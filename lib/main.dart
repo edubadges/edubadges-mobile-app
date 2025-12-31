@@ -1,13 +1,3 @@
-import 'dart:async';
-
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:edubadges/app/app.dart';
 import 'package:edubadges/core/constants/env_keys.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
@@ -21,6 +11,14 @@ import 'package:edubadges/firebase/firebase_options_production.dart'
     as firebase_prod;
 import 'package:edubadges/firebase/firebase_options_tst.dart' as firebase_tst;
 import 'package:edubadges/flavors.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 String? appFlavor;
 
