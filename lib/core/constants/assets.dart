@@ -25,7 +25,4 @@ class Assets {
 
   static const String imageLogo = '$_imagesPath/logo.svg';
   static const String imageNotifications = '$_imagesPath/notifications.png';
-  static const String imageNotifications@2x = '$_imagesPath/notifications@2x.png';
-  static const String imageNotifications@3x = '$_imagesPath/notifications@3x.png';
-
 }
