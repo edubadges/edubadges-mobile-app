@@ -14,7 +14,7 @@ class F {
       case Flavor.acc:
         return 'Edubadges Acc';
       case Flavor.prod:
-        return 'Edubadges Prod';
+        return 'Edubadges';
     }
   }
 
