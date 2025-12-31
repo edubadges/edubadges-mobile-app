@@ -1,0 +1,55 @@
+name: edubadges
+description: A Flutter application
+publish_to: none
+version: 1.0.0+1
+environment:
+  sdk: ^3.10.1
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  equatable: any
+  dartz: any
+  flutter_dotenv: any
+  go_router: any
+  dio: any
+  flutter_svg: any
+  flutter_native_splash: any
+  firebase_core: any
+  firebase_crashlytics: any
+  firebase_analytics: any
+  flutter_riverpod: any
+  aroma_error:
+    git:
+      url: git@gitlab.com:CoffeeIT/aroma/flutter/aromaerror.git
+      ref: 1.0.0
+  aroma_networking:
+    git:
+      url: git@gitlab.com:CoffeeIT/aroma/flutter/aromanetworking.git
+      ref: 1.0.0
+  logger: any
+  shared_preferences: any
+  firebase_auth: any
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_flavorizr: ^2.4.1
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - .env.dev
+    - .env.tst
+    - .env.acc
+    - .env.prod
+flutter_native_splash:
+  color: "#772583"
+  android_gravity: center
+  ios_content_mode: center
+  fullscreen: true
+  android: true
+  android_12:
+    color: "#772583"
+    icon_background_color: "#772583"
+  ios: true

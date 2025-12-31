@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "279570130104",
+    "project_id": "edubadges-tst",
+    "storage_bucket": "edubadges-tst.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:279570130104:android:6969e53adf7c2e7b07c04d",
+        "android_client_info": {
+          "package_name": "nl.surf.edubadges"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVL7cTKitipp6Sqs64nUPR1QjexECRkYM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
