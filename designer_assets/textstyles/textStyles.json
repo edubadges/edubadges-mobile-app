@@ -1,0 +1,192 @@
+{
+  "fileName": "Edubadges Design",
+  "textStyles": [
+    {
+      "name": "M3/display/large",
+      "fontFamily": "Nunito",
+      "fontWeight": "Regular",
+      "fontSize": 57,
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": -0.25
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/display/medium",
+      "fontFamily": "Nunito",
+      "fontWeight": "Regular",
+      "fontSize": 45,
+      "letterSpacing": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/display/small",
+      "fontFamily": "Nunito",
+      "fontWeight": "Regular",
+      "fontSize": 36,
+      "letterSpacing": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/headline/large",
+      "fontFamily": "Nunito",
+      "fontWeight": "Bold",
+      "fontSize": 32,
+      "letterSpacing": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/headline/medium",
+      "fontFamily": "Nunito",
+      "fontWeight": "Regular",
+      "fontSize": 28,
+      "letterSpacing": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/headline/small",
+      "fontFamily": "Nunito",
+      "fontWeight": "Bold",
+      "fontSize": 24,
+      "letterSpacing": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/title/large",
+      "fontFamily": "Nunito",
+      "fontWeight": "Bold",
+      "fontSize": 20,
+      "letterSpacing": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/title/medium",
+      "fontFamily": "Nunito",
+      "fontWeight": "Bold",
+      "fontSize": 17,
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/title/small",
+      "fontFamily": "Nunito",
+      "fontWeight": "Bold",
+      "fontSize": 14,
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/body/large",
+      "fontFamily": "Source Sans Pro",
+      "fontWeight": "Regular",
+      "fontSize": 16,
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/body/medium",
+      "fontFamily": "Source Sans Pro",
+      "fontWeight": "Regular",
+      "fontSize": 15,
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/body/small",
+      "fontFamily": "Source Sans Pro",
+      "fontWeight": "Regular",
+      "fontSize": 12,
+      "letterSpacing": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/label/large - prominent",
+      "fontFamily": "Source Sans Pro",
+      "fontWeight": "SemiBold",
+      "fontSize": 16,
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/label/large",
+      "fontFamily": "Source Sans Pro",
+      "fontWeight": "SemiBold",
+      "fontSize": 16,
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/label/medium - prominent",
+      "fontFamily": "Source Sans Pro",
+      "fontWeight": "SemiBold",
+      "fontSize": 14,
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/label/medium",
+      "fontFamily": "Source Sans Pro",
+      "fontWeight": "Regular",
+      "fontSize": 14,
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    },
+    {
+      "name": "M3/label/small",
+      "fontFamily": "Source Sans Pro",
+      "fontWeight": "Regular",
+      "fontSize": 12,
+      "letterSpacing": {
+        "unit": "PIXELS",
+        "value": 0
+      },
+      "textCase": "ORIGINAL"
+    }
+  ]
+}
