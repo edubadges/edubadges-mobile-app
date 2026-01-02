@@ -14,7 +14,7 @@ quality:
   stage: qa
   before_script:
     - dnf update
-    - dnf install git unzip curl tar gzip bash wget findutils
+    - dnf install -y xz
     - wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.38.5-stable.tar.xz
     - tar xf flutter_linux_3.38.5-stable.tar.xz -C /opt
     - export PATH="$PATH:/opt/flutter/bin"
