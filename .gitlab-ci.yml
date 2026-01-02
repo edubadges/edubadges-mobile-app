@@ -8,6 +8,7 @@ stages:
 quality:
   image: sonarsource/sonar-scanner-cli:11.3
   stage: qa
+  entrypoint: [""] # This is critical – do NOT remove
   before_script:
     - apk update
     - apk add --no-cache git unzip curl bash
