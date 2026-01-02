@@ -13,13 +13,24 @@ quality:
       user: root                # Required for dnf
   stage: qa
   before_script:
+    # Install required minimal packages: xz (for extraction) + findutils (provides 'which' command)
     - dnf install -y xz findutils
+
+    # Download Flutter using curl (already present)
     - curl -O https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.38.5-stable.tar.xz
+
+    # Extract
     - tar xf flutter_linux_3.38.5-stable.tar.xz -C /opt
+
+    # Add to PATH
     - export PATH="$PATH:/opt/flutter/bin"
+
+    # Fix Git dubious ownership
     - git config --global --add safe.directory /opt/flutter
+
+    # Optional: disable analytics + verify
     - flutter config --no-analytics
-    - flutter --version       # Should now show version successfully
+    - flutter --version       # Should now succeed
   script:
     - flutter pub get
     - sonar-scanner -Dsonar.login=$SONAR_TOKEN
@@ -30,7 +41,7 @@ quality:
     key: "${CI_JOB_NAME}"
     paths:
       - .sonar/cache
-      - ~/.pub-cache          # Speeds up pub get on future runs
+      - ~/.pub-cache          # Makes pub get instant after first run
   only:
     - merge_requests
     - develop
