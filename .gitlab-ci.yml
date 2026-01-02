@@ -9,6 +9,8 @@ quality:
   image:
     name: sonarsource/sonar-scanner-cli:11.3
     entrypoint: [ "" ]
+    docker:
+      user: root
   stage: qa
   before_script:
     - dnf update
