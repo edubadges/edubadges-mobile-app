@@ -13,8 +13,8 @@ quality:
       user: root                # Required for dnf
   stage: qa
   before_script:
-    # Install minimal packages: xz (extraction) + which (for Flutter tools)
-    - dnf install -y xz which
+    # Install required packages: xz (extraction) + which (Flutter needs it) + openssh-clients (for ssh-keyscan)
+    - dnf install -y xz which openssh-clients
 
     # Download Flutter using curl (already present)
     - curl -O https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.38.5-stable.tar.xz
@@ -28,9 +28,13 @@ quality:
     # Fix Git dubious ownership
     - git config --global --add safe.directory /opt/flutter
 
+    # Add GitLab.com host key to known_hosts (fixes "Host key verification failed")
+    - mkdir -p ~/.ssh
+    - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+
     # Optional: disable analytics + verify
     - flutter config --no-analytics
-    - flutter --version       # Should succeed now
+    - flutter --version       # Should show Flutter version
   script:
     - flutter pub get
     - sonar-scanner -Dsonar.login=$SONAR_TOKEN
@@ -41,7 +45,7 @@ quality:
     key: "${CI_JOB_NAME}"
     paths:
       - .sonar/cache
-      - ~/.pub-cache          # Makes pub get instant after first run
+      - ~/.pub-cache          # Speeds up pub get massively after first run
   only:
     - merge_requests
     - develop
