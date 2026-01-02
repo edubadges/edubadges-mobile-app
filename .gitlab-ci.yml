@@ -11,27 +11,15 @@ quality:
     entrypoint: [ "" ]
   stage: qa
   before_script:
-    # === Diagnostic commands to check the OS and package managers ===
-    - echo "=== OS Release Info ==="
-    - cat /etc/os-release || echo "No /etc/os-release found"
-    - echo "=== Checking common package managers ==="
-    - which apk && echo "apk found" || echo "apk NOT found"
-    - which apt && echo "apt found" || echo "apt NOT found"
-    - which apt-get && echo "apt-get found" || echo "apt-get NOT found"
-    - which yum && echo "yum found" || echo "yum NOT found"
-    - which dnf && echo "dnf found" || echo "dnf NOT found"
-    - which pacman && echo "pacman found" || echo "pacman NOT found"
-    # ==============================================================
-    - apk update
-    - apt-get update
-    - yam update
-    - dnf update
-    - apk add --no-cache git unzip curl bash
-    - curl -O https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.24.3-stable.tar.xz
-    - tar xf flutter_linux_3.24.3-stable.tar.xz -C /opt
-    - echo 'export PATH="$PATH:/opt/flutter/bin"' >> /etc/profile
+    - dnf update -y
+    - dnf install -y git unzip curl tar gzip bash wget findutils
+    # Install latest stable Flutter (as of January 2026: 3.38.5)
+    - wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.38.5-stable.tar.xz
+    - tar xf flutter_linux_3.38.5-stable.tar.xz -C /opt
     - export PATH="$PATH:/opt/flutter/bin"
-    - flutter --version
+    - flutter config --no-analytics  # Optional: disable telemetry
+    - flutter --version  # Verify installation (shows in logs)
+    - flutter pub get
   script:
     - sonar-scanner -Dsonar.login=$SONAR_TOKEN
   variables:
