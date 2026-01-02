@@ -28,9 +28,6 @@ quality:
     # Fix Git dubious ownership
     - git config --global --add safe.directory /opt/flutter
 
-    # Disable Android SDK check (no Android build needed for pub get or Sonar Dart analysis)
-    - flutter config --no-android-sdk
-
     # Optional: disable analytics + verify
     - flutter config --no-analytics
     - flutter --version       # Should succeed now
