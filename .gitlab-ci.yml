@@ -8,17 +8,18 @@ stages:
 quality:
   image:
     name: sonarsource/sonar-scanner-cli:11.3
-    entrypoint: [ "" ]
+    entrypoint: [""]
     docker:
-      user: root # Required for dnf
+      user: root                # Required for dnf
   stage: qa
   before_script:
-    - dnf update
-    - dnf install -y xz
+    - dnf install -y xz findutils
     - curl -O https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.38.5-stable.tar.xz
     - tar xf flutter_linux_3.38.5-stable.tar.xz -C /opt
     - export PATH="$PATH:/opt/flutter/bin"
     - git config --global --add safe.directory /opt/flutter
+    - flutter config --no-analytics
+    - flutter --version       # Should now show version successfully
   script:
     - flutter pub get
     - sonar-scanner -Dsonar.login=$SONAR_TOKEN
@@ -29,7 +30,7 @@ quality:
     key: "${CI_JOB_NAME}"
     paths:
       - .sonar/cache
-      - ~/.pub-cache
+      - ~/.pub-cache          # Speeds up pub get on future runs
   only:
     - merge_requests
     - develop
