@@ -12,19 +12,16 @@ abstract class Failure extends Equatable {
 
 class ServerFailure extends Failure {
   final int statusCode;
-  const ServerFailure(String message, this.statusCode, {String? code})
-    : super(message, code: code);
+  const ServerFailure(super.message, this.statusCode, {super.code});
 
   @override
   List<Object?> get props => [statusCode, ...super.props];
 }
 
 class NetworkFailure extends Failure {
-  const NetworkFailure(String message, {String? code})
-    : super(message, code: code);
+  const NetworkFailure(super.message, {super.code});
 }
 
 class ValidationFailure extends Failure {
-  const ValidationFailure(String message, {String? code})
-    : super(message, code: code);
+  const ValidationFailure(super.message, {super.code});
 }
