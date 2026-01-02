@@ -11,14 +11,13 @@ quality:
     entrypoint: [ "" ]
   stage: qa
   before_script:
-    - dnf update -y
-    - dnf install -y git unzip curl tar gzip bash wget findutils
-    # Install latest stable Flutter (as of January 2026: 3.38.5)
+    - dnf update
+    - dnf install git unzip curl tar gzip bash wget findutils
     - wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.38.5-stable.tar.xz
     - tar xf flutter_linux_3.38.5-stable.tar.xz -C /opt
     - export PATH="$PATH:/opt/flutter/bin"
-    - flutter config --no-analytics  # Optional: disable telemetry
-    - flutter --version  # Verify installation (shows in logs)
+    - flutter config --no-analytics
+    - flutter --version
     - flutter pub get
   script:
     - sonar-scanner -Dsonar.login=$SONAR_TOKEN
