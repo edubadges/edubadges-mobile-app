@@ -11,6 +11,17 @@ quality:
     entrypoint: [ "" ]
   stage: qa
   before_script:
+    # === Diagnostic commands to check the OS and package managers ===
+    - echo "=== OS Release Info ==="
+    - cat /etc/os-release || echo "No /etc/os-release found"
+    - echo "=== Checking common package managers ==="
+    - which apk && echo "apk found" || echo "apk NOT found"
+    - which apt && echo "apt found" || echo "apt NOT found"
+    - which apt-get && echo "apt-get found" || echo "apt-get NOT found"
+    - which yum && echo "yum found" || echo "yum NOT found"
+    - which dnf && echo "dnf found" || echo "dnf NOT found"
+    - which pacman && echo "pacman found" || echo "pacman NOT found"
+    # ==============================================================
     - apk update
     - apt-get update
     - yam update
