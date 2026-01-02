@@ -8,9 +8,7 @@ stages:
 quality:
   image: sonarsource/sonar-scanner-cli:11.3
   before_script:
-    - curl -LO https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.38.0-stable.zip
-    - unzip flutter_linux_3.38.0-stable.zip
-    - export PATH="$PWD/flutter/bin:$PATH"
+    - flutter --version  # Verify
     - flutter pub get
   stage: qa
   script:
