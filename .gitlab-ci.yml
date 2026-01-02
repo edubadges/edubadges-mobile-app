@@ -8,7 +8,8 @@ stages:
 quality:
   image: sonarsource/sonar-scanner-cli:11.3
   before_script:
-    - apt-get update && apt-get install -y curl unzip git
+    - apk update
+    - apk add --no-cache curl unzip git xz  # Install required tools (xz for tar xf .tar.xz)
     - curl -LO https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.38.0-stable.tar.xz
     - tar xf flutter_linux_3.38.0-stable.tar.xz
     - export PATH="$PWD/flutter/bin:$PATH"
@@ -26,4 +27,3 @@ quality:
   only:
     - merge_requests
     - develop
-
