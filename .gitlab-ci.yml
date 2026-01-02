@@ -19,7 +19,6 @@ quality:
     - tar xf flutter_linux_3.38.5-stable.tar.xz -C /opt
     - export PATH="$PATH:/opt/flutter/bin"
     - git config --global --add safe.directory /opt/flutter
-    - flutter config --no-analytics
   script:
     - flutter pub get
     - sonar-scanner -Dsonar.login=$SONAR_TOKEN
