@@ -13,8 +13,8 @@ quality:
       user: root                # Required for dnf
   stage: qa
   before_script:
-    # Install required minimal packages: xz (for extraction) + findutils (provides 'which' command)
-    - dnf install -y xz findutils
+    # Install minimal packages: xz (extraction) + which (for Flutter tools)
+    - dnf install -y xz which
 
     # Download Flutter using curl (already present)
     - curl -O https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.38.5-stable.tar.xz
@@ -28,9 +28,12 @@ quality:
     # Fix Git dubious ownership
     - git config --global --add safe.directory /opt/flutter
 
+    # Disable Android SDK check (no Android build needed for pub get or Sonar Dart analysis)
+    - flutter config --no-android-sdk
+
     # Optional: disable analytics + verify
     - flutter config --no-analytics
-    - flutter --version       # Should now succeed
+    - flutter --version       # Should succeed now
   script:
     - flutter pub get
     - sonar-scanner -Dsonar.login=$SONAR_TOKEN
