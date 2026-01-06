@@ -18,7 +18,7 @@ quality:
     - tar xf flutter_linux_3.38.5-stable.tar.xz -C /opt
     - export PATH="$PATH:/opt/flutter/bin"
     - git config --global --add safe.directory /opt/flutter
-    - 'git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/".insteadOf git@gitlab.com:'
+    - git config --global url."https://oauth2:${GITLAB_PERSONAL_ACCESS_TOKEN}@gitlab.com/".insteadOf git@gitlab.com:
     - flutter config --no-analytics
     - flutter --version
   script:
