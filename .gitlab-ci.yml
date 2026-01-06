@@ -28,9 +28,8 @@ quality:
     # Fix Git dubious ownership
     - git config --global --add safe.directory /opt/flutter
 
-    # Properly add GitLab host keys (with -H for hashed format, standard in CI)
-    - mkdir -p ~/.ssh
-    - ssh-keyscan -H gitlab.com >> ~/.ssh/known_hosts
+    # Rewrite SSH git@gitlab.com URLs to HTTPS using the built-in CI job token (automatically grants access to private repos the project can reach)
+    - git config --global url."https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/".insteadOf git@gitlab.com:
 
     # Optional: disable analytics + verify
     - flutter config --no-analytics
