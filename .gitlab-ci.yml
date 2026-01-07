@@ -35,8 +35,6 @@ quality:
     key: "${CI_JOB_NAME}"
     paths:
       - .sonar/cache
-      - ~/.pub-cache
-      - /opt/flutter
   only:
     - merge_requests
     - develop
