@@ -1,24 +1,60 @@
-# edubadges
+# 🎖️ SURF Edubadges
 
-A Flutter application
+## 📱 Target Platforms
+This application is built to run on the following platforms:
+*   🍎 iOS
+*   🤖 Android
 
-## Getting Started
+## 🎨 Design
+You can find the design files on Figma:
+[Edubadges Design](https://www.figma.com/design/gPMsf9xuwPBG9yk4EZTabu/Edubadges-Design?t=xZ3tcYWY3fjYnVt1-0)
 
-This project is a starting point for a Flutter application.
+## 🧑‍💻 Active Members
+*   Peter
 
-A few resources to get you started if this is your first Flutter project:
+## ⚙️ Installation
+1.  **Clone the repository:**
+    ```bash
+    git clone https://gitlab.com/CoffeeIT/surf/surf-flutter
+    cd surf-flutter
+    ```
+2.  **Set up Environment Variables:**
+    *   This project uses `flutter_dotenv` for configuration.
+    *   Create environment-specific `.env` files (e.g., `.env.dev`, `.env.tst`, `.env.prod`, `.env.acc`) in the root directory.
+    *   You might need to copy from an example file or obtain the necessary keys.
+    *   *(Suggestion: Add details here or link to documentation about required variables)*
+3.  **Install dependencies:**
+    ```bash
+    flutter pub get
+    ```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## ▶️ Running the Project
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-## TODO
+1.  Ensure you have a device (physical or emulator) running.
+2.  **Run the app (default flavor, usually dev):**
+    ```bash
+    flutter run
+    ```
+3.  **Run a specific flavor:**
+    This project uses `flutter_flavorizr` to manage build environments (dev, tst, prod, acc).
+    ```bash
+    # Example for running the 'dev' flavor
+    flutter run --flavor dev
 
-### Aroma Error Configuration
-If you're using the `aroma_error` package, you need to:
-1. Create `lib/core/utils/aroma_error_provider.dart` with an `AromaErrorController` provider
-2. Update `lib/core/network/network_providers.dart` to use the error controller:
-   - Uncomment the `aromaErrorController` line in `networkConfigProvider`
-   - Add the import for `aroma_error_provider.dart`
+    # Replace 'dev' with 'tst', 'prod', or 'acc' as needed
+    flutter run --flavor <flavor_name>
+    ```
+
+## 🛠️ Tech Stack
+*   **Framework:** Flutter & Dart
+*   **Routing:** `go_router`
+*   **HTTP Client:** `dio`
+*   **Build Flavors:** `flutter_flavorizr`
+*   **Environment Variables:** `flutter_dotenv`
+*   **Localization:** `flutter_localizations`
+*   **Vector Graphics:** `flutter_svg`
+
+
+## 📊 Project Management
+Track progress and issues on Jira:
+[Edubadges Jira Board](https://digitalclub.atlassian.net/jira/software/c/projects/SURF/summary)
