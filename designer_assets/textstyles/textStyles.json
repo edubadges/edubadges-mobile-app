@@ -102,7 +102,7 @@
     },
     {
       "name": "M3/body/large",
-      "fontFamily": "Source Sans Pro",
+      "fontFamily": "Source Sans 3",
       "fontWeight": "Regular",
       "fontSize": 16,
       "letterSpacing": {
@@ -113,7 +113,7 @@
     },
     {
       "name": "M3/body/medium",
-      "fontFamily": "Source Sans Pro",
+      "fontFamily": "Source Sans 3",
       "fontWeight": "Regular",
       "fontSize": 15,
       "letterSpacing": {
@@ -124,7 +124,7 @@
     },
     {
       "name": "M3/body/small",
-      "fontFamily": "Source Sans Pro",
+      "fontFamily": "Source Sans 3",
       "fontWeight": "Regular",
       "fontSize": 12,
       "letterSpacing": {
@@ -135,7 +135,7 @@
     },
     {
       "name": "M3/label/large - prominent",
-      "fontFamily": "Source Sans Pro",
+      "fontFamily": "Source Sans 3",
       "fontWeight": "SemiBold",
       "fontSize": 16,
       "letterSpacing": {
@@ -146,7 +146,7 @@
     },
     {
       "name": "M3/label/large",
-      "fontFamily": "Source Sans Pro",
+      "fontFamily": "Source Sans 3",
       "fontWeight": "SemiBold",
       "fontSize": 16,
       "letterSpacing": {
@@ -157,7 +157,7 @@
     },
     {
       "name": "M3/label/medium - prominent",
-      "fontFamily": "Source Sans Pro",
+      "fontFamily": "Source Sans 3",
       "fontWeight": "SemiBold",
       "fontSize": 14,
       "letterSpacing": {
@@ -168,7 +168,7 @@
     },
     {
       "name": "M3/label/medium",
-      "fontFamily": "Source Sans Pro",
+      "fontFamily": "Source Sans 3",
       "fontWeight": "Regular",
       "fontSize": 14,
       "letterSpacing": {
@@ -179,7 +179,7 @@
     },
     {
       "name": "M3/label/small",
-      "fontFamily": "Source Sans Pro",
+      "fontFamily": "Source Sans 3",
       "fontWeight": "Regular",
       "fontSize": 12,
       "letterSpacing": {
