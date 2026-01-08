@@ -49,6 +49,7 @@ class AppThemes {
       onError: AppColors.onError,
       surface: AppColors.surface,
       onSurface: AppColors.onSurface,
+      onSurfaceVariant: AppColors.onSurfaceVariant,
       primaryContainer: AppColors.primaryContainer,
       primaryFixed: AppColors.primaryFixed,
       secondaryContainer: AppColors.secondaryContainer,
@@ -157,7 +158,7 @@ class AppThemes {
 
       // BodyLarge styles
       bodyLarge: const TextStyle(
-        fontFamily: 'SourceSansPro',
+        fontFamily: 'SourceSans3',
         fontSize: 16,
         height: 1.0,
         letterSpacing: 0.0,
@@ -166,7 +167,7 @@ class AppThemes {
 
       // BodyMedium styles
       bodyMedium: const TextStyle(
-        fontFamily: 'SourceSansPro',
+        fontFamily: 'SourceSans3',
         fontSize: 15,
         height: 1.0,
         letterSpacing: 0.0,
@@ -175,7 +176,7 @@ class AppThemes {
 
       // BodySmall styles
       bodySmall: const TextStyle(
-        fontFamily: 'SourceSansPro',
+        fontFamily: 'SourceSans3',
         fontSize: 12,
         height: 1.0,
         letterSpacing: 0.0,
@@ -184,7 +185,7 @@ class AppThemes {
 
       // LabelLarge styles
       labelLarge: const TextStyle(
-        fontFamily: 'SourceSansPro',
+        fontFamily: 'SourceSans3',
         fontSize: 16,
         height: 1.0,
         letterSpacing: 0.0,
@@ -193,7 +194,7 @@ class AppThemes {
 
       // LabelMedium styles
       labelMedium: const TextStyle(
-        fontFamily: 'SourceSansPro',
+        fontFamily: 'SourceSans3',
         fontSize: 14,
         height: 1.0,
         letterSpacing: 0.0,
@@ -202,7 +203,7 @@ class AppThemes {
 
       // LabelSmall styles
       labelSmall: const TextStyle(
-        fontFamily: 'SourceSansPro',
+        fontFamily: 'SourceSans3',
         fontSize: 12,
         height: 1.0,
         letterSpacing: 0.0,
@@ -223,7 +224,7 @@ class AppThemes {
         height: 1.0,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w700,
-        color: AppColors.onPrimary,
+        color: AppColors.onSurface,
       ),
     );
   }
@@ -233,7 +234,7 @@ class AppThemes {
 extension CustomTextStyles on TextTheme {
   /// Nunito SemiBold - 16/16 . 0.0
   TextStyle get m3LabelLargeProminent => const TextStyle(
-    fontFamily: 'SourceSansPro',
+    fontFamily: 'SourceSans3',
     fontSize: 16,
     height: 1.0,
     letterSpacing: 0.0,
@@ -242,7 +243,7 @@ extension CustomTextStyles on TextTheme {
 
   /// Nunito SemiBold - 14/14 . 0.0
   TextStyle get m3LabelMediumProminent => const TextStyle(
-    fontFamily: 'SourceSansPro',
+    fontFamily: 'SourceSans3',
     fontSize: 14,
     height: 1.0,
     letterSpacing: 0.0,

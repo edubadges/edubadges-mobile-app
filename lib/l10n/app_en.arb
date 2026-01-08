@@ -1,0 +1,28 @@
+{
+  "@@locale": "en",
+
+  "appName": "Edubadges",
+  "@appName": {
+    "description": "App name"
+  },
+
+  "tabBadges": "Edubadges",
+  "@tabBadges": {
+    "description": "Navigation label for the Edubadges section"
+  },
+
+  "tabCollections": "Collections",
+  "@tabCollections": {
+    "description": "Navigation label for the Collections section"
+  },
+
+  "tabCatalog": "Catalog",
+  "@tabCatalog": {
+    "description": "Navigation label for the Catalog section"
+  },
+
+  "tabAccount": "Account",
+  "@tabAccount": {
+    "description": "Navigation label for the Account section"
+  }
+}
