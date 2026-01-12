@@ -1,0 +1,13 @@
+{
+    "@@locale": "nl",
+    "@@last_modified": "2026-01-12T10:13:17+01:00",
+    "appName": "Edubadges",
+    "loginCardButton": "Ga naar mijn edubadges",
+    "loginCardText": "Mijn badges is de plek om edubadges te ontvangen en verzamelen. Een eduID is nodig om ‘mijn badges’ aan te maken en te gebruiken. Het maken van een eduID duurt minder dan 30 seconden.",
+    "loginSubtitle": "Edubadges zijn digitale certificaten die aantonen welke kennis of vaardigheden iemand heeft opgedaan, binnen of buiten het formele onderwijs.",
+    "loginTitle": "Never stop learning",
+    "tabAccount": "Account",
+    "tabBadges": "Edubadges",
+    "tabCatalog": "Catalogus",
+    "tabCollections": "Collecties"
+}

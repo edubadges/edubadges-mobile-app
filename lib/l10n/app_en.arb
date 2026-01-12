@@ -1,28 +1,13 @@
 {
-  "@@locale": "en",
-
-  "appName": "Edubadges",
-  "@appName": {
-    "description": "App name"
-  },
-
-  "tabBadges": "Edubadges",
-  "@tabBadges": {
-    "description": "Navigation label for the Edubadges section"
-  },
-
-  "tabCollections": "Collections",
-  "@tabCollections": {
-    "description": "Navigation label for the Collections section"
-  },
-
-  "tabCatalog": "Catalog",
-  "@tabCatalog": {
-    "description": "Navigation label for the Catalog section"
-  },
-
-  "tabAccount": "Account",
-  "@tabAccount": {
-    "description": "Navigation label for the Account section"
-  }
+    "@@locale": "en",
+    "@@last_modified": "2026-01-12T10:13:17+01:00",
+    "appName": "Edubadges",
+    "loginCardButton": "Go to my edubadges",
+    "loginCardText": "My Badges is the place to receive and collect edubadges. An eduID is required to create and use \"My Badges.\" Creating an eduID takes less than 30 seconds.",
+    "loginSubtitle": "Edubadges are digital certificates that demonstrate the knowledge or skills someone has acquired, within or outside formal education.",
+    "loginTitle": "Never stop learning",
+    "tabAccount": "Account",
+    "tabBadges": "Edubadges",
+    "tabCatalog": "Catalog",
+    "tabCollections": "Collections"
 }

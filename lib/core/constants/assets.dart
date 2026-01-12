@@ -35,4 +35,13 @@ class Assets {
   static const String _imagesPath = 'assets/images';
 
   static const String imageLogo = '$_imagesPath/logo.svg';
+  static const String imageBadge0 = '$_imagesPath/badge0.png';
+  static const String imageBadge1 = '$_imagesPath/badge1.png';
+  static const String imageBadge2 = '$_imagesPath/badge2.png';
+  static const String imageBadge3 = '$_imagesPath/badge3.png';
+  static const String imageBadge4 = '$_imagesPath/badge4.png';
+  static const String imageBadge5 = '$_imagesPath/badge5.png';
+  static const String imageBadge6 = '$_imagesPath/badge6.png';
+  static const String imageBadge7 = '$_imagesPath/badge7.png';
+  static const String imageBadge8 = '$_imagesPath/badge8.png';
 }
