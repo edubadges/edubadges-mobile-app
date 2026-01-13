@@ -1,0 +1,3 @@
+class AppConstants {
+  // Add app-wide constants here
+}

@@ -1,0 +1,7 @@
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
+#include "Generated.xcconfig"
+
+ASSET_PREFIX=prod
+BUNDLE_NAME=Edubadges Prod
+BUNDLE_DISPLAY_NAME=Edubadges Prod
+BASE_URL=https://api.edubadges.nl
