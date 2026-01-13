@@ -1,0 +1,255 @@
+format_version: '23'
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: flutter
+workflows:
+  test:
+    steps:
+    - activate-ssh-key@4:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+    - git-clone@8: {}
+    - restore-dart-cache@2: {}
+    - restore-gradle-cache@2: {}
+    - change-android-versioncode-and-versionname@1:
+        inputs:
+        - build_gradle_path: "$BITRISE_SOURCE_DIR/android/$MODULE/build.gradle.kts"
+    - flutter-installer@1:
+        inputs:
+        - version: 3.35.7
+        - is_update: 'false'
+    - flutter-analyze@0:
+        inputs:
+        - project_location: "$BITRISE_SOURCE_DIR"
+        is_skippable: true
+    - flutter-build@0:
+        inputs:
+        - android_additional_params: "--release --flavor tst"
+        - project_location: "$BITRISE_SOURCE_DIR"
+        - platform: android
+    - sign-apk@2:
+        inputs:
+        - use_apk_signer: 'true'
+    - script@1:
+        inputs:
+        - content: |
+            #!/bin/bash
+
+            # --- Get Flutter version name ---
+            VERSION_STRING=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+            VERSION_NAME=$(echo "$VERSION_STRING" | cut -d '+' -f 1)
+
+            if [[ -z "$VERSION_NAME" ]]; then
+              VERSION_NAME=""
+            fi
+
+            echo "Version name: $VERSION_NAME"
+            envman add --key FLUTTER_VERSION_NAME --value "$VERSION_NAME"
+
+            # --- Get SHA-1 and SHA-256 fingerprints (if keystore exists) ---
+            if [[ -n "$BITRISEIO_ANDROID_KEYSTORE_PATH" && -f "$BITRISEIO_ANDROID_KEYSTORE_PATH" ]]; then
+              echo "Extracting SHA-1 and SHA-256 from keystore..."
+
+              keytool -list -v \
+                -keystore "$BITRISEIO_ANDROID_KEYSTORE_PATH" \
+                -alias "$BITRISEIO_ANDROID_KEYSTORE_PATH" \
+                -storepass "$BITRISEIO_ANDROID_KEYSTORE_PASSWORD" \
+                -keypass "$BITRISEIO_ANDROID_KEY_PASSWORD" \
+                | grep -E "SHA1:|SHA256:"
+
+            else
+              echo "No keystore found or environment variables not set. Skipping SHA fingerprint extraction."
+            fi
+    - deploy-to-bitrise-io@2: {}
+    - save-dart-cache@1: {}
+    - save-gradle-cache@1: {}
+    - firebase-app-distribution@0:
+        inputs:
+        - app_path: "$BITRISE_SIGNED_APK_PATH"
+        - release_notes: "$APP_NAME (tst) release"
+        - groups: internal
+        - app: 1:279570130104:android:6969e53adf7c2e7b07c04d
+        - firebase_token: "$FIREBASE_TOKEN"
+    - slack@4:
+        inputs:
+        - text: 'Android $APP_NAME v$FLUTTER_VERSION_NAME ($BITRISE_BUILD_NUMBER) deployed
+            to Firebase :rocket:'
+        - thumb_url: "$ICON_URL"
+        - pretext: "*Deployment succeeded!*"
+        - webhook_url: "$SLACK_WEBHOOK_URL"
+        is_always_run: false
+        title: Send a Slack message (success)
+    - slack@4:
+        inputs:
+        - text: 'Android $APP_NAME v$FLUTTER_VERSION_NAME ($BITRISE_BUILD_NUMBER)
+            deployment failed :rocket-explosion:'
+        - thumb_url: "$ICON_URL"
+        - pretext: "*Deployment failed!*"
+        - color: "#c33b46"
+        - webhook_url: "$SLACK_WEBHOOK_URL"
+        is_always_run: true
+        run_if: ".IsBuildFailed"
+        title: Send a Slack message (error)
+  acceptance:
+    steps:
+    - activate-ssh-key@4:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+    - git-clone@8.4: {}
+    - restore-dart-cache@2: {}
+    - restore-gradle-cache@2: {}
+    - change-android-versioncode-and-versionname@1:
+        inputs:
+        - build_gradle_path: "$BITRISE_SOURCE_DIR/android/$MODULE/build.gradle.kts"
+    - flutter-installer@1:
+        inputs:
+        - version: 3.35.7
+        - is_update: 'false'
+    - flutter-analyze@0:
+        inputs:
+        - project_location: "$BITRISE_SOURCE_DIR"
+        is_skippable: true
+    - flutter-build@0:
+        inputs:
+        - android_additional_params: "--release --flavor acc"
+        - project_location: "$BITRISE_SOURCE_DIR"
+        - platform: android
+    - sign-apk@2:
+        inputs:
+        - use_apk_signer: 'true'
+    - script@1:
+        inputs:
+        - content: |
+            #!/bin/bash
+
+            # Get the version string from pubspec.yaml (e.g., 1.2.3+45)
+            VERSION_STRING=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+
+            # Extract the version name (the part before the '+')
+            VERSION_NAME=$(echo "$VERSION_STRING" | cut -d '+' -f 1)
+
+            # If no version name is found, fallback to an empty string
+            if [[ -z "$VERSION_NAME" ]]; then
+              VERSION_NAME=""
+            fi
+
+            echo "Version name: $VERSION_NAME"
+
+            # Export the version name as an environment variable for later steps
+            envman add --key FLUTTER_VERSION_NAME --value "$VERSION_NAME"
+    - deploy-to-bitrise-io@2: {}
+    - save-dart-cache@1: {}
+    - save-gradle-cache@1: {}
+    - firebase-app-distribution@0:
+        inputs:
+        - app_path: "$BITRISE_SIGNED_APK_PATH"
+        - release_notes: "$APP_NAME acceptance (acc) release"
+        - groups: client
+        - app: 1:1082820211264:android:9a2af7c3d69ca1667f65a5
+        - firebase_token: "$FIREBASE_TOKEN"
+    - slack@4:
+        inputs:
+        - text: 'Android $APP_NAME v$FLUTTER_VERSION_NAME ($BITRISE_BUILD_NUMBER) deployed
+            to Firebase :rocket:'
+        - thumb_url: "$ICON_URL"
+        - pretext: "*Deployment succeeded!*"
+        - webhook_url: "$SLACK_WEBHOOK_URL"
+        is_always_run: false
+        title: Send a Slack message (success)
+    - slack@4:
+        inputs:
+        - text: 'Android $APP_NAME v$FLUTTER_VERSION_NAME ($BITRISE_BUILD_NUMBER)
+            deployment failed :rocket-explosion:'
+        - thumb_url: "$ICON_URL"
+        - pretext: "*Deployment failed!*"
+        - color: "#c33b46"
+        - webhook_url: "$SLACK_WEBHOOK_URL"
+        is_always_run: true
+        run_if: ".IsBuildFailed"
+        title: Send a Slack message (error)
+  release:
+    steps:
+    - activate-ssh-key@4:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+    - git-clone@8.4: {}
+    - restore-dart-cache@2: {}
+    - restore-gradle-cache@2: {}
+    - change-android-versioncode-and-versionname@1:
+        inputs:
+        - build_gradle_path: "$BITRISE_SOURCE_DIR/android/$MODULE/build.gradle.kts"
+    - flutter-installer@1:
+        inputs:
+        - version: 3.35.7
+        - is_update: 'false'
+    - flutter-analyze@0:
+        inputs:
+        - project_location: "$BITRISE_SOURCE_DIR"
+        is_skippable: true
+    - flutter-build@0:
+        inputs:
+        - android_additional_params: "--release --flavor prod"
+        - platform: android
+        - build_format: aab
+    - script@1:
+        inputs:
+        - content: |
+            #!/bin/bash
+
+            # Get the version string from pubspec.yaml (e.g., 1.2.3+45)
+            VERSION_STRING=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+
+            # Extract the version name (the part before the '+')
+            VERSION_NAME=$(echo "$VERSION_STRING" | cut -d '+' -f 1)
+
+            # If no version name is found, fallback to an empty string
+            if [[ -z "$VERSION_NAME" ]]; then
+              VERSION_NAME=""
+            fi
+
+            echo "Version name: $VERSION_NAME"
+
+            # Export the version name as an environment variable for later steps
+            envman add --key FLUTTER_VERSION_NAME --value "$VERSION_NAME"
+    - deploy-to-bitrise-io@2: {}
+    - save-dart-cache@1: {}
+    - save-gradle-cache@1: {}
+    - sign-apk@2: {}
+    - google-play-deploy@3:
+        inputs:
+        - service_account_json_key_path: "$BITRISEIO_SERVICE_ACCOUNT_JSON_KEY_URL"
+        - package_name: nl.surf.edubadges
+        - track: production
+        - release_name: "$FLUTTER_VERSION_NAME ($BITRISE_BUILD_NUMBER)"
+    - slack@4:
+        inputs:
+        - text: 'Android $APP_NAME v$FLUTTER_VERSION_NAME ($BITRISE_BUILD_NUMBER) deployed
+            to Play Store :rocket:'
+        - thumb_url: "$ICON_URL"
+        - pretext: "*Deployment succeeded!*"
+        - webhook_url: "$SLACK_WEBHOOK_URL"
+        is_always_run: false
+        title: Send a Slack message (success)
+    - slack@4:
+        inputs:
+        - text: 'Android $APP_NAME v$FLUTTER_VERSION_NAME ($BITRISE_BUILD_NUMBER)
+            deployment failed :rocket-explosion:'
+        - thumb_url: "$ICON_URL"
+        - pretext: "*Deployment failed!*"
+        - color: "#c33b46"
+        - webhook_url: "$SLACK_WEBHOOK_URL"
+        is_always_run: true
+        run_if: ".IsBuildFailed"
+        title: Send a Slack message (error)
+app:
+  envs:
+  - opts:
+      is_expand: false
+    PROJECT_LOCATION: "."
+  - opts:
+      is_expand: false
+    MODULE: app
+  - opts:
+      is_expand: false
+    VARIANT: ''
+meta:
+  bitrise.io:
+    stack: osx-xcode-16.3.x
+    machine_type_id: g2-m1.8core
+

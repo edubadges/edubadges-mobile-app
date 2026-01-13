@@ -1,0 +1,108 @@
+import 'package:edubadges/app/app.dart';
+import 'package:edubadges/core/constants/env_keys.dart';
+import 'package:edubadges/core/constants/environment_config.dart';
+import 'package:edubadges/core/network/network_providers.dart';
+import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/firebase/firebase_options_acceptance.dart'
+    as firebase_acc;
+import 'package:edubadges/firebase/firebase_options_develop.dart'
+    as firebase_dev;
+import 'package:edubadges/firebase/firebase_options_production.dart'
+    as firebase_prod;
+import 'package:edubadges/firebase/firebase_options_tst.dart' as firebase_tst;
+import 'package:edubadges/flavors.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+String? appFlavor;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Configure system UI for edge-to-edge display
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+
+  if (appFlavor == null) {
+    const flutterAppFlavor = String.fromEnvironment('FLUTTER_APP_FLAVOR');
+    const appFlavorEnv = String.fromEnvironment('APP_FLAVOR');
+    if (flutterAppFlavor.isNotEmpty) {
+      appFlavor = flutterAppFlavor;
+    } else if (appFlavorEnv.isNotEmpty) {
+      appFlavor = appFlavorEnv;
+    } else {
+      appFlavor = 'dev';
+    }
+  }
+
+  F.appFlavor = Flavor.values.firstWhere(
+    (element) => element.name == appFlavor,
+  );
+
+  logger.i('App flavor: ${F.appFlavor.name}');
+
+  await dotenv.load(fileName: F.envFileName);
+
+  EnvironmentConfig.instance.init(
+    apiUrl: dotenv.env[EnvKeys.apiUrl] ?? '',
+    enableAnalytics: dotenv.env[EnvKeys.enableAnalytics] == 'true',
+    enableCrashlytics: dotenv.env[EnvKeys.enableCrashlytics] == 'true',
+  );
+
+  // Initialize Firebase
+  await Firebase.initializeApp(options: _getFirebaseOptions());
+
+  // Initialize Analytics
+  final analyticsEnabled = EnvironmentConfig.instance.enableAnalytics;
+  await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(
+    analyticsEnabled,
+  );
+
+  // Initialize Crashlytics (iOS/Android only)
+  if (!kIsWeb) {
+    final crashlyticsEnabled = EnvironmentConfig.instance.enableCrashlytics;
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+      crashlyticsEnabled,
+    );
+
+    if (crashlyticsEnabled) {
+      FlutterError.onError =
+          FirebaseCrashlytics.instance.recordFlutterFatalError;
+      PlatformDispatcher.instance.onError = (error, stack) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        return true;
+      };
+    }
+  }
+
+  logger.i('''Environment Configuration
+  Flavor: ${F.appFlavor.name}
+  API URL: ${dotenv.env[EnvKeys.apiUrl]}
+  Analytics Enabled: ${dotenv.env[EnvKeys.enableAnalytics] == 'true'}
+  Crashlytics Enabled: ${dotenv.env[EnvKeys.enableCrashlytics] == 'true'}''');
+
+  // Initialize Networking
+  final container = ProviderContainer();
+  final apiClient = container.read(apiClientProvider);
+  await apiClient.init();
+
+  runApp(UncontrolledProviderScope(container: container, child: const App()));
+}
+
+FirebaseOptions _getFirebaseOptions() {
+  switch (F.appFlavor) {
+    case Flavor.dev:
+      return firebase_dev.DefaultFirebaseOptions.currentPlatform;
+    case Flavor.tst:
+      return firebase_tst.DefaultFirebaseOptions.currentPlatform;
+    case Flavor.acc:
+      return firebase_acc.DefaultFirebaseOptions.currentPlatform;
+    case Flavor.prod:
+      return firebase_prod.DefaultFirebaseOptions.currentPlatform;
+  }
+}
