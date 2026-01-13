@@ -1,0 +1,11 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    prefer_single_quotes: true
+    require_trailing_commas: true
+    directives_ordering: true
+    always_use_package_imports: true
+
+
+

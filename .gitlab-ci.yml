@@ -1,0 +1,40 @@
+image: docker:20.10
+services:
+  - docker:20.10-dind
+
+variables:
+  FLUTTER_VERSION: "3.38.5"
+  FLUTTER_CHANNEL: "stable"
+
+stages:
+  - qa
+
+quality:
+  image:
+    name: sonarsource/sonar-scanner-cli:11.3
+    entrypoint: [""]
+    docker:
+      user: root
+  stage: qa
+  before_script:
+    - dnf install -y xz which openssh-clients
+    - curl -LO "https://storage.googleapis.com/flutter_infra_release/releases/${FLUTTER_CHANNEL}/linux/flutter_linux_${FLUTTER_VERSION}-${FLUTTER_CHANNEL}.tar.xz"
+    - tar xf "flutter_linux_${FLUTTER_VERSION}-${FLUTTER_CHANNEL}.tar.xz" -C /opt
+    - export PATH="$PATH:/opt/flutter/bin"
+    - git config --global --add safe.directory /opt/flutter
+    - 'git config --global url."https://${GITLAB_USERNAME}:${GITLAB_PAT}@gitlab.com/".insteadOf git@gitlab.com:'
+    - flutter config --no-analytics
+    - flutter --version
+  script:
+    - flutter pub get
+    - sonar-scanner -Dsonar.login=$SONAR_TOKEN
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
+    GIT_DEPTH: "0"
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  only:
+    - merge_requests
+    - develop
