@@ -1,0 +1,53 @@
+flavors:
+  dev:
+    app:
+      name: "Edubadges Dev"
+    android:
+      applicationId: "nl.surf.edubadges"
+      variables:
+        BASE_URL:
+          value: "https://api-demo.edubadges.nl"
+    ios:
+      bundleId: "nl.surf.edubadges"
+      variables:
+        BASE_URL:
+          value: "https://api-demo.edubadges.nl"
+  tst:
+    app:
+      name: "Edubadges Tst"
+    android:
+      applicationId: "nl.surf.edubadges"
+      variables:
+        BASE_URL:
+          value: "https://api-demo.edubadges.nl"
+    ios:
+      bundleId: "nl.surf.edubadges"
+      variables:
+        BASE_URL:
+          value: "https://api-demo.edubadges.nl"
+  acc:
+    app:
+      name: "Edubadges Acc"
+    android:
+      applicationId: "nl.surf.edubadges"
+      variables:
+        BASE_URL:
+          value: "https://api-demo.edubadges.nl"
+    ios:
+      bundleId: "nl.surf.edubadges"
+      variables:
+        BASE_URL:
+          value: "https://api-demo.edubadges.nl"
+  prod:
+    app:
+      name: "Edubadges Prod"
+    android:
+      applicationId: "nl.surf.edubadges"
+      variables:
+        BASE_URL:
+          value: "https://api.edubadges.nl"
+    ios:
+      bundleId: "nl.surf.edubadges"
+      variables:
+        BASE_URL:
+          value: "https://api.edubadges.nl"

@@ -1,0 +1,30 @@
+import com.android.build.gradle.AppExtension
+
+val android = project.extensions.getByType(AppExtension::class.java)
+
+android.apply {
+    flavorDimensions("flavor-type")
+
+    productFlavors {
+        create("dev") {
+            dimension = "flavor-type"
+            applicationId = "nl.surf.edubadges"
+            resValue(type = "string", name = "app_name", value = "Edubadges Dev")
+        }
+        create("tst") {
+            dimension = "flavor-type"
+            applicationId = "nl.surf.edubadges"
+            resValue(type = "string", name = "app_name", value = "Edubadges Tst")
+        }
+        create("acc") {
+            dimension = "flavor-type"
+            applicationId = "nl.surf.edubadges"
+            resValue(type = "string", name = "app_name", value = "Edubadges Acc")
+        }
+        create("prod") {
+            dimension = "flavor-type"
+            applicationId = "nl.surf.edubadges"
+            resValue(type = "string", name = "app_name", value = "Edubadges Prod")
+        }
+    }
+}
