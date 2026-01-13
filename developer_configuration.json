@@ -1,0 +1,38 @@
+{
+  "project": {
+    "name": "edubadges",
+    "bundleId": "nl.surf.edubadges",
+    "displayName": "Edubadges",
+    "description": "A Flutter application"
+  },
+  "platforms": {
+    "ios": true,
+    "android": true,
+    "web": false,
+    "macos": false,
+    "windows": false,
+    "linux": false
+  },
+  "api": {
+    "customApiUrlDev": "https://api-demo.edubadges.nl",
+    "customApiUrlTst": "https://api-demo.edubadges.nl",
+    "customApiUrlAcc": "https://api-demo.edubadges.nl",
+    "customApiUrlProd": "https://api.edubadges.nl"
+  },
+  "firebase": {
+    "enabled": true,
+    "dev_Id": "edubadges-dev",
+    "tst_Id": "edubadges-tst",
+    "acc_Id": "edubadges-acc",
+    "prod_Id": "edubadges-prod"
+  },
+  "design": {
+    "splashScreenColor": "#772583",
+    "darkMode": false
+  },
+  "packages": {
+    "aroma_error": true,
+    "aroma_networking": true,
+    "aroma_app_update": false
+  }
+}
