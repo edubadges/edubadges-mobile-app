@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -65,6 +65,7 @@
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		1EB264033A59C95A0CE834AA /* Pods-Runner.debug-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-dev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-dev.xcconfig"; sourceTree = "<group>"; };
+		26EFCF612F163C930070A35D /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
 		331C807B294A618700263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
 		331C8081294A63A400263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		35FD76238F2EB92A22FD50C3 /* prodProfile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = prodProfile.xcconfig; path = Flutter/prodProfile.xcconfig; sourceTree = "<group>"; };
@@ -143,6 +144,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		26EFCF622F163C930070A35D /* ci_scripts */ = {
+			isa = PBXGroup;
+			children = (
+				26EFCF612F163C930070A35D /* ci_post_clone.sh */,
+			);
+			path = ci_scripts;
+			sourceTree = "<group>";
+		};
 		331C8082294A63A400263BE5 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -173,7 +182,6 @@
 				94F6238565B138D5F081DCF4 /* Pods-RunnerTests.release.xcconfig */,
 				DE441595B1D022434FBE9271 /* Pods-RunnerTests.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -204,6 +212,7 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
+				26EFCF622F163C930070A35D /* ci_scripts */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
 				97C146EF1CF9000F007C117D /* Products */,
@@ -319,7 +328,7 @@
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
 			packageReferences = (
-				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */,
+				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */,
 			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
@@ -534,6 +543,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C640B9632BEF361F0F884814 /* accDebug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug-acc";
@@ -612,6 +622,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9A69373D74C0F11A934D0613 /* tstProfile.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Profile-tst";
@@ -695,6 +706,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1F39AB2350F936A4D967E10 /* accProfile.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Profile-acc";
@@ -758,7 +770,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = GN86T42AF6;
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -772,6 +784,90 @@
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Profile;
+		};
+		26EFCF552F16357F0070A35D /* Debug-dev */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Debug-dev";
+		};
+		26EFCF562F16357F0070A35D /* Profile-dev */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Profile-dev";
+		};
+		26EFCF572F16357F0070A35D /* Release-dev */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Release-dev";
+		};
+		26EFCF582F16357F0070A35D /* Debug-tst */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Debug-tst";
+		};
+		26EFCF592F16357F0070A35D /* Profile-tst */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Profile-tst";
+		};
+		26EFCF5A2F16357F0070A35D /* Release-tst */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Release-tst";
+		};
+		26EFCF5B2F16357F0070A35D /* Debug-acc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Debug-acc";
+		};
+		26EFCF5C2F16357F0070A35D /* Profile-acc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Profile-acc";
+		};
+		26EFCF5D2F16357F0070A35D /* Release-acc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Release-acc";
+		};
+		26EFCF5E2F16357F0070A35D /* Debug-prod */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Debug-prod";
+		};
+		26EFCF5F2F16357F0070A35D /* Profile-prod */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Profile-prod";
+		};
+		26EFCF602F16357F0070A35D /* Release-prod */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RunnerTests;
+			};
+			name = "Release-prod";
 		};
 		2838FFFD7A7F17B768AED681 /* Profile-acc */ = {
 			isa = XCBuildConfiguration;
@@ -972,6 +1068,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 35FD76238F2EB92A22FD50C3 /* prodProfile.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Profile-prod";
@@ -1050,6 +1147,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BDDA4E425A9277ABC23200AC /* tstRelease.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release-tst";
@@ -1130,6 +1228,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 793C10218E633570664C3C5E /* prodDebug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug-prod";
@@ -1283,6 +1382,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6787170811E17B1554521A44 /* devDebug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug-dev";
@@ -1480,7 +1580,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = GN86T42AF6;
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1503,7 +1603,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = GN86T42AF6;
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1522,6 +1622,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 691F63C9BED510CD9EDD0B38 /* prodRelease.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release-prod";
@@ -1602,6 +1703,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A10987C20B342905BE6CDE4F /* devProfile.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Profile-dev";
@@ -1682,6 +1784,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 68504318FD205E2017A1C7B6 /* devRelease.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release-dev";
@@ -1690,6 +1793,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B9E02656054CBC19EE4ED6FF /* tstDebug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Debug-tst";
@@ -1770,6 +1874,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E0CFF5BFB3F555875B64ED67 /* accRelease.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = "Release-acc";
@@ -1783,6 +1888,18 @@
 				331C8088294A63A400263BE5 /* Debug */,
 				331C8089294A63A400263BE5 /* Release */,
 				331C808A294A63A400263BE5 /* Profile */,
+				26EFCF552F16357F0070A35D /* Debug-dev */,
+				26EFCF562F16357F0070A35D /* Profile-dev */,
+				26EFCF572F16357F0070A35D /* Release-dev */,
+				26EFCF582F16357F0070A35D /* Debug-tst */,
+				26EFCF592F16357F0070A35D /* Profile-tst */,
+				26EFCF5A2F16357F0070A35D /* Release-tst */,
+				26EFCF5B2F16357F0070A35D /* Debug-acc */,
+				26EFCF5C2F16357F0070A35D /* Profile-acc */,
+				26EFCF5D2F16357F0070A35D /* Release-acc */,
+				26EFCF5E2F16357F0070A35D /* Debug-prod */,
+				26EFCF5F2F16357F0070A35D /* Profile-prod */,
+				26EFCF602F16357F0070A35D /* Release-prod */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1834,7 +1951,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */ = {
+		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage;
 		};
