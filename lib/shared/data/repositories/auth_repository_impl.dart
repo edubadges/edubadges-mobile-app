@@ -1,19 +1,13 @@
-import 'package:edubadges/shared/data/datasources/auth_local_datasource.dart';
-import 'package:edubadges/shared/data/repositories/auth_repository.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:edubadges/features/login/domain/repositories/login_repository.dart';
 
-class AuthRepositoryImpl implements AuthRepository {
-  final Ref ref;
-  final AuthLocalDataSource localDataSource;
+class AuthRepositoryImpl {
+  final LoginRepository loginRepository;
 
-  AuthRepositoryImpl(this.ref, this.localDataSource);
+  AuthRepositoryImpl(this.loginRepository);
 
-  @override
-  Future<bool> isLoggedIn() => localDataSource.isLoggedIn();
+  Future<bool> isLoggedIn() => loginRepository.isLoggedIn().then((result) => result.getOrElse(() => false));
 
-  @override
-  Future<void> login() => localDataSource.login();
+  Future<void> login() => loginRepository.login();
 
-  @override
-  Future<void> logout() => localDataSource.logout();
+  Future<void> logout() => loginRepository.logout();
 }

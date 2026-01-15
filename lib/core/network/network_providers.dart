@@ -1,32 +1,31 @@
-import 'package:aroma_networking/aroma_networking.dart';
 import 'package:dio/dio.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
+import 'package:edubadges/core/network/api_client.dart';
+import 'package:edubadges/core/network/network_config.dart';
+import 'package:edubadges/core/network/network_info.dart';
 import 'package:edubadges/core/utils/logger.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:edubadges/shared/data/datasources/oidc_auth_datasource.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final networkConfigProvider = Provider<AromaNetworkConfig>((ref) {
-  return AromaNetworkConfig(
+final oidcAuthDataSourceProvider = Provider<OidcAuthDataSource>((ref) {
+  return OidcAuthDataSource();
+});
+
+final networkConfigProvider = Provider<NetworkConfig>((ref) {
+  final oidcAuth = ref.watch(oidcAuthDataSourceProvider);
+  return NetworkConfig(
     baseUrl: EnvironmentConfig.instance.apiUrl,
-    getAccessToken: () async {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        return await user.getIdToken();
-      }
-      return null;
-    },
-    onUnauthorized: () async {
-      await FirebaseAuth.instance.signOut();
-    },
+    getAccessToken: oidcAuth.getAccessToken,
+    onUnauthorized: oidcAuth.logout,
     logger: logger,
-    // TODO: Add aromaErrorController if using aroma_error package
-    // aromaErrorController: ref.watch(aromaErrorControllerProvider),
   );
 });
 
 final dioProvider = Provider<Dio>((ref) {
   final config = ref.watch(networkConfigProvider);
-  return config.createDio();
+  final dio = config.createDio();
+  dio.options.headers['x-requested-with'] = 'mobile';
+  return dio;
 });
 
 final apiClientProvider = Provider<ApiClient>((ref) {
