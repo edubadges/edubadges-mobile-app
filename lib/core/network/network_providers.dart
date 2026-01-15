@@ -1,6 +1,8 @@
-import 'package:aroma_networking/aroma_networking.dart';
 import 'package:dio/dio.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
+import 'package:edubadges/core/network/api_client.dart';
+import 'package:edubadges/core/network/network_config.dart';
+import 'package:edubadges/core/network/network_info.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/shared/data/datasources/oidc_auth_datasource.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,9 +11,9 @@ final oidcAuthDataSourceProvider = Provider<OidcAuthDataSource>((ref) {
   return OidcAuthDataSource();
 });
 
-final networkConfigProvider = Provider<AromaNetworkConfig>((ref) {
+final networkConfigProvider = Provider<NetworkConfig>((ref) {
   final oidcAuth = ref.watch(oidcAuthDataSourceProvider);
-  return AromaNetworkConfig(
+  return NetworkConfig(
     baseUrl: EnvironmentConfig.instance.apiUrl,
     getAccessToken: oidcAuth.getAccessToken,
     onUnauthorized: oidcAuth.logout,

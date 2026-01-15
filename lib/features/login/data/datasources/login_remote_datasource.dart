@@ -1,4 +1,4 @@
-import 'package:aroma_networking/aroma_networking.dart';
+import 'package:edubadges/core/network/api_client.dart';
 
 abstract class LoginRemoteDataSource {
   Future<void> login();
