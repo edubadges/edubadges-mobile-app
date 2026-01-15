@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
@@ -172,9 +173,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         width: double.infinity,
                         height: 54,
                         child: ElevatedButton(
-                          onPressed: () {
-                            // TODO: open webview to eduID here
-                          },
+                          onPressed: authAsync.isLoading
+                              ? null
+                              : () async {
+                                  await ref.read(authProvider.notifier).login();
+
+                                  if (context.mounted) {
+                                    context.go(RoutePath.main);
+                                  }
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: colorScheme.primary,
                             foregroundColor: colorScheme.onPrimary,
@@ -183,44 +190,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
                             elevation: 0,
                           ),
-                          child: Text(
-                            l10n.loginCardButton,
-                            style: textTheme.labelLarge?.copyWith(
-                              color: colorScheme.onPrimary,
-                            ),
-                          ),
+                          child: authAsync.isLoading
+                              ? const CircularProgressIndicator(color: Colors.white)
+                              : Text(
+                                  l10n.loginCardButton,
+                                  style: textTheme.labelLarge?.copyWith(
+                                    color: colorScheme.onPrimary,
+                                  ),
+                                ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ),
-
-              const SizedBox(height: 40),
-
-              // Login Button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: authAsync.isLoading
-                      ? null // Disable button while loading
-                      : () async {
-                          await ref.read(authProvider.notifier).login();
-
-                          if (context.mounted) {
-                            context.go('/');
-                          }
-                        },
-                  child: authAsync.isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Login (Fake)',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
                 ),
               ),
             ],
