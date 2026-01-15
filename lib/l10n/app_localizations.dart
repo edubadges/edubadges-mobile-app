@@ -151,6 +151,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Collections'**
   String get tabCollections;
+
+  /// No description provided for @newCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'New collection'**
+  String get newCollection;
+
+  /// No description provided for @newCollectionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new collection and share it with acquaintances.'**
+  String get newCollectionDescription;
+
+  /// No description provided for @collectionName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get collectionName;
+
+  /// No description provided for @collectionNamePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Name of the collection'**
+  String get collectionNamePlaceholder;
+
+  /// No description provided for @collectionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get collectionDescription;
+
+  /// No description provided for @collectionDescriptionPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Description of the collection'**
+  String get collectionDescriptionPlaceholder;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @collectionNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get collectionNameRequired;
 }
 
 class _AppLocalizationsDelegate

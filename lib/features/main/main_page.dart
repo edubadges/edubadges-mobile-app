@@ -33,8 +33,9 @@ class MainPage extends StatelessWidget {
         type: BottomNavigationBarType.fixed,
         currentIndex: navigationShell.currentIndex,
         onTap: (index) => _onTap(context, index),
-        backgroundColor: colorScheme.surface,
+        backgroundColor: colorScheme.surfaceContainer,
         elevation: 8,
+        iconSize: 24,
         selectedItemColor: colorScheme.onSurface,
         unselectedItemColor: colorScheme.onSurfaceVariant,
         selectedLabelStyle: theme.textTheme.labelMedium?.copyWith(
@@ -97,19 +98,19 @@ class MainPage extends StatelessWidget {
       label: label,
       tooltip: label,
       icon: Padding(
-        padding: const EdgeInsets.only(top: 8.0, bottom: 6.0),
+        padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
           decoration: isSelected
               ? BoxDecoration(
             color: pillColor,
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(16),
           )
               : null,
           child: SvgPicture.asset(
             iconPath,
-            width: 30,
-            height: 30,
+            width: 24,
+            height: 24,
             colorFilter: ColorFilter.mode(
               isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
               BlendMode.srcIn,
