@@ -32,6 +32,8 @@ dependencies:
   logger: any
   shared_preferences: any
   firebase_auth: any
+  flutter_appauth: any
+  flutter_secure_storage: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -50,6 +50,8 @@ void main() async {
 
   EnvironmentConfig.instance.init(
     apiUrl: dotenv.env[EnvKeys.apiUrl] ?? '',
+    openIdUrl: dotenv.env[EnvKeys.openIdUrl] ?? '',
+    openIdClientId: dotenv.env[EnvKeys.openIdClientId] ?? '',
     enableAnalytics: dotenv.env[EnvKeys.enableAnalytics] == 'true',
     enableCrashlytics: dotenv.env[EnvKeys.enableCrashlytics] == 'true',
   );

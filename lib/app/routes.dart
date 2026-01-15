@@ -34,7 +34,9 @@ final appRouter = Provider<GoRouter>((ref) {
       GoRoute(
         path: RoutePath.login,
         name: 'login',
-        builder: (context, state) => const LoginPage(),
+        builder: (context, state) {
+          return const LoginPage();
+        },
       ),
 
       // Authenticated Shell with 4 Tabs

@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
+import 'app_localizations_nl.dart';
 
 // ignore_for_file: type=lint
 
@@ -92,37 +93,64 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('nl'),
+  ];
 
-  /// App name
+  /// No description provided for @appName.
   ///
   /// In en, this message translates to:
   /// **'Edubadges'**
   String get appName;
 
-  /// Navigation label for the Edubadges section
+  /// No description provided for @loginCardButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to my edubadges'**
+  String get loginCardButton;
+
+  /// No description provided for @loginCardText.
+  ///
+  /// In en, this message translates to:
+  /// **'My Badges is the place to receive and collect edubadges. An eduID is required to create and use \"My Badges.\" Creating an eduID takes less than 30 seconds.'**
+  String get loginCardText;
+
+  /// No description provided for @loginSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edubadges are digital certificates that demonstrate the knowledge or skills someone has acquired, within or outside formal education.'**
+  String get loginSubtitle;
+
+  /// No description provided for @loginTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Never stop learning'**
+  String get loginTitle;
+
+  /// No description provided for @tabAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get tabAccount;
+
+  /// No description provided for @tabBadges.
   ///
   /// In en, this message translates to:
   /// **'Edubadges'**
   String get tabBadges;
 
-  /// Navigation label for the Collections section
-  ///
-  /// In en, this message translates to:
-  /// **'Collections'**
-  String get tabCollections;
-
-  /// Navigation label for the Catalog section
+  /// No description provided for @tabCatalog.
   ///
   /// In en, this message translates to:
   /// **'Catalog'**
   String get tabCatalog;
 
-  /// Navigation label for the Account section
+  /// No description provided for @tabCollections.
   ///
   /// In en, this message translates to:
-  /// **'Account'**
-  String get tabAccount;
+  /// **'Collections'**
+  String get tabCollections;
 }
 
 class _AppLocalizationsDelegate
@@ -136,7 +164,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en'].contains(locale.languageCode);
+      <String>['en', 'nl'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -147,6 +175,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'en':
       return AppLocalizationsEn();
+    case 'nl':
+      return AppLocalizationsNl();
   }
 
   throw FlutterError(
