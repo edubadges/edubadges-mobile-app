@@ -31,8 +31,8 @@
     "darkMode": false
   },
   "packages": {
-    "aroma_error": true,
-    "aroma_networking": true,
+    "aroma_error": false,
+    "aroma_networking": false,
     "aroma_app_update": false
   }
 }
