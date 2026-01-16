@@ -51,7 +51,6 @@ class AppThemes {
       surface: AppColors.surface,
       onSurface: AppColors.onSurface,
       onSurfaceVariant: AppColors.onSurfaceVariant,
-      onPrimaryContainer: AppColors.onPrimaryContainer,
       primaryContainer: AppColors.primaryContainer,
       primaryFixed: AppColors.primaryFixed,
       secondaryContainer: AppColors.secondaryContainer,
