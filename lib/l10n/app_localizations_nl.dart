@@ -85,4 +85,54 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get delete => 'Verwijderen';
+
+  @override
+  String get accountData => 'Gegevens';
+
+  @override
+  String get confirmedName => 'Bevestigde naam';
+
+  @override
+  String get providedByInstitution => 'Geleverd door je instelling';
+
+  @override
+  String get emailAddress => 'E-mailadres';
+
+  @override
+  String get institution => 'Instelling';
+
+  @override
+  String get eduid => '#eduid';
+
+  @override
+  String get memberSince => 'Lid sinds';
+
+  @override
+  String get notificationSettings => 'Notificatieinstellingen';
+
+  @override
+  String get generalNotifications => 'Algemene meldingen';
+
+  @override
+  String get givenAgreements => 'Gegeven akkoordverklaring(en)';
+
+  @override
+  String get agreementsDescription =>
+      'Je kan je gegeven akkoordverklaring(en) intrekken.';
+
+  @override
+  String get deleteAccount => 'Je edubadges account verwijderen';
+
+  @override
+  String get deleteAccountDescription =>
+      'Je kunt je edubadges account verwijderen als je dat wilt.\n\nWees je dan wel bewust dat hierna al je edubadges niet meer gevalideerd kunnen worden. Het verwijderen van je edubadges account betekent overigens niet dat je eduID ook verwijderd wordt.\n\nOm het proces van het verwijderen van je edubadges account te voltooien, moet je je browser sluiten nadat je account is verwijderd.';
+
+  @override
+  String get deleteMyAccount => 'Verwijder mijn account';
+
+  @override
+  String get somethingWentWrong => 'Er is iets misgegaan';
+
+  @override
+  String get retry => 'Opnieuw proberen';
 }

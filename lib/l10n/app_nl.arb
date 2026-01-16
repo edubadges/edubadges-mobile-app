@@ -24,5 +24,21 @@
     "addEdubadge": "Edubadge toevoegen",
     "areYouSure": "Weet je het zeker?",
     "deleteCollectionConfirmation": "Je staat op het punt om een collectie te verwijderen.",
-    "delete": "Verwijderen"
+    "delete": "Verwijderen",
+    "accountData": "Gegevens",
+    "confirmedName": "Bevestigde naam",
+    "providedByInstitution": "Geleverd door je instelling",
+    "emailAddress": "E-mailadres",
+    "institution": "Instelling",
+    "eduid": "#eduid",
+    "memberSince": "Lid sinds",
+    "notificationSettings": "Notificatieinstellingen",
+    "generalNotifications": "Algemene meldingen",
+    "givenAgreements": "Gegeven akkoordverklaring(en)",
+    "agreementsDescription": "Je kan je gegeven akkoordverklaring(en) intrekken.",
+    "deleteAccount": "Je edubadges account verwijderen",
+    "deleteAccountDescription": "Je kunt je edubadges account verwijderen als je dat wilt.\n\nWees je dan wel bewust dat hierna al je edubadges niet meer gevalideerd kunnen worden. Het verwijderen van je edubadges account betekent overigens niet dat je eduID ook verwijderd wordt.\n\nOm het proces van het verwijderen van je edubadges account te voltooien, moet je je browser sluiten nadat je account is verwijderd.",
+    "deleteMyAccount": "Verwijder mijn account",
+    "somethingWentWrong": "Er is iets misgegaan",
+    "retry": "Opnieuw proberen"
 }

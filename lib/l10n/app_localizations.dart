@@ -241,6 +241,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
+
+  /// No description provided for @accountData.
+  ///
+  /// In en, this message translates to:
+  /// **'Data'**
+  String get accountData;
+
+  /// No description provided for @confirmedName.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed name'**
+  String get confirmedName;
+
+  /// No description provided for @providedByInstitution.
+  ///
+  /// In en, this message translates to:
+  /// **'Provided by your institution'**
+  String get providedByInstitution;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address'**
+  String get emailAddress;
+
+  /// No description provided for @institution.
+  ///
+  /// In en, this message translates to:
+  /// **'Institution'**
+  String get institution;
+
+  /// No description provided for @eduid.
+  ///
+  /// In en, this message translates to:
+  /// **'#eduid'**
+  String get eduid;
+
+  /// No description provided for @memberSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Member since'**
+  String get memberSince;
+
+  /// No description provided for @notificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification settings'**
+  String get notificationSettings;
+
+  /// No description provided for @generalNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'General notifications'**
+  String get generalNotifications;
+
+  /// No description provided for @givenAgreements.
+  ///
+  /// In en, this message translates to:
+  /// **'Given agreement(s)'**
+  String get givenAgreements;
+
+  /// No description provided for @agreementsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You can withdraw your given agreement(s).'**
+  String get agreementsDescription;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your edubadges account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You can delete your edubadges account if you wish. Be aware that after this, all your edubadges can no longer be validated.\n\nDeleting your edubadges account does not mean that your eduID will also be deleted.\n\nTo complete the process of deleting your edubadges account, you must close your browser after your account has been deleted.'**
+  String get deleteAccountDescription;
+
+  /// No description provided for @deleteMyAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get deleteMyAccount;
+
+  /// No description provided for @somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get somethingWentWrong;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
 }
 
 class _AppLocalizationsDelegate

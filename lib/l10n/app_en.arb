@@ -24,5 +24,21 @@
     "addEdubadge": "Add Edubadge",
     "areYouSure": "Are you sure?",
     "deleteCollectionConfirmation": "You are about to delete a collection.",
-    "delete": "Delete"
+    "delete": "Delete",
+    "accountData": "Data",
+    "confirmedName": "Confirmed name",
+    "providedByInstitution": "Provided by your institution",
+    "emailAddress": "Email address",
+    "institution": "Institution",
+    "eduid": "#eduid",
+    "memberSince": "Member since",
+    "notificationSettings": "Notification settings",
+    "generalNotifications": "General notifications",
+    "givenAgreements": "Given agreement(s)",
+    "agreementsDescription": "You can withdraw your given agreement(s).",
+    "deleteAccount": "Delete your edubadges account",
+    "deleteAccountDescription": "You can delete your edubadges account if you wish. Be aware that after this, all your edubadges can no longer be validated.\n\nDeleting your edubadges account does not mean that your eduID will also be deleted.\n\nTo complete the process of deleting your edubadges account, you must close your browser after your account has been deleted.",
+    "deleteMyAccount": "Delete my account",
+    "somethingWentWrong": "Something went wrong",
+    "retry": "Retry"
 }

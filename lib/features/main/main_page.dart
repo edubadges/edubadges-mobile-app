@@ -1,10 +1,12 @@
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-class MainPage extends StatelessWidget {
+class MainPage extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
 
   const MainPage({super.key, required this.navigationShell});
@@ -17,7 +19,8 @@ class MainPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(profileProvider);
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
