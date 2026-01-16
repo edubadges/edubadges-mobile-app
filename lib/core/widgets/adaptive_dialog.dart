@@ -21,6 +21,7 @@ class AdaptiveDialog extends StatelessWidget {
   final VoidCallback onSecondButtonPressed;
 
   final bool isFirstButtonDefaultAction;
+  final bool isDestructiveAction;
 
   const AdaptiveDialog({
     super.key,
@@ -32,6 +33,7 @@ class AdaptiveDialog extends StatelessWidget {
     required this.onFirstButtonPressed,
     required this.onSecondButtonPressed,
     this.isFirstButtonDefaultAction = false,
+    this.isDestructiveAction = false,
   });
 
   static Future<void> show({
@@ -44,6 +46,7 @@ class AdaptiveDialog extends StatelessWidget {
     required VoidCallback onFirstButtonPressed,
     required VoidCallback onSecondButtonPressed,
     bool isFirstButtonDefaultAction = false,
+    bool isDestructiveAction = false,
   }) {
     return showDialog(
       context: context,
@@ -56,6 +59,7 @@ class AdaptiveDialog extends StatelessWidget {
         onFirstButtonPressed: onFirstButtonPressed,
         onSecondButtonPressed: onSecondButtonPressed,
         isFirstButtonDefaultAction: isFirstButtonDefaultAction,
+        isDestructiveAction: isDestructiveAction,
       ),
     );
   }
@@ -67,13 +71,9 @@ class AdaptiveDialog extends StatelessWidget {
         : _buildMaterialDialog(context);
   }
 
-  Widget _buildCupertinoDialog(BuildContext context) {
-    final localizedFirstButtonText =
-        firstButtonText ?? AppLocalizations.of(context)?.cancel ?? '';
-
-    Widget? content;
+  Widget? _buildContent(BuildContext context) {
     if (description != null && body != null) {
-      content = Column(
+      return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -83,17 +83,21 @@ class AdaptiveDialog extends StatelessWidget {
         ],
       );
     } else if (description != null) {
-      content = Text(
-        description!,
-        style: Theme.of(context).textTheme.bodyMedium,
-      );
+      return Text(description!, style: Theme.of(context).textTheme.bodyMedium);
     } else if (body != null) {
-      content = body;
+      return body;
     }
+    return null;
+  }
+
+  Widget _buildCupertinoDialog(BuildContext context) {
+    final localizedFirstButtonText =
+        firstButtonText ?? AppLocalizations.of(context)?.cancel ?? '';
 
     return CupertinoAlertDialog(
       title: Text(title, style: Theme.of(context).textTheme.headlineSmall),
-      content: content,
+      content: _buildContent(context),
+
       actions: [
         CupertinoDialogAction(
           isDefaultAction: isFirstButtonDefaultAction,
@@ -116,14 +120,19 @@ class AdaptiveDialog extends StatelessWidget {
         ),
         CupertinoDialogAction(
           isDefaultAction: !isFirstButtonDefaultAction,
+          isDestructiveAction: isDestructiveAction,
           textStyle: !isFirstButtonDefaultAction
               ? Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: AppColors.primary,
+                  color: isDestructiveAction
+                      ? AppColors.error
+                      : AppColors.primary,
                   fontWeight: FontWeight.w600,
                 )
-              : Theme.of(
-                  context,
-                ).textTheme.labelLarge?.copyWith(color: AppColors.primary),
+              : Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: isDestructiveAction
+                      ? AppColors.error
+                      : AppColors.primary,
+                ),
           onPressed: () {
             Navigator.of(context).pop();
             onSecondButtonPressed();
@@ -141,29 +150,9 @@ class AdaptiveDialog extends StatelessWidget {
     final localizedFirstButtonText =
         firstButtonText ?? AppLocalizations.of(context)?.cancel ?? '';
 
-    Widget? content;
-    if (description != null && body != null) {
-      content = Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(description!, style: Theme.of(context).textTheme.bodyMedium),
-          const SizedBox(height: 16),
-          body!,
-        ],
-      );
-    } else if (description != null) {
-      content = Text(
-        description!,
-        style: Theme.of(context).textTheme.bodyMedium,
-      );
-    } else if (body != null) {
-      content = body;
-    }
-
     return AlertDialog(
       title: Text(title, style: Theme.of(context).textTheme.headlineSmall),
-      content: content,
+      content: _buildContent(context),
       actions: [
         TextButton(
           onPressed: () {
@@ -182,12 +171,16 @@ class AdaptiveDialog extends StatelessWidget {
             Navigator.of(context).pop();
             onSecondButtonPressed();
           },
-          style: TextButton.styleFrom(foregroundColor: AppColors.primary),
+          style: TextButton.styleFrom(
+            foregroundColor: isDestructiveAction
+                ? AppColors.error
+                : AppColors.primary,
+          ),
           child: Text(
             secondButtonText,
-            style: Theme.of(
-              context,
-            ).textTheme.labelLarge?.copyWith(color: AppColors.primary),
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: isDestructiveAction ? AppColors.error : AppColors.primary,
+            ),
           ),
         ),
       ],

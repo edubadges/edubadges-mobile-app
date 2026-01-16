@@ -205,6 +205,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Name is required'**
   String get collectionNameRequired;
+
+  /// No description provided for @addEdubadgesToCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'Add edubadges to your collection'**
+  String get addEdubadgesToCollection;
+
+  /// No description provided for @addEdubadgesToCollectionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Bundle edubadges in your collection to manage them clearly and share them easily.'**
+  String get addEdubadgesToCollectionDescription;
+
+  /// No description provided for @addEdubadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Edubadge'**
+  String get addEdubadge;
+
+  /// No description provided for @areYouSure.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure?'**
+  String get areYouSure;
+
+  /// No description provided for @deleteCollectionConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'You are about to delete a collection.'**
+  String get deleteCollectionConfirmation;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
 }
 
 class _AppLocalizationsDelegate

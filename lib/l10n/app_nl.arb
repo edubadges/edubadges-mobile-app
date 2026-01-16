@@ -18,5 +18,11 @@
     "collectionDescriptionPlaceholder": "Beschrijving van de collectie",
     "save": "Opslaan",
     "cancel": "Annuleer",
-    "collectionNameRequired": "Naam is verplicht"
+    "collectionNameRequired": "Naam is verplicht",
+    "addEdubadgesToCollection": "Voeg edubadges toe aan je collectie",
+    "addEdubadgesToCollectionDescription": "Bundel edubadges in je collectie om ze overzichtelijk te beheren en eenvoudig te delen.",
+    "addEdubadge": "Edubadge toevoegen",
+    "areYouSure": "Weet je het zeker?",
+    "deleteCollectionConfirmation": "Je staat op het punt om een collectie te verwijderen.",
+    "delete": "Verwijderen"
 }

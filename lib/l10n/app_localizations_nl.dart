@@ -65,4 +65,24 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get collectionNameRequired => 'Naam is verplicht';
+
+  @override
+  String get addEdubadgesToCollection => 'Voeg edubadges toe aan je collectie';
+
+  @override
+  String get addEdubadgesToCollectionDescription =>
+      'Bundel edubadges in je collectie om ze overzichtelijk te beheren en eenvoudig te delen.';
+
+  @override
+  String get addEdubadge => 'Edubadge toevoegen';
+
+  @override
+  String get areYouSure => 'Weet je het zeker?';
+
+  @override
+  String get deleteCollectionConfirmation =>
+      'Je staat op het punt om een collectie te verwijderen.';
+
+  @override
+  String get delete => 'Verwijderen';
 }

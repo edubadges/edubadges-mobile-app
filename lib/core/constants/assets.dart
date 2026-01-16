@@ -19,6 +19,8 @@ class Assets {
   static const String iconCollections = '$_iconsPath/ic_collections.svg';
   static const String iconCopy = '$_iconsPath/ic_copy.svg';
   static const String iconDate = '$_iconsPath/ic_date.svg';
+  static const String iconDelete = '$_iconsPath/ic_delete.svg';
+  static const String iconEdit = '$_iconsPath/ic_edit.svg';
   static const String iconFeedback = '$_iconsPath/ic_feedback.svg';
   static const String iconIndicatif = '$_iconsPath/ic_indicatif.svg';
   static const String iconLanguage = '$_iconsPath/ic_language.svg';

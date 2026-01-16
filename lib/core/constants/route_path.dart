@@ -3,6 +3,7 @@ class RoutePath {
   static const String login = '/login';
   static const String start = '/';
   static const String collections = '/collections';
+  static const String collection = '/collection/:id';
   static const String catalog = '/catalog';
   static const String account = '/account';
 

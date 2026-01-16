@@ -65,4 +65,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get collectionNameRequired => 'Name is required';
+
+  @override
+  String get addEdubadgesToCollection => 'Add edubadges to your collection';
+
+  @override
+  String get addEdubadgesToCollectionDescription =>
+      'Bundle edubadges in your collection to manage them clearly and share them easily.';
+
+  @override
+  String get addEdubadge => 'Add Edubadge';
+
+  @override
+  String get areYouSure => 'Are you sure?';
+
+  @override
+  String get deleteCollectionConfirmation =>
+      'You are about to delete a collection.';
+
+  @override
+  String get delete => 'Delete';
 }
