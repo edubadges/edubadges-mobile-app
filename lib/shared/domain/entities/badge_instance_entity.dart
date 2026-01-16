@@ -2,8 +2,6 @@ import 'package:edubadges/shared/domain/entities/badge_class_entity.dart';
 import 'package:equatable/equatable.dart';
 
 /// Badge instance entity representing an awarded badge
-/// This is the top-level entity that contains badge instance information
-/// and a nested badgeclass
 class BadgeInstanceEntity extends Equatable {
   final int id;
   final DateTime createdAt;

@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-/// Extension for badge class containing name-value pairs
 class BadgeClassExtensionEntity extends Equatable {
   final String name;
   final String value;

@@ -1,7 +1,6 @@
 import 'package:edubadges/shared/domain/entities/institution_entity.dart';
 import 'package:equatable/equatable.dart';
 
-/// Faculty entity representing a faculty within an institution
 class FacultyEntity extends Equatable {
   final String? nameDutch;
   final String? nameEnglish;

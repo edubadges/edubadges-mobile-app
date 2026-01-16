@@ -1,6 +1,5 @@
 import 'package:edubadges/core/constants/environment_config.dart';
 
-/// Get the correct full image path
 String? buildImageUrl(String? imagePath) {
   if (imagePath == null) return null;
 

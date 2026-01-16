@@ -23,10 +23,9 @@ class BadgesOverviewPage extends ConsumerWidget {
         },
         child: CustomScrollView(
           slivers: [
-            // Badges list
             badgesAsync.when(
               data: (badges) {
-                // TODO: Setup cleaner message once it's been designed in Figma
+                // TODO: Temp design once it's been designed in Figma it will be changed
                 if (badges.isEmpty) {
                   return const SliverFillRemaining(
                     child: Center(child: Text('No badges found')),
@@ -52,9 +51,11 @@ class BadgesOverviewPage extends ConsumerWidget {
                   ),
                 );
               },
+              // TODO: Temp design once it's been designed in Figma it will be changed
               loading: () => const SliverFillRemaining(
                 child: Center(child: CircularProgressIndicator()),
               ),
+              // TODO: Temp design once it's been designed in Figma it will be changed
               error: (error, stackTrace) => SliverFillRemaining(
                 child: Center(
                   child: Column(
@@ -65,12 +66,6 @@ class BadgesOverviewPage extends ConsumerWidget {
                       Text(
                         'Error loading badges',
                         style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        error.toString(),
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 24),
                       ElevatedButton(

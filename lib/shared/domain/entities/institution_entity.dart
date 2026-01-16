@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-/// Institution entity representing an educational institution
 class InstitutionEntity extends Equatable {
   final String? nameDutch;
   final String? nameEnglish;

@@ -2,8 +2,6 @@ import 'package:edubadges/shared/domain/entities/badge_class_extension_entity.da
 import 'package:edubadges/shared/domain/entities/issuer_entity.dart';
 import 'package:equatable/equatable.dart';
 
-/// Badge class entity matching the API structure
-/// Can contain different levels of detail depending on the endpoint
 class BadgeClassEntity extends Equatable {
   final int id;
   final String name;

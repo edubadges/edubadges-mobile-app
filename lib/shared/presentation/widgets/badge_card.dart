@@ -29,7 +29,6 @@ class BadgeCard extends StatelessWidget {
     final institutionImageUrl = buildImageUrl(institution?.imageDutch);
     final badgeImageUrl = buildImageUrl(instance.badgeclass.image);
 
-    // Small badge
     if (style == BadgeCardStyle.small) {
       return Container(
         decoration: BoxDecoration(
@@ -75,7 +74,6 @@ class BadgeCard extends StatelessWidget {
       );
     }
 
-    // Large card style
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
@@ -133,7 +131,6 @@ class BadgeCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          // Institution
           if (institution != null)
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,

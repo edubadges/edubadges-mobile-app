@@ -1,7 +1,6 @@
 import 'package:edubadges/shared/domain/entities/faculty_entity.dart';
 import 'package:equatable/equatable.dart';
 
-/// Issuer entity representing the issuer of a badge
 class IssuerEntity extends Equatable {
   final String? nameDutch;
   final String? nameEnglish;
