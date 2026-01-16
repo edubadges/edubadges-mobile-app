@@ -5,6 +5,30 @@ import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+class AdaptiveDialogConfig {
+  final String title;
+  final String? description;
+  final Widget? body;
+  final String? firstButtonText;
+  final String secondButtonText;
+  final VoidCallback onFirstButtonPressed;
+  final VoidCallback onSecondButtonPressed;
+  final bool isFirstButtonDefaultAction;
+  final bool isDestructiveAction;
+
+  const AdaptiveDialogConfig({
+    required this.title,
+    this.description,
+    this.body,
+    this.firstButtonText,
+    required this.secondButtonText,
+    required this.onFirstButtonPressed,
+    required this.onSecondButtonPressed,
+    this.isFirstButtonDefaultAction = false,
+    this.isDestructiveAction = false,
+  });
+}
+
 class AdaptiveDialog extends StatelessWidget {
   final String title;
 
@@ -38,28 +62,20 @@ class AdaptiveDialog extends StatelessWidget {
 
   static Future<void> show({
     required BuildContext context,
-    required String title,
-    String? description,
-    Widget? body,
-    String? firstButtonText,
-    required String secondButtonText,
-    required VoidCallback onFirstButtonPressed,
-    required VoidCallback onSecondButtonPressed,
-    bool isFirstButtonDefaultAction = false,
-    bool isDestructiveAction = false,
+    required AdaptiveDialogConfig config,
   }) {
     return showDialog(
       context: context,
       builder: (context) => AdaptiveDialog(
-        title: title,
-        description: description,
-        body: body,
-        firstButtonText: firstButtonText,
-        secondButtonText: secondButtonText,
-        onFirstButtonPressed: onFirstButtonPressed,
-        onSecondButtonPressed: onSecondButtonPressed,
-        isFirstButtonDefaultAction: isFirstButtonDefaultAction,
-        isDestructiveAction: isDestructiveAction,
+        title: config.title,
+        description: config.description,
+        body: config.body,
+        firstButtonText: config.firstButtonText,
+        secondButtonText: config.secondButtonText,
+        onFirstButtonPressed: config.onFirstButtonPressed,
+        onSecondButtonPressed: config.onSecondButtonPressed,
+        isFirstButtonDefaultAction: config.isFirstButtonDefaultAction,
+        isDestructiveAction: config.isDestructiveAction,
       ),
     );
   }
@@ -93,6 +109,9 @@ class AdaptiveDialog extends StatelessWidget {
   Widget _buildCupertinoDialog(BuildContext context) {
     final localizedFirstButtonText =
         firstButtonText ?? AppLocalizations.of(context)?.cancel ?? '';
+    final secondButtonColor = isDestructiveAction
+        ? AppColors.error
+        : AppColors.primary;
 
     return CupertinoAlertDialog(
       title: Text(title, style: Theme.of(context).textTheme.headlineSmall),
@@ -123,16 +142,12 @@ class AdaptiveDialog extends StatelessWidget {
           isDestructiveAction: isDestructiveAction,
           textStyle: !isFirstButtonDefaultAction
               ? Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: isDestructiveAction
-                      ? AppColors.error
-                      : AppColors.primary,
+                  color: secondButtonColor,
                   fontWeight: FontWeight.w600,
                 )
-              : Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: isDestructiveAction
-                      ? AppColors.error
-                      : AppColors.primary,
-                ),
+              : Theme.of(
+                  context,
+                ).textTheme.labelLarge?.copyWith(color: secondButtonColor),
           onPressed: () {
             Navigator.of(context).pop();
             onSecondButtonPressed();

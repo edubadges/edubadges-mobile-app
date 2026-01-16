@@ -122,17 +122,19 @@ class CollectionPage extends StatelessWidget {
             onPressed: () {
               AdaptiveDialog.show(
                 context: context,
-                title: l10n.areYouSure,
-                description: l10n.deleteCollectionConfirmation,
-                firstButtonText: l10n.cancel,
-                secondButtonText: l10n.delete,
-                isDestructiveAction: true,
-                onFirstButtonPressed: () {
-                  context.pop();
-                },
-                onSecondButtonPressed: () {
-                  // TODO: Implement delete functionality
-                },
+                config: AdaptiveDialogConfig(
+                  title: l10n.areYouSure,
+                  description: l10n.deleteCollectionConfirmation,
+                  firstButtonText: l10n.cancel,
+                  secondButtonText: l10n.delete,
+                  isDestructiveAction: true,
+                  onFirstButtonPressed: () {
+                    context.pop();
+                  },
+                  onSecondButtonPressed: () {
+                    // TODO: Implement delete functionality
+                  },
+                ),
               );
             },
             icon: const SvgIcon(
