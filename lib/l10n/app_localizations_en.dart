@@ -85,4 +85,57 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get delete => 'Delete';
+
+  @override
+  String get accountData => 'Data';
+
+  @override
+  String get confirmedName => 'Confirmed name';
+
+  @override
+  String get providedByInstitution => 'Provided by your institution';
+
+  @override
+  String get emailAddress => 'Email address';
+
+  @override
+  String get institution => 'Institution';
+
+  @override
+  String get eduid => '#eduid';
+
+  @override
+  String get memberSince => 'Member since';
+
+  @override
+  String get notificationSettings => 'Notification settings';
+
+  @override
+  String get generalNotifications => 'General notifications';
+
+  @override
+  String get givenAgreements => 'Given agreement(s)';
+
+  @override
+  String get agreementsDescription =>
+      'You can withdraw your given agreement(s).';
+
+  @override
+  String get deleteAccount => 'Delete your edubadges account';
+
+  @override
+  String get deleteAccountDescription =>
+      'You can delete your edubadges account if you wish. Be aware that after this, all your edubadges can no longer be validated.\n\nDeleting your edubadges account does not mean that your eduID will also be deleted.\n\nTo complete the process of deleting your edubadges account, you must close your browser after your account has been deleted.';
+
+  @override
+  String get deleteMyAccount => 'Delete my account';
+
+  @override
+  String get somethingWentWrong => 'Something went wrong';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get noProfileData => 'No profile data';
 }

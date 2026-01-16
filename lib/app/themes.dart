@@ -43,6 +43,7 @@ class AppThemes {
       brightness: Brightness.light,
       primary: AppColors.primary,
       onPrimary: AppColors.onPrimary,
+      onPrimaryContainer: AppColors.onPrimaryContainer,
       secondary: AppColors.secondary,
       onSecondary: AppColors.onSecondary,
       error: AppColors.error,
@@ -79,7 +80,7 @@ class AppThemes {
       displayLarge: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 57,
-        height: 1.0,
+        height: 64 / 57,
         letterSpacing: -0.25,
         fontWeight: FontWeight.w400,
       ),
@@ -88,7 +89,7 @@ class AppThemes {
       displayMedium: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 45,
-        height: 1.0,
+        height: 52 / 45,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
@@ -97,7 +98,7 @@ class AppThemes {
       displaySmall: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 36,
-        height: 1.0,
+        height: 44 / 36,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
@@ -106,7 +107,7 @@ class AppThemes {
       headlineLarge: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 32,
-        height: 1.0,
+        height: 40 / 32,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w700,
       ),
@@ -115,7 +116,7 @@ class AppThemes {
       headlineMedium: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 28,
-        height: 1.0,
+        height: 36 / 28,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
@@ -124,7 +125,7 @@ class AppThemes {
       headlineSmall: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 24,
-        height: 1.0,
+        height: 32 / 24,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w700,
       ),
@@ -133,7 +134,7 @@ class AppThemes {
       titleLarge: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 20,
-        height: 1.0,
+        height: 28 / 20,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w700,
       ),
@@ -142,7 +143,7 @@ class AppThemes {
       titleMedium: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 17,
-        height: 1.0,
+        height: 24 / 17,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w700,
       ),
@@ -151,7 +152,7 @@ class AppThemes {
       titleSmall: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 14,
-        height: 1.0,
+        height: 20 / 14,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w700,
       ),
@@ -160,7 +161,7 @@ class AppThemes {
       bodyLarge: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 16,
-        height: 1.0,
+        height: 24 / 16,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
@@ -169,7 +170,7 @@ class AppThemes {
       bodyMedium: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 15,
-        height: 1.0,
+        height: 22 / 15,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
@@ -178,7 +179,7 @@ class AppThemes {
       bodySmall: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 12,
-        height: 1.0,
+        height: 16 / 12,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
@@ -187,7 +188,7 @@ class AppThemes {
       labelLarge: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 16,
-        height: 1.0,
+        height: 20 / 16,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w600,
       ),
@@ -196,7 +197,7 @@ class AppThemes {
       labelMedium: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 14,
-        height: 1.0,
+        height: 16 / 14,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
@@ -205,7 +206,7 @@ class AppThemes {
       labelSmall: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 12,
-        height: 1.0,
+        height: 16 / 12,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
@@ -221,7 +222,7 @@ class AppThemes {
       titleTextStyle: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 20,
-        height: 1.0,
+        height: 28 / 20,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w700,
         color: AppColors.onSurface,
@@ -232,20 +233,20 @@ class AppThemes {
 
 /// Extension for additional custom text styles not covered by Material 3
 extension CustomTextStyles on TextTheme {
-  /// Nunito SemiBold - 16/16 . 0.0
+  /// Nunito SemiBold - 16/20 . 0.0
   TextStyle get m3LabelLargeProminent => const TextStyle(
     fontFamily: 'SourceSans3',
     fontSize: 16,
-    height: 1.0,
+    height: 20 / 16,
     letterSpacing: 0.0,
     fontWeight: FontWeight.w600,
   );
 
-  /// Nunito SemiBold - 14/14 . 0.0
+  /// Nunito SemiBold - 14/16 . 0.0
   TextStyle get m3LabelMediumProminent => const TextStyle(
     fontFamily: 'SourceSans3',
     fontSize: 14,
-    height: 1.0,
+    height: 16 / 14,
     letterSpacing: 0.0,
     fontWeight: FontWeight.w600,
   );

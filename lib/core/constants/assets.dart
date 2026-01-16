@@ -9,12 +9,17 @@ class Assets {
 
   static const String iconAccount = '$_iconsPath/ic_account.svg';
   static const String iconBackpack = '$_iconsPath/ic_backpack.svg';
-  static const String iconBadgeExpireDate = '$_iconsPath/ic_badge_expire_date.svg';
-  static const String iconBadgeFormParticipation = '$_iconsPath/ic_badge_form_participation.svg';
-  static const String iconBadgeIndicatief = '$_iconsPath/ic_badge_indicatief.svg';
+  static const String iconBadgeExpireDate =
+      '$_iconsPath/ic_badge_expire_date.svg';
+  static const String iconChevron = '$_iconsPath/ic_chevron.svg';
+  static const String iconBadgeFormParticipation =
+      '$_iconsPath/ic_badge_form_participation.svg';
+  static const String iconBadgeIndicatief =
+      '$_iconsPath/ic_badge_indicatief.svg';
   static const String iconBadgeStackable = '$_iconsPath/ic_badge_stackable.svg';
   static const String iconBadgeType = '$_iconsPath/ic_badge_type.svg';
-  static const String iconBadgeUnderReview = '$_iconsPath/ic_badge_under_review.svg';
+  static const String iconBadgeUnderReview =
+      '$_iconsPath/ic_badge_under_review.svg';
   static const String iconCatalog = '$_iconsPath/ic_catalog.svg';
   static const String iconCollections = '$_iconsPath/ic_collections.svg';
   static const String iconCopy = '$_iconsPath/ic_copy.svg';
