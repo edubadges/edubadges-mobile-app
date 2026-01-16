@@ -18,7 +18,7 @@ class AppThemes {
   }
 
   static SystemUiOverlayStyle get systemUiOverlayStyle {
-    return SystemUiOverlayStyle(
+    return const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
       systemNavigationBarColor: Colors.transparent,
@@ -28,7 +28,7 @@ class AppThemes {
   }
 
   static SystemUiOverlayStyle get systemUiOverlayStyleLight {
-    return SystemUiOverlayStyle(
+    return const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
       systemNavigationBarColor: Colors.transparent,
@@ -74,9 +74,9 @@ class AppThemes {
 
   /// Text theme with custom typography
   static TextTheme get _textTheme {
-    return TextTheme(
+    return const TextTheme(
       // DisplayLarge styles
-      displayLarge: const TextStyle(
+      displayLarge: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 57,
         height: 1.0,
@@ -85,7 +85,7 @@ class AppThemes {
       ),
 
       // DisplayMedium styles
-      displayMedium: const TextStyle(
+      displayMedium: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 45,
         height: 1.0,
@@ -94,7 +94,7 @@ class AppThemes {
       ),
 
       // DisplaySmall styles
-      displaySmall: const TextStyle(
+      displaySmall: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 36,
         height: 1.0,
@@ -103,7 +103,7 @@ class AppThemes {
       ),
 
       // HeadlineLarge styles
-      headlineLarge: const TextStyle(
+      headlineLarge: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 32,
         height: 1.0,
@@ -112,7 +112,7 @@ class AppThemes {
       ),
 
       // HeadlineMedium styles
-      headlineMedium: const TextStyle(
+      headlineMedium: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 28,
         height: 1.0,
@@ -121,7 +121,7 @@ class AppThemes {
       ),
 
       // HeadlineSmall styles
-      headlineSmall: const TextStyle(
+      headlineSmall: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 24,
         height: 1.0,
@@ -130,7 +130,7 @@ class AppThemes {
       ),
 
       // TitleLarge styles
-      titleLarge: const TextStyle(
+      titleLarge: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 20,
         height: 1.0,
@@ -139,7 +139,7 @@ class AppThemes {
       ),
 
       // TitleMedium styles
-      titleMedium: const TextStyle(
+      titleMedium: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 17,
         height: 1.0,
@@ -148,7 +148,7 @@ class AppThemes {
       ),
 
       // TitleSmall styles
-      titleSmall: const TextStyle(
+      titleSmall: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 14,
         height: 1.0,
@@ -157,7 +157,7 @@ class AppThemes {
       ),
 
       // BodyLarge styles
-      bodyLarge: const TextStyle(
+      bodyLarge: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 16,
         height: 1.0,
@@ -166,7 +166,7 @@ class AppThemes {
       ),
 
       // BodyMedium styles
-      bodyMedium: const TextStyle(
+      bodyMedium: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 15,
         height: 1.0,
@@ -175,7 +175,7 @@ class AppThemes {
       ),
 
       // BodySmall styles
-      bodySmall: const TextStyle(
+      bodySmall: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 12,
         height: 1.0,
@@ -184,7 +184,7 @@ class AppThemes {
       ),
 
       // LabelLarge styles
-      labelLarge: const TextStyle(
+      labelLarge: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 16,
         height: 1.0,
@@ -193,7 +193,7 @@ class AppThemes {
       ),
 
       // LabelMedium styles
-      labelMedium: const TextStyle(
+      labelMedium: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 14,
         height: 1.0,
@@ -202,7 +202,7 @@ class AppThemes {
       ),
 
       // LabelSmall styles
-      labelSmall: const TextStyle(
+      labelSmall: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 12,
         height: 1.0,
