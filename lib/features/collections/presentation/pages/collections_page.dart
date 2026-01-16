@@ -7,7 +7,7 @@ class CollectionsPage extends StatelessWidget {
   const CollectionsPage({super.key});
 
   void _showCreateCollectionBottomSheet(BuildContext context) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isDismissible: true,
       enableDrag: true,

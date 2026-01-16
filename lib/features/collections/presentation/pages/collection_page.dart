@@ -96,7 +96,7 @@ class CollectionPage extends StatelessWidget {
 
         titleSpacing: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.primary),
+          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -112,7 +112,7 @@ class CollectionPage extends StatelessWidget {
             onPressed: () {
               // TODO: Implement edit functionality
             },
-            icon: SvgIcon(
+            icon: const SvgIcon(
               assetPath: Assets.iconEdit,
               size: 24,
               color: AppColors.primary,
@@ -135,7 +135,7 @@ class CollectionPage extends StatelessWidget {
                 },
               );
             },
-            icon: SvgIcon(
+            icon: const SvgIcon(
               assetPath: Assets.iconDelete,
               size: 24,
               color: AppColors.primary,
