@@ -28,26 +28,23 @@ class BadgesOverviewPage extends ConsumerWidget {
                 // TODO: Temp design once it's been designed in Figma it will be changed
                 if (badges.isEmpty) {
                   return const SliverFillRemaining(
-                    child: Center(child: Text('No badges found')),
+                    child: Center(child: SizedBox()),
                   );
                 }
-                
+
                 return SliverPadding(
                   padding: const EdgeInsets.all(16),
                   sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final badge = badges[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: BadgeCard(
-                            instance: badge,
-                            style: BadgeCardStyle.small,
-                          ),
-                        );
-                      },
-                      childCount: badges.length,
-                    ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final badge = badges[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: BadgeCard(
+                          instance: badge,
+                          style: BadgeCardStyle.small,
+                        ),
+                      );
+                    }, childCount: badges.length),
                   ),
                 );
               },
@@ -56,28 +53,8 @@ class BadgesOverviewPage extends ConsumerWidget {
                 child: Center(child: CircularProgressIndicator()),
               ),
               // TODO: Temp design once it's been designed in Figma it will be changed
-              error: (error, stackTrace) => SliverFillRemaining(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Error loading badges',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: () {
-                          ref.read(badgesOverviewProvider.notifier).refresh();
-                        },
-                        child: const Text('Retry'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              error: (error, stackTrace) =>
+                  SliverFillRemaining(child: Center(child: SizedBox())),
             ),
           ],
         ),
