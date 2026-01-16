@@ -9,5 +9,14 @@
     "tabAccount": "Account",
     "tabBadges": "Edubadges",
     "tabCatalog": "Catalog",
-    "tabCollections": "Collections"
+    "tabCollections": "Collections",
+    "newCollection": "New collection",
+    "newCollectionDescription": "Create a new collection and share it with acquaintances.",
+    "collectionName": "Name",
+    "collectionNamePlaceholder": "Name of the collection",
+    "collectionDescription": "Description",
+    "collectionDescriptionPlaceholder": "Description of the collection",
+    "save": "Save",
+    "cancel": "Cancel",
+    "collectionNameRequired": "Name is required"
 }

@@ -16,7 +16,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get loginCardText =>
-      'Mijn badges is de plek om edubadges te ontvangen en verzamelen. Een eduID is nodig om ‘mijn badges’ aan te maken en te gebruiken. Het maken van een eduID duurt minder dan 30 seconden.';
+      'Mijn badges is de plek om edubadges te ontvangen en verzamelen. Een eduID is nodig om \'mijn badges\' aan te maken en te gebruiken. Het maken van een eduID duurt minder dan 30 seconden.';
 
   @override
   String get loginSubtitle =>
@@ -36,4 +36,33 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get tabCollections => 'Collecties';
+
+  @override
+  String get newCollection => 'Nieuwe collectie';
+
+  @override
+  String get newCollectionDescription =>
+      'Maak een nieuwe collectie aan en deel deze met bekenden.';
+
+  @override
+  String get collectionName => 'Naam';
+
+  @override
+  String get collectionNamePlaceholder => 'Naam van de collectie';
+
+  @override
+  String get collectionDescription => 'Omschrijving';
+
+  @override
+  String get collectionDescriptionPlaceholder =>
+      'Beschrijving van de collectie';
+
+  @override
+  String get save => 'Opslaan';
+
+  @override
+  String get cancel => 'Annuleer';
+
+  @override
+  String get collectionNameRequired => 'Naam is verplicht';
 }

@@ -36,4 +36,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tabCollections => 'Collections';
+
+  @override
+  String get newCollection => 'New collection';
+
+  @override
+  String get newCollectionDescription =>
+      'Create a new collection and share it with acquaintances.';
+
+  @override
+  String get collectionName => 'Name';
+
+  @override
+  String get collectionNamePlaceholder => 'Name of the collection';
+
+  @override
+  String get collectionDescription => 'Description';
+
+  @override
+  String get collectionDescriptionPlaceholder =>
+      'Description of the collection';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get collectionNameRequired => 'Name is required';
 }
