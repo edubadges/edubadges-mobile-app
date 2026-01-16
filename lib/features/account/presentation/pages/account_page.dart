@@ -1,4 +1,5 @@
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
@@ -12,9 +13,17 @@ import 'package:intl/intl.dart';
 class AccountPage extends ConsumerWidget {
   const AccountPage({super.key});
 
+  static const double _spacingSmall = 8.0;
+  static const double _spacingMedium = 16.0;
+  static const double _cardBorderRadius = 20.0;
+  static const double _cardPadding = 20.0;
+  static const double _badgeBorderRadius = 8.0;
+  static const double _chevronSize = 12.0;
+  static const double _chevronPadding = 8.0;
+
   Widget _buildDivider(ColorScheme colorScheme) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: _spacingSmall),
       child: Divider(color: colorScheme.outlineVariant, height: 1),
     );
   }
@@ -30,13 +39,13 @@ class AccountPage extends ConsumerWidget {
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(_cardBorderRadius),
         side: BorderSide(color: colorScheme.outlineVariant, width: 1),
       ),
       color: colorScheme.surfaceContainer,
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: _spacingMedium),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(_cardPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -54,30 +63,87 @@ class AccountPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildDataSection(BuildContext context, ProfileEntity profile) {
-    final l10n = AppLocalizations.of(context)!;
+  Widget _buildInstitutionBadge(BuildContext context, String text) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: _spacingSmall,
+        vertical: 4,
+      ),
+      decoration: BoxDecoration(
+        color: colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(_badgeBorderRadius),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check, size: 16, color: colorScheme.primary),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: colorScheme.primary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDataItem(
+    BuildContext context,
+    String label,
+    String value, {
+    bool showBadge = false,
+    String? badgeText,
+  }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: colorScheme.onSurface,
+          ),
+        ),
+        Text(
+          value,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+        if (showBadge && badgeText != null) ...[
+          const SizedBox(height: 4),
+          _buildInstitutionBadge(context, badgeText),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildDataSection(BuildContext context, ProfileEntity profile) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
     final dataItems = [
-      {
-        'label': l10n.confirmedName,
-        'value': profile.fullName,
-        'hasBadge': true,
-      },
-      {'label': l10n.emailAddress, 'value': profile.email, 'hasBadge': false},
+      (label: l10n.confirmedName, value: profile.fullName, showBadge: true),
+      (label: l10n.emailAddress, value: profile.email, showBadge: false),
       if (profile.institution != null)
-        {
-          'label': l10n.institution,
-          'value': profile.institution!,
-          'hasBadge': false,
-        },
-      {'label': l10n.eduid, 'value': profile.entityId, 'hasBadge': false},
-      {
-        'label': l10n.memberSince,
-        'value': 'dinsdag 20 april 2021 om 16:20',
-        'hasBadge': false,
-      },
+        (
+          label: l10n.institution,
+          value: profile.institution!,
+          showBadge: false,
+        ),
+      (label: l10n.eduid, value: profile.entityId, showBadge: false),
+      (
+        label: l10n.memberSince,
+        value: 'dinsdag 20 april 2021 om 16:20',
+        showBadge: false,
+      ),
     ];
 
     return _buildSectionCard(
@@ -85,53 +151,22 @@ class AccountPage extends ConsumerWidget {
       title: l10n.accountData,
       children: [
         _buildDivider(colorScheme),
-        const SizedBox(height: 16),
+        const SizedBox(height: _spacingMedium),
         ...dataItems.asMap().entries.map((entry) {
           final index = entry.key;
-          final item = entry.value as Map<String, dynamic>;
+          final item = entry.value;
           final isLast = index == dataItems.length - 1;
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                item['label'] as String,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: colorScheme.onSurface,
-                ),
+              _buildDataItem(
+                context,
+                item.label,
+                item.value,
+                showBadge: item.showBadge,
+                badgeText: item.showBadge ? l10n.providedByInstitution : null,
               ),
-              Text(
-                item['value'] as String,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
-              ),
-              if (item['hasBadge'] == true) ...[
-                const SizedBox(height: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.check, size: 16, color: colorScheme.primary),
-                      const SizedBox(width: 4),
-                      Text(
-                        l10n.providedByInstitution,
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: colorScheme.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
               if (!isLast) ...[
                 const SizedBox(height: 14),
                 _buildDivider(colorScheme),
@@ -157,21 +192,14 @@ class AccountPage extends ConsumerWidget {
       title: l10n.notificationSettings,
       children: [
         _buildDivider(colorScheme),
-        const SizedBox(height: 8),
+        const SizedBox(height: _spacingSmall),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.generalNotifications,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
+            Text(
+              l10n.generalNotifications,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
             Switch(
@@ -187,6 +215,64 @@ class AccountPage extends ConsumerWidget {
     );
   }
 
+  String _formatAgreementDateText(String type, DateTime date, String version) {
+    final dateStr = DateFormat('MMM d, yyyy').format(date);
+    return type == 'agreed'
+        ? 'Akkoord op $dateStr, versie $version'
+        : 'Gelezen op $dateStr, versie $version';
+  }
+
+  Widget _buildAgreementItem(
+    BuildContext context,
+    String institution,
+    String dateText,
+  ) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return InkWell(
+      onTap: () {
+        // TODO: Navigate to agreement details
+      },
+      borderRadius: BorderRadius.circular(_badgeBorderRadius),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: _spacingSmall),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    institution,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  Text(
+                    dateText,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(_chevronPadding),
+              child: SvgIcon(
+                assetPath: Assets.iconChevron,
+                size: _chevronSize,
+                color: colorScheme.primary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildAgreementsSection(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
@@ -194,18 +280,18 @@ class AccountPage extends ConsumerWidget {
 
     // Mock agreements data - TODO replace with actual API call when available
     final mockAgreements = [
-      {
-        'institution': 'University Voorbeeld',
-        'type': 'agreed',
-        'date': DateTime(2025, 11, 15),
-        'version': '1',
-      },
-      {
-        'institution': 'University Voorbeeld',
-        'type': 'read',
-        'date': DateTime(2025, 11, 12),
-        'version': '1',
-      },
+      (
+        institution: 'University Voorbeeld',
+        type: 'agreed',
+        date: DateTime(2025, 11, 15),
+        version: '1',
+      ),
+      (
+        institution: 'University Voorbeeld',
+        type: 'read',
+        date: DateTime(2025, 11, 12),
+        version: '1',
+      ),
     ];
 
     return _buildSectionCard(
@@ -218,65 +304,22 @@ class AccountPage extends ConsumerWidget {
             color: colorScheme.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: _spacingSmall),
         _buildDivider(colorScheme),
-        const SizedBox(height: 8),
+        const SizedBox(height: _spacingSmall),
         ...mockAgreements.asMap().entries.map((entry) {
           final index = entry.key;
-          final agreement = entry.value as Map<String, dynamic>;
+          final agreement = entry.value;
           final isLast = index == mockAgreements.length - 1;
-          final date = agreement['date'] as DateTime;
-          final dateStr = DateFormat('MMM d, yyyy').format(date);
-          final version = agreement['version'] as String;
-          final type = agreement['type'] as String;
-          final institution = agreement['institution'] as String;
-          final dateText = type == 'agreed'
-              ? 'Akkoord op $dateStr, versie $version'
-              : 'Gelezen op $dateStr, versie $version';
+          final dateText = _formatAgreementDateText(
+            agreement.type,
+            agreement.date,
+            agreement.version,
+          );
 
           return Column(
             children: [
-              InkWell(
-                onTap: () {
-                  // TODO: Navigate to agreement details
-                },
-                borderRadius: BorderRadius.circular(8),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              institution,
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: colorScheme.onSurface,
-                              ),
-                            ),
-                            Text(
-                              dateText,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SvgIcon(
-                          assetPath: Assets.iconChevron,
-                          size: 12,
-                          color: colorScheme.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              _buildAgreementItem(context, agreement.institution, dateText),
               if (!isLast) _buildDivider(colorScheme),
             ],
           );
@@ -294,14 +337,14 @@ class AccountPage extends ConsumerWidget {
       context: context,
       title: l10n.deleteAccount,
       children: [
-        const SizedBox(height: 16),
+        const SizedBox(height: _spacingMedium),
         Text(
           l10n.deleteAccountDescription,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: colorScheme.onSurface,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: _spacingMedium),
         SizedBox(
           width: double.infinity,
           child: OutlinedButton(
@@ -311,9 +354,9 @@ class AccountPage extends ConsumerWidget {
             style: OutlinedButton.styleFrom(
               foregroundColor: colorScheme.error,
               side: BorderSide(color: colorScheme.error),
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: _spacingMedium),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(_badgeBorderRadius),
               ),
             ),
             child: Text(
@@ -351,7 +394,7 @@ class AccountPage extends ConsumerWidget {
             onPressed: () async {
               await ref.read(authProvider.notifier).logout();
               if (context.mounted) {
-                context.go('/login');
+                context.go(RoutePath.login);
               }
             },
           ),
@@ -361,10 +404,15 @@ class AccountPage extends ConsumerWidget {
         child: profileAsync.when(
           data: (profile) {
             if (profile == null) {
-              return const Center(child: Text('No profile data'));
+              return  Center(child: Text(l10n.noProfileData));
             }
             return SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              padding: const EdgeInsets.fromLTRB(
+                _cardPadding,
+                0,
+                _cardPadding,
+                _cardPadding,
+              ),
               child: Column(
                 spacing: 0,
                 children: [

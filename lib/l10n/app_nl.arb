@@ -40,5 +40,6 @@
     "deleteAccountDescription": "Je kunt je edubadges account verwijderen als je dat wilt.\n\nWees je dan wel bewust dat hierna al je edubadges niet meer gevalideerd kunnen worden. Het verwijderen van je edubadges account betekent overigens niet dat je eduID ook verwijderd wordt.\n\nOm het proces van het verwijderen van je edubadges account te voltooien, moet je je browser sluiten nadat je account is verwijderd.",
     "deleteMyAccount": "Verwijder mijn account",
     "somethingWentWrong": "Er is iets misgegaan",
-    "retry": "Opnieuw proberen"
+    "retry": "Opnieuw proberen",
+    "noProfileData": "Geen profielgegevens"
 }

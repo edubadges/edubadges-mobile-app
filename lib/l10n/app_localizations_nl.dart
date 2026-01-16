@@ -135,4 +135,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get retry => 'Opnieuw proberen';
+
+  @override
+  String get noProfileData => 'Geen profielgegevens';
 }
