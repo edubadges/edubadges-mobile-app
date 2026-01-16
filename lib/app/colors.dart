@@ -66,4 +66,7 @@ class AppColors {
   static const Color onTertiaryFixed = Color(0xFF31111D);
   static const Color onTertiaryFixedVariant = Color(0xFF555555);
   static const Color outlineVariant = Color(0xFFE0E0E0);
+
+
+  static const Color iosBlue = Color(0xFF007AFF);
 }
