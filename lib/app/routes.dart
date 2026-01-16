@@ -50,7 +50,6 @@ final appRouter = Provider<GoRouter>((ref) {
           final description = state.uri.queryParameters['description'];
 
           if (id == null || id.isEmpty) {
-            // Redirect to collections page if ID is missing
             return const CollectionsPage();
           }
 

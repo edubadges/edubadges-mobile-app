@@ -128,7 +128,7 @@ class CollectionPage extends StatelessWidget {
                 secondButtonText: l10n.delete,
                 isDestructiveAction: true,
                 onFirstButtonPressed: () {
-                  // Cancel - do nothing
+                  context.pop();
                 },
                 onSecondButtonPressed: () {
                   // TODO: Implement delete functionality
