@@ -18,5 +18,11 @@
     "collectionDescriptionPlaceholder": "Description of the collection",
     "save": "Save",
     "cancel": "Cancel",
-    "collectionNameRequired": "Name is required"
+    "collectionNameRequired": "Name is required",
+    "addEdubadgesToCollection": "Add edubadges to your collection",
+    "addEdubadgesToCollectionDescription": "Bundle edubadges in your collection to manage them clearly and share them easily.",
+    "addEdubadge": "Add Edubadge",
+    "areYouSure": "Are you sure?",
+    "deleteCollectionConfirmation": "You are about to delete a collection.",
+    "delete": "Delete"
 }

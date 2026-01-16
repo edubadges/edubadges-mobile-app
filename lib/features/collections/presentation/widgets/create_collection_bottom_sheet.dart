@@ -1,7 +1,9 @@
 import 'package:edubadges/core/widgets/app_text_field.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
+import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class CreateCollectionBottomSheet extends StatefulWidget {
   const CreateCollectionBottomSheet({super.key});
@@ -26,8 +28,20 @@ class _CreateCollectionBottomSheetState
 
   void _handleSave() {
     if (_formKey.currentState!.validate()) {
-      // TODO: Add backend integration here
+      final title = _nameController.text.trim();
+      final description = _descriptionController.text.trim();
+
+      final id = DateTime.now().millisecondsSinceEpoch.toString();
+
       Navigator.of(context).pop();
+
+      final collection = CollectionRouteModel(
+        id: id,
+        title: title,
+        description: description.isNotEmpty ? description : null,
+      );
+
+      context.push(collection.buildRouteUrl());
     }
   }
 
@@ -55,7 +69,6 @@ class _CreateCollectionBottomSheetState
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Drag handle
                 Center(
                   child: Container(
                     width: 32,
@@ -67,7 +80,6 @@ class _CreateCollectionBottomSheetState
                     ),
                   ),
                 ),
-                // Title
                 Center(
                   child: Text(
                     l10n.newCollection,
@@ -79,7 +91,6 @@ class _CreateCollectionBottomSheetState
                   ),
                 ),
                 const SizedBox(height: 12),
-                // Description
                 Center(
                   child: Text(
                     l10n.newCollectionDescription,
@@ -90,7 +101,6 @@ class _CreateCollectionBottomSheetState
                   ),
                 ),
                 const SizedBox(height: 22),
-                // Name field
                 AppTextField(
                   label: l10n.collectionName,
                   placeholder: l10n.collectionNamePlaceholder,
@@ -103,7 +113,6 @@ class _CreateCollectionBottomSheetState
                   },
                 ),
                 const SizedBox(height: 24),
-                // Description field
                 AppTextField(
                   label: l10n.collectionDescription,
                   placeholder: l10n.collectionDescriptionPlaceholder,
@@ -111,10 +120,8 @@ class _CreateCollectionBottomSheetState
                   maxLines: 4,
                 ),
                 const SizedBox(height: 32),
-                // Save button
                 PrimaryButton(text: l10n.save, onPressed: _handleSave),
                 const SizedBox(height: 8),
-                // Cancel button
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(

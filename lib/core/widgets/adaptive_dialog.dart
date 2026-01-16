@@ -5,6 +5,30 @@ import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+class AdaptiveDialogConfig {
+  final String title;
+  final String? description;
+  final Widget? body;
+  final String? firstButtonText;
+  final String secondButtonText;
+  final VoidCallback onFirstButtonPressed;
+  final VoidCallback onSecondButtonPressed;
+  final bool isFirstButtonDefaultAction;
+  final bool isDestructiveAction;
+
+  const AdaptiveDialogConfig({
+    required this.title,
+    this.description,
+    this.body,
+    this.firstButtonText,
+    required this.secondButtonText,
+    required this.onFirstButtonPressed,
+    required this.onSecondButtonPressed,
+    this.isFirstButtonDefaultAction = false,
+    this.isDestructiveAction = false,
+  });
+}
+
 class AdaptiveDialog extends StatelessWidget {
   final String title;
 
@@ -21,6 +45,7 @@ class AdaptiveDialog extends StatelessWidget {
   final VoidCallback onSecondButtonPressed;
 
   final bool isFirstButtonDefaultAction;
+  final bool isDestructiveAction;
 
   const AdaptiveDialog({
     super.key,
@@ -32,30 +57,25 @@ class AdaptiveDialog extends StatelessWidget {
     required this.onFirstButtonPressed,
     required this.onSecondButtonPressed,
     this.isFirstButtonDefaultAction = false,
+    this.isDestructiveAction = false,
   });
 
   static Future<void> show({
     required BuildContext context,
-    required String title,
-    String? description,
-    Widget? body,
-    String? firstButtonText,
-    required String secondButtonText,
-    required VoidCallback onFirstButtonPressed,
-    required VoidCallback onSecondButtonPressed,
-    bool isFirstButtonDefaultAction = false,
+    required AdaptiveDialogConfig config,
   }) {
     return showDialog(
       context: context,
       builder: (context) => AdaptiveDialog(
-        title: title,
-        description: description,
-        body: body,
-        firstButtonText: firstButtonText,
-        secondButtonText: secondButtonText,
-        onFirstButtonPressed: onFirstButtonPressed,
-        onSecondButtonPressed: onSecondButtonPressed,
-        isFirstButtonDefaultAction: isFirstButtonDefaultAction,
+        title: config.title,
+        description: config.description,
+        body: config.body,
+        firstButtonText: config.firstButtonText,
+        secondButtonText: config.secondButtonText,
+        onFirstButtonPressed: config.onFirstButtonPressed,
+        onSecondButtonPressed: config.onSecondButtonPressed,
+        isFirstButtonDefaultAction: config.isFirstButtonDefaultAction,
+        isDestructiveAction: config.isDestructiveAction,
       ),
     );
   }
@@ -67,13 +87,9 @@ class AdaptiveDialog extends StatelessWidget {
         : _buildMaterialDialog(context);
   }
 
-  Widget _buildCupertinoDialog(BuildContext context) {
-    final localizedFirstButtonText =
-        firstButtonText ?? AppLocalizations.of(context)?.cancel ?? '';
-
-    Widget? content;
+  Widget? _buildContent(BuildContext context) {
     if (description != null && body != null) {
-      content = Column(
+      return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -83,17 +99,24 @@ class AdaptiveDialog extends StatelessWidget {
         ],
       );
     } else if (description != null) {
-      content = Text(
-        description!,
-        style: Theme.of(context).textTheme.bodyMedium,
-      );
+      return Text(description!, style: Theme.of(context).textTheme.bodyMedium);
     } else if (body != null) {
-      content = body;
+      return body;
     }
+    return null;
+  }
+
+  Widget _buildCupertinoDialog(BuildContext context) {
+    final localizedFirstButtonText =
+        firstButtonText ?? AppLocalizations.of(context)?.cancel ?? '';
+    final secondButtonColor = isDestructiveAction
+        ? AppColors.error
+        : AppColors.primary;
 
     return CupertinoAlertDialog(
       title: Text(title, style: Theme.of(context).textTheme.headlineSmall),
-      content: content,
+      content: _buildContent(context),
+
       actions: [
         CupertinoDialogAction(
           isDefaultAction: isFirstButtonDefaultAction,
@@ -116,14 +139,15 @@ class AdaptiveDialog extends StatelessWidget {
         ),
         CupertinoDialogAction(
           isDefaultAction: !isFirstButtonDefaultAction,
+          isDestructiveAction: isDestructiveAction,
           textStyle: !isFirstButtonDefaultAction
               ? Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: AppColors.primary,
+                  color: secondButtonColor,
                   fontWeight: FontWeight.w600,
                 )
               : Theme.of(
                   context,
-                ).textTheme.labelLarge?.copyWith(color: AppColors.primary),
+                ).textTheme.labelLarge?.copyWith(color: secondButtonColor),
           onPressed: () {
             Navigator.of(context).pop();
             onSecondButtonPressed();
@@ -141,29 +165,9 @@ class AdaptiveDialog extends StatelessWidget {
     final localizedFirstButtonText =
         firstButtonText ?? AppLocalizations.of(context)?.cancel ?? '';
 
-    Widget? content;
-    if (description != null && body != null) {
-      content = Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(description!, style: Theme.of(context).textTheme.bodyMedium),
-          const SizedBox(height: 16),
-          body!,
-        ],
-      );
-    } else if (description != null) {
-      content = Text(
-        description!,
-        style: Theme.of(context).textTheme.bodyMedium,
-      );
-    } else if (body != null) {
-      content = body;
-    }
-
     return AlertDialog(
       title: Text(title, style: Theme.of(context).textTheme.headlineSmall),
-      content: content,
+      content: _buildContent(context),
       actions: [
         TextButton(
           onPressed: () {
@@ -182,12 +186,16 @@ class AdaptiveDialog extends StatelessWidget {
             Navigator.of(context).pop();
             onSecondButtonPressed();
           },
-          style: TextButton.styleFrom(foregroundColor: AppColors.primary),
+          style: TextButton.styleFrom(
+            foregroundColor: isDestructiveAction
+                ? AppColors.error
+                : AppColors.primary,
+          ),
           child: Text(
             secondButtonText,
-            style: Theme.of(
-              context,
-            ).textTheme.labelLarge?.copyWith(color: AppColors.primary),
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: isDestructiveAction ? AppColors.error : AppColors.primary,
+            ),
           ),
         ),
       ],
