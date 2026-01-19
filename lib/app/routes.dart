@@ -83,13 +83,7 @@ final appRouter = Provider<GoRouter>((ref) {
             textShort: textShort,
           );
 
-          return AgreementDetailsPage(
-            agreementId: agreement.agreementId,
-            titleLong: agreement.titleLong,
-            textLong: agreement.textLong,
-            titleShort: agreement.titleShort,
-            textShort: agreement.textShort,
-          );
+          return AgreementDetailsPage(agreement: agreement);
         },
       ),
 

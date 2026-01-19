@@ -1,25 +1,15 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/widgets/link_text.dart';
+import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/presentation/widgets/withdraw_agreement_dialog.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class AgreementDetailsPage extends StatefulWidget {
-  final String titleLong;
-  final String textLong;
-  final String titleShort;
-  final String textShort;
-  final String agreementId;
+  final AgreementRouteModel agreement;
 
-  const AgreementDetailsPage({
-    super.key,
-    required this.titleLong,
-    required this.textLong,
-    required this.titleShort,
-    required this.textShort,
-    required this.agreementId,
-  });
+  const AgreementDetailsPage({super.key, required this.agreement});
 
   @override
   State<AgreementDetailsPage> createState() => _AgreementDetailsPageState();
@@ -35,11 +25,11 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
     final colorScheme = theme.colorScheme;
 
     final currentTitle = _isShowingLongVersion
-        ? widget.titleLong
-        : widget.titleShort;
+        ? widget.agreement.titleLong
+        : widget.agreement.titleShort;
     final currentText = _isShowingLongVersion
-        ? widget.textLong
-        : widget.textShort;
+        ? widget.agreement.textLong
+        : widget.agreement.textShort;
     final toggleButtonText = _isShowingLongVersion
         ? l10n.viewShortText
         : l10n.viewFullText;
@@ -51,11 +41,9 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
           currentTitle,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w700,
-
           ),
           textAlign: TextAlign.center,
           maxLines: 2,
-          
         ),
         centerTitle: true,
         leading: IconButton(
@@ -73,7 +61,6 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    
                     LinkText(
                       text: currentText,
                       style: theme.textTheme.bodyMedium,
@@ -91,7 +78,7 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
                     child: ElevatedButton(
                       onPressed: () => WithdrawAgreementDialog.show(
                         context: context,
-                        institution: widget.agreementId,
+                        institution: widget.agreement.agreementId,
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorScheme.primary,
