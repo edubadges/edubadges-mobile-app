@@ -398,30 +398,6 @@ abstract class AppLocalizations {
   /// **'Privacy conditions'**
   String get privacyConditions;
 
-  /// No description provided for @agreementPrivacyTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Edubadges and your privacy'**
-  String get agreementPrivacyTitle;
-
-  /// No description provided for @agreementPrivacyContent.
-  ///
-  /// In en, this message translates to:
-  /// **'A full version of this privacy statement can be found below. This version gives you an overview of the most important points.\n\nAvans Hogeschool is the data controller for edubadges. SURF is the processor for edubadges.\n\nThe following personal data is processed: first name, last name, unique identifier, email address, eduID, issue date, issuer and performance/learning outcomes.\n\nFor questions about privacy, you can contact privacy@avans.nl.\n\nBy clicking \'I have read this\' you declare to have read the full privacy statement.'**
-  String get agreementPrivacyContent;
-
-  /// No description provided for @agreementTermsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Terms and conditions of institution'**
-  String get agreementTermsTitle;
-
-  /// No description provided for @agreementTermsContent.
-  ///
-  /// In en, this message translates to:
-  /// **'Thank you for reviewing Avans Hogeschool\'s privacy statement for edubadges. We take the protection of your data seriously.\n\nFor questions, you can contact privacy@avans.nl.\n\n1 What are edubadges\nEdubadges are digital insignias that demonstrate what knowledge or skills you have acquired. You can share them on social media, in your digital CV or with employers.\n\nSURF develops the technical infrastructure for securely storing and validating edubadges. More information can be found on SURF\'s website.\n\n2 Purpose and processing\nAvans Hogeschool makes it possible to receive digital certificates for students using edubadges.'**
-  String get agreementTermsContent;
-
   /// No description provided for @withdraw.
   ///
   /// In en, this message translates to:
