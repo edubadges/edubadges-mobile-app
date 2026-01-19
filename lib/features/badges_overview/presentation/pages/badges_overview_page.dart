@@ -14,7 +14,7 @@ class BadgesOverviewPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: SvgPicture.asset(Assets.imageLogo),
+        title: SvgPicture.asset(Assets.imageLogo, width: 131, height: 32),
         centerTitle: true,
       ),
       body: CustomScrollView(
