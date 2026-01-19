@@ -5,6 +5,7 @@ import 'package:edubadges/features/catalog/presentation/pages/catalog_page.dart'
 import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
 import 'package:edubadges/features/collections/presentation/pages/collection_page.dart';
 import 'package:edubadges/features/collections/presentation/pages/collections_page.dart';
+import 'package:edubadges/features/general_terms/presentation/pages/general_terms_page.dart';
 import 'package:edubadges/features/login/presentation/pages/login_page.dart';
 import 'package:edubadges/features/main/main_page.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
@@ -40,6 +41,13 @@ final appRouter = Provider<GoRouter>((ref) {
           return const LoginPage();
         },
       ),
+
+      GoRoute(path: RoutePath.generalTerms,
+          name: 'general-terms',
+          builder: (context, state) {
+            return const GeneralTermsPage();
+          }
+          ),
 
       GoRoute(
         path: RoutePath.collection,

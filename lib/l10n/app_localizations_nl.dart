@@ -26,6 +26,15 @@ class AppLocalizationsNl extends AppLocalizations {
   String get loginTitle => 'Never stop learning';
 
   @override
+  String get generalAgreementTitle => 'Privacy voorwaarden';
+
+  @override
+  String get generalAgreementButtonReadMore => 'Lees meer';
+
+  @override
+  String get generalAgreementButtonRead => 'Gelezen';
+
+  @override
   String get tabAccount => 'Account';
 
   @override
