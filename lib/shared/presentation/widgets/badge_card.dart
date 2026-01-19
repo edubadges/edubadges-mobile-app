@@ -40,7 +40,7 @@ class BadgeCard extends StatelessWidget {
         child: Row(
           spacing: 12,
           children: [
-            // TODO: add no image paceholder
+            // TODO: add no image paceholder (https://digitalclub.atlassian.net/browse/SURF-517)
             if (badgeImageUrl != null)
               Image.network(
                 badgeImageUrl,
@@ -88,7 +88,7 @@ class BadgeCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 32, width: 32),
-              // TODO: add no image paceholder
+              // TODO: add no image paceholder (https://digitalclub.atlassian.net/browse/SURF-517)
               if (badgeImageUrl != null)
                 Expanded(
                   child: Image.network(
@@ -124,13 +124,13 @@ class BadgeCard extends StatelessWidget {
             alignment: WrapAlignment.center,
             spacing: 8,
             children: [
-              // TODO: Add real data
+              // TODO: Add real data (https://digitalclub.atlassian.net/browse/SURF-515)
               buildChip(
                 icon: Assets.iconTimeInvestment,
                 text: '480 uur',
                 context: context,
               ),
-              // TODO: Add real data
+              // TODO: Add real data (https://digitalclub.atlassian.net/browse/SURF-515)
               buildChip(
                 icon: Assets.iconCollections,
                 text: '8,0',
@@ -152,7 +152,7 @@ class BadgeCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // TODO: add no image paceholder
+                // TODO: add no image paceholder (https://digitalclub.atlassian.net/browse/SURF-517)
                 if (institutionImageUrl != null)
                   Image.network(
                     institutionImageUrl,

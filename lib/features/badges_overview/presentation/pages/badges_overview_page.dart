@@ -25,7 +25,7 @@ class BadgesOverviewPage extends ConsumerWidget {
           slivers: [
             badgesAsync.when(
               data: (badges) {
-                // TODO: Temp design once it's been designed in Figma it will be changed
+                // TODO: Temp design once it's been designed in Figma it will be changed (https://digitalclub.atlassian.net/browse/SURF-516)
                 if (badges.isEmpty) {
                   return const SliverFillRemaining(
                     child: Center(child: SizedBox()),
@@ -48,11 +48,11 @@ class BadgesOverviewPage extends ConsumerWidget {
                   ),
                 );
               },
-              // TODO: Temp design once it's been designed in Figma it will be changed
+              // TODO: Temp design once it's been designed in Figma it will be changed (https://digitalclub.atlassian.net/browse/SURF-516)
               loading: () => const SliverFillRemaining(
                 child: Center(child: CircularProgressIndicator()),
               ),
-              // TODO: Temp design once it's been designed in Figma it will be changed
+              // TODO: Temp design once it's been designed in Figma it will be changed (https://digitalclub.atlassian.net/browse/SURF-516)
               error: (error, stackTrace) =>
                   SliverFillRemaining(child: Center(child: SizedBox())),
             ),
