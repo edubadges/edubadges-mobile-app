@@ -119,12 +119,23 @@ class BadgeCard extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 12),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            alignment: WrapAlignment.center,
             spacing: 8,
             children: [
-              // TODO: add other chips (need to see where the data comes from)
+              // TODO: Add real data
+              buildChip(
+                icon: Assets.iconTimeInvestment,
+                text: '480 uur',
+                context: context,
+              ),
+              // TODO: Add real data
+              buildChip(
+                icon: Assets.iconCollections,
+                text: '8,0',
+                context: context,
+              ),
               buildChip(
                 icon: Assets.iconDate,
                 text: DateFormat(
@@ -183,6 +194,7 @@ class BadgeCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         spacing: 6,
         children: [
           SvgPicture.asset(
