@@ -41,5 +41,31 @@
     "deleteMyAccount": "Verwijder mijn account",
     "somethingWentWrong": "Er is iets misgegaan",
     "retry": "Opnieuw proberen",
-    "noProfileData": "Geen profielgegevens"
+    "noProfileData": "Geen profielgegevens",
+    "logoutConfirmationTitle": "Weet je het zeker?",
+    "logoutConfirmationMessage": "Je staat op het punt om uit te loggen.",
+    "logout": "Uitloggen",
+    "deleteAccountConfirmationTitle": "Verwijder mijn account",
+    "deleteAccountConfirmationMessage": "Wees je dan wel bewust dat hierna al je edubadges niet meer gevalideerd kunnen worden. Het verwijderen van je edubadges account betekent overigens niet dat je eduID ook verwijderd wordt.",
+    "deleteAccountConfirmationPrompt": "Typ het woord 'verwijderen' om mijn badges definitief te verwijderen",
+    "deleteAccountInputPlaceholder": "Typ 'verwijderen'",
+    "deleteAccountRequiredText": "verwijderen",
+    "privacyConditions": "Privacy voorwaarden",
+    "agreementPrivacyTitle": "Edubadges en jouw privacy",
+    "agreementPrivacyContent": "Een volledige versie van deze privacyverklaring vind je hieronder. Deze versie geeft je een overzicht van de belangrijkste punten.\n\nAvans Hogeschool is de verwerkingsverantwoordelijke voor edubadges. SURF is de verwerker voor edubadges.\n\nDe volgende persoonsgegevens worden verwerkt: voornaam, achternaam, unieke identifier, e-mailadres, eduID, uitgiftedatum, uitgever en prestaties/leerresultaten.\n\nVoor vragen over privacy kun je contact opnemen via privacy@avans.nl.\n\nDoor op 'Ik heb dit gelezen' te klikken verklaar je de volledige privacyverklaring gelezen te hebben.",
+    "agreementTermsTitle": "Voorwaarden van instelling",
+    "agreementTermsContent": "Bedankt voor het bekijken van de privacyverklaring van Avans Hogeschool voor edubadges. We nemen de bescherming van je gegevens serieus.\n\nVoor vragen kun je contact opnemen via privacy@avans.nl.\n\n1 Wat zijn edubadges\nEdubadges zijn digitale insignes die aantonen welke kennis of vaardigheden je hebt opgedaan. Je kunt ze delen op sociale media, in je digitale CV of met werkgevers.\n\nSURF ontwikkelt de technische infrastructuur voor het veilig opslaan en valideren van edubadges. Meer informatie vind je op de website van SURF.\n\n2 Doel en verwerking\nAvans Hogeschool maakt het mogelijk om digitale certificaten te ontvangen voor studenten met behulp van edubadges.",
+    "withdraw": "Intrekken",
+    "viewFullText": "Bekijk volledige tekst",
+    "viewShortText": "Bekijk korte tekst",
+    "withdrawAgreementTitle": "Mijn akkoordverklaring intrekken",
+    "withdrawAgreementMessage": "Weet je zeker dat je je akkoordverklaring wil intrekken voor {institution}?",
+    "@withdrawAgreementMessage": {
+        "placeholders": {
+            "institution": {
+                "type": "String"
+            }
+        }
+    },
+    "confirm": "Bevestig"
 }

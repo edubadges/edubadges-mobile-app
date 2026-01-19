@@ -138,4 +138,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noProfileData => 'No profile data';
+
+  @override
+  String get logoutConfirmationTitle => 'Are you sure?';
+
+  @override
+  String get logoutConfirmationMessage => 'You are about to log out.';
+
+  @override
+  String get logout => 'Log out';
+
+  @override
+  String get deleteAccountConfirmationTitle => 'Delete my account';
+
+  @override
+  String get deleteAccountConfirmationMessage =>
+      'Be aware that after this, all your edubadges can no longer be validated. Deleting your edubadges account does not mean that your eduID will also be deleted.';
+
+  @override
+  String get deleteAccountConfirmationPrompt =>
+      'Type the word \'delete\' to permanently delete my badges';
+
+  @override
+  String get deleteAccountInputPlaceholder => 'Type \'delete\'';
+
+  @override
+  String get deleteAccountRequiredText => 'delete';
+
+  @override
+  String get privacyConditions => 'Privacy conditions';
+
+  @override
+  String get agreementPrivacyTitle => 'Edubadges and your privacy';
+
+  @override
+  String get agreementPrivacyContent =>
+      'A full version of this privacy statement can be found below. This version gives you an overview of the most important points.\n\nAvans Hogeschool is the data controller for edubadges. SURF is the processor for edubadges.\n\nThe following personal data is processed: first name, last name, unique identifier, email address, eduID, issue date, issuer and performance/learning outcomes.\n\nFor questions about privacy, you can contact privacy@avans.nl.\n\nBy clicking \'I have read this\' you declare to have read the full privacy statement.';
+
+  @override
+  String get agreementTermsTitle => 'Terms and conditions of institution';
+
+  @override
+  String get agreementTermsContent =>
+      'Thank you for reviewing Avans Hogeschool\'s privacy statement for edubadges. We take the protection of your data seriously.\n\nFor questions, you can contact privacy@avans.nl.\n\n1 What are edubadges\nEdubadges are digital insignias that demonstrate what knowledge or skills you have acquired. You can share them on social media, in your digital CV or with employers.\n\nSURF develops the technical infrastructure for securely storing and validating edubadges. More information can be found on SURF\'s website.\n\n2 Purpose and processing\nAvans Hogeschool makes it possible to receive digital certificates for students using edubadges.';
+
+  @override
+  String get withdraw => 'Withdraw';
+
+  @override
+  String get viewFullText => 'View full text';
+
+  @override
+  String get viewShortText => 'View short text';
+
+  @override
+  String get withdrawAgreementTitle => 'Withdraw my agreement statement';
+
+  @override
+  String withdrawAgreementMessage(String institution) {
+    return 'Are you sure you want to withdraw your agreement statement for $institution?';
+  }
+
+  @override
+  String get confirm => 'Confirm';
 }

@@ -138,4 +138,68 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get noProfileData => 'Geen profielgegevens';
+
+  @override
+  String get logoutConfirmationTitle => 'Weet je het zeker?';
+
+  @override
+  String get logoutConfirmationMessage =>
+      'Je staat op het punt om uit te loggen.';
+
+  @override
+  String get logout => 'Uitloggen';
+
+  @override
+  String get deleteAccountConfirmationTitle => 'Verwijder mijn account';
+
+  @override
+  String get deleteAccountConfirmationMessage =>
+      'Wees je dan wel bewust dat hierna al je edubadges niet meer gevalideerd kunnen worden. Het verwijderen van je edubadges account betekent overigens niet dat je eduID ook verwijderd wordt.';
+
+  @override
+  String get deleteAccountConfirmationPrompt =>
+      'Typ het woord \'verwijderen\' om mijn badges definitief te verwijderen';
+
+  @override
+  String get deleteAccountInputPlaceholder => 'Typ \'verwijderen\'';
+
+  @override
+  String get deleteAccountRequiredText => 'verwijderen';
+
+  @override
+  String get privacyConditions => 'Privacy voorwaarden';
+
+  @override
+  String get agreementPrivacyTitle => 'Edubadges en jouw privacy';
+
+  @override
+  String get agreementPrivacyContent =>
+      'Een volledige versie van deze privacyverklaring vind je hieronder. Deze versie geeft je een overzicht van de belangrijkste punten.\n\nAvans Hogeschool is de verwerkingsverantwoordelijke voor edubadges. SURF is de verwerker voor edubadges.\n\nDe volgende persoonsgegevens worden verwerkt: voornaam, achternaam, unieke identifier, e-mailadres, eduID, uitgiftedatum, uitgever en prestaties/leerresultaten.\n\nVoor vragen over privacy kun je contact opnemen via privacy@avans.nl.\n\nDoor op \'Ik heb dit gelezen\' te klikken verklaar je de volledige privacyverklaring gelezen te hebben.';
+
+  @override
+  String get agreementTermsTitle => 'Voorwaarden van instelling';
+
+  @override
+  String get agreementTermsContent =>
+      'Bedankt voor het bekijken van de privacyverklaring van Avans Hogeschool voor edubadges. We nemen de bescherming van je gegevens serieus.\n\nVoor vragen kun je contact opnemen via privacy@avans.nl.\n\n1 Wat zijn edubadges\nEdubadges zijn digitale insignes die aantonen welke kennis of vaardigheden je hebt opgedaan. Je kunt ze delen op sociale media, in je digitale CV of met werkgevers.\n\nSURF ontwikkelt de technische infrastructuur voor het veilig opslaan en valideren van edubadges. Meer informatie vind je op de website van SURF.\n\n2 Doel en verwerking\nAvans Hogeschool maakt het mogelijk om digitale certificaten te ontvangen voor studenten met behulp van edubadges.';
+
+  @override
+  String get withdraw => 'Intrekken';
+
+  @override
+  String get viewFullText => 'Bekijk volledige tekst';
+
+  @override
+  String get viewShortText => 'Bekijk korte tekst';
+
+  @override
+  String get withdrawAgreementTitle => 'Mijn akkoordverklaring intrekken';
+
+  @override
+  String withdrawAgreementMessage(String institution) {
+    return 'Weet je zeker dat je je akkoordverklaring wil intrekken voor $institution?';
+  }
+
+  @override
+  String get confirm => 'Bevestig';
 }
