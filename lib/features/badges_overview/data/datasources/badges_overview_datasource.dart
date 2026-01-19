@@ -1,5 +1,6 @@
-import 'package:edubadges/core/errors/exceptions.dart';
 import 'package:edubadges/core/network/api_client.dart';
+import 'package:edubadges/core/network/errors/error_codes.dart';
+import 'package:edubadges/core/network/errors/exceptions.dart';
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 
 abstract class BadgesOverviewDataSource {
@@ -13,37 +14,22 @@ class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
 
   @override
   Future<List<BadgeInstanceModel>> getBadgeInstances() async {
+    final response = await apiClient.get<List<dynamic>>('/badge-instances');
+    final data = response.data ?? [];
+
     try {
-      final response = await apiClient.get<List<dynamic>>('/badge-instances');
-      final data = response.data;
-      
-      if (data == null) {
-        return [];
-      }
-      
-      try {
-        return data
-            .map((json) {
-              if (json is! Map<String, dynamic>) {
-                throw FormatException('Invalid badge instance format');
-              }
-              return BadgeInstanceModel.fromJson(json);
-            })
-            .toList();
-      } catch (e) {
-        throw ServerException(
-          'Failed to parse badge instances: ${e.toString()}',
-          500,
-        );
-      }
-    } on ServerException {
-      rethrow;
-    } on NetworkException {
-      rethrow;
-    } catch (e) {
-      throw ServerException(
-        'Unexpected error loading badge instances: ${e.toString()}',
-        500,
+      return data.map((json) {
+        if (json is! Map<String, dynamic>) {
+          throw FormatException('Invalid badge instance format');
+        }
+        return BadgeInstanceModel.fromJson(json);
+      }).toList();
+    } catch (e, stackTrace) {
+      throw ParsingException(
+        message: 'Failed to parse badge instances: ${e.toString()}',
+        code: ErrorCodes.parsingError,
+        originalError: e,
+        stackTrace: stackTrace,
       );
     }
   }
