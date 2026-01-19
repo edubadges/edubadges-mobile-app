@@ -17,47 +17,42 @@ class BadgesOverviewPage extends ConsumerWidget {
         title: SvgPicture.asset(Assets.imageLogo),
         centerTitle: true,
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await ref.read(badgesOverviewProvider.notifier).refresh();
-        },
-        child: CustomScrollView(
-          slivers: [
-            badgesAsync.when(
-              data: (badges) {
-                // TODO: Temp design once it's been designed in Figma it will be changed (https://digitalclub.atlassian.net/browse/SURF-516)
-                if (badges.isEmpty) {
-                  return const SliverFillRemaining(
-                    child: Center(child: SizedBox()),
-                  );
-                }
-
-                return SliverPadding(
-                  padding: const EdgeInsets.all(16),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final badge = badges[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: BadgeCard(
-                          instance: badge,
-                          style: BadgeCardStyle.small,
-                        ),
-                      );
-                    }, childCount: badges.length),
-                  ),
+      body: CustomScrollView(
+        slivers: [
+          badgesAsync.when(
+            data: (badges) {
+              // TODO: Temp design once it's been designed in Figma it will be changed (https://digitalclub.atlassian.net/browse/SURF-516)
+              if (badges.isEmpty) {
+                return const SliverFillRemaining(
+                  child: Center(child: SizedBox()),
                 );
-              },
-              // TODO: Temp design once it's been designed in Figma it will be changed (https://digitalclub.atlassian.net/browse/SURF-516)
-              loading: () => const SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator()),
-              ),
-              // TODO: Temp design once it's been designed in Figma it will be changed (https://digitalclub.atlassian.net/browse/SURF-516)
-              error: (error, stackTrace) =>
-                  SliverFillRemaining(child: Center(child: SizedBox())),
+              }
+
+              return SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final badge = badges[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: BadgeCard(
+                        instance: badge,
+                        style: BadgeCardStyle.small,
+                      ),
+                    );
+                  }, childCount: badges.length),
+                ),
+              );
+            },
+            // TODO: Temp design once it's been designed in Figma it will be changed (https://digitalclub.atlassian.net/browse/SURF-516)
+            loading: () => const SliverFillRemaining(
+              child: Center(child: CircularProgressIndicator()),
             ),
-          ],
-        ),
+            // TODO: Temp design once it's been designed in Figma it will be changed (https://digitalclub.atlassian.net/browse/SURF-516)
+            error: (error, stackTrace) =>
+                SliverFillRemaining(child: Center(child: SizedBox())),
+          ),
+        ],
       ),
     );
   }
