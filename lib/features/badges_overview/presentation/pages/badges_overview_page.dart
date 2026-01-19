@@ -8,7 +8,10 @@ class BadgesOverviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: SvgPicture.asset(Assets.imageLogo), centerTitle: true),
+      appBar: AppBar(
+        title: SvgPicture.asset(Assets.imageLogo, width: 131, height: 32),
+        centerTitle: true,
+      ),
       body: const Center(child: Text('BadgesOverview Page')),
     );
   }
