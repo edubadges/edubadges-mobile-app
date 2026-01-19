@@ -110,10 +110,15 @@ class BadgeCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          // Name
-          Text(instance.badgeclass.name, style: textTheme.titleMedium),
+          Text(
+            instance.badgeclass.name,
+            style: textTheme.titleMedium,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 12),
-          // Chips
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
@@ -147,7 +152,15 @@ class BadgeCard extends StatelessWidget {
                     },
                   ),
                 const SizedBox(width: 8),
-                Text(institutionName),
+                Flexible(
+                  child: Text(
+                    institutionName,
+                    style: textTheme.bodySmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                  ),
+                ),
               ],
             ),
         ],
