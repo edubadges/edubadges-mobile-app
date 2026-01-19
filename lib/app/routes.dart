@@ -2,6 +2,8 @@ import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/features/account/presentation/pages/account_page.dart';
 import 'package:edubadges/features/badges_overview/presentation/pages/badges_overview_page.dart';
 import 'package:edubadges/features/catalog/presentation/pages/catalog_page.dart';
+import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
+import 'package:edubadges/features/collections/presentation/pages/collection_page.dart';
 import 'package:edubadges/features/collections/presentation/pages/collections_page.dart';
 import 'package:edubadges/features/login/presentation/pages/login_page.dart';
 import 'package:edubadges/features/main/main_page.dart';
@@ -36,6 +38,28 @@ final appRouter = Provider<GoRouter>((ref) {
         name: 'login',
         builder: (context, state) {
           return const LoginPage();
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.collection,
+        name: 'collection',
+        builder: (context, state) {
+          final id = state.pathParameters['id'];
+          final title = state.uri.queryParameters['title'] ?? '';
+          final description = state.uri.queryParameters['description'];
+
+          if (id == null || id.isEmpty) {
+            return const CollectionsPage();
+          }
+
+          final collection = CollectionRouteModel(
+            id: id,
+            title: title,
+            description: description?.isNotEmpty ?? false ? description : null,
+          );
+
+          return CollectionPage(collection: collection);
         },
       ),
 

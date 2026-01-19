@@ -1,76 +1,447 @@
+import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/widgets/svg_icon.dart';
+import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
+import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class AccountPage extends ConsumerWidget {
   const AccountPage({super.key});
 
+  static const double _spacingSmall = 8.0;
+  static const double _spacingMedium = 16.0;
+  static const double _cardBorderRadius = 20.0;
+  static const double _cardPadding = 20.0;
+  static const double _badgeBorderRadius = 8.0;
+  static const double _chevronSize = 12.0;
+  static const double _chevronPadding = 8.0;
+
+  Widget _buildDivider(ColorScheme colorScheme) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: _spacingSmall),
+      child: Divider(color: colorScheme.outlineVariant, height: 1),
+    );
+  }
+
+  Widget _buildSectionCard({
+    required BuildContext context,
+    required String title,
+    required List<Widget> children,
+  }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(_cardBorderRadius),
+        side: BorderSide(color: colorScheme.outlineVariant, width: 1),
+      ),
+      color: colorScheme.surfaceContainer,
+      margin: const EdgeInsets.only(bottom: _spacingMedium),
+      child: Padding(
+        padding: const EdgeInsets.all(_cardPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            ...children,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInstitutionBadge(BuildContext context, String text) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: _spacingSmall,
+        vertical: 4,
+      ),
+      decoration: BoxDecoration(
+        color: colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(_badgeBorderRadius),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check, size: 16, color: colorScheme.primary),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: colorScheme.primary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDataItem(
+    BuildContext context,
+    String label,
+    String value, {
+    bool showBadge = false,
+    String? badgeText,
+  }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: colorScheme.onSurface,
+          ),
+        ),
+        Text(
+          value,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+        if (showBadge && badgeText != null) ...[
+          const SizedBox(height: 4),
+          _buildInstitutionBadge(context, badgeText),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildDataSection(BuildContext context, ProfileEntity profile) {
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final dataItems = [
+      (label: l10n.confirmedName, value: profile.fullName, showBadge: true),
+      (label: l10n.emailAddress, value: profile.email, showBadge: false),
+      if (profile.institution != null)
+        (
+          label: l10n.institution,
+          value: profile.institution!,
+          showBadge: false,
+        ),
+      (label: l10n.eduid, value: profile.entityId, showBadge: false),
+      (
+        label: l10n.memberSince,
+        value: 'dinsdag 20 april 2021 om 16:20',
+        showBadge: false,
+      ),
+    ];
+
+    return _buildSectionCard(
+      context: context,
+      title: l10n.accountData,
+      children: [
+        _buildDivider(colorScheme),
+        const SizedBox(height: _spacingMedium),
+        ...dataItems.asMap().entries.map((entry) {
+          final index = entry.key;
+          final item = entry.value;
+          final isLast = index == dataItems.length - 1;
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDataItem(
+                context,
+                item.label,
+                item.value,
+                showBadge: item.showBadge,
+                badgeText: item.showBadge ? l10n.providedByInstitution : null,
+              ),
+              if (!isLast) ...[
+                const SizedBox(height: 14),
+                _buildDivider(colorScheme),
+                const SizedBox(height: 14),
+              ],
+            ],
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildNotificationSection(
+    BuildContext context,
+    ProfileEntity profile,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return _buildSectionCard(
+      context: context,
+      title: l10n.notificationSettings,
+      children: [
+        _buildDivider(colorScheme),
+        const SizedBox(height: _spacingSmall),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              l10n.generalNotifications,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            Switch(
+              value: profile.marketingOptIn,
+              onChanged: (value) {
+                // TODO: Implement update notification settings
+              },
+              activeThumbColor: colorScheme.primary,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  String _formatAgreementDateText(String type, DateTime date, String version) {
+    final dateStr = DateFormat('MMM d, yyyy').format(date);
+    return type == 'agreed'
+        ? 'Akkoord op $dateStr, versie $version'
+        : 'Gelezen op $dateStr, versie $version';
+  }
+
+  Widget _buildAgreementItem(
+    BuildContext context,
+    String institution,
+    String dateText,
+  ) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return InkWell(
+      onTap: () {
+        // TODO: Navigate to agreement details
+      },
+      borderRadius: BorderRadius.circular(_badgeBorderRadius),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: _spacingSmall),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    institution,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  Text(
+                    dateText,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(_chevronPadding),
+              child: SvgIcon(
+                assetPath: Assets.iconChevron,
+                size: _chevronSize,
+                color: colorScheme.primary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAgreementsSection(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    // Mock agreements data - TODO replace with actual API call when available
+    final mockAgreements = [
+      (
+        institution: 'University Voorbeeld',
+        type: 'agreed',
+        date: DateTime(2025, 11, 15),
+        version: '1',
+      ),
+      (
+        institution: 'University Voorbeeld',
+        type: 'read',
+        date: DateTime(2025, 11, 12),
+        version: '1',
+      ),
+    ];
+
+    return _buildSectionCard(
+      context: context,
+      title: l10n.givenAgreements,
+      children: [
+        Text(
+          l10n.agreementsDescription,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: _spacingSmall),
+        _buildDivider(colorScheme),
+        const SizedBox(height: _spacingSmall),
+        ...mockAgreements.asMap().entries.map((entry) {
+          final index = entry.key;
+          final agreement = entry.value;
+          final isLast = index == mockAgreements.length - 1;
+          final dateText = _formatAgreementDateText(
+            agreement.type,
+            agreement.date,
+            agreement.version,
+          );
+
+          return Column(
+            children: [
+              _buildAgreementItem(context, agreement.institution, dateText),
+              if (!isLast) _buildDivider(colorScheme),
+            ],
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildDeleteAccountSection(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return _buildSectionCard(
+      context: context,
+      title: l10n.deleteAccount,
+      children: [
+        const SizedBox(height: _spacingMedium),
+        Text(
+          l10n.deleteAccountDescription,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurface,
+          ),
+        ),
+        const SizedBox(height: _spacingMedium),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton(
+            onPressed: () {
+              // TODO: Implement delete account functionality
+            },
+            style: OutlinedButton.styleFrom(
+              foregroundColor: colorScheme.error,
+              side: BorderSide(color: colorScheme.error),
+              padding: const EdgeInsets.symmetric(vertical: _spacingMedium),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(_badgeBorderRadius),
+              ),
+            ),
+            child: Text(
+              l10n.deleteMyAccount,
+              style: theme.textTheme.labelLarge?.copyWith(
+                color: colorScheme.error,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final authAsync = ref.watch(authProvider);
-    // TODO: this should be replaced, this is temporary to implement navigation
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final profileAsync = ref.watch(profileProvider);
+
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: Text(l10n.tabAccount),
+        title: Text(
+          l10n.tabAccount,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        backgroundColor: colorScheme.surface,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout, color: colorScheme.primary, size: 24),
+            onPressed: () async {
+              await ref.read(authProvider.notifier).logout();
+              if (context.mounted) {
+                context.go(RoutePath.login);
+              }
+            },
+          ),
+        ],
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'You are logged in',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: SafeArea(
+        child: profileAsync.when(
+          data: (profile) {
+            if (profile == null) {
+              return  Center(child: Text(l10n.noProfileData));
+            }
+            return SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(
+                _cardPadding,
+                0,
+                _cardPadding,
+                _cardPadding,
               ),
-              const SizedBox(height: 16),
-              Text(
-                'This is a demo account using local storage',
-                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                textAlign: TextAlign.center,
+              child: Column(
+                spacing: 0,
+                children: [
+                  _buildDataSection(context, profile),
+                  _buildNotificationSection(context, profile),
+                  _buildAgreementsSection(context),
+                  _buildDeleteAccountSection(context),
+                ],
               ),
-              const SizedBox(height: 64),
-
-              // Logout Button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: authAsync.isLoading
-                      ? null // Disable while logging out
-                      : () async {
-                    await ref.read(authProvider.notifier).logout();
-
-                    if (context.mounted) {
-                      context.go('/login'); // Redirect to login page
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: authAsync.isLoading
-                      ? const SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 3,
-                    ),
-                  )
-                      : const Text(
-                    'Logout',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  l10n.somethingWentWrong,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: colorScheme.error,
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => ref.read(profileProvider.notifier).refresh(),
+                  child: Text(l10n.retry),
+                ),
+              ],
+            ),
           ),
         ),
       ),

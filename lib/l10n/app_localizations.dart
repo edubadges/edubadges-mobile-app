@@ -151,6 +151,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Collections'**
   String get tabCollections;
+
+  /// No description provided for @newCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'New collection'**
+  String get newCollection;
+
+  /// No description provided for @newCollectionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new collection and share it with acquaintances.'**
+  String get newCollectionDescription;
+
+  /// No description provided for @collectionName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get collectionName;
+
+  /// No description provided for @collectionNamePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Name of the collection'**
+  String get collectionNamePlaceholder;
+
+  /// No description provided for @collectionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get collectionDescription;
+
+  /// No description provided for @collectionDescriptionPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Description of the collection'**
+  String get collectionDescriptionPlaceholder;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @collectionNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get collectionNameRequired;
+
+  /// No description provided for @addEdubadgesToCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'Add edubadges to your collection'**
+  String get addEdubadgesToCollection;
+
+  /// No description provided for @addEdubadgesToCollectionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Bundle edubadges in your collection to manage them clearly and share them easily.'**
+  String get addEdubadgesToCollectionDescription;
+
+  /// No description provided for @addEdubadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Edubadge'**
+  String get addEdubadge;
+
+  /// No description provided for @areYouSure.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure?'**
+  String get areYouSure;
+
+  /// No description provided for @deleteCollectionConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'You are about to delete a collection.'**
+  String get deleteCollectionConfirmation;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @accountData.
+  ///
+  /// In en, this message translates to:
+  /// **'Data'**
+  String get accountData;
+
+  /// No description provided for @confirmedName.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed name'**
+  String get confirmedName;
+
+  /// No description provided for @providedByInstitution.
+  ///
+  /// In en, this message translates to:
+  /// **'Provided by your institution'**
+  String get providedByInstitution;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address'**
+  String get emailAddress;
+
+  /// No description provided for @institution.
+  ///
+  /// In en, this message translates to:
+  /// **'Institution'**
+  String get institution;
+
+  /// No description provided for @eduid.
+  ///
+  /// In en, this message translates to:
+  /// **'#eduid'**
+  String get eduid;
+
+  /// No description provided for @memberSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Member since'**
+  String get memberSince;
+
+  /// No description provided for @notificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification settings'**
+  String get notificationSettings;
+
+  /// No description provided for @generalNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'General notifications'**
+  String get generalNotifications;
+
+  /// No description provided for @givenAgreements.
+  ///
+  /// In en, this message translates to:
+  /// **'Given agreement(s)'**
+  String get givenAgreements;
+
+  /// No description provided for @agreementsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You can withdraw your given agreement(s).'**
+  String get agreementsDescription;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your edubadges account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You can delete your edubadges account if you wish. Be aware that after this, all your edubadges can no longer be validated.\n\nDeleting your edubadges account does not mean that your eduID will also be deleted.\n\nTo complete the process of deleting your edubadges account, you must close your browser after your account has been deleted.'**
+  String get deleteAccountDescription;
+
+  /// No description provided for @deleteMyAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get deleteMyAccount;
+
+  /// No description provided for @somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get somethingWentWrong;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @noProfileData.
+  ///
+  /// In en, this message translates to:
+  /// **'No profile data'**
+  String get noProfileData;
 }
 
 class _AppLocalizationsDelegate

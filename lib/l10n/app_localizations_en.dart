@@ -36,4 +36,106 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tabCollections => 'Collections';
+
+  @override
+  String get newCollection => 'New collection';
+
+  @override
+  String get newCollectionDescription =>
+      'Create a new collection and share it with acquaintances.';
+
+  @override
+  String get collectionName => 'Name';
+
+  @override
+  String get collectionNamePlaceholder => 'Name of the collection';
+
+  @override
+  String get collectionDescription => 'Description';
+
+  @override
+  String get collectionDescriptionPlaceholder =>
+      'Description of the collection';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get collectionNameRequired => 'Name is required';
+
+  @override
+  String get addEdubadgesToCollection => 'Add edubadges to your collection';
+
+  @override
+  String get addEdubadgesToCollectionDescription =>
+      'Bundle edubadges in your collection to manage them clearly and share them easily.';
+
+  @override
+  String get addEdubadge => 'Add Edubadge';
+
+  @override
+  String get areYouSure => 'Are you sure?';
+
+  @override
+  String get deleteCollectionConfirmation =>
+      'You are about to delete a collection.';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get accountData => 'Data';
+
+  @override
+  String get confirmedName => 'Confirmed name';
+
+  @override
+  String get providedByInstitution => 'Provided by your institution';
+
+  @override
+  String get emailAddress => 'Email address';
+
+  @override
+  String get institution => 'Institution';
+
+  @override
+  String get eduid => '#eduid';
+
+  @override
+  String get memberSince => 'Member since';
+
+  @override
+  String get notificationSettings => 'Notification settings';
+
+  @override
+  String get generalNotifications => 'General notifications';
+
+  @override
+  String get givenAgreements => 'Given agreement(s)';
+
+  @override
+  String get agreementsDescription =>
+      'You can withdraw your given agreement(s).';
+
+  @override
+  String get deleteAccount => 'Delete your edubadges account';
+
+  @override
+  String get deleteAccountDescription =>
+      'You can delete your edubadges account if you wish. Be aware that after this, all your edubadges can no longer be validated.\n\nDeleting your edubadges account does not mean that your eduID will also be deleted.\n\nTo complete the process of deleting your edubadges account, you must close your browser after your account has been deleted.';
+
+  @override
+  String get deleteMyAccount => 'Delete my account';
+
+  @override
+  String get somethingWentWrong => 'Something went wrong';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get noProfileData => 'No profile data';
 }
