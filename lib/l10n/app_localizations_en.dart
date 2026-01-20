@@ -138,4 +138,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noProfileData => 'No profile data';
+
+  @override
+  String countHours(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString hours',
+      one: '1 hour',
+    );
+    return '$_temp0';
+  }
 }

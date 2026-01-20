@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -16,6 +17,13 @@ class BadgeCard extends StatelessWidget {
     required this.instance,
     this.style = BadgeCardStyle.large,
   });
+
+  int? getTimeInvestment() {
+    final match = instance.badgeclass.badgeclassextensionSet?.firstWhereOrNull(
+      (element) => element.name == 'extensions:TimeInvestmentExtension',
+    );
+    return match != null ? int.tryParse(match.value) : null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +82,8 @@ class BadgeCard extends StatelessWidget {
       );
     }
 
+    int? timeInvestment = getTimeInvestment();
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
@@ -124,12 +134,12 @@ class BadgeCard extends StatelessWidget {
             alignment: WrapAlignment.center,
             spacing: 8,
             children: [
-              // TODO: Add real data (https://digitalclub.atlassian.net/browse/SURF-515)
-              buildChip(
-                icon: Assets.iconTimeInvestment,
-                text: '480 uur',
-                context: context,
-              ),
+              if (timeInvestment != null)
+                buildChip(
+                  icon: Assets.iconTimeInvestment,
+                  text: l10n.countHours(timeInvestment),
+                  context: context,
+                ),
               // TODO: Add real data (https://digitalclub.atlassian.net/browse/SURF-515)
               buildChip(
                 icon: Assets.iconCollections,

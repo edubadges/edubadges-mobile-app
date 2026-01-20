@@ -41,5 +41,14 @@
     "deleteMyAccount": "Delete my account",
     "somethingWentWrong": "Something went wrong",
     "retry": "Retry",
-    "noProfileData": "No profile data"
+    "noProfileData": "No profile data",
+    "countHours": "{count, plural, =1{1 hour} other{{count} hours}}",
+    "@countHours": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    }
 }

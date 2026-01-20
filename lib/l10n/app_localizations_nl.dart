@@ -138,4 +138,19 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get noProfileData => 'Geen profielgegevens';
+
+  @override
+  String countHours(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString uur',
+      one: '1 uur',
+    );
+    return '$_temp0';
+  }
 }
