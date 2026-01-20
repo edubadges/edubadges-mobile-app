@@ -343,6 +343,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No profile data'**
   String get noProfileData;
+
+  /// No description provided for @countHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 hour} other{{count} hours}}'**
+  String countHours(num count);
 }
 
 class _AppLocalizationsDelegate

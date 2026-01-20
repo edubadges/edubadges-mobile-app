@@ -41,5 +41,14 @@
     "deleteMyAccount": "Verwijder mijn account",
     "somethingWentWrong": "Er is iets misgegaan",
     "retry": "Opnieuw proberen",
-    "noProfileData": "Geen profielgegevens"
+    "noProfileData": "Geen profielgegevens",
+    "countHours": "{count, plural, =1{1 uur} other{{count} uur}}",
+    "@countHours": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    }
 }
