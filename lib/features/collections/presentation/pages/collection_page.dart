@@ -117,7 +117,7 @@ class CollectionPage extends ConsumerWidget {
                     child: ElevatedButton.icon(
                       onPressed: () {
                         final link =
-                            'https://edubadges.nl/collection/${collection.id}';
+                            'https://edubadges.nl/collection/${collection.id}'; //TODO: Replace with actual link
                         Clipboard.setData(ClipboardData(text: link));
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -241,7 +241,9 @@ class CollectionPage extends ConsumerWidget {
         backgroundColor: AppColors.surface,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              // TODO: Implement add edubadge functionality
+            },
             icon: const SvgIcon(
               assetPath: Assets.iconEdit,
               size: 24,

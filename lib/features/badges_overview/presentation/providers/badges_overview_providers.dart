@@ -5,31 +5,36 @@ import 'package:edubadges/features/badges_overview/domain/repositories/badges_ov
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final badgesOverviewDataSourceProvider = Provider<BadgesOverviewDataSource>((ref) {
+final badgesOverviewDataSourceProvider = Provider<BadgesOverviewDataSource>((
+  ref,
+) {
   final client = ref.read(apiClientProvider);
   return BadgesOverviewDataSourceImpl(client);
 });
 
-final badgesOverviewRepositoryProvider = Provider<BadgesOverviewRepository>((ref) {
+final badgesOverviewRepositoryProvider = Provider<BadgesOverviewRepository>((
+  ref,
+) {
   final datasource = ref.read(badgesOverviewDataSourceProvider);
   return BadgesOverviewRepositoryImpl(datasource);
 });
 
-final badgesOverviewProvider = AsyncNotifierProvider<BadgesOverviewNotifier, List<BadgeInstanceModel>>(
-  BadgesOverviewNotifier.new,
-);
+final badgesOverviewProvider =
+    AsyncNotifierProvider<BadgesOverviewNotifier, List<BadgeInstanceModel>>(
+      BadgesOverviewNotifier.new,
+    );
 
 class BadgesOverviewNotifier extends AsyncNotifier<List<BadgeInstanceModel>> {
   @override
   Future<List<BadgeInstanceModel>> build() async {
     final repository = ref.read(badgesOverviewRepositoryProvider);
     final result = await repository.getBadgeInstances();
-    
+
     final badges = result.fold(
       (failure) => throw failure,
       (entities) => entities,
     );
-    
+
     return badges;
   }
 
@@ -39,7 +44,7 @@ class BadgesOverviewNotifier extends AsyncNotifier<List<BadgeInstanceModel>> {
     try {
       final repository = ref.read(badgesOverviewRepositoryProvider);
       final result = await repository.getBadgeInstances();
-      
+
       result.fold(
         (failure) => state = AsyncError(failure, StackTrace.current),
         (entities) => state = AsyncData(entities),

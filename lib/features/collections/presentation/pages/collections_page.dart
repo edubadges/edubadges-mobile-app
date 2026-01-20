@@ -88,11 +88,15 @@ class CollectionsPage extends ConsumerWidget {
                 ),
                 child: InkWell(
                   onTap: () {
-                    final route = RoutePath.collection.replaceAll(':id', collection.id);
+                    final route = RoutePath.collection.replaceAll(
+                      ':id',
+                      collection.id,
+                    );
                     final uri = Uri.parse(route).replace(
                       queryParameters: {
                         'title': collection.name,
-                        if (collection.description != null && collection.description!.isNotEmpty)
+                        if (collection.description != null &&
+                            collection.description!.isNotEmpty)
                           'description': collection.description!,
                       },
                     );
