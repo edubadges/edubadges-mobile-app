@@ -50,5 +50,23 @@
                 "format": "decimalPattern"
             }
         }
-    }
+    },
+    "noCollectionsYet": "Nog geen collecties",
+    "countEdubadges": "{count, plural, =1{1 edubadge} other{{count} edubadges}}",
+    "@countEdubadges": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "errorLoadingCollections": "Fout bij het laden van collecties",
+    "collectionVisibleAndShareable": "Collectie zichtbaar en deelbaar",
+    "publicCollectionRequires": "Een openbare collectie vereist op zijn minst 1 openbare edubadge",
+    "privateBadgesError": "Er staan één of meerdere badges op privé, maak deze openbaar om deze collectie openbaar te kunnen maken.",
+    "linkCopied": "Link gekopieerd",
+    "copyLink": "Kopieer link",
+    "errorLoadingCollection": "Fout bij het laden van collectie",
+    "goBack": "Ga terug"
 }

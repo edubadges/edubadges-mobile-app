@@ -6,12 +6,12 @@ import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final badgesOverviewDataSourceProvider = Provider<BadgesOverviewDataSource>((ref) {
-  final client = ref.watch(apiClientProvider);
+  final client = ref.read(apiClientProvider);
   return BadgesOverviewDataSourceImpl(client);
 });
 
 final badgesOverviewRepositoryProvider = Provider<BadgesOverviewRepository>((ref) {
-  final datasource = ref.watch(badgesOverviewDataSourceProvider);
+  final datasource = ref.read(badgesOverviewDataSourceProvider);
   return BadgesOverviewRepositoryImpl(datasource);
 });
 
@@ -25,10 +25,12 @@ class BadgesOverviewNotifier extends AsyncNotifier<List<BadgeInstanceModel>> {
     final repository = ref.read(badgesOverviewRepositoryProvider);
     final result = await repository.getBadgeInstances();
     
-    return result.fold(
+    final badges = result.fold(
       (failure) => throw failure,
       (entities) => entities,
     );
+    
+    return badges;
   }
 
   /// Refresh the badge instances list

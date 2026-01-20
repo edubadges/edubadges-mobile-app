@@ -1,16 +1,151 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
+import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
+import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/data/models/badge_instance_model.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class CollectionPage extends StatelessWidget {
+class CollectionPage extends ConsumerWidget {
   final CollectionRouteModel collection;
 
   const CollectionPage({super.key, required this.collection});
+
+  Widget _buildVisibilitySection(
+    BuildContext context,
+    List<BadgeInstanceModel> badges,
+    ValueNotifier<bool> publicNotifier,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final allBadgesPublic =
+        badges.isEmpty || badges.every((badge) => badge.public);
+    final canMakePublic = allBadgesPublic && badges.isNotEmpty;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: colorScheme.outlineVariant, width: 1),
+      ),
+      child: Column(
+        spacing: 16,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.collectionVisibleAndShareable,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.publicCollectionRequires,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              ValueListenableBuilder<bool>(
+                valueListenable: publicNotifier,
+                builder: (context, value, child) {
+                  final isOn = value && canMakePublic;
+                  return AnimatedIconSwitch(
+                    value: isOn,
+                    width: 44,
+                    height: 28,
+                    activeColor: colorScheme.primary,
+                    inactiveColor: colorScheme.surfaceContainerHighest,
+                    activeThumbColor: Colors.white,
+                    inactiveThumbColor: colorScheme.onSurfaceVariant,
+                    withIcons: true,
+                    iconOnThumb: true,
+                    activeIcon: Icons.check,
+                    inactiveIcon: Icons.close,
+                    activeIconColor: colorScheme.primary,
+                    inactiveIconColor: Colors.white,
+                    activeIconSize: 16,
+                    inactiveIconSize: 16,
+                    borderRadius: 14,
+                    onChanged: canMakePublic
+                        ? (bool state) {
+                            publicNotifier.value = state;
+                          }
+                        : null,
+                  );
+                },
+              ),
+            ],
+          ),
+          if (!allBadgesPublic && badges.isNotEmpty) ...[
+            Text(
+              l10n.privateBadgesError,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.error,
+              ),
+            ),
+          ],
+          ValueListenableBuilder<bool>(
+            valueListenable: publicNotifier,
+            builder: (context, isPublicValue, child) {
+              if (!isPublicValue || !canMakePublic) {
+                return const SizedBox.shrink();
+              }
+              return Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        final link =
+                            'https://edubadges.nl/collection/${collection.id}';
+                        Clipboard.setData(ClipboardData(text: link));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(l10n.linkCopied),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.copy, size: 20),
+                      label: Text(l10n.copyLink),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorScheme.primary,
+                        foregroundColor: colorScheme.onPrimary,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildEmptyState(BuildContext context, double screenWidth) {
     final l10n = AppLocalizations.of(context)!;
@@ -51,9 +186,7 @@ class CollectionPage extends StatelessWidget {
           child: SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-                // TODO: Implement add edubadge functionality
-              },
+              onPressed: () {},
               style: ElevatedButton.styleFrom(
                 backgroundColor: colorScheme.primary,
                 foregroundColor: colorScheme.onPrimary,
@@ -83,17 +216,16 @@ class CollectionPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final screenWidth = MediaQuery.of(context).size.width;
+    final collectionsAsync = ref.watch(collectionsProvider);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
         centerTitle: false,
-
         titleSpacing: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.primary),
@@ -109,9 +241,7 @@ class CollectionPage extends StatelessWidget {
         backgroundColor: AppColors.surface,
         actions: [
           IconButton(
-            onPressed: () {
-              // TODO: Implement edit functionality
-            },
+            onPressed: () {},
             icon: const SvgIcon(
               assetPath: Assets.iconEdit,
               size: 24,
@@ -131,9 +261,7 @@ class CollectionPage extends StatelessWidget {
                   onFirstButtonPressed: () {
                     context.pop();
                   },
-                  onSecondButtonPressed: () {
-                    // TODO: Implement delete functionality
-                  },
+                  onSecondButtonPressed: () {},
                 ),
               );
             },
@@ -146,25 +274,60 @@ class CollectionPage extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (collection.description != null &&
-                  collection.description!.isNotEmpty) ...[
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    collection.description!,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurface,
+        child: collectionsAsync.when(
+          data: (collections) {
+            final foundCollection = collections.firstWhere(
+              (c) => c.id == collection.id,
+              orElse: () => collections.first,
+            );
+
+            final badges = foundCollection.badgeInstances ?? [];
+            final publicNotifier = ValueNotifier<bool>(foundCollection.public);
+
+            if (badges.isEmpty) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: _buildEmptyState(
+                  context,
+                  MediaQuery.of(context).size.width,
+                ),
+              );
+            }
+
+            return ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                _buildVisibilitySection(context, badges, publicNotifier),
+                ...badges.map(
+                  (badge) => Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: BadgeCard(
+                      instance: badge,
+                      style: BadgeCardStyle.large,
                     ),
                   ),
                 ),
               ],
-              Expanded(child: _buildEmptyState(context, screenWidth)),
-            ],
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stackTrace) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  l10n.errorLoadingCollection,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: colorScheme.error,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => context.pop(),
+                  child: Text(l10n.goBack),
+                ),
+              ],
+            ),
           ),
         ),
       ),
