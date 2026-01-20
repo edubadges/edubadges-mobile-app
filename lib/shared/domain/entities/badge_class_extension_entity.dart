@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class BadgeClassExtensionEntity extends Equatable {
   final String name;
-  final String value;
+  final dynamic value;
 
   const BadgeClassExtensionEntity({
     required this.name,

@@ -9,7 +9,7 @@ class BadgeClassExtensionModel extends BadgeClassExtensionEntity {
   factory BadgeClassExtensionModel.fromJson(Map<String, dynamic> json) {
     return BadgeClassExtensionModel(
       name: json['name'] as String,
-      value: json['value'] as String,
+      value: json['value'] as dynamic,
     );
   }
 
