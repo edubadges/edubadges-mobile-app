@@ -63,7 +63,7 @@
             }
         }
     },
-    "confirm": "Bevestig"
+    "confirm": "Bevestig",
     "countHours": "{count, plural, =1{1 uur} other{{count} uur}}",
     "@countHours": {
         "placeholders": {
