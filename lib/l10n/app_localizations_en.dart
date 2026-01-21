@@ -140,6 +140,53 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noProfileData => 'No profile data';
 
   @override
+  String get logoutConfirmationTitle => 'Are you sure?';
+
+  @override
+  String get logoutConfirmationMessage => 'You are about to log out.';
+
+  @override
+  String get logout => 'Log out';
+
+  @override
+  String get deleteAccountConfirmationTitle => 'Delete my account';
+
+  @override
+  String get deleteAccountConfirmationMessage =>
+      'Be aware that after this, all your edubadges can no longer be validated. Deleting your edubadges account does not mean that your eduID will also be deleted.';
+
+  @override
+  String get deleteAccountConfirmationPrompt =>
+      'Type the word \'delete\' to permanently delete my badges';
+
+  @override
+  String get deleteAccountInputPlaceholder => 'Type \'delete\'';
+
+  @override
+  String get deleteAccountRequiredText => 'delete';
+
+  @override
+  String get privacyConditions => 'Privacy conditions';
+
+  @override
+  String get withdraw => 'Withdraw';
+
+  @override
+  String get viewFullText => 'View full text';
+
+  @override
+  String get viewShortText => 'View short text';
+
+  @override
+  String get withdrawAgreementTitle => 'Withdraw my agreement statement';
+
+  @override
+  String withdrawAgreementMessage(String institution) {
+    return 'Are you sure you want to withdraw your agreement statement for $institution?';
+  }
+
+  @override
+  String get confirm => 'Confirm';
   String countHours(num count) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);

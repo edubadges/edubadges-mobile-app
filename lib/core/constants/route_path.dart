@@ -6,6 +6,7 @@ class RoutePath {
   static const String collection = '/collection/:id';
   static const String catalog = '/catalog';
   static const String account = '/account';
+  static const String agreementDetails = '/agreement/:id';
 
   /// List of all main navigation routes
   static const List<String> mainRoutes = [main, collections, catalog, account];

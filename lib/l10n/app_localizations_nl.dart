@@ -140,6 +140,54 @@ class AppLocalizationsNl extends AppLocalizations {
   String get noProfileData => 'Geen profielgegevens';
 
   @override
+  String get logoutConfirmationTitle => 'Weet je het zeker?';
+
+  @override
+  String get logoutConfirmationMessage =>
+      'Je staat op het punt om uit te loggen.';
+
+  @override
+  String get logout => 'Uitloggen';
+
+  @override
+  String get deleteAccountConfirmationTitle => 'Verwijder mijn account';
+
+  @override
+  String get deleteAccountConfirmationMessage =>
+      'Wees je dan wel bewust dat hierna al je edubadges niet meer gevalideerd kunnen worden. Het verwijderen van je edubadges account betekent overigens niet dat je eduID ook verwijderd wordt.';
+
+  @override
+  String get deleteAccountConfirmationPrompt =>
+      'Typ het woord \'verwijderen\' om mijn badges definitief te verwijderen';
+
+  @override
+  String get deleteAccountInputPlaceholder => 'Typ \'verwijderen\'';
+
+  @override
+  String get deleteAccountRequiredText => 'verwijderen';
+
+  @override
+  String get privacyConditions => 'Privacy voorwaarden';
+
+  @override
+  String get withdraw => 'Intrekken';
+
+  @override
+  String get viewFullText => 'Bekijk volledige tekst';
+
+  @override
+  String get viewShortText => 'Bekijk korte tekst';
+
+  @override
+  String get withdrawAgreementTitle => 'Mijn akkoordverklaring intrekken';
+
+  @override
+  String withdrawAgreementMessage(String institution) {
+    return 'Weet je zeker dat je je akkoordverklaring wil intrekken voor $institution?';
+  }
+
+  @override
+  String get confirm => 'Bevestig';
   String countHours(num count) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);

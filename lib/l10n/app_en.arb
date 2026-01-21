@@ -42,6 +42,29 @@
     "somethingWentWrong": "Something went wrong",
     "retry": "Retry",
     "noProfileData": "No profile data",
+<<<<<<< lib/l10n/app_en.arb
+    "logoutConfirmationTitle": "Are you sure?",
+    "logoutConfirmationMessage": "You are about to log out.",
+    "logout": "Log out",
+    "deleteAccountConfirmationTitle": "Delete my account",
+    "deleteAccountConfirmationMessage": "Be aware that after this, all your edubadges can no longer be validated. Deleting your edubadges account does not mean that your eduID will also be deleted.",
+    "deleteAccountConfirmationPrompt": "Type the word 'delete' to permanently delete my badges",
+    "deleteAccountInputPlaceholder": "Type 'delete'",
+    "deleteAccountRequiredText": "delete",
+    "privacyConditions": "Privacy conditions",
+    "withdraw": "Withdraw",
+    "viewFullText": "View full text",
+    "viewShortText": "View short text",
+    "withdrawAgreementTitle": "Withdraw my agreement statement",
+    "withdrawAgreementMessage": "Are you sure you want to withdraw your agreement statement for {institution}?",
+    "@withdrawAgreementMessage": {
+        "placeholders": {
+            "institution": {
+                "type": "String"
+            }
+        }
+    },
+    "confirm": "Confirm"
     "countHours": "{count, plural, =1{1 hour} other{{count} hours}}",
     "@countHours": {
         "placeholders": {
