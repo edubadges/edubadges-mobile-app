@@ -42,7 +42,6 @@
     "somethingWentWrong": "Something went wrong",
     "retry": "Retry",
     "noProfileData": "No profile data",
-<<<<<<< lib/l10n/app_en.arb
     "logoutConfirmationTitle": "Are you sure?",
     "logoutConfirmationMessage": "You are about to log out.",
     "logout": "Log out",
@@ -64,7 +63,7 @@
             }
         }
     },
-    "confirm": "Confirm"
+    "confirm": "Confirm",
     "countHours": "{count, plural, =1{1 hour} other{{count} hours}}",
     "@countHours": {
         "placeholders": {
