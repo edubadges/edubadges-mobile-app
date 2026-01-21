@@ -16,9 +16,7 @@ class CollectionsDataSourceImpl implements CollectionsDataSource {
 
   @override
   Future<List<CollectionsModel>> getCollectionss() async {
-    final response = await apiClient.get<List<dynamic>>(
-      '/badge-collections',
-    );
+    final response = await apiClient.get<List<dynamic>>('/badge-collections');
     final data = response.data ?? [];
 
     try {

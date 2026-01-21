@@ -11,9 +11,7 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsModel>> {
     final badgeInstances = await ref.read(badgesOverviewProvider.future);
 
     final apiClient = ref.read(apiClientProvider);
-    final response = await apiClient.get<List<dynamic>>(
-      '/badge-collections',
-    );
+    final response = await apiClient.get<List<dynamic>>('/badge-collections');
 
     final collectionsJson = response.data ?? [];
     final collections = collectionsJson
@@ -36,9 +34,7 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsModel>> {
     try {
       final badgeInstances = await ref.read(badgesOverviewProvider.future);
       final apiClient = ref.read(apiClientProvider);
-      final response = await apiClient.get<List<dynamic>>(
-        '/badge-collections',
-      );
+      final response = await apiClient.get<List<dynamic>>('/badge-collections');
 
       final collectionsJson = response.data ?? [];
       final collections = collectionsJson

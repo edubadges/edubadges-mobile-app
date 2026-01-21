@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 import 'package:edubadges/core/network/errors/error_handling_method.dart';
 import 'package:edubadges/core/network/network_exceptions.dart';
@@ -32,13 +31,12 @@ class ApiClient {
       if (errorHandlingMethod != null) {
         requestOptions.extra!['errorHandlingMethod'] = errorHandlingMethod;
       }
-      
-      // Merge default query parameters with provided ones
+
       final mergedQueryParameters = <String, dynamic>{
         'format': 'json',
         ...?queryParameters,
       };
-      
+
       return await _dio.get<T>(
         path,
         queryParameters: mergedQueryParameters,
@@ -70,7 +68,7 @@ class ApiClient {
       if (errorHandlingMethod != null) {
         requestOptions.extra!['errorHandlingMethod'] = errorHandlingMethod;
       }
-      
+
       return await _dio.post<T>(
         path,
         data: data,
@@ -104,7 +102,7 @@ class ApiClient {
       if (errorHandlingMethod != null) {
         requestOptions.extra!['errorHandlingMethod'] = errorHandlingMethod;
       }
-      
+
       return await _dio.put<T>(
         path,
         data: data,
@@ -138,7 +136,7 @@ class ApiClient {
       if (errorHandlingMethod != null) {
         requestOptions.extra!['errorHandlingMethod'] = errorHandlingMethod;
       }
-      
+
       return await _dio.patch<T>(
         path,
         data: data,
@@ -170,7 +168,7 @@ class ApiClient {
       if (errorHandlingMethod != null) {
         requestOptions.extra!['errorHandlingMethod'] = errorHandlingMethod;
       }
-      
+
       return await _dio.delete<T>(
         path,
         data: data,
@@ -203,7 +201,7 @@ class ApiClient {
       if (errorHandlingMethod != null) {
         requestOptions.extra!['errorHandlingMethod'] = errorHandlingMethod;
       }
-      
+
       return await _dio.download(
         urlPath,
         savePath,
