@@ -197,6 +197,8 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get confirm => 'Bevestig';
+
+  @override
   String countHours(num count) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);

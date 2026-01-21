@@ -362,7 +362,6 @@ abstract class AppLocalizations {
   /// **'No profile data'**
   String get noProfileData;
 
-
   /// No description provided for @logoutConfirmationTitle.
   ///
   /// In en, this message translates to:

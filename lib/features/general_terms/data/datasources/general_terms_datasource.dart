@@ -17,6 +17,7 @@ class GeneralTermsDataSourceImpl implements GeneralTermsDataSource {
       logger.i('Get terms URL call completed with status code: ${response.statusCode}');
 
       if (response.statusCode == 200 && response.data != null) {
+        // TODO: update in the agreement ticket
         // Assuming the response body contains the URL to the markdown file.
         final url = response.data.toString();
         logger.i('Received terms URL from API: $url');
