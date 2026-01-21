@@ -147,4 +147,118 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get noProfileData => 'Geen profielgegevens';
+
+  @override
+  String get logoutConfirmationTitle => 'Weet je het zeker?';
+
+  @override
+  String get logoutConfirmationMessage =>
+      'Je staat op het punt om uit te loggen.';
+
+  @override
+  String get logout => 'Uitloggen';
+
+  @override
+  String get deleteAccountConfirmationTitle => 'Verwijder mijn account';
+
+  @override
+  String get deleteAccountConfirmationMessage =>
+      'Wees je dan wel bewust dat hierna al je edubadges niet meer gevalideerd kunnen worden. Het verwijderen van je edubadges account betekent overigens niet dat je eduID ook verwijderd wordt.';
+
+  @override
+  String get deleteAccountConfirmationPrompt =>
+      'Typ het woord \'verwijderen\' om mijn badges definitief te verwijderen';
+
+  @override
+  String get deleteAccountInputPlaceholder => 'Typ \'verwijderen\'';
+
+  @override
+  String get deleteAccountRequiredText => 'verwijderen';
+
+  @override
+  String get privacyConditions => 'Privacy voorwaarden';
+
+  @override
+  String get withdraw => 'Intrekken';
+
+  @override
+  String get viewFullText => 'Bekijk volledige tekst';
+
+  @override
+  String get viewShortText => 'Bekijk korte tekst';
+
+  @override
+  String get withdrawAgreementTitle => 'Mijn akkoordverklaring intrekken';
+
+  @override
+  String withdrawAgreementMessage(String institution) {
+    return 'Weet je zeker dat je je akkoordverklaring wil intrekken voor $institution?';
+  }
+
+  @override
+  String get confirm => 'Bevestig';
+  String countHours(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString uur',
+      one: '1 uur',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noCollectionsYet => 'Nog geen collecties';
+
+  @override
+  String countEdubadges(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString edubadges',
+      one: '1 edubadge',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get errorLoadingCollections => 'Fout bij het laden van collecties';
+
+  @override
+  String get collectionVisibleAndShareable => 'Collectie zichtbaar en deelbaar';
+
+  @override
+  String get publicCollectionRequires =>
+      'Een openbare collectie vereist op zijn minst 1 openbare edubadge';
+
+  @override
+  String get privateBadgesError =>
+      'Er staan één of meerdere badges op privé, maak deze openbaar om deze collectie openbaar te kunnen maken.';
+
+  @override
+  String get linkCopied => 'Link gekopieerd';
+
+  @override
+  String get copyLink => 'Kopieer link';
+
+  @override
+  String get errorLoadingCollection => 'Fout bij het laden van collectie';
+
+  @override
+  String get goBack => 'Ga terug';
+
+  @override
+  String get editCollection => 'Bewerk collectie';
+
+  @override
+  String get editCollectionDescription =>
+      'Werk de details van je collectie bij';
 }

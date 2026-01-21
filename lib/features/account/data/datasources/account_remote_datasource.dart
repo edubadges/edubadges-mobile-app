@@ -9,10 +9,7 @@ class AccountRemoteDataSourceImpl implements AccountDataSource {
 
   @override
   Future<ProfileModel> getProfile() async {
-    final response = await apiClient.get(
-      '/profile',
-      queryParameters: {'format': 'json'},
-    );
+    final response = await apiClient.get('/profile');
     return ProfileModel.fromJson(response.data as Map<String, dynamic>);
   }
 }

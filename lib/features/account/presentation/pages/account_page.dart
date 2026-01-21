@@ -1,8 +1,11 @@
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
+import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
+import 'package:edubadges/features/account/presentation/widgets/delete_account_dialog.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
@@ -203,11 +206,12 @@ class AccountPage extends ConsumerWidget {
               ),
             ),
             Switch(
-              value: profile.marketingOptIn,
+              value: true, // TODO: Replace with real value later https://digitalclub.atlassian.net/browse/SURF-514
               onChanged: (value) {
-                // TODO: Implement update notification settings
+                // TODO: Implement update notification settings https://digitalclub.atlassian.net/browse/SURF-514
               },
-              activeThumbColor: colorScheme.primary,
+              activeThumbColor: colorScheme.surfaceContainer,
+              activeTrackColor: colorScheme.primary,
             ),
           ],
         ),
@@ -226,13 +230,38 @@ class AccountPage extends ConsumerWidget {
     BuildContext context,
     String institution,
     String dateText,
+    ({String institution, String type, DateTime date, String version})
+    agreement,
   ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    // Mock agreement data - TODO replace with actual API data when available https://digitalclub.atlassian.net/browse/SURF-514
+    final agreementModel = AgreementRouteModel(
+      agreementId: agreement.institution,
+      titleLong: 'Edubadges and your privacy - Full Version',
+      textLong:
+          '''Below are the most important points about edubadges and your privacy. In the [full version](https://raw.githubusercontent.com/edubadges/privacy/master/hogeschool-utrecht/edubadges-formal-text-en.md) detailed information about this processing can be found.
+
+University of applied sciences Utrecht is the controller and SURF is the processor for issuing edubadges. For the edubadges platform to function, it is necessary to process your personal data. By using digital badges, Hogeschool Utrecht enables the students and participant to visibly present their acquired competences at other educational institutions and social media such as LinkedIN. With badges the students and participants are enabled to be in charge of their own choices regarding the learning progress and respective learning process.
+
+To issue edubadges, your first name, last name, a unique identifier and email address are processed. In addition the edubadge contains your eduID and supplementary information such as the time of issue, the publisher (University of applied sciences Utrecht) and information about the achievement, educational module and/or learning outcomes. If you have any questions about your privacy, please contact [askprivacy@hu.nl](mailto:askprivacy@hu.nl).
+
+By clicking 'I have read this', you declare that you have read the [full privacy statement](https://raw.githubusercontent.com/edubadges/privacy/master/hogeschool-utrecht/edubadges-formal-text-en.md).''',
+      titleShort: 'Edubadges and your privacy',
+      textShort:
+          '''Below are the most important points about edubadges and your privacy. In the [full version](https://raw.githubusercontent.com/edubadges/privacy/master/hogeschool-utrecht/edubadges-formal-text-en.md) detailed information about this processing can be found.
+
+University of applied sciences Utrecht is the controller and SURF is the processor for issuing edubadges. For the edubadges platform to function, it is necessary to process your personal data. By using digital badges, Hogeschool Utrecht enables the students and participant to visibly present their acquired competences at other educational institutions and social media such as LinkedIN. With badges the students and participants are enabled to be in charge of their own choices regarding the learning progress and respective learning process.
+
+To issue edubadges, your first name, last name, a unique identifier and email address are processed. In addition the edubadge contains your eduID and supplementary information such as the time of issue, the publisher (University of applied sciences Utrecht) and information about the achievement, educational module and/or learning outcomes. If you have any questions about your privacy, please contact [askprivacy@hu.nl](mailto:askprivacy@hu.nl).
+
+By clicking 'I have read this', you declare that you have read the [full privacy statement](https://raw.githubusercontent.com/edubadges/privacy/master/hogeschool-utrecht/edubadges-formal-text-en.md).''',
+    );
+
     return InkWell(
       onTap: () {
-        // TODO: Navigate to agreement details
+        context.push(agreementModel.buildRouteUrl());
       },
       borderRadius: BorderRadius.circular(_badgeBorderRadius),
       child: Padding(
@@ -319,12 +348,29 @@ class AccountPage extends ConsumerWidget {
 
           return Column(
             children: [
-              _buildAgreementItem(context, agreement.institution, dateText),
+              _buildAgreementItem(
+                context,
+                agreement.institution,
+                dateText,
+                agreement,
+              ),
               if (!isLast) _buildDivider(colorScheme),
             ],
           );
         }),
       ],
+    );
+  }
+
+  Future<void> _showDeleteAccountConfirmation(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (context) => DeleteAccountDialog(
+        onDelete: () async {
+          // TODO: Implement delete account functionality https://digitalclub.atlassian.net/browse/SURF-514
+          Navigator.of(context).pop();
+        },
+      ),
     );
   }
 
@@ -348,9 +394,7 @@ class AccountPage extends ConsumerWidget {
         SizedBox(
           width: double.infinity,
           child: OutlinedButton(
-            onPressed: () {
-              // TODO: Implement delete account functionality
-            },
+            onPressed: () => _showDeleteAccountConfirmation(context),
             style: OutlinedButton.styleFrom(
               foregroundColor: colorScheme.error,
               side: BorderSide(color: colorScheme.error),
@@ -368,6 +412,31 @@ class AccountPage extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Future<void> _showLogoutConfirmation(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    await AdaptiveDialog.show(
+      context: context,
+      config: AdaptiveDialogConfig(
+        title: l10n.logoutConfirmationTitle,
+        description: l10n.logoutConfirmationMessage,
+        firstButtonText: l10n.cancel,
+        secondButtonText: l10n.logout,
+        isDestructiveAction: true,
+        onFirstButtonPressed: () {},
+        onSecondButtonPressed: () async {
+          await ref.read(authProvider.notifier).logout();
+          if (context.mounted) {
+            context.go(RoutePath.login);
+          }
+        },
+      ),
     );
   }
 
@@ -391,12 +460,7 @@ class AccountPage extends ConsumerWidget {
         actions: [
           IconButton(
             icon: Icon(Icons.logout, color: colorScheme.primary, size: 24),
-            onPressed: () async {
-              await ref.read(authProvider.notifier).logout();
-              if (context.mounted) {
-                context.go(RoutePath.login);
-              }
-            },
+            onPressed: () => _showLogoutConfirmation(context, ref),
           ),
         ],
       ),
@@ -404,7 +468,7 @@ class AccountPage extends ConsumerWidget {
         child: profileAsync.when(
           data: (profile) {
             if (profile == null) {
-              return  Center(child: Text(l10n.noProfileData));
+              return Center(child: Text(l10n.noProfileData));
             }
             return SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(

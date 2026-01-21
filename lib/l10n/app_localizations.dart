@@ -361,6 +361,175 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No profile data'**
   String get noProfileData;
+
+
+  /// No description provided for @logoutConfirmationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure?'**
+  String get logoutConfirmationTitle;
+
+  /// No description provided for @logoutConfirmationMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You are about to log out.'**
+  String get logoutConfirmationMessage;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get logout;
+
+  /// No description provided for @deleteAccountConfirmationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get deleteAccountConfirmationTitle;
+
+  /// No description provided for @deleteAccountConfirmationMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Be aware that after this, all your edubadges can no longer be validated. Deleting your edubadges account does not mean that your eduID will also be deleted.'**
+  String get deleteAccountConfirmationMessage;
+
+  /// No description provided for @deleteAccountConfirmationPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Type the word \'delete\' to permanently delete my badges'**
+  String get deleteAccountConfirmationPrompt;
+
+  /// No description provided for @deleteAccountInputPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Type \'delete\''**
+  String get deleteAccountInputPlaceholder;
+
+  /// No description provided for @deleteAccountRequiredText.
+  ///
+  /// In en, this message translates to:
+  /// **'delete'**
+  String get deleteAccountRequiredText;
+
+  /// No description provided for @privacyConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy conditions'**
+  String get privacyConditions;
+
+  /// No description provided for @withdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get withdraw;
+
+  /// No description provided for @viewFullText.
+  ///
+  /// In en, this message translates to:
+  /// **'View full text'**
+  String get viewFullText;
+
+  /// No description provided for @viewShortText.
+  ///
+  /// In en, this message translates to:
+  /// **'View short text'**
+  String get viewShortText;
+
+  /// No description provided for @withdrawAgreementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw my agreement statement'**
+  String get withdrawAgreementTitle;
+
+  /// No description provided for @withdrawAgreementMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to withdraw your agreement statement for {institution}?'**
+  String withdrawAgreementMessage(String institution);
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @countHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 hour} other{{count} hours}}'**
+  String countHours(num count);
+
+  /// No description provided for @noCollectionsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No collections yet'**
+  String get noCollectionsYet;
+
+  /// No description provided for @countEdubadges.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 edubadge} other{{count} edubadges}}'**
+  String countEdubadges(num count);
+
+  /// No description provided for @errorLoadingCollections.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading collections'**
+  String get errorLoadingCollections;
+
+  /// No description provided for @collectionVisibleAndShareable.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection visible and shareable'**
+  String get collectionVisibleAndShareable;
+
+  /// No description provided for @publicCollectionRequires.
+  ///
+  /// In en, this message translates to:
+  /// **'A public collection requires at least 1 public edubadge'**
+  String get publicCollectionRequires;
+
+  /// No description provided for @privateBadgesError.
+  ///
+  /// In en, this message translates to:
+  /// **'One or more badges are private, make them public to make this collection public.'**
+  String get privateBadgesError;
+
+  /// No description provided for @linkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied'**
+  String get linkCopied;
+
+  /// No description provided for @copyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy link'**
+  String get copyLink;
+
+  /// No description provided for @errorLoadingCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading collection'**
+  String get errorLoadingCollection;
+
+  /// No description provided for @goBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Back'**
+  String get goBack;
+
+  /// No description provided for @editCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit collection'**
+  String get editCollection;
+
+  /// No description provided for @editCollectionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your collection details'**
+  String get editCollectionDescription;
 }
 
 class _AppLocalizationsDelegate

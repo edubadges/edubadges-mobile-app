@@ -1,5 +1,7 @@
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/presentation/pages/account_page.dart';
+import 'package:edubadges/features/account/presentation/pages/agreement_details_page.dart';
 import 'package:edubadges/features/badges_overview/presentation/pages/badges_overview_page.dart';
 import 'package:edubadges/features/catalog/presentation/pages/catalog_page.dart';
 import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
@@ -68,6 +70,28 @@ final appRouter = Provider<GoRouter>((ref) {
           );
 
           return CollectionPage(collection: collection);
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.agreementDetails,
+        name: 'agreement-details',
+        builder: (context, state) {
+          final agreementId = state.pathParameters['id'] ?? '';
+          final titleLong = state.uri.queryParameters['titleLong'] ?? '';
+          final textLong = state.uri.queryParameters['textLong'] ?? '';
+          final titleShort = state.uri.queryParameters['titleShort'] ?? '';
+          final textShort = state.uri.queryParameters['textShort'] ?? '';
+
+          final agreement = AgreementRouteModel(
+            agreementId: agreementId,
+            titleLong: titleLong,
+            textLong: textLong,
+            titleShort: titleShort,
+            textShort: textShort,
+          );
+
+          return AgreementDetailsPage(agreement: agreement);
         },
       ),
 

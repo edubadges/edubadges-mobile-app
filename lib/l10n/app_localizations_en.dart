@@ -147,4 +147,117 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noProfileData => 'No profile data';
+
+  @override
+  String get logoutConfirmationTitle => 'Are you sure?';
+
+  @override
+  String get logoutConfirmationMessage => 'You are about to log out.';
+
+  @override
+  String get logout => 'Log out';
+
+  @override
+  String get deleteAccountConfirmationTitle => 'Delete my account';
+
+  @override
+  String get deleteAccountConfirmationMessage =>
+      'Be aware that after this, all your edubadges can no longer be validated. Deleting your edubadges account does not mean that your eduID will also be deleted.';
+
+  @override
+  String get deleteAccountConfirmationPrompt =>
+      'Type the word \'delete\' to permanently delete my badges';
+
+  @override
+  String get deleteAccountInputPlaceholder => 'Type \'delete\'';
+
+  @override
+  String get deleteAccountRequiredText => 'delete';
+
+  @override
+  String get privacyConditions => 'Privacy conditions';
+
+  @override
+  String get withdraw => 'Withdraw';
+
+  @override
+  String get viewFullText => 'View full text';
+
+  @override
+  String get viewShortText => 'View short text';
+
+  @override
+  String get withdrawAgreementTitle => 'Withdraw my agreement statement';
+
+  @override
+  String withdrawAgreementMessage(String institution) {
+    return 'Are you sure you want to withdraw your agreement statement for $institution?';
+  }
+
+  @override
+  String get confirm => 'Confirm';
+  String countHours(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString hours',
+      one: '1 hour',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noCollectionsYet => 'No collections yet';
+
+  @override
+  String countEdubadges(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString edubadges',
+      one: '1 edubadge',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get errorLoadingCollections => 'Error loading collections';
+
+  @override
+  String get collectionVisibleAndShareable =>
+      'Collection visible and shareable';
+
+  @override
+  String get publicCollectionRequires =>
+      'A public collection requires at least 1 public edubadge';
+
+  @override
+  String get privateBadgesError =>
+      'One or more badges are private, make them public to make this collection public.';
+
+  @override
+  String get linkCopied => 'Link copied';
+
+  @override
+  String get copyLink => 'Copy link';
+
+  @override
+  String get errorLoadingCollection => 'Error loading collection';
+
+  @override
+  String get goBack => 'Go Back';
+
+  @override
+  String get editCollection => 'Edit collection';
+
+  @override
+  String get editCollectionDescription => 'Update your collection details';
 }

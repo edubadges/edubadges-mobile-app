@@ -44,5 +44,56 @@
     "deleteMyAccount": "Delete my account",
     "somethingWentWrong": "Something went wrong",
     "retry": "Retry",
-    "noProfileData": "No profile data"
+    "noProfileData": "No profile data",
+    "logoutConfirmationTitle": "Are you sure?",
+    "logoutConfirmationMessage": "You are about to log out.",
+    "logout": "Log out",
+    "deleteAccountConfirmationTitle": "Delete my account",
+    "deleteAccountConfirmationMessage": "Be aware that after this, all your edubadges can no longer be validated. Deleting your edubadges account does not mean that your eduID will also be deleted.",
+    "deleteAccountConfirmationPrompt": "Type the word 'delete' to permanently delete my badges",
+    "deleteAccountInputPlaceholder": "Type 'delete'",
+    "deleteAccountRequiredText": "delete",
+    "privacyConditions": "Privacy conditions",
+    "withdraw": "Withdraw",
+    "viewFullText": "View full text",
+    "viewShortText": "View short text",
+    "withdrawAgreementTitle": "Withdraw my agreement statement",
+    "withdrawAgreementMessage": "Are you sure you want to withdraw your agreement statement for {institution}?",
+    "@withdrawAgreementMessage": {
+        "placeholders": {
+            "institution": {
+                "type": "String"
+            }
+        }
+    },
+    "confirm": "Confirm",
+    "countHours": "{count, plural, =1{1 hour} other{{count} hours}}",
+    "@countHours": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "noCollectionsYet": "No collections yet",
+    "countEdubadges": "{count, plural, =1{1 edubadge} other{{count} edubadges}}",
+    "@countEdubadges": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "errorLoadingCollections": "Error loading collections",
+    "collectionVisibleAndShareable": "Collection visible and shareable",
+    "publicCollectionRequires": "A public collection requires at least 1 public edubadge",
+    "privateBadgesError": "One or more badges are private, make them public to make this collection public.",
+    "linkCopied": "Link copied",
+    "copyLink": "Copy link",
+    "errorLoadingCollection": "Error loading collection",
+    "goBack": "Go Back",
+    "editCollection": "Edit collection",
+    "editCollectionDescription": "Update your collection details"
 }

@@ -44,5 +44,56 @@
     "deleteMyAccount": "Verwijder mijn account",
     "somethingWentWrong": "Er is iets misgegaan",
     "retry": "Opnieuw proberen",
-    "noProfileData": "Geen profielgegevens"
+    "noProfileData": "Geen profielgegevens",
+    "logoutConfirmationTitle": "Weet je het zeker?",
+    "logoutConfirmationMessage": "Je staat op het punt om uit te loggen.",
+    "logout": "Uitloggen",
+    "deleteAccountConfirmationTitle": "Verwijder mijn account",
+    "deleteAccountConfirmationMessage": "Wees je dan wel bewust dat hierna al je edubadges niet meer gevalideerd kunnen worden. Het verwijderen van je edubadges account betekent overigens niet dat je eduID ook verwijderd wordt.",
+    "deleteAccountConfirmationPrompt": "Typ het woord 'verwijderen' om mijn badges definitief te verwijderen",
+    "deleteAccountInputPlaceholder": "Typ 'verwijderen'",
+    "deleteAccountRequiredText": "verwijderen",
+    "privacyConditions": "Privacy voorwaarden",
+    "withdraw": "Intrekken",
+    "viewFullText": "Bekijk volledige tekst",
+    "viewShortText": "Bekijk korte tekst",
+    "withdrawAgreementTitle": "Mijn akkoordverklaring intrekken",
+    "withdrawAgreementMessage": "Weet je zeker dat je je akkoordverklaring wil intrekken voor {institution}?",
+    "@withdrawAgreementMessage": {
+        "placeholders": {
+            "institution": {
+                "type": "String"
+            }
+        }
+    },
+    "confirm": "Bevestig"
+    "countHours": "{count, plural, =1{1 uur} other{{count} uur}}",
+    "@countHours": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "noCollectionsYet": "Nog geen collecties",
+    "countEdubadges": "{count, plural, =1{1 edubadge} other{{count} edubadges}}",
+    "@countEdubadges": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "errorLoadingCollections": "Fout bij het laden van collecties",
+    "collectionVisibleAndShareable": "Collectie zichtbaar en deelbaar",
+    "publicCollectionRequires": "Een openbare collectie vereist op zijn minst 1 openbare edubadge",
+    "privateBadgesError": "Er staan één of meerdere badges op privé, maak deze openbaar om deze collectie openbaar te kunnen maken.",
+    "linkCopied": "Link gekopieerd",
+    "copyLink": "Kopieer link",
+    "errorLoadingCollection": "Fout bij het laden van collectie",
+    "goBack": "Ga terug",
+    "editCollection": "Bewerk collectie",
+    "editCollectionDescription": "Werk de details van je collectie bij"
 }
