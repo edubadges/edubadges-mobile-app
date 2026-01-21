@@ -18,7 +18,6 @@ class CollectionsDataSourceImpl implements CollectionsDataSource {
   Future<List<CollectionsModel>> getCollectionss() async {
     final response = await apiClient.get<List<dynamic>>(
       '/badge-collections',
-      queryParameters: {'format': 'json'},
     );
     final data = response.data ?? [];
 

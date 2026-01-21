@@ -19,9 +19,9 @@ class BaseFormBottomSheet extends StatelessWidget {
     required this.formKey,
     required this.formFields,
     required this.onSave,
+    required this.saveButtonText,
+    required this.cancelButtonText,
     this.onCancel,
-    this.saveButtonText = 'Save',
-    this.cancelButtonText = 'Cancel',
     this.handleKeyboardPadding = true,
   });
 

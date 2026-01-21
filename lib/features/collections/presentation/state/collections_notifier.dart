@@ -13,7 +13,6 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsModel>> {
     final apiClient = ref.read(apiClientProvider);
     final response = await apiClient.get<List<dynamic>>(
       '/badge-collections',
-      queryParameters: {'format': 'json'},
     );
 
     final collectionsJson = response.data ?? [];
@@ -39,7 +38,6 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsModel>> {
       final apiClient = ref.read(apiClientProvider);
       final response = await apiClient.get<List<dynamic>>(
         '/badge-collections',
-        queryParameters: {'format': 'json'},
       );
 
       final collectionsJson = response.data ?? [];

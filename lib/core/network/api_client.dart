@@ -33,9 +33,15 @@ class ApiClient {
         requestOptions.extra!['errorHandlingMethod'] = errorHandlingMethod;
       }
       
+      // Merge default query parameters with provided ones
+      final mergedQueryParameters = <String, dynamic>{
+        'format': 'json',
+        ...?queryParameters,
+      };
+      
       return await _dio.get<T>(
         path,
-        queryParameters: queryParameters,
+        queryParameters: mergedQueryParameters,
         options: requestOptions,
         cancelToken: cancelToken,
         onReceiveProgress: onReceiveProgress,

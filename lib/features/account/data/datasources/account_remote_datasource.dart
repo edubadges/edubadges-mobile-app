@@ -11,7 +11,6 @@ class AccountRemoteDataSourceImpl implements AccountDataSource {
   Future<ProfileModel> getProfile() async {
     final response = await apiClient.get(
       '/profile',
-      queryParameters: {'format': 'json'},
     );
     return ProfileModel.fromJson(response.data as Map<String, dynamic>);
   }
