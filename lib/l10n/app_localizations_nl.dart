@@ -153,4 +153,48 @@ class AppLocalizationsNl extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get noCollectionsYet => 'Nog geen collecties';
+
+  @override
+  String countEdubadges(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString edubadges',
+      one: '1 edubadge',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get errorLoadingCollections => 'Fout bij het laden van collecties';
+
+  @override
+  String get collectionVisibleAndShareable => 'Collectie zichtbaar en deelbaar';
+
+  @override
+  String get publicCollectionRequires =>
+      'Een openbare collectie vereist op zijn minst 1 openbare edubadge';
+
+  @override
+  String get privateBadgesError =>
+      'Er staan één of meerdere badges op privé, maak deze openbaar om deze collectie openbaar te kunnen maken.';
+
+  @override
+  String get linkCopied => 'Link gekopieerd';
+
+  @override
+  String get copyLink => 'Kopieer link';
+
+  @override
+  String get errorLoadingCollection => 'Fout bij het laden van collectie';
+
+  @override
+  String get goBack => 'Ga terug';
 }

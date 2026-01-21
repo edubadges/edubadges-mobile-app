@@ -349,6 +349,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 hour} other{{count} hours}}'**
   String countHours(num count);
+
+  /// No description provided for @noCollectionsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No collections yet'**
+  String get noCollectionsYet;
+
+  /// No description provided for @countEdubadges.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 edubadge} other{{count} edubadges}}'**
+  String countEdubadges(num count);
+
+  /// No description provided for @errorLoadingCollections.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading collections'**
+  String get errorLoadingCollections;
+
+  /// No description provided for @collectionVisibleAndShareable.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection visible and shareable'**
+  String get collectionVisibleAndShareable;
+
+  /// No description provided for @publicCollectionRequires.
+  ///
+  /// In en, this message translates to:
+  /// **'A public collection requires at least 1 public edubadge'**
+  String get publicCollectionRequires;
+
+  /// No description provided for @privateBadgesError.
+  ///
+  /// In en, this message translates to:
+  /// **'One or more badges are private, make them public to make this collection public.'**
+  String get privateBadgesError;
+
+  /// No description provided for @linkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied'**
+  String get linkCopied;
+
+  /// No description provided for @copyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy link'**
+  String get copyLink;
+
+  /// No description provided for @errorLoadingCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading collection'**
+  String get errorLoadingCollection;
+
+  /// No description provided for @goBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Back'**
+  String get goBack;
 }
 
 class _AppLocalizationsDelegate

@@ -153,4 +153,49 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get noCollectionsYet => 'No collections yet';
+
+  @override
+  String countEdubadges(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countString edubadges',
+      one: '1 edubadge',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get errorLoadingCollections => 'Error loading collections';
+
+  @override
+  String get collectionVisibleAndShareable =>
+      'Collection visible and shareable';
+
+  @override
+  String get publicCollectionRequires =>
+      'A public collection requires at least 1 public edubadge';
+
+  @override
+  String get privateBadgesError =>
+      'One or more badges are private, make them public to make this collection public.';
+
+  @override
+  String get linkCopied => 'Link copied';
+
+  @override
+  String get copyLink => 'Copy link';
+
+  @override
+  String get errorLoadingCollection => 'Error loading collection';
+
+  @override
+  String get goBack => 'Go Back';
 }
