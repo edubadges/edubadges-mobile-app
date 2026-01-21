@@ -90,5 +90,7 @@
     "linkCopied": "Link gekopieerd",
     "copyLink": "Kopieer link",
     "errorLoadingCollection": "Fout bij het laden van collectie",
-    "goBack": "Ga terug"
+    "goBack": "Ga terug",
+    "editCollection": "Bewerk collectie",
+    "editCollectionDescription": "Werk de details van je collectie bij"
 }

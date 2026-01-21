@@ -91,5 +91,7 @@
     "linkCopied": "Link copied",
     "copyLink": "Copy link",
     "errorLoadingCollection": "Error loading collection",
-    "goBack": "Go Back"
+    "goBack": "Go Back",
+    "editCollection": "Edit collection",
+    "editCollectionDescription": "Update your collection details"
 }

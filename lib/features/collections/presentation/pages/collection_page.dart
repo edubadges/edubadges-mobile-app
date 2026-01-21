@@ -1,10 +1,13 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
+import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
+import 'package:edubadges/features/collections/data/models/collections_model.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
+import 'package:edubadges/features/collections/presentation/widgets/edit_collection_bottom_sheet.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
@@ -20,6 +23,8 @@ class CollectionPage extends ConsumerWidget {
 
   Widget _buildVisibilitySection(
     BuildContext context,
+    WidgetRef ref,
+    CollectionsModel collection,
     List<BadgeInstanceModel> badges,
     ValueNotifier<bool> publicNotifier,
   ) {
@@ -87,8 +92,20 @@ class CollectionPage extends ConsumerWidget {
                     inactiveIconSize: 16,
                     borderRadius: 14,
                     onChanged: canMakePublic
-                        ? (bool state) {
+                        ? (bool state) async {
                             publicNotifier.value = state;
+                            final success = await ref
+                                .read(collectionsProvider.notifier)
+                                .updateCollection(
+                                  collection.entityId,
+                                  collection.name,
+                                  collection.description,
+                                  state,
+                                  collection.badgeInstanceIds,
+                                );
+                            if (!success) {
+                              publicNotifier.value = !state;
+                            }
                           }
                         : null,
                   );
@@ -119,12 +136,7 @@ class CollectionPage extends ConsumerWidget {
                         final link =
                             'https://edubadges.nl/collection/${collection.id}'; //TODO: Replace with actual link
                         Clipboard.setData(ClipboardData(text: link));
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(l10n.linkCopied),
-                            duration: const Duration(seconds: 2),
-                          ),
-                        );
+                        showAppSnackBar(context, l10n.linkCopied);
                       },
                       icon: const Icon(Icons.copy, size: 20),
                       label: Text(l10n.copyLink),
@@ -222,6 +234,32 @@ class CollectionPage extends ConsumerWidget {
     final colorScheme = theme.colorScheme;
     final collectionsAsync = ref.watch(collectionsProvider);
 
+    ref.listen<AsyncValue<List<CollectionsModel>>>(collectionsProvider, (
+      previous,
+      next,
+    ) {
+      next.whenOrNull(
+        error: (error, stackTrace) {
+          if (context.mounted) {
+            showAppSnackBar(context, l10n.somethingWentWrong);
+          }
+        },
+      );
+    });
+
+    final collectionTitle = collectionsAsync.when(
+      data: (collections) {
+        if (collections.isEmpty) return collection.title;
+        final foundCollection = collections.firstWhere(
+          (c) => c.id == collection.id,
+          orElse: () => collections.first,
+        );
+        return foundCollection.name;
+      },
+      loading: () => collection.title,
+      error: (error, stackTrace) => collection.title,
+    );
+
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
@@ -232,7 +270,7 @@ class CollectionPage extends ConsumerWidget {
           onPressed: () => context.pop(),
         ),
         title: Text(
-          collection.title,
+          collectionTitle,
           style: theme.textTheme.titleLarge?.copyWith(
             color: colorScheme.onSurface,
             fontWeight: FontWeight.w700,
@@ -242,7 +280,25 @@ class CollectionPage extends ConsumerWidget {
         actions: [
           IconButton(
             onPressed: () {
-              // TODO: Implement add edubadge functionality
+              collectionsAsync.when(
+                data: (collections) {
+                  final foundCollection = collections.firstWhere(
+                    (c) => c.id == collection.id,
+                    orElse: () => collections.first,
+                  );
+                  showModalBottomSheet<void>(
+                    context: context,
+                    isDismissible: true,
+                    enableDrag: true,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) =>
+                        EditCollectionBottomSheet(collection: foundCollection),
+                  );
+                },
+                loading: () {},
+                error: (error, stackTrace) {},
+              );
             },
             icon: const SvgIcon(
               assetPath: Assets.iconEdit,
@@ -263,7 +319,33 @@ class CollectionPage extends ConsumerWidget {
                   onFirstButtonPressed: () {
                     context.pop();
                   },
-                  onSecondButtonPressed: () {},
+                  onSecondButtonPressed: () async {
+                    context.pop();
+                    final collectionsAsync = ref.read(collectionsProvider);
+                    final collections = await collectionsAsync.when(
+                      data: (collections) => Future.value(collections),
+                      loading: () => ref.read(collectionsProvider.future),
+                      error: (error, stackTrace) =>
+                          Future.error(error, stackTrace),
+                    );
+
+                    if (collections.isEmpty) {
+                      return;
+                    }
+
+                    final foundCollection = collections.firstWhere(
+                      (c) => c.id == collection.id,
+                      orElse: () => collections.first,
+                    );
+
+                    final success = await ref
+                        .read(collectionsProvider.notifier)
+                        .deleteCollection(foundCollection.entityId);
+
+                    if (success && context.mounted && context.canPop()) {
+                      context.pop();
+                    }
+                  },
                 ),
               );
             },
@@ -299,7 +381,13 @@ class CollectionPage extends ConsumerWidget {
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                _buildVisibilitySection(context, badges, publicNotifier),
+                _buildVisibilitySection(
+                  context,
+                  ref,
+                  foundCollection,
+                  badges,
+                  publicNotifier,
+                ),
                 ...badges.map(
                   (badge) => Padding(
                     padding: const EdgeInsets.only(top: 16),

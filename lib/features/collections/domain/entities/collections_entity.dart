@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 
 class CollectionsEntity extends Equatable {
   final String id;
+  final String entityId;
   final String name;
   final String? description;
   final List<int> badgeInstanceIds;
@@ -11,6 +12,7 @@ class CollectionsEntity extends Equatable {
 
   const CollectionsEntity({
     required this.id,
+    required this.entityId,
     required this.name,
     this.description,
     required this.badgeInstanceIds,
@@ -21,6 +23,7 @@ class CollectionsEntity extends Equatable {
   @override
   List<Object?> get props => [
     id,
+    entityId,
     name,
     description,
     badgeInstanceIds,

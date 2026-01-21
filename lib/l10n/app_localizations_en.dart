@@ -245,4 +245,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goBack => 'Go Back';
+
+  @override
+  String get editCollection => 'Edit collection';
+
+  @override
+  String get editCollectionDescription => 'Update your collection details';
 }
