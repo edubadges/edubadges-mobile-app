@@ -21,7 +21,7 @@ class OidcAuthDataSource {
   Future<void> login({bool addAcrValues = false}) async {
     try {
       final Map<String, String> additionalParameters = {};
-      List<String>? promptValues; // Default to null
+      List<String>? promptValues;
 
       if (addAcrValues) {
         additionalParameters['acr_values'] = 'https://eduid.nl/trust/validate-names';

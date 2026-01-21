@@ -15,13 +15,12 @@ class LoginRepositoryImpl implements LoginRepository {
   @override
   Future<Either<Failure, void>> login() async {
     try {
-      // 1. Initial login when user presses the button
       await loginDataSource.login();
-
-      // 2. Check the backend status
       final status = await remoteDataSource.login();
 
-      // 3. If required, perform a second login with specific acr_values
+      // If required, perform a second login with specific acr_values.
+      // This should trigger the system to let the user complete the registration flow.
+      // TODO: this doesnt work properly yet, we flagged it with the client and their backenders
       if (status is LoginLinkAccountRequired || status is LoginRevalidateNameRequired) {
         await loginDataSource.login(addAcrValues: true);
         await remoteDataSource.login();
