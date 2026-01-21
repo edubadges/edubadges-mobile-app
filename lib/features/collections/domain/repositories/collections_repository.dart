@@ -7,4 +7,14 @@ abstract class CollectionsRepository {
   Future<Either<Failure, List<CollectionsEntity>>> getCollectionss(
     List<BadgeInstanceModel> badgeInstances,
   );
+
+  Future<Either<Failure, void>> deleteCollection(String entityId);
+
+  Future<Either<Failure, void>> updateCollection({
+    required String entityId,
+    required String name,
+    String? description,
+    required bool public,
+    required List<int> badgeInstanceIds,
+  });
 }

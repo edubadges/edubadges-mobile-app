@@ -409,6 +409,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Go Back'**
   String get goBack;
+
+  /// No description provided for @editCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit collection'**
+  String get editCollection;
+
+  /// No description provided for @editCollectionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your collection details'**
+  String get editCollectionDescription;
 }
 
 class _AppLocalizationsDelegate

@@ -4,6 +4,7 @@ import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 class CollectionsModel extends CollectionsEntity {
   const CollectionsModel({
     required super.id,
+    required super.entityId,
     required super.name,
     super.description,
     required super.badgeInstanceIds,
@@ -27,9 +28,11 @@ class CollectionsModel extends CollectionsEntity {
     // Handle id as either int or String
     final idValue = json['id'];
     final id = idValue is int ? idValue.toString() : idValue as String;
+    final entityId = json['entity_id'] as String;
 
     return CollectionsModel(
       id: id,
+      entityId: entityId,
       name: json['name'] as String,
       description: json['description'] as String?,
       badgeInstanceIds: badgeInstanceIds,
@@ -39,6 +42,7 @@ class CollectionsModel extends CollectionsEntity {
 
   CollectionsModel copyWith({
     String? id,
+    String? entityId,
     String? name,
     String? description,
     List<int>? badgeInstanceIds,
@@ -47,6 +51,7 @@ class CollectionsModel extends CollectionsEntity {
   }) {
     return CollectionsModel(
       id: id ?? this.id,
+      entityId: entityId ?? this.entityId,
       name: name ?? this.name,
       description: description ?? this.description,
       badgeInstanceIds: badgeInstanceIds ?? this.badgeInstanceIds,

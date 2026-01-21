@@ -5,6 +5,8 @@ import 'package:edubadges/features/collections/data/models/collections_model.dar
 
 abstract class CollectionsDataSource {
   Future<List<CollectionsModel>> getCollectionss();
+  Future<void> deleteCollection(String entityId);
+  Future<void> updateCollection(String entityId, Map<String, dynamic> data);
 }
 
 class CollectionsDataSourceImpl implements CollectionsDataSource {
@@ -35,5 +37,18 @@ class CollectionsDataSourceImpl implements CollectionsDataSource {
         stackTrace: stackTrace,
       );
     }
+  }
+
+  @override
+  Future<void> deleteCollection(String entityId) async {
+    await apiClient.delete<void>('/badge-collections/$entityId');
+  }
+
+  @override
+  Future<void> updateCollection(
+    String entityId,
+    Map<String, dynamic> data,
+  ) async {
+    await apiClient.put<void>('/badge-collections/$entityId', data: data);
   }
 }

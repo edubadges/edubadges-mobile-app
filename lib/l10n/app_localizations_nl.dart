@@ -197,4 +197,11 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get goBack => 'Ga terug';
+
+  @override
+  String get editCollection => 'Bewerk collectie';
+
+  @override
+  String get editCollectionDescription =>
+      'Werk de details van je collectie bij';
 }
