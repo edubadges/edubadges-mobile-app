@@ -12,10 +12,12 @@ enum BadgeCardStyle { small, large }
 class BadgeCard extends StatelessWidget {
   final BadgeInstanceModel instance;
   final BadgeCardStyle style;
+  final bool isSelected;
   const BadgeCard({
     super.key,
     required this.instance,
     this.style = BadgeCardStyle.large,
+    this.isSelected = false,
   });
 
   int? getTimeInvestment() {
@@ -41,8 +43,10 @@ class BadgeCard extends StatelessWidget {
       return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: colorScheme.outlineVariant),
-          color: colorScheme.surfaceContainer,
+          border: Border.all(
+            color: isSelected ? colorScheme.primary : colorScheme.outlineVariant,
+          ),
+          color: isSelected ? colorScheme.surface : colorScheme.surfaceContainer,
         ),
         padding: const EdgeInsets.all(16),
         child: Row(
@@ -87,8 +91,10 @@ class BadgeCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: colorScheme.outlineVariant),
-        color: colorScheme.surfaceContainer,
+        border: Border.all(
+          color: isSelected ? colorScheme.primary : colorScheme.outlineVariant,
+        ),
+        color: isSelected ? colorScheme.surface : colorScheme.surfaceContainer,
       ),
       padding: const EdgeInsets.all(16),
       child: Column(

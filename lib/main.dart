@@ -57,6 +57,7 @@ void main() async {
     openIdClientId: dotenv.env[EnvKeys.openIdClientId] ?? '',
     enableAnalytics: dotenv.env[EnvKeys.enableAnalytics] == 'true',
     enableCrashlytics: dotenv.env[EnvKeys.enableCrashlytics] == 'true',
+    publicCollectionBaseUrl: dotenv.env[EnvKeys.publicCollectionBaseUrl] ?? '',
   );
 
   // Initialize Firebase

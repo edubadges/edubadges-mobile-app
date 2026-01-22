@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/network/errors/exceptions.dart';
 import 'package:edubadges/features/collections/data/datasources/collections_datasource.dart';
+import 'package:edubadges/features/collections/data/models/create_collection_request.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
 import 'package:edubadges/features/collections/domain/repositories/collections_repository.dart';
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
@@ -76,6 +77,33 @@ class CollectionsRepositoryImpl implements CollectionsRepository {
       }
       await collectionsDataSource.updateCollection(entityId, data);
       return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.statusCode));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on ValidationException catch (e) {
+      return Left(ValidationFailure(e.message));
+    } on AppException catch (e) {
+      return Left(NetworkFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, CollectionsEntity>> createCollection({
+    required String name,
+    String? description,
+    required bool public,
+    required List<int> badgeInstanceIds,
+  }) async {
+    try {
+      final request = CreateCollectionRequest(
+        name: name,
+        description: description,
+        public: public,
+        badgeInstances: badgeInstanceIds,
+      );
+      final collection = await collectionsDataSource.createCollection(request);
+      return Right(collection);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, e.statusCode));
     } on NetworkException catch (e) {

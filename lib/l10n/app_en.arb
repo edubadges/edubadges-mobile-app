@@ -92,5 +92,10 @@
     "errorLoadingCollection": "Error loading collection",
     "goBack": "Go Back",
     "editCollection": "Edit collection",
-    "editCollectionDescription": "Update your collection details"
+    "editCollectionDescription": "Update your collection details",
+    "continueText": "Continue",
+    "addEdubadges": "Add Edubadges",
+    "selectAtLeastOneBadge": "Select at least one badge",
+    "noBadgesAvailable": "No badges available",
+    "add": "Add"
 }

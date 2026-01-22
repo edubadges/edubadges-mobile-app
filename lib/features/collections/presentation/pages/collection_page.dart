@@ -1,5 +1,6 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
@@ -134,7 +135,7 @@ class CollectionPage extends ConsumerWidget {
                     child: ElevatedButton.icon(
                       onPressed: () {
                         final link =
-                            'https://edubadges.nl/collection/${collection.id}'; //TODO: Replace with actual link
+                            '${EnvironmentConfig.instance.publicCollectionBaseUrl}/${collection.entityId}';
                         Clipboard.setData(ClipboardData(text: link));
                         showAppSnackBar(context, l10n.linkCopied);
                       },
@@ -250,11 +251,14 @@ class CollectionPage extends ConsumerWidget {
     final collectionTitle = collectionsAsync.when(
       data: (collections) {
         if (collections.isEmpty) return collection.title;
-        final foundCollection = collections.firstWhere(
-          (c) => c.id == collection.id,
-          orElse: () => collections.first,
-        );
-        return foundCollection.name;
+        try {
+          final foundCollection = collections.firstWhere(
+            (c) => c.id == collection.id,
+          );
+          return foundCollection.name;
+        } catch (e) {
+          return collection.title;
+        }
       },
       loading: () => collection.title,
       error: (error, stackTrace) => collection.title,
@@ -282,19 +286,24 @@ class CollectionPage extends ConsumerWidget {
             onPressed: () {
               collectionsAsync.when(
                 data: (collections) {
-                  final foundCollection = collections.firstWhere(
-                    (c) => c.id == collection.id,
-                    orElse: () => collections.first,
-                  );
-                  showModalBottomSheet<void>(
-                    context: context,
-                    isDismissible: true,
-                    enableDrag: true,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (context) =>
-                        EditCollectionBottomSheet(collection: foundCollection),
-                  );
+                  try {
+                    final foundCollection = collections.firstWhere(
+                      (c) => c.id == collection.id,
+                    );
+                    showModalBottomSheet<void>(
+                      context: context,
+                      isDismissible: true,
+                      enableDrag: true,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) =>
+                          EditCollectionBottomSheet(collection: foundCollection),
+                    );
+                  } catch (e) {
+                    if (context.mounted && context.canPop()) {
+                      context.pop();
+                    }
+                  }
                 },
                 loading: () {},
                 error: (error, stackTrace) {},
@@ -330,12 +339,20 @@ class CollectionPage extends ConsumerWidget {
                     );
 
                     if (collections.isEmpty) {
+                      if (context.mounted && context.canPop()) {
+                        context.pop();
+                      }
                       return;
                     }
 
                     final foundCollection = collections.firstWhere(
                       (c) => c.id == collection.id,
-                      orElse: () => collections.first,
+                      orElse: () {
+                        if (context.mounted && context.canPop()) {
+                          context.pop();
+                        }
+                        throw StateError('Collection not found');
+                      },
                     );
 
                     final success = await ref
@@ -360,45 +377,51 @@ class CollectionPage extends ConsumerWidget {
       body: SafeArea(
         child: collectionsAsync.when(
           data: (collections) {
-            final foundCollection = collections.firstWhere(
-              (c) => c.id == collection.id,
-              orElse: () => collections.first,
-            );
-
-            final badges = foundCollection.badgeInstances ?? [];
-            final publicNotifier = ValueNotifier<bool>(foundCollection.public);
-
-            if (badges.isEmpty) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: _buildEmptyState(
-                  context,
-                  MediaQuery.of(context).size.width,
-                ),
+            try {
+              final foundCollection = collections.firstWhere(
+                (c) => c.id == collection.id,
               );
-            }
 
-            return ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                _buildVisibilitySection(
-                  context,
-                  ref,
-                  foundCollection,
-                  badges,
-                  publicNotifier,
-                ),
-                ...badges.map(
-                  (badge) => Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: BadgeCard(
-                      instance: badge,
-                      style: BadgeCardStyle.large,
+              final badges = foundCollection.badgeInstances ?? [];
+              final publicNotifier = ValueNotifier<bool>(foundCollection.public);
+
+              if (badges.isEmpty) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: _buildEmptyState(
+                    context,
+                    MediaQuery.of(context).size.width,
+                  ),
+                );
+              }
+
+              return ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  _buildVisibilitySection(
+                    context,
+                    ref,
+                    foundCollection,
+                    badges,
+                    publicNotifier,
+                  ),
+                  ...badges.map(
+                    (badge) => Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: BadgeCard(
+                        instance: badge,
+                        style: BadgeCardStyle.large,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            );
+                ],
+              );
+            } catch (e) {
+              if (context.mounted && context.canPop()) {
+                context.pop();
+              }
+              return const SizedBox.shrink();
+            }
           },
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stackTrace) => Center(

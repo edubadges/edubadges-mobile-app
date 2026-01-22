@@ -107,6 +107,7 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
                       toggleButtonText,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: colorScheme.primary,
+                        decoration: TextDecoration.underline,
                       ),
                     ),
                   ),

@@ -253,4 +253,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editCollectionDescription => 'Update your collection details';
+
+  @override
+  String get continueText => 'Continue';
+
+  @override
+  String get addEdubadges => 'Add Edubadges';
+
+  @override
+  String get selectAtLeastOneBadge => 'Select at least one badge';
+
+  @override
+  String get noBadgesAvailable => 'No badges available';
+
+  @override
+  String get add => 'Add';
 }

@@ -25,10 +25,16 @@ class CollectionsModel extends CollectionsEntity {
       }
     }).toList();
 
-    // Handle id as either int or String
     final idValue = json['id'];
-    final id = idValue is int ? idValue.toString() : idValue as String;
-    final entityId = json['entity_id'] as String;
+    final id = idValue == null
+        ? ''
+        : (idValue is int ? idValue.toString() : idValue as String);
+    final entityIdValue = json['entity_id'];
+    final entityId = entityIdValue == null
+        ? ''
+        : (entityIdValue is int
+              ? entityIdValue.toString()
+              : entityIdValue as String);
 
     return CollectionsModel(
       id: id,

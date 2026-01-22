@@ -205,7 +205,7 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get noCollectionsYet => 'Nog geen collecties';
+  String get noCollectionsYet => 'Je hebt nog geen collecties';
 
   @override
   String countEdubadges(num count) {
@@ -254,4 +254,19 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get editCollectionDescription =>
       'Werk de details van je collectie bij';
+
+  @override
+  String get continueText => 'Doorgaan';
+
+  @override
+  String get addEdubadges => 'Edubadges toevoegen';
+
+  @override
+  String get selectAtLeastOneBadge => 'Selecteer minimaal één badge';
+
+  @override
+  String get noBadgesAvailable => 'Geen badges beschikbaar';
+
+  @override
+  String get add => 'Toevoegen';
 }

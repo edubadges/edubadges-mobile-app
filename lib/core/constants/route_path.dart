@@ -4,6 +4,8 @@ class RoutePath {
   static const String start = '/';
   static const String collections = '/collections';
   static const String collection = '/collection/:id';
+  static const String newCollection = '/new-collection';
+  static const String newCollectionBadgeSelection = '/new-collection/badges';
   static const String catalog = '/catalog';
   static const String account = '/account';
   static const String agreementDetails = '/agreement/:id';

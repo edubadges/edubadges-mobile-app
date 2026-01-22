@@ -73,7 +73,7 @@
             }
         }
     },
-    "noCollectionsYet": "Nog geen collecties",
+    "noCollectionsYet": "Je hebt nog geen collecties",
     "countEdubadges": "{count, plural, =1{1 edubadge} other{{count} edubadges}}",
     "@countEdubadges": {
         "placeholders": {
@@ -92,5 +92,10 @@
     "errorLoadingCollection": "Fout bij het laden van collectie",
     "goBack": "Ga terug",
     "editCollection": "Bewerk collectie",
-    "editCollectionDescription": "Werk de details van je collectie bij"
+    "editCollectionDescription": "Werk de details van je collectie bij",
+    "continueText": "Doorgaan",
+    "addEdubadges": "Edubadges toevoegen",
+    "selectAtLeastOneBadge": "Selecteer minimaal één badge",
+    "noBadgesAvailable": "Geen badges beschikbaar",
+    "add": "Toevoegen"
 }
