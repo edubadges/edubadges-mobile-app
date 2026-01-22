@@ -331,4 +331,98 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get feedbackRequired => 'Feedback is required';
+
+  @override
+  String get aboutThisEdubadge => 'About this Edubadge';
+
+  @override
+  String get theEdubadge => 'The Edubadge';
+
+  @override
+  String get expiresOn => 'Expires on';
+
+  @override
+  String get type => 'Type';
+
+  @override
+  String get badgeTheProgram => 'The program';
+
+  @override
+  String get badgeTheAssessment => 'The assessment';
+
+  @override
+  String get learningOutcomes => 'Learning outcomes';
+
+  @override
+  String get studyLoad => 'Study load';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get languageDutch => 'Dutch';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get assessmentWrittenExam => '(Written) Exam';
+
+  @override
+  String get assessmentReportPaper => 'Report / paper';
+
+  @override
+  String get assessmentBehaviouralAssessment => 'Behavioural assessment';
+
+  @override
+  String get assessmentProfessionalProduct => 'Professional product';
+
+  @override
+  String get assessmentDevelopmentReport =>
+      'Development report / reflection report';
+
+  @override
+  String get assessmentPortfolioAssessment =>
+      'Portfolio / portfolio assessment';
+
+  @override
+  String get assessmentOramExam => 'Presentation / Oral exam';
+
+  @override
+  String get assessmentPersonalizedAssessment =>
+      'Personalized type of assessment';
+
+  @override
+  String get supervised => 'Supervised';
+
+  @override
+  String get assessmentSupervisedWithIdentityVerification =>
+      'Supervised with identity verification';
+
+  @override
+  String get assessmentWithIdentityVerification => 'With identity verification';
+
+  @override
+  String get assessmentType => 'Assessment type';
+
+  @override
+  String get online => 'Online';
+
+  @override
+  String get onsite => 'On-site';
+
+  @override
+  String get blended => 'Blended';
+
+  @override
+  String get workExperience => 'Work experience';
+
+  @override
+  String get formOfParticipation => 'Form of participation';
+
+  @override
+  String get indicativeLevel => '(Indicative) EQF/NLQF';
+
+  @override
+  String get never => 'Never';
 }

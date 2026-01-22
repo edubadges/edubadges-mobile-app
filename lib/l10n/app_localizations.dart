@@ -637,6 +637,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Feedback is required'**
   String get feedbackRequired;
+
+  /// No description provided for @aboutThisEdubadge.
+  ///
+  /// In en, this message translates to:
+  /// **'About this Edubadge'**
+  String get aboutThisEdubadge;
+
+  /// No description provided for @theEdubadge.
+  ///
+  /// In en, this message translates to:
+  /// **'The Edubadge'**
+  String get theEdubadge;
+
+  /// No description provided for @expiresOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires on'**
+  String get expiresOn;
+
+  /// No description provided for @type.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get type;
+
+  /// No description provided for @badgeTheProgram.
+  ///
+  /// In en, this message translates to:
+  /// **'The program'**
+  String get badgeTheProgram;
+
+  /// No description provided for @badgeTheAssessment.
+  ///
+  /// In en, this message translates to:
+  /// **'The assessment'**
+  String get badgeTheAssessment;
+
+  /// No description provided for @learningOutcomes.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning outcomes'**
+  String get learningOutcomes;
+
+  /// No description provided for @studyLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Study load'**
+  String get studyLoad;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @languageDutch.
+  ///
+  /// In en, this message translates to:
+  /// **'Dutch'**
+  String get languageDutch;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// No description provided for @assessmentWrittenExam.
+  ///
+  /// In en, this message translates to:
+  /// **'(Written) Exam'**
+  String get assessmentWrittenExam;
+
+  /// No description provided for @assessmentReportPaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Report / paper'**
+  String get assessmentReportPaper;
+
+  /// No description provided for @assessmentBehaviouralAssessment.
+  ///
+  /// In en, this message translates to:
+  /// **'Behavioural assessment'**
+  String get assessmentBehaviouralAssessment;
+
+  /// No description provided for @assessmentProfessionalProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Professional product'**
+  String get assessmentProfessionalProduct;
+
+  /// No description provided for @assessmentDevelopmentReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Development report / reflection report'**
+  String get assessmentDevelopmentReport;
+
+  /// No description provided for @assessmentPortfolioAssessment.
+  ///
+  /// In en, this message translates to:
+  /// **'Portfolio / portfolio assessment'**
+  String get assessmentPortfolioAssessment;
+
+  /// No description provided for @assessmentOramExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Presentation / Oral exam'**
+  String get assessmentOramExam;
+
+  /// No description provided for @assessmentPersonalizedAssessment.
+  ///
+  /// In en, this message translates to:
+  /// **'Personalized type of assessment'**
+  String get assessmentPersonalizedAssessment;
+
+  /// No description provided for @supervised.
+  ///
+  /// In en, this message translates to:
+  /// **'Supervised'**
+  String get supervised;
+
+  /// No description provided for @assessmentSupervisedWithIdentityVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Supervised with identity verification'**
+  String get assessmentSupervisedWithIdentityVerification;
+
+  /// No description provided for @assessmentWithIdentityVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'With identity verification'**
+  String get assessmentWithIdentityVerification;
+
+  /// No description provided for @assessmentType.
+  ///
+  /// In en, this message translates to:
+  /// **'Assessment type'**
+  String get assessmentType;
+
+  /// No description provided for @online.
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get online;
+
+  /// No description provided for @onsite.
+  ///
+  /// In en, this message translates to:
+  /// **'On-site'**
+  String get onsite;
+
+  /// No description provided for @blended.
+  ///
+  /// In en, this message translates to:
+  /// **'Blended'**
+  String get blended;
+
+  /// No description provided for @workExperience.
+  ///
+  /// In en, this message translates to:
+  /// **'Work experience'**
+  String get workExperience;
+
+  /// No description provided for @formOfParticipation.
+  ///
+  /// In en, this message translates to:
+  /// **'Form of participation'**
+  String get formOfParticipation;
+
+  /// No description provided for @indicativeLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'(Indicative) EQF/NLQF'**
+  String get indicativeLevel;
+
+  /// No description provided for @never.
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get never;
 }
 
 class _AppLocalizationsDelegate

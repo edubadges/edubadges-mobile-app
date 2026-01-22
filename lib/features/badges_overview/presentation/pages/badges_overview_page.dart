@@ -1,4 +1,5 @@
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/widgets/feedback_bottom_sheet.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -6,6 +7,7 @@ import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 class BadgesOverviewPage extends ConsumerWidget {
   const BadgesOverviewPage({super.key});
@@ -105,9 +107,18 @@ class BadgesOverviewPage extends ConsumerWidget {
                     final badge = state.claimedBadges[index];
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 8),
-                      child: BadgeCard(
-                        instance: badge,
-                        style: BadgeCardStyle.small,
+                      child: GestureDetector(
+                        onTap: () {
+                          final routeModel = BadgeDetailsRouteModel(
+                            id: badge.entityId,
+                            from: 'overview',
+                          );
+                          context.push(routeModel.buildRouteUrl());
+                        },
+                        child: BadgeCard(
+                          instance: badge,
+                          style: BadgeCardStyle.small,
+                        ),
                       ),
                     );
                   }, childCount: state.claimedBadges.length),
