@@ -6,13 +6,14 @@ import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class NewCollectionPage extends StatelessWidget {
-  final String name;
-  final String? description;
+class _EmptyState extends StatelessWidget {
+  final String collectionName;
+  final String? collectionDescription;
 
-  const NewCollectionPage({super.key, required this.name, this.description});
+  const _EmptyState({required this.collectionName, this.collectionDescription});
 
-  Widget _buildEmptyState(BuildContext context, double screenWidth) {
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -55,9 +56,10 @@ class NewCollectionPage extends StatelessWidget {
                 final uri = Uri.parse(RoutePath.newCollectionBadgeSelection)
                     .replace(
                       queryParameters: {
-                        'name': name,
-                        if (description != null && description!.isNotEmpty)
-                          'description': description!,
+                        'name': collectionName,
+                        if (collectionDescription != null &&
+                            collectionDescription!.isNotEmpty)
+                          'description': collectionDescription!,
                       },
                     );
                 context.push(uri.toString());
@@ -89,6 +91,13 @@ class NewCollectionPage extends StatelessWidget {
       ],
     );
   }
+}
+
+class NewCollectionPage extends StatelessWidget {
+  final String name;
+  final String? description;
+
+  const NewCollectionPage({super.key, required this.name, this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -130,9 +139,9 @@ class NewCollectionPage extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: _buildEmptyState(
-                  context,
-                  MediaQuery.of(context).size.width,
+                child: _EmptyState(
+                  collectionName: name,
+                  collectionDescription: description,
                 ),
               ),
             ),

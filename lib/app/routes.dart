@@ -91,7 +91,6 @@ final appRouter = Provider<GoRouter>((ref) {
 
       GoRoute(
         path: RoutePath.newCollection,
-        name: 'new-collection',
         builder: (context, state) {
           final name = state.uri.queryParameters['name'] ?? '';
           final description = state.uri.queryParameters['description'];

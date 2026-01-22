@@ -1,3 +1,4 @@
+import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/app_text_field.dart';
 import 'package:edubadges/core/widgets/base_form_bottom_sheet.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -32,7 +33,7 @@ class _CreateCollectionBottomSheetState
 
       Navigator.of(context).pop();
 
-      final uri = Uri.parse('/new-collection').replace(
+      final uri = Uri.parse(RoutePath.newCollection).replace(
         queryParameters: {
           'name': name,
           if (description.isNotEmpty) 'description': description,
