@@ -4,4 +4,6 @@ import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 
 abstract class BadgesOverviewRepository {
   Future<Either<Failure, List<BadgeInstanceModel>>> getBadgeInstances();
+  Future<Either<Failure, List<BadgeInstanceModel>>> getDirectAwards();
+  Future<Either<Failure, List<BadgeInstanceModel>>> getEnrollments();
 }

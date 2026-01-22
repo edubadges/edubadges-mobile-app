@@ -107,7 +107,7 @@ class BaseFormBottomSheet extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        side: BorderSide(color: colorScheme.outlineVariant),
+                        side: BorderSide(color: colorScheme.primary),
                       ),
                       child: Text(
                         cancelButtonText,

@@ -97,5 +97,21 @@
     "addEdubadges": "Edubadges toevoegen",
     "selectAtLeastOneBadge": "Selecteer minimaal één badge",
     "noBadgesAvailable": "Geen badges beschikbaar",
-    "add": "Toevoegen"
+    "add": "Toevoegen",
+    "newBadgeReady": "{count, plural, =1{Er staat 1 nieuwe edubadge klaar} other{Er staan {count} nieuwe edubadges klaar}}",
+    "@newBadgeReady": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "requestedBadges": "Aangevraagde edubadges",
+    "noEdubadgesYet": "Je hebt nog geen edubadges",
+    "giveFeedback": "Feedback geven",
+    "giveFeedbackDescription": "We horen graag wat je van de app vindt. Laat hieronder je feedback achter.",
+    "feedback": "Feedback",
+    "feedbackPlaceholder": "Typ hier je feedback...",
+    "feedbackRequired": "Feedback is verplicht"
 }

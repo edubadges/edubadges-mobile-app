@@ -541,6 +541,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add'**
   String get add;
+
+  /// No description provided for @newBadgeReady.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{There is 1 new edubadge ready} other{There are {count} new edubadges ready}}'**
+  String newBadgeReady(num count);
+
+  /// No description provided for @requestedBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested badges'**
+  String get requestedBadges;
+
+  /// No description provided for @noEdubadgesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any edubadges yet'**
+  String get noEdubadgesYet;
+
+  /// No description provided for @giveFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Give feedback'**
+  String get giveFeedback;
+
+  /// No description provided for @giveFeedbackDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'d love to hear what you think about the app. Leave your feedback below.'**
+  String get giveFeedbackDescription;
+
+  /// No description provided for @feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get feedback;
+
+  /// No description provided for @feedbackPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Type your feedback here...'**
+  String get feedbackPlaceholder;
+
+  /// No description provided for @feedbackRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback is required'**
+  String get feedbackRequired;
 }
 
 class _AppLocalizationsDelegate

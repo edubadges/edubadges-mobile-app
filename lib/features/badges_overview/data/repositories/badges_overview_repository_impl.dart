@@ -21,4 +21,28 @@ class BadgesOverviewRepositoryImpl implements BadgesOverviewRepository {
       return Left(NetworkFailure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, List<BadgeInstanceModel>>> getDirectAwards() async {
+    try {
+      final models = await badgesOverviewDataSource.getDirectAwards();
+      return Right(models);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.statusCode));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<BadgeInstanceModel>>> getEnrollments() async {
+    try {
+      final models = await badgesOverviewDataSource.getEnrollments();
+      return Right(models);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.statusCode));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    }
+  }
 }
