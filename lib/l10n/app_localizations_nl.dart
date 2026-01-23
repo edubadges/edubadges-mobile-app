@@ -96,6 +96,23 @@ class AppLocalizationsNl extends AppLocalizations {
   String get delete => 'Verwijderen';
 
   @override
+  String get notificationPermissionsTitle => 'Blijf op de hoogte';
+
+  @override
+  String get notificationPermissionsSubtitle =>
+      'Edubadge kan je een melding sturen wanneer er iets voor je klaarstaat, zoals een nieuwe badge of een belangrijke update.';
+
+  @override
+  String get notificationPermissionsLabel =>
+      'Je kunt dit later altijd aanpassen in de instellingen.';
+
+  @override
+  String get notificationPermissionsButtonAllow => 'Notificaties toestaan';
+
+  @override
+  String get notificationPermissionsButtonDeny => 'Niet nu';
+
+  @override
   String get accountData => 'Gegevens';
 
   @override

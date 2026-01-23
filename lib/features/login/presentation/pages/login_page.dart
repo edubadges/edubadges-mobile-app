@@ -179,7 +179,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   await ref.read(authProvider.notifier).login();
 
                                   if (context.mounted) {
-                                    context.go(RoutePath.main);
+                                    context.go(RoutePath.notificationPermission);
                                   }
                                 },
                           style: ElevatedButton.styleFrom(
