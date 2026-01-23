@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/features/badges_overview/data/datasources/badges_overview_datasource.dart';
 import 'package:edubadges/features/badges_overview/data/repositories/badges_overview_repository_impl.dart';
