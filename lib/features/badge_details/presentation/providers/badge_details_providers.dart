@@ -39,7 +39,7 @@ final badgeByIdProvider = Provider.family<BadgeInstanceModel?, String>(
     return badgesAsync.whenOrNull(
       data: (badges) {
         try {
-          return badges.firstWhere((badge) => badge.entityId == badgeId);
+          return badges.claimedBadges.firstWhere((badge) => badge.entityId == badgeId);
         } catch (e) {
           return null;
         }

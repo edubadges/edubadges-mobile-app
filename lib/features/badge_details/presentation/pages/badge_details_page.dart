@@ -123,8 +123,8 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           height: _badgeCardHeight,
           child: badgesAsync.when(
             data: (badges) {
-              if (!_hasInitializedPage && badges.isNotEmpty) {
-                final initialIndex = badges.indexWhere(
+              if (!_hasInitializedPage && badges.claimedBadges.isNotEmpty) {
+                final initialIndex = badges.claimedBadges.indexWhere(
                   (b) => b.entityId == widget.badge.id,
                 );
                 _currentIndex = initialIndex != -1 ? initialIndex : 0;
@@ -138,12 +138,12 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
               return PageView.builder(
                 controller: _pageController,
                 onPageChanged: _onPageChanged,
-                itemCount: badges.length,
+                itemCount: badges.claimedBadges.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: BadgeCard(
-                      instance: badges[index],
+                      instance: badges.claimedBadges[index],
                       style: BadgeCardStyle.large,
                     ),
                   );
@@ -159,11 +159,11 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
 
         ...badgesAsync.when(
           data: (badges) {
-            if (badges.isEmpty || _currentIndex >= badges.length) {
+            if (badges.claimedBadges.isEmpty || _currentIndex >= badges.claimedBadges.length) {
               return [const Center(child: Text('No badge'))];
             }
 
-            final currentBadgeId = badges[_currentIndex].entityId;
+            final currentBadgeId = badges.claimedBadges[_currentIndex].entityId;
             return _buildBadgeDetailsContent(currentBadgeId);
           },
           //TODO: Add loading indicator
