@@ -14,3 +14,8 @@ String? languageCodeToString(String? langCode, BuildContext context) {
 
   return null;
 }
+
+String filterBadMarkdown(String md) {
+   // Remove lines that are just > with optional whitespace
+  return md.replaceAll(RegExp(r'^>\s*$', multiLine: true), '');
+}

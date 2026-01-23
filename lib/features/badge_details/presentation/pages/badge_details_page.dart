@@ -233,7 +233,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         _buildSectionCard(
           title: l10n.aboutThisEdubadge,
           item: MarkdownBody(
-            data: details!.badgeclass.description!,
+            data: filterBadMarkdown(details!.badgeclass.description!),
             styleSheet: _buildMarkdownStyleSheet(),
           ),
         ),
@@ -241,7 +241,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         _buildSectionCard(
           title: l10n.learningOutcomes,
           item: MarkdownBody(
-            data: learningOutcome,
+            data: filterBadMarkdown(learningOutcome),
             styleSheet: _buildMarkdownStyleSheet(),
           ),
         ),
