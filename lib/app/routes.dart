@@ -139,18 +139,11 @@ final appRouter = Provider<GoRouter>((ref) {
 
       GoRoute(
         path: RoutePath.badge,
-        name: 'badge details',
+        name: 'badgedetails',
         builder: (context, state) {
-          final id = state.pathParameters['id'];
-          final from = state.uri.queryParameters['from'];
-
-          if (id == null || id.isEmpty) {
-            return const CollectionsPage();
-          }
-
           final badge = BadgeDetailsRouteModel(
-            id: id,
-            from: from,
+            id: state.pathParameters['id'] ?? '',
+            from: state.uri.queryParameters['from'],
           );
 
           return BadgeDetailsPage(badge: badge);
