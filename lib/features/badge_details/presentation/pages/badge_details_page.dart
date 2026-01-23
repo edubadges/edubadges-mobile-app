@@ -82,6 +82,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   }
 
   MarkdownStyleSheet _buildMarkdownStyleSheet() {
+  // TODO: Setup markdown styling (https://digitalclub.atlassian.net/browse/SURF-540)
   // final colorScheme = Theme.of(context).colorScheme;
   return MarkdownStyleSheet(
     // TODO: Figure out design with design team what block quotes should look like
