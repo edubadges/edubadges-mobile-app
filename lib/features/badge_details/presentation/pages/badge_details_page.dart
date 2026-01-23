@@ -3,6 +3,7 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_detail_item_model.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
@@ -38,7 +39,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   int _currentIndex = 0;
   bool _hasInitializedPage = false;
 
-  bool get _shouldShowCarousel => widget.badge.from == 'overview';
+  bool get _shouldShowCarousel => widget.badge.from == BadgeDetailsRouteFrom.overview;
 
   @override
   void initState() {

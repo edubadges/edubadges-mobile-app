@@ -143,7 +143,9 @@ final appRouter = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final badge = BadgeDetailsRouteModel(
             id: state.pathParameters['id'] ?? '',
-            from: state.uri.queryParameters['from'],
+            from: BadgeDetailsRouteFromExtension.fromString(
+              state.uri.queryParameters['from'],
+            ),
           );
 
           return BadgeDetailsPage(badge: badge);

@@ -1,5 +1,6 @@
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/widgets/feedback_bottom_sheet.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -111,7 +112,7 @@ class BadgesOverviewPage extends ConsumerWidget {
                         onTap: () {
                           final routeModel = BadgeDetailsRouteModel(
                             id: badge.entityId,
-                            from: 'overview',
+                            from: BadgeDetailsRouteFrom.overview,
                           );
                           context.push(routeModel.buildRouteUrl());
                         },
