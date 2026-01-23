@@ -10,7 +10,6 @@ enum ParticipationType {
 
   const ParticipationType(this.value);
 
-  /// Convert a string value to a ParticipationType enum
   static ParticipationType? fromString(String? value) {
     if (value == null) return null;
     

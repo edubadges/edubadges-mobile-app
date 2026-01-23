@@ -38,7 +38,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   int _currentIndex = 0;
   bool _hasInitializedPage = false;
 
-  // Check if we should show carousel
   bool get _shouldShowCarousel => widget.badge.from == 'overview';
 
   @override
@@ -113,7 +112,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     );
   }
 
-  // Multiple badges with carousel
   Widget _buildCarouselView() {
     final badgesAsync = ref.watch(badgesListProvider);
 
@@ -175,7 +173,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     );
   }
 
-  // Single badge without carousel
   Widget _buildSingleBadgeView() {
     final badge = ref.watch(badgeByIdProvider(widget.badge.id));
 

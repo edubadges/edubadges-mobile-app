@@ -6,19 +6,16 @@ import 'package:edubadges/features/badges_overview/presentation/providers/badges
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// Data source provider
 final badgeDetailsDataSourceProvider = Provider<BadgeDetailsDataSource>((ref) {
   final client = ref.read(apiClientProvider);
   return BadgeDetailsDataSourceImpl(client);
 });
 
-// Repository provider
 final badgeDetailsRepositoryProvider = Provider<BadgeDetailsRepository>((ref) {
   final dataSource = ref.read(badgeDetailsDataSourceProvider);
   return BadgeDetailsRepositoryImpl(dataSource);
 });
 
-// Provider for full badge details from API (with detailed data)
 final badgeDetailsProvider = FutureProvider.autoDispose.family<BadgeInstanceModel, String>(
   (ref, badgeId) async {
     final repository = ref.read(badgeDetailsRepositoryProvider);
@@ -31,7 +28,6 @@ final badgeDetailsProvider = FutureProvider.autoDispose.family<BadgeInstanceMode
   },
 );
 
-// Provider to get basic badge info from overview list (for carousel display)
 final badgeByIdProvider = Provider.family<BadgeInstanceModel?, String>(
   (ref, badgeId) {
     final badgesAsync = ref.watch(badgesOverviewProvider);
@@ -48,5 +44,4 @@ final badgeByIdProvider = Provider.family<BadgeInstanceModel?, String>(
   },
 );
 
-// Alias for badges list (used in carousel)
 final badgesListProvider = badgesOverviewProvider;

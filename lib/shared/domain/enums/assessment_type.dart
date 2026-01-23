@@ -14,7 +14,6 @@ enum AssessmentType {
 
   const AssessmentType(this.value);
 
-  /// Convert a string value to an AssessmentType enum
   static AssessmentType? fromString(String? value) {
     if (value == null) return null;
     
