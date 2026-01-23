@@ -1,3 +1,4 @@
+import 'package:edubadges/app/constants.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_detail_item_model.dart';
@@ -238,7 +239,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             subtitle: details?.expiresAt == null
                 ? l10n.never
                 : DateFormat(
-                    'd MMM yyyy',
+                    AppConstants.mediumDateFormat,
                     l10n.localeName,
                   ).format(details!.expiresAt!),
           ),
