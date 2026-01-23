@@ -41,6 +41,27 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   @override
   void initState() {
     super.initState();
+    
+    if (_shouldShowCarousel) {
+      ref.listenManual(badgesListProvider, (previous, next) {
+        if (!_hasInitializedPage && next is AsyncData) {
+          final badges = next.value;
+          if (badges?.claimedBadges.isNotEmpty ?? false) {
+            final initialIndex = badges!.claimedBadges.indexWhere(
+              (b) => b.entityId == widget.badge.id,
+            );
+            setState(() {
+              _currentIndex = initialIndex != -1 ? initialIndex : 0;
+              _pageController = PageController(
+                initialPage: _currentIndex,
+                viewportFraction: 0.93,
+              );
+              _hasInitializedPage = true;
+            });
+          }
+        }
+      }, fireImmediately: true);
+    }
   }
 
   @override
@@ -112,16 +133,8 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           height: _badgeCardHeight,
           child: badgesAsync.when(
             data: (badges) {
-              if (!_hasInitializedPage && badges.claimedBadges.isNotEmpty) {
-                final initialIndex = badges.claimedBadges.indexWhere(
-                  (b) => b.entityId == widget.badge.id,
-                );
-                _currentIndex = initialIndex != -1 ? initialIndex : 0;
-                _pageController = PageController(
-                  initialPage: _currentIndex,
-                  viewportFraction: 0.93,
-                );
-                _hasInitializedPage = true;
+              if (!_hasInitializedPage || badges.claimedBadges.isEmpty) {
+                return const Center(child: SizedBox());
               }
 
               return PageView.builder(
@@ -203,7 +216,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     final learningOutcome = details?.getExtensionValue<String?>(
       BadgeExtensionKeys.learningOutcome,
     );
-    final eCTS = details?.getExtensionValue<int?>(BadgeExtensionKeys.ects);
     final language = languageCodeToString(
       details?.getExtensionValue<String?>(BadgeExtensionKeys.language),
       context,
@@ -211,7 +223,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     final supervisedStatus = getAssessmentSupervisedStatus(details);
     final assessmentType = details?.badgeclass.assessmentType;
     final participation = details?.badgeclass.participation;
-    final eQF = details?.getExtensionValue<int?>(BadgeExtensionKeys.eQF);
 
     return [
       if (details?.badgeclass.description != null)
