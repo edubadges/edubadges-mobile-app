@@ -1,9 +1,10 @@
-import 'package:collection/collection.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_detail_item_model.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
+import 'package:edubadges/features/badge_details/domain/constants/badge_extensions.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
+import 'package:edubadges/features/badge_details/domain/extensions/badge_instance_extensions.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
@@ -29,17 +30,12 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   static const int _sectionCardSpacing = 16;
   static const double _badgeCardHeight = 260;
 
-  static const String _learningOutcomeExtension =
-      'extensions:LearningOutcomeExtension';
-  static const String _ectsExtension = 'extensions:ECTSExtension';
-  static const String _languageExtension = 'extensions:LanguageExtension';
-  static const String _eqfExtension = 'extensions:EQFExtension';
-
   late PageController _pageController;
   int _currentIndex = 0;
   bool _hasInitializedPage = false;
 
-  bool get _shouldShowCarousel => widget.badge.from == BadgeDetailsRouteFrom.overview;
+  bool get _shouldShowCarousel =>
+      widget.badge.from == BadgeDetailsRouteFrom.overview;
 
   @override
   void initState() {
@@ -60,13 +56,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     });
   }
 
-  T? getExtensionValue<T>(BadgeInstanceModel? details, String extensionName) {
-    final match = details?.badgeclass.badgeclassextensionSet?.firstWhereOrNull(
-      (element) => element.name == extensionName,
-    );
-    return match?.value as T?;
-  }
-
   String? getAssessmentSupervisedStatus(BadgeInstanceModel? details) {
     final l10n = AppLocalizations.of(context)!;
     final badgeclass = details?.badgeclass;
@@ -82,16 +71,16 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   }
 
   MarkdownStyleSheet _buildMarkdownStyleSheet() {
-  // TODO: Setup markdown styling (https://digitalclub.atlassian.net/browse/SURF-540)
-  // final colorScheme = Theme.of(context).colorScheme;
-  return MarkdownStyleSheet(
-    // TODO: Figure out design with design team what block quotes should look like
-    // blockquoteDecoration: BoxDecoration(
-    //   color: colorScheme.surfaceContainerLowest,
-    //   borderRadius: BorderRadius.circular(12),
-    // ),
-  );
-}
+    // TODO: Setup markdown styling (https://digitalclub.atlassian.net/browse/SURF-540)
+    // final colorScheme = Theme.of(context).colorScheme;
+    return MarkdownStyleSheet(
+      // TODO: Figure out design with design team what block quotes should look like
+      // blockquoteDecoration: BoxDecoration(
+      //   color: colorScheme.surfaceContainerLowest,
+      //   borderRadius: BorderRadius.circular(12),
+      // ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +147,8 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
 
         ...badgesAsync.when(
           data: (badges) {
-            if (badges.claimedBadges.isEmpty || _currentIndex >= badges.claimedBadges.length) {
+            if (badges.claimedBadges.isEmpty ||
+                _currentIndex >= badges.claimedBadges.length) {
               return [const Center(child: Text('No badge'))];
             }
 
@@ -209,19 +199,18 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   List<Widget> _buildBadgeDetails(BadgeInstanceModel? details) {
     final l10n = AppLocalizations.of(context)!;
 
-    final learningOutcome = getExtensionValue<String?>(
-      details,
-      _learningOutcomeExtension,
+    final learningOutcome = details?.getExtensionValue<String?>(
+      BadgeExtensionKeys.learningOutcome,
     );
-    final eCTS = getExtensionValue<int?>(details, _ectsExtension);
+    final eCTS = details?.getExtensionValue<int?>(BadgeExtensionKeys.ects);
     final language = languageCodeToString(
-      getExtensionValue<String?>(details, _languageExtension),
+      details?.getExtensionValue<String?>(BadgeExtensionKeys.language),
       context,
     );
     final supervisedStatus = getAssessmentSupervisedStatus(details);
     final assessmentType = details?.badgeclass.assessmentType;
     final participation = details?.badgeclass.participation;
-    final eQF = getExtensionValue<int?>(details, _eqfExtension);
+    final eQF = details?.getExtensionValue<int?>(BadgeExtensionKeys.eQF);
 
     return [
       if (details?.badgeclass.description != null)
@@ -256,7 +245,8 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           BadgeDetailItemModel(
             icon: Assets.iconCollections,
             title: l10n.type,
-            subtitle: 'Extracurriculair', // TODO: Add real data (https://digitalclub.atlassian.net/browse/SURF-539)
+            subtitle:
+                'Extracurriculair', // TODO: Add real data (https://digitalclub.atlassian.net/browse/SURF-539)
           ),
         ],
       ),
@@ -266,7 +256,8 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           BadgeDetailItemModel(
             icon: Assets.iconType,
             title: l10n.type,
-            subtitle: 'Microcredential', // TODO: Add real data (https://digitalclub.atlassian.net/browse/SURF-539)
+            subtitle:
+                'Microcredential', // TODO: Add real data (https://digitalclub.atlassian.net/browse/SURF-539)
           ),
           if (eCTS != null)
             BadgeDetailItemModel(

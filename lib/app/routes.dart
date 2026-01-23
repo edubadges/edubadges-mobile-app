@@ -3,6 +3,7 @@ import 'package:edubadges/features/account/data/models/agreement_route_model.dar
 import 'package:edubadges/features/account/presentation/pages/account_page.dart';
 import 'package:edubadges/features/account/presentation/pages/agreement_details_page.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/features/badge_details/presentation/pages/badge_details_page.dart';
 import 'package:edubadges/features/badges_overview/presentation/pages/badges_overview_page.dart';
 import 'package:edubadges/features/catalog/presentation/pages/catalog_page.dart';
