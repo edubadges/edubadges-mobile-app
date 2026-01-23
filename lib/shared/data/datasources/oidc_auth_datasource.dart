@@ -18,21 +18,31 @@ class OidcAuthDataSource {
   final List<String> _scopes = ['openid', 'eduid.nl/links'];
 
   /// Perform login – called when app opens if no valid token
-  Future<void> login() async {
+  Future<void> login({bool addAcrValues = false}) async {
     try {
-      final AuthorizationTokenResponse? result = await _appAuth.authorizeAndExchangeCode(
+      final Map<String, String> additionalParameters = {};
+      List<String>? promptValues;
+
+      if (addAcrValues) {
+        additionalParameters['acr_values'] = 'https://eduid.nl/trust/validate-names';
+      } else {
+        promptValues = ['login'];
+      }
+
+      final AuthorizationTokenResponse result = await _appAuth.authorizeAndExchangeCode(
         AuthorizationTokenRequest(
           clientId,
           redirectUri,
           issuer: issuer,
           scopes: _scopes,
-          promptValues: ['login'],
+          promptValues: promptValues,
+          additionalParameters: additionalParameters,
         ),
       );
 
-      if (result?.accessToken != null) {
+      if (result.accessToken != null) {
         await _saveTokens(
-          result!.accessToken!,
+          result.accessToken!,
           result.refreshToken,
           result.accessTokenExpirationDateTime,
           result.idToken,
@@ -91,7 +101,7 @@ class OidcAuthDataSource {
     if (refreshToken == null) return;
 
     try {
-      final TokenResponse? result = await _appAuth.token(
+      final TokenResponse result = await _appAuth.token(
         TokenRequest(
           clientId,
           redirectUri,
@@ -101,7 +111,7 @@ class OidcAuthDataSource {
         ),
       );
 
-      if (result != null && result.accessToken != null) {
+      if (result.accessToken != null) {
         await _saveTokens(
           result.accessToken!,
           result.refreshToken,

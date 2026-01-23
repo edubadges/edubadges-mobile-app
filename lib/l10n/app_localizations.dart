@@ -128,6 +128,24 @@ abstract class AppLocalizations {
   /// **'Never stop learning'**
   String get loginTitle;
 
+  /// No description provided for @generalAgreementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get generalAgreementTitle;
+
+  /// No description provided for @generalAgreementButtonReadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Read more'**
+  String get generalAgreementButtonReadMore;
+
+  /// No description provided for @generalAgreementButtonRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get generalAgreementButtonRead;
+
   /// No description provided for @tabAccount.
   ///
   /// In en, this message translates to:
@@ -373,7 +391,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No profile data'**
   String get noProfileData;
-
 
   /// No description provided for @logoutConfirmationTitle.
   ///

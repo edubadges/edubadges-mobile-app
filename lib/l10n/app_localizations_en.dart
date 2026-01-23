@@ -26,6 +26,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginTitle => 'Never stop learning';
 
   @override
+  String get generalAgreementTitle => 'Privacy Policy';
+
+  @override
+  String get generalAgreementButtonReadMore => 'Read more';
+
+  @override
+  String get generalAgreementButtonRead => 'Read';
+
+  @override
   String get tabAccount => 'Account';
 
   @override
@@ -204,6 +213,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirm => 'Confirm';
+
+  @override
   String countHours(num count) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);
