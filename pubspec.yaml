@@ -26,10 +26,11 @@ dependencies:
   flutter_appauth: any
   flutter_secure_storage: any
   connectivity_plus: any
+  flutter_markdown_plus: any
+  permission_handler: any
   url_launcher: any
   intl: ^0.20.2
   collection: ^1.19.1
-
 
 dev_dependencies:
   flutter_test:
@@ -104,10 +105,6 @@ flutter:
     - family: SourceSans3LightItalic
       fonts:
         - asset: assets/fonts/SourceSans3-LightItalic.ttf
-          weight: 300
-    - family: NunitoExtraLightItalic
-      fonts:
-        - asset: assets/fonts/Nunito-ExtraLightItalic.ttf
           weight: 300
     - family: SourceSans3MediumItalic
       fonts:
