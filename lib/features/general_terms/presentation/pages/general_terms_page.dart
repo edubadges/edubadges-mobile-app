@@ -81,7 +81,6 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
         children: [
           markdownAsync.when(
             data: (markdownContent) {
-              // Show placeholder if content is empty (e.g., while URL is loading)
               if (markdownContent.isEmpty) {
                 return const Center(child: CircularProgressIndicator());
               }

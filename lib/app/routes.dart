@@ -44,7 +44,8 @@ final appRouter = Provider<GoRouter>((ref) {
         },
       ),
 
-      GoRoute(path: RoutePath.generalTerms,
+      GoRoute(
+          path: RoutePath.generalTerms,
           name: 'general-terms',
           builder: (context, state) {
             return const GeneralTermsPage();
