@@ -1,6 +1,7 @@
 class RoutePath {
   static const String main = '/';
   static const String login = '/login';
+  static const String generalTerms = '/general-terms';
   static const String start = '/';
   static const String collections = '/collections';
   static const String collection = '/collection/:id';
@@ -8,6 +9,7 @@ class RoutePath {
   static const String newCollectionBadgeSelection = '/new-collection/badges';
   static const String catalog = '/catalog';
   static const String account = '/account';
+  static const String notificationPermission = '/notification-permission';
   static const String agreementDetails = '/agreement/:id';
 
   /// List of all main navigation routes

@@ -26,6 +26,15 @@ class AppLocalizationsNl extends AppLocalizations {
   String get loginTitle => 'Never stop learning';
 
   @override
+  String get generalAgreementTitle => 'Privacy voorwaarden';
+
+  @override
+  String get generalAgreementButtonReadMore => 'Lees meer';
+
+  @override
+  String get generalAgreementButtonRead => 'Gelezen';
+
+  @override
   String get tabAccount => 'Account';
 
   @override
@@ -85,6 +94,23 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get delete => 'Verwijderen';
+
+  @override
+  String get notificationPermissionsTitle => 'Blijf op de hoogte';
+
+  @override
+  String get notificationPermissionsSubtitle =>
+      'Edubadge kan je een melding sturen wanneer er iets voor je klaarstaat, zoals een nieuwe badge of een belangrijke update.';
+
+  @override
+  String get notificationPermissionsLabel =>
+      'Je kunt dit later altijd aanpassen in de instellingen.';
+
+  @override
+  String get notificationPermissionsButtonAllow => 'Notificaties toestaan';
+
+  @override
+  String get notificationPermissionsButtonDeny => 'Niet nu';
 
   @override
   String get accountData => 'Gegevens';

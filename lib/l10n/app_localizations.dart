@@ -128,6 +128,24 @@ abstract class AppLocalizations {
   /// **'Never stop learning'**
   String get loginTitle;
 
+  /// No description provided for @generalAgreementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get generalAgreementTitle;
+
+  /// No description provided for @generalAgreementButtonReadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Read more'**
+  String get generalAgreementButtonReadMore;
+
+  /// No description provided for @generalAgreementButtonRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get generalAgreementButtonRead;
+
   /// No description provided for @tabAccount.
   ///
   /// In en, this message translates to:
@@ -241,6 +259,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
+
+  /// No description provided for @notificationPermissionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay informed'**
+  String get notificationPermissionsTitle;
+
+  /// No description provided for @notificationPermissionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edubadge can send you a notification when something is ready for you, such as a new badge or an important update.'**
+  String get notificationPermissionsSubtitle;
+
+  /// No description provided for @notificationPermissionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'You can always change this later in the settings.'**
+  String get notificationPermissionsLabel;
+
+  /// No description provided for @notificationPermissionsButtonAllow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications'**
+  String get notificationPermissionsButtonAllow;
+
+  /// No description provided for @notificationPermissionsButtonDeny.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get notificationPermissionsButtonDeny;
 
   /// No description provided for @accountData.
   ///
