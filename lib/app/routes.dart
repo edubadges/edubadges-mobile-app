@@ -9,27 +9,35 @@ import 'package:edubadges/features/collections/presentation/pages/collection_pag
 import 'package:edubadges/features/collections/presentation/pages/collections_page.dart';
 import 'package:edubadges/features/login/presentation/pages/login_page.dart';
 import 'package:edubadges/features/main/main_page.dart';
+import 'package:edubadges/features/notification_permission/presentation/pages/notification_permission_page.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
+import 'package:edubadges/shared/presentation/providers/permission_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final appRouter = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
+  final notificationStatus = ref.watch(notificationPermissionStatusProvider);
 
   return GoRouter(
     initialLocation: RoutePath.login,
     redirect: (context, state) {
-      final bool loggedIn = authState.when(
-        data: (isLoggedIn) => isLoggedIn,
-        loading: () => false,
-        // ignore: unnecessary_underscores
-        error: (_, __) => false,
-      );
-
+      final bool loggedIn = authState.asData?.value ?? false;
       final bool isGoingToLogin = state.uri.path == RoutePath.login;
 
       if (!loggedIn && !isGoingToLogin) return RoutePath.login;
-      if (loggedIn && isGoingToLogin) return RoutePath.main;
+
+      // After login, decide where to go.
+      if (loggedIn && isGoingToLogin) {
+        // If the permission has not been determined yet, show the permission screen.
+        // This packages means user has not decided yet with .denied
+        if (notificationStatus.asData?.value == PermissionStatus.denied) {
+          return RoutePath.notificationPermission;
+        }
+        // Otherwise, go directly to the main page.
+        return RoutePath.main;
+      }
 
       return null;
     },
@@ -40,6 +48,14 @@ final appRouter = Provider<GoRouter>((ref) {
         name: 'login',
         builder: (context, state) {
           return const LoginPage();
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.notificationPermission,
+        name: 'notification-permission',
+        builder: (context, state) {
+          return const NotificationPermissionPage();
         },
       ),
 
