@@ -82,12 +82,13 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   }
 
   MarkdownStyleSheet _buildMarkdownStyleSheet() {
-  final colorScheme = Theme.of(context).colorScheme;
+  // final colorScheme = Theme.of(context).colorScheme;
   return MarkdownStyleSheet(
-    blockquoteDecoration: BoxDecoration(
-      color: colorScheme.surfaceContainerLowest,
-      borderRadius: BorderRadius.circular(12),
-    ),
+    // TODO: Figure out design with design team what block quotes should look like
+    // blockquoteDecoration: BoxDecoration(
+    //   color: colorScheme.surfaceContainerLowest,
+    //   borderRadius: BorderRadius.circular(12),
+    // ),
   );
 }
 
