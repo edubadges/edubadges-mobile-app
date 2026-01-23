@@ -119,4 +119,30 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsModel>> {
       },
     );
   }
+
+  Future<bool> createCollection({
+    required String name,
+    String? description,
+    required bool public,
+    required List<int> badgeInstanceIds,
+  }) async {
+    final useCase = ref.read(createCollectionUseCaseProvider);
+    final result = await useCase(
+      name: name,
+      description: description,
+      public: public,
+      badgeInstanceIds: badgeInstanceIds,
+    );
+
+    return result.fold(
+      (failure) {
+        state = AsyncError(failure, StackTrace.current);
+        return false;
+      },
+      (_) {
+        refresh();
+        return true;
+      },
+    );
+  }
 }

@@ -17,4 +17,11 @@ abstract class CollectionsRepository {
     required bool public,
     required List<int> badgeInstanceIds,
   });
+
+  Future<Either<Failure, CollectionsEntity>> createCollection({
+    required String name,
+    String? description,
+    required bool public,
+    required List<int> badgeInstanceIds,
+  });
 }

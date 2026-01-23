@@ -5,8 +5,10 @@ import 'package:edubadges/features/account/presentation/pages/agreement_details_
 import 'package:edubadges/features/badges_overview/presentation/pages/badges_overview_page.dart';
 import 'package:edubadges/features/catalog/presentation/pages/catalog_page.dart';
 import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
+import 'package:edubadges/features/collections/presentation/pages/badge_selection_page.dart';
 import 'package:edubadges/features/collections/presentation/pages/collection_page.dart';
 import 'package:edubadges/features/collections/presentation/pages/collections_page.dart';
+import 'package:edubadges/features/collections/presentation/pages/new_collection_page.dart';
 import 'package:edubadges/features/general_terms/presentation/pages/general_terms_page.dart';
 import 'package:edubadges/features/login/presentation/pages/login_page.dart';
 import 'package:edubadges/features/main/main_page.dart';
@@ -109,6 +111,27 @@ final appRouter = Provider<GoRouter>((ref) {
           );
 
           return AgreementDetailsPage(agreement: agreement);
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.newCollection,
+        builder: (context, state) {
+          final name = state.uri.queryParameters['name'] ?? '';
+          final description = state.uri.queryParameters['description'];
+
+          return NewCollectionPage(name: name, description: description);
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.newCollectionBadgeSelection,
+        name: 'new-collection-badge-selection',
+        builder: (context, state) {
+          final name = state.uri.queryParameters['name'] ?? '';
+          final description = state.uri.queryParameters['description'];
+
+          return BadgeSelectionPage(name: name, description: description);
         },
       ),
 

@@ -559,6 +559,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Update your collection details'**
   String get editCollectionDescription;
+
+  /// No description provided for @continueText.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueText;
+
+  /// No description provided for @addEdubadges.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Edubadges'**
+  String get addEdubadges;
+
+  /// No description provided for @selectAtLeastOneBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least one badge'**
+  String get selectAtLeastOneBadge;
+
+  /// No description provided for @noBadgesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No badges available'**
+  String get noBadgesAvailable;
+
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
 }
 
 class _AppLocalizationsDelegate

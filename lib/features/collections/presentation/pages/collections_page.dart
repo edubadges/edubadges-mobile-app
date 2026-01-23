@@ -53,14 +53,14 @@ class CollectionsPage extends ConsumerWidget {
                 children: [
                   SvgIcon(
                     assetPath: Assets.iconCollections,
-                    size: 100,
+                    size: 40,
                     color: colorScheme.primary,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     l10n.noCollectionsYet,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: colorScheme.onSurface,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],

@@ -1,6 +1,6 @@
+import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/app_text_field.dart';
 import 'package:edubadges/core/widgets/base_form_bottom_sheet.dart';
-import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -27,20 +27,20 @@ class _CreateCollectionBottomSheetState
   }
 
   void _handleSave() {
-    final title = _nameController.text.trim();
-    final description = _descriptionController.text.trim();
+    if (_formKey.currentState!.validate()) {
+      final name = _nameController.text.trim();
+      final description = _descriptionController.text.trim();
 
-    final id = DateTime.now().millisecondsSinceEpoch.toString();
+      Navigator.of(context).pop();
 
-    Navigator.of(context).pop();
-
-    final collection = CollectionRouteModel(
-      id: id,
-      title: title,
-      description: description.isNotEmpty ? description : null,
-    );
-
-    context.push(collection.buildRouteUrl());
+      final uri = Uri.parse(RoutePath.newCollection).replace(
+        queryParameters: {
+          'name': name,
+          if (description.isNotEmpty) 'description': description,
+        },
+      );
+      context.push(uri.toString());
+    }
   }
 
   void _handleCancel() {

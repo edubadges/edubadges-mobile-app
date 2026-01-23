@@ -3,6 +3,7 @@ import 'package:edubadges/features/collections/data/datasources/collections_data
 import 'package:edubadges/features/collections/data/models/collections_model.dart';
 import 'package:edubadges/features/collections/data/repositories/collections_repository_impl.dart';
 import 'package:edubadges/features/collections/domain/repositories/collections_repository.dart';
+import 'package:edubadges/features/collections/domain/usecases/create_collection_use_case.dart';
 import 'package:edubadges/features/collections/domain/usecases/delete_collection_use_case.dart';
 import 'package:edubadges/features/collections/domain/usecases/update_collection_use_case.dart';
 import 'package:edubadges/features/collections/presentation/state/collections_notifier.dart';
@@ -30,6 +31,13 @@ final updateCollectionUseCaseProvider = Provider<UpdateCollectionUseCase>((
 ) {
   final repository = ref.read(collectionsRepositoryProvider);
   return UpdateCollectionUseCase(repository: repository);
+});
+
+final createCollectionUseCaseProvider = Provider<CreateCollectionUseCase>((
+  ref,
+) {
+  final repository = ref.read(collectionsRepositoryProvider);
+  return CreateCollectionUseCase(repository: repository);
 });
 
 final collectionsProvider =
