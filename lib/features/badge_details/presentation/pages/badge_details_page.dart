@@ -261,7 +261,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           BadgeDetailItemModel(
             icon: Assets.iconCollections,
             title: l10n.type,
-            subtitle: 'subtitle2',
+            subtitle: 'Extracurriculair', // TODO: Add real data (https://digitalclub.atlassian.net/browse/SURF-539)
           ),
         ],
       ),
@@ -271,7 +271,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           BadgeDetailItemModel(
             icon: Assets.iconType,
             title: l10n.type,
-            subtitle: 'subtitle1',
+            subtitle: 'Microcredential', // TODO: Add real data (https://digitalclub.atlassian.net/browse/SURF-539)
           ),
           if (eCTS != null)
             BadgeDetailItemModel(
