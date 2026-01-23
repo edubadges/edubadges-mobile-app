@@ -216,6 +216,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     final learningOutcome = details?.getExtensionValue<String?>(
       BadgeExtensionKeys.learningOutcome,
     );
+    final eCTS = details?.getExtensionValue<double?>(BadgeExtensionKeys.ects);
     final language = languageCodeToString(
       details?.getExtensionValue<String?>(BadgeExtensionKeys.language),
       context,
@@ -223,6 +224,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     final supervisedStatus = getAssessmentSupervisedStatus(details);
     final assessmentType = details?.badgeclass.assessmentType;
     final participation = details?.badgeclass.participation;
+    final eQF = details?.getExtensionValue<double?>(BadgeExtensionKeys.eQF);
 
     return [
       if (details?.badgeclass.description != null)
