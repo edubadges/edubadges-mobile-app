@@ -295,4 +295,41 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get add => 'Toevoegen';
+
+  @override
+  String newBadgeReady(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Er staan $countString nieuwe edubadges klaar',
+      one: 'Er staat 1 nieuwe edubadge klaar',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get requestedBadges => 'Aangevraagde edubadges';
+
+  @override
+  String get noEdubadgesYet => 'Je hebt nog geen edubadges';
+
+  @override
+  String get giveFeedback => 'Feedback geven';
+
+  @override
+  String get giveFeedbackDescription =>
+      'We horen graag wat je van de app vindt. Laat hieronder je feedback achter.';
+
+  @override
+  String get feedback => 'Feedback';
+
+  @override
+  String get feedbackPlaceholder => 'Typ hier je feedback...';
+
+  @override
+  String get feedbackRequired => 'Feedback is verplicht';
 }

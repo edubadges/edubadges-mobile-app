@@ -1,6 +1,23 @@
 import 'package:edubadges/shared/domain/entities/badge_class_entity.dart';
 import 'package:equatable/equatable.dart';
 
+/// Badge acceptance status
+enum BadgeAcceptance {
+  unaccepted('Unaccepted'),
+  accepted('Accepted'),
+  rejected('Rejected');
+
+  const BadgeAcceptance(this.value);
+  final String value;
+
+  static BadgeAcceptance fromString(String value) {
+    return BadgeAcceptance.values.firstWhere(
+      (e) => e.value == value,
+      orElse: () => BadgeAcceptance.unaccepted,
+    );
+  }
+}
+
 /// Badge instance entity representing an awarded badge
 class BadgeInstanceEntity extends Equatable {
   final int id;
@@ -10,7 +27,7 @@ class BadgeInstanceEntity extends Equatable {
   final String awardType;
   final bool revoked;
   final DateTime? expiresAt;
-  final String acceptance;
+  final BadgeAcceptance acceptance;
   final bool public;
   final BadgeClassEntity badgeclass;
 
@@ -29,15 +46,15 @@ class BadgeInstanceEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        createdAt,
-        entityId,
-        issuedOn,
-        awardType,
-        revoked,
-        expiresAt,
-        acceptance,
-        public,
-        badgeclass,
-      ];
+    id,
+    createdAt,
+    entityId,
+    issuedOn,
+    awardType,
+    revoked,
+    expiresAt,
+    acceptance,
+    public,
+    badgeclass,
+  ];
 }

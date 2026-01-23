@@ -35,10 +35,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
   Future<void> _handleCreate() async {
     if (_selectedBadgeIds.isEmpty) {
       final l10n = AppLocalizations.of(context)!;
-      showAppSnackBar(
-        context,
-        l10n.selectAtLeastOneBadge,
-      );
+      showAppSnackBar(context, l10n.selectAtLeastOneBadge);
       return;
     }
 
@@ -88,7 +85,13 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
           children: [
             Expanded(
               child: badgesAsync.when(
-                data: (badges) {
+                data: (badgesState) {
+                  final badges = [
+                    ...badgesState.claimedBadges,
+                    ...badgesState.unclaimedBadges,
+                    ...badgesState.requestedBadges,
+                  ];
+
                   if (badges.isEmpty) {
                     return Center(
                       child: Text(

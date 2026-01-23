@@ -294,4 +294,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get add => 'Add';
+
+  @override
+  String newBadgeReady(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'There are $countString new edubadges ready',
+      one: 'There is 1 new edubadge ready',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get requestedBadges => 'Requested badges';
+
+  @override
+  String get noEdubadgesYet => 'You don\'t have any edubadges yet';
+
+  @override
+  String get giveFeedback => 'Give feedback';
+
+  @override
+  String get giveFeedbackDescription =>
+      'We\'d love to hear what you think about the app. Leave your feedback below.';
+
+  @override
+  String get feedback => 'Feedback';
+
+  @override
+  String get feedbackPlaceholder => 'Type your feedback here...';
+
+  @override
+  String get feedbackRequired => 'Feedback is required';
 }

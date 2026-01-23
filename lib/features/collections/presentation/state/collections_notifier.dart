@@ -8,7 +8,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class CollectionsNotifier extends AsyncNotifier<List<CollectionsModel>> {
   @override
   Future<List<CollectionsModel>> build() async {
-    final badgeInstances = await ref.read(badgesOverviewProvider.future);
+    final badgesState = await ref.read(badgesOverviewProvider.future);
+    final badgeInstances = [
+      ...badgesState.claimedBadges,
+      ...badgesState.unclaimedBadges,
+      ...badgesState.requestedBadges,
+    ];
 
     final apiClient = ref.read(apiClientProvider);
     final response = await apiClient.get<List<dynamic>>('/badge-collections');
@@ -32,7 +37,12 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsModel>> {
   Future<void> refresh() async {
     state = const AsyncLoading();
     try {
-      final badgeInstances = await ref.read(badgesOverviewProvider.future);
+      final badgesState = await ref.read(badgesOverviewProvider.future);
+      final badgeInstances = [
+        ...badgesState.claimedBadges,
+        ...badgesState.unclaimedBadges,
+        ...badgesState.requestedBadges,
+      ];
       final apiClient = ref.read(apiClientProvider);
       final response = await apiClient.get<List<dynamic>>('/badge-collections');
 

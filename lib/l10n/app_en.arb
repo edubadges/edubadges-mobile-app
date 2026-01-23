@@ -105,5 +105,21 @@
     "addEdubadges": "Add Edubadges",
     "selectAtLeastOneBadge": "Select at least one badge",
     "noBadgesAvailable": "No badges available",
-    "add": "Add"
+    "add": "Add",
+    "newBadgeReady": "{count, plural, =1{There is 1 new edubadge ready} other{There are {count} new edubadges ready}}",
+    "@newBadgeReady": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "requestedBadges": "Requested badges",
+    "noEdubadgesYet": "You don't have any edubadges yet",
+    "giveFeedback": "Give feedback",
+    "giveFeedbackDescription": "We'd love to hear what you think about the app. Leave your feedback below.",
+    "feedback": "Feedback",
+    "feedbackPlaceholder": "Type your feedback here...",
+    "feedbackRequired": "Feedback is required"
 }

@@ -29,12 +29,14 @@ class BadgeInstanceModel extends BadgeInstanceEntity {
       revoked: json['revoked'] as bool? ?? false,
       expiresAt: json['expires_at'] != null
           ? (json['expires_at'] is DateTime
-              ? json['expires_at'] as DateTime
-              : DateTime.parse(json['expires_at'] as String))
+                ? json['expires_at'] as DateTime
+                : DateTime.parse(json['expires_at'] as String))
           : null,
-      acceptance: json['acceptance'] as String,
+      acceptance: BadgeAcceptance.fromString(json['acceptance'] as String),
       public: json['public'] as bool? ?? true,
-      badgeclass: BadgeClassModel.fromJson(json['badgeclass'] as Map<String, dynamic>),
+      badgeclass: BadgeClassModel.fromJson(
+        json['badgeclass'] as Map<String, dynamic>,
+      ),
     );
   }
 
@@ -47,7 +49,7 @@ class BadgeInstanceModel extends BadgeInstanceEntity {
       'award_type': awardType,
       'revoked': revoked,
       if (expiresAt != null) 'expires_at': expiresAt!.toIso8601String(),
-      'acceptance': acceptance,
+      'acceptance': acceptance.value,
       'public': public,
       'badgeclass': (badgeclass as BadgeClassModel).toJson(),
     };
