@@ -155,8 +155,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           ),
         ),
 
-        const SizedBox(height: 12),
-
         ...badgesAsync.when(
           data: (badges) {
             if (badges.isEmpty || _currentIndex >= badges.length) {
@@ -191,9 +189,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             ),
           ),
 
-        const SizedBox(height: 12),
-
-        // Details for just this badge
         ..._buildBadgeDetailsContent(widget.badge.id),
       ],
     );
