@@ -1,4 +1,5 @@
 import 'package:edubadges/app/constants.dart';
+import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_detail_item_model.dart';
@@ -90,18 +91,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
       (false, true) => l10n.supervised,
       _ => null,
     };
-  }
-
-  MarkdownStyleSheet _buildMarkdownStyleSheet() {
-    // TODO: Setup markdown styling (https://digitalclub.atlassian.net/browse/SURF-540)
-    // final colorScheme = Theme.of(context).colorScheme;
-    return MarkdownStyleSheet(
-      // TODO: Figure out design with design team what block quotes should look like
-      // blockquoteDecoration: BoxDecoration(
-      //   color: colorScheme.surfaceContainerLowest,
-      //   borderRadius: BorderRadius.circular(12),
-      // ),
-    );
   }
 
   @override
@@ -232,7 +221,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           title: l10n.aboutThisEdubadge,
           item: MarkdownBody(
             data: filterBadMarkdown(details!.badgeclass.description!),
-            styleSheet: _buildMarkdownStyleSheet(),
+            styleSheet: AppThemes.markdownStyleSheet(context),
           ),
         ),
       if (learningOutcome != null)
@@ -240,7 +229,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           title: l10n.learningOutcomes,
           item: MarkdownBody(
             data: filterBadMarkdown(learningOutcome),
-            styleSheet: _buildMarkdownStyleSheet(),
+            styleSheet: AppThemes.markdownStyleSheet(context),
           ),
         ),
       _buildSectionCard(
