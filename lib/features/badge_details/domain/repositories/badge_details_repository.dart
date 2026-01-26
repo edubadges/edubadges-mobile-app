@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:edubadges/core/errors/failures.dart';
-import 'package:edubadges/shared/data/models/badge_instance_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 
 abstract class BadgeDetailsRepository {
-  Future<Either<Failure, BadgeInstanceModel>> getBadgeDetails(String entityId);
+  Future<Either<Failure, BadgeInstanceEntity>> getBadgeDetails(String entityId);
 }

@@ -1,7 +1,6 @@
 import 'package:edubadges/shared/domain/entities/badge_class_entity.dart';
 import 'package:equatable/equatable.dart';
 
-/// Badge acceptance status
 enum BadgeAcceptance {
   unaccepted('Unaccepted'),
   accepted('Accepted'),
@@ -18,7 +17,6 @@ enum BadgeAcceptance {
   }
 }
 
-/// Badge instance entity representing an awarded badge
 class BadgeInstanceEntity extends Equatable {
   final int id;
   final DateTime createdAt;

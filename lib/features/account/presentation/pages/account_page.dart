@@ -1,8 +1,8 @@
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/mock_data.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
-import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/account/presentation/widgets/delete_account_dialog.dart';
@@ -206,7 +206,8 @@ class AccountPage extends ConsumerWidget {
               ),
             ),
             Switch(
-              value: true, // TODO: Replace with real value later https://digitalclub.atlassian.net/browse/SURF-514
+              value:
+                  true, // TODO: Replace with real value later https://digitalclub.atlassian.net/browse/SURF-514
               onChanged: (value) {
                 // TODO: Implement update notification settings https://digitalclub.atlassian.net/browse/SURF-514
               },
@@ -236,28 +237,7 @@ class AccountPage extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    // Mock agreement data - TODO replace with actual API data when available https://digitalclub.atlassian.net/browse/SURF-514
-    final agreementModel = AgreementRouteModel(
-      agreementId: agreement.institution,
-      titleLong: 'Edubadges and your privacy - Full Version',
-      textLong:
-          '''Below are the most important points about edubadges and your privacy. In the [full version](https://raw.githubusercontent.com/edubadges/privacy/master/hogeschool-utrecht/edubadges-formal-text-en.md) detailed information about this processing can be found.
-
-University of applied sciences Utrecht is the controller and SURF is the processor for issuing edubadges. For the edubadges platform to function, it is necessary to process your personal data. By using digital badges, Hogeschool Utrecht enables the students and participant to visibly present their acquired competences at other educational institutions and social media such as LinkedIN. With badges the students and participants are enabled to be in charge of their own choices regarding the learning progress and respective learning process.
-
-To issue edubadges, your first name, last name, a unique identifier and email address are processed. In addition the edubadge contains your eduID and supplementary information such as the time of issue, the publisher (University of applied sciences Utrecht) and information about the achievement, educational module and/or learning outcomes. If you have any questions about your privacy, please contact [askprivacy@hu.nl](mailto:askprivacy@hu.nl).
-
-By clicking 'I have read this', you declare that you have read the [full privacy statement](https://raw.githubusercontent.com/edubadges/privacy/master/hogeschool-utrecht/edubadges-formal-text-en.md).''',
-      titleShort: 'Edubadges and your privacy',
-      textShort:
-          '''Below are the most important points about edubadges and your privacy. In the [full version](https://raw.githubusercontent.com/edubadges/privacy/master/hogeschool-utrecht/edubadges-formal-text-en.md) detailed information about this processing can be found.
-
-University of applied sciences Utrecht is the controller and SURF is the processor for issuing edubadges. For the edubadges platform to function, it is necessary to process your personal data. By using digital badges, Hogeschool Utrecht enables the students and participant to visibly present their acquired competences at other educational institutions and social media such as LinkedIN. With badges the students and participants are enabled to be in charge of their own choices regarding the learning progress and respective learning process.
-
-To issue edubadges, your first name, last name, a unique identifier and email address are processed. In addition the edubadge contains your eduID and supplementary information such as the time of issue, the publisher (University of applied sciences Utrecht) and information about the achievement, educational module and/or learning outcomes. If you have any questions about your privacy, please contact [askprivacy@hu.nl](mailto:askprivacy@hu.nl).
-
-By clicking 'I have read this', you declare that you have read the [full privacy statement](https://raw.githubusercontent.com/edubadges/privacy/master/hogeschool-utrecht/edubadges-formal-text-en.md).''',
-    );
+    final agreementModel = MockData.getMockAgreement(agreement.institution);
 
     return InkWell(
       onTap: () {

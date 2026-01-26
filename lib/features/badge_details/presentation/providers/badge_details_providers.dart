@@ -3,7 +3,7 @@ import 'package:edubadges/features/badge_details/data/datasources/badge_details_
 import 'package:edubadges/features/badge_details/domain/repositories/badge_details_repository.dart';
 import 'package:edubadges/features/badge_details/domain/repositories/badge_details_repository_impl.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
-import 'package:edubadges/shared/data/models/badge_instance_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final badgeDetailsDataSourceProvider = Provider<BadgeDetailsDataSource>((ref) {
@@ -16,32 +16,31 @@ final badgeDetailsRepositoryProvider = Provider<BadgeDetailsRepository>((ref) {
   return BadgeDetailsRepositoryImpl(dataSource);
 });
 
-final badgeDetailsProvider = FutureProvider.autoDispose.family<BadgeInstanceModel, String>(
-  (ref, badgeId) async {
-    final repository = ref.read(badgeDetailsRepositoryProvider);
-    final result = await repository.getBadgeDetails(badgeId);
-    
-    return result.fold(
-      (failure) => throw failure,
-      (badge) => badge,
-    );
-  },
-);
+final badgeDetailsProvider = FutureProvider.autoDispose
+    .family<BadgeInstanceEntity, String>((ref, badgeId) async {
+      final repository = ref.read(badgeDetailsRepositoryProvider);
+      final result = await repository.getBadgeDetails(badgeId);
 
-final badgeByIdProvider = Provider.family<BadgeInstanceModel?, String>(
-  (ref, badgeId) {
-    final badgesAsync = ref.watch(badgesOverviewProvider);
-    
-    return badgesAsync.whenOrNull(
-      data: (badges) {
-        try {
-          return badges.claimedBadges.firstWhere((badge) => badge.entityId == badgeId);
-        } catch (e) {
-          return null;
-        }
-      },
-    );
-  },
-);
+      return result.fold((failure) => throw failure, (badge) => badge);
+    });
+
+final badgeByIdProvider = Provider.family<BadgeInstanceEntity?, String>((
+  ref,
+  badgeId,
+) {
+  final badgesAsync = ref.watch(badgesOverviewProvider);
+
+  return badgesAsync.whenOrNull(
+    data: (badges) {
+      try {
+        return badges.claimedBadges.firstWhere(
+          (badge) => badge.entityId == badgeId,
+        );
+      } catch (e) {
+        return null;
+      }
+    },
+  );
+});
 
 final badgesListProvider = badgesOverviewProvider;

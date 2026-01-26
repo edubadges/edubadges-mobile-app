@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
-import 'package:edubadges/shared/data/models/badge_instance_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 
-extension BadgeInstanceExtensions on BadgeInstanceModel {
+extension BadgeInstanceExtensions on BadgeInstanceEntity {
   T? getExtensionValue<T>(String extensionName) {
     final match = badgeclass.badgeclassextensionSet?.firstWhereOrNull(
       (element) => element.name == extensionName,

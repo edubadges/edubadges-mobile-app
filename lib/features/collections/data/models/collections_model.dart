@@ -1,5 +1,5 @@
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
-import 'package:edubadges/shared/data/models/badge_instance_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 
 class CollectionsModel extends CollectionsEntity {
   const CollectionsModel({
@@ -16,10 +16,16 @@ class CollectionsModel extends CollectionsEntity {
     final badgeIds = json['badge_instances'] as List<dynamic>? ?? [];
 
     final badgeInstanceIds = badgeIds.map((item) {
-      if (item is int) {
+      if (item is String) {
         return item;
+      } else if (item is int) {
+        return item.toString();
+      } else if (item is Map<String, dynamic> &&
+          item.containsKey('entity_id')) {
+        return item['entity_id'] as String;
       } else if (item is Map<String, dynamic> && item.containsKey('id')) {
-        return item['id'] as int;
+        final id = item['id'];
+        return id is int ? id.toString() : id as String;
       } else {
         throw FormatException('Invalid badge instance ID format: $item');
       }
@@ -46,13 +52,14 @@ class CollectionsModel extends CollectionsEntity {
     );
   }
 
+  @override
   CollectionsModel copyWith({
     String? id,
     String? entityId,
     String? name,
     String? description,
-    List<int>? badgeInstanceIds,
-    List<BadgeInstanceModel>? badgeInstances,
+    List<String>? badgeInstanceIds,
+    List<BadgeInstanceEntity>? badgeInstances,
     bool? public,
   }) {
     return CollectionsModel(
@@ -67,11 +74,15 @@ class CollectionsModel extends CollectionsEntity {
   }
 
   Map<String, dynamic> toJson() {
+    final badgeInstancePks = badgeInstanceIds.map((id) {
+      return int.tryParse(id) ?? id;
+    }).toList();
+
     return {
       'id': id,
       'name': name,
       if (description != null) 'description': description,
-      'badge_instances': badgeInstanceIds,
+      'badge_instances': badgeInstancePks,
       'public': public,
     };
   }

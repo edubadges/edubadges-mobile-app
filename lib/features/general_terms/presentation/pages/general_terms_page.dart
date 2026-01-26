@@ -33,7 +33,8 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
 
   void _scrollListener() {
     // Check if the scroll position is within 100px of the bottom
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 100) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 100) {
       if (!_isNearBottom) {
         setState(() {
           _isNearBottom = true;
@@ -57,18 +58,19 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
   }
 
   Future<void> _acceptTerms() async {
-      context.go(RoutePath.main);
+    context.go(RoutePath.main);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     final markdownAsync = ref.watch(markdownContentProvider);
-    final buttonText = _isNearBottom ? l10n.generalAgreementButtonRead : l10n.generalAgreementButtonReadMore;
+    final buttonText = _isNearBottom
+        ? l10n.generalAgreementButtonRead
+        : l10n.generalAgreementButtonReadMore;
     final buttonOnPressed = _isNearBottom ? _acceptTerms : _scrollToBottom;
 
     return Scaffold(
@@ -89,9 +91,9 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
                 padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
                 child: Markdown(
                   data: markdownContent,
-                  styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
-                    p: textTheme.bodyMedium!.copyWith(fontSize: 16),
-                  ),
+                  styleSheet: MarkdownStyleSheet.fromTheme(
+                    theme,
+                  ).copyWith(p: textTheme.bodyMedium!.copyWith(fontSize: 16)),
                 ),
               );
             },
@@ -99,7 +101,9 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
             error: (err, stack) => Center(
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
-                child: Text('Error loading terms: $err'), // TODO: add localisation when we know more about error handling
+                child: Text(
+                  'Error loading terms: $err',
+                ), // TODO: add localisation when we know more about error handling
               ),
             ),
           ),

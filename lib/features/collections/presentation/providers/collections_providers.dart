@@ -1,7 +1,7 @@
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/features/collections/data/datasources/collections_datasource.dart';
-import 'package:edubadges/features/collections/data/models/collections_model.dart';
 import 'package:edubadges/features/collections/data/repositories/collections_repository_impl.dart';
+import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
 import 'package:edubadges/features/collections/domain/repositories/collections_repository.dart';
 import 'package:edubadges/features/collections/domain/usecases/create_collection_use_case.dart';
 import 'package:edubadges/features/collections/domain/usecases/delete_collection_use_case.dart';
@@ -41,6 +41,6 @@ final createCollectionUseCaseProvider = Provider<CreateCollectionUseCase>((
 });
 
 final collectionsProvider =
-    AsyncNotifierProvider<CollectionsNotifier, List<CollectionsModel>>(
+    AsyncNotifierProvider<CollectionsNotifier, List<CollectionsEntity>>(
       CollectionsNotifier.new,
     );

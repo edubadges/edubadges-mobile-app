@@ -5,9 +5,8 @@ import 'package:edubadges/features/collections/domain/repositories/collections_r
 class UpdateCollectionUseCase {
   final CollectionsRepository _repository;
 
-  const UpdateCollectionUseCase({
-    required CollectionsRepository repository,
-  }) : _repository = repository;
+  const UpdateCollectionUseCase({required CollectionsRepository repository})
+    : _repository = repository;
 
   Future<Either<Failure, void>> call({
     required String entityId,

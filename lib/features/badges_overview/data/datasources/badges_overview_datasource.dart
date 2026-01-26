@@ -8,6 +8,8 @@ abstract class BadgesOverviewDataSource {
   Future<List<BadgeInstanceModel>> getBadgeInstances();
   Future<List<BadgeInstanceModel>> getDirectAwards();
   Future<List<BadgeInstanceModel>> getEnrollments();
+  Future<void> claimBadge(String entityId);
+  Future<void> declineBadge(String entityId);
 }
 
 class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
@@ -37,7 +39,7 @@ class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
     }
   }
 
-  // THIS IS THE BEST I COULD DO WITH THEIR RESPONSE STRUCTURE, IT WOULD BE 
+  // THIS IS THE BEST I COULD DO WITH THEIR RESPONSE STRUCTURE, IT WOULD BE BETTER IF THEY RETURNED A LIST OF BADGE INSTANCES
   @override
   Future<List<BadgeInstanceModel>> getDirectAwards() async {
     final response = await apiClient.get<dynamic>('/direct-awards');
@@ -160,5 +162,23 @@ class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
         stackTrace: stackTrace,
       );
     }
+  }
+
+  @override
+  Future<void> claimBadge(String entityId) async {
+    await apiClient.post(
+      '/direct-awards-accept/$entityId',
+      queryParameters: {'accept': 'true'},
+      data: {'entity_id': entityId, 'accept': true},
+    );
+  }
+
+  @override
+  Future<void> declineBadge(String entityId) async {
+    await apiClient.post(
+      '/direct-awards-accept/$entityId',
+      queryParameters: {'accept': 'false'},
+      data: {'entity_id': entityId, 'accept': false},
+    );
   }
 }

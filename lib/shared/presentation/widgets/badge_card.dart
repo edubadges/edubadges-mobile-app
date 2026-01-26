@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
-import 'package:edubadges/shared/data/models/badge_instance_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -10,7 +10,7 @@ import 'package:intl/intl.dart';
 enum BadgeCardStyle { small, large }
 
 class BadgeCard extends StatelessWidget {
-  final BadgeInstanceModel instance;
+  final BadgeInstanceEntity instance;
   final BadgeCardStyle style;
   final bool isSelected;
   const BadgeCard({
@@ -44,9 +44,13 @@ class BadgeCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? colorScheme.primary : colorScheme.outlineVariant,
+            color: isSelected
+                ? colorScheme.primary
+                : colorScheme.outlineVariant,
           ),
-          color: isSelected ? colorScheme.surface : colorScheme.surfaceContainer,
+          color: isSelected
+              ? colorScheme.surface
+              : colorScheme.surfaceContainer,
         ),
         padding: const EdgeInsets.all(16),
         child: Row(

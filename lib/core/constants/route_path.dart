@@ -12,6 +12,9 @@ class RoutePath {
   static const String account = '/account';
   static const String notificationPermission = '/notification-permission';
   static const String agreementDetails = '/agreement/:id';
+  static const String badgeClaim = '/badge-claim/:id';
+  static const String badgePrivacy = '/badge-privacy/:id';
+  static const String badgeClaimSuccess = '/badge-claim-success';
 
   /// List of all main navigation routes
   static const List<String> mainRoutes = [main, collections, catalog, account];

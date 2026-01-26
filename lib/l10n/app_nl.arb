@@ -20,7 +20,7 @@
     "collectionDescription": "Omschrijving",
     "collectionDescriptionPlaceholder": "Beschrijving van de collectie",
     "save": "Opslaan",
-    "cancel": "Annuleer",
+    "cancel": "Annuleren",
     "collectionNameRequired": "Naam is verplicht",
     "addEdubadgesToCollection": "Voeg edubadges toe aan je collectie",
     "addEdubadgesToCollectionDescription": "Bundel edubadges in je collectie om ze overzichtelijk te beheren en eenvoudig te delen.",
@@ -151,5 +151,33 @@
     "workExperience": "Werkervaring",
     "formOfParticipation": "Vorm van participatie",
     "indicativeLevel": "(Indicatief) EQF/NLQF",
-    "never": "Nooit"
+    "never": "Nooit",
+    "claimEdubadge": "Claim edubadge",
+    "decline": "Weigeren",
+    "declineBadgeTitle": "Edubadge weigeren",
+    "declineBadgeConfirmation": "Je staat op het punt deze edubadge te weigeren. Deze actie is definitief en kan niet worden teruggedraaid.",
+    "badgesRemainingToClaim": "{count, plural, =0{Geen edubadges meer te claimen} =1{Nog 1 edubadge te claimen} other{Nog {count} edubadges te claimen}}",
+    "@badgesRemainingToClaim": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "badgePrivacyTitle": "Edubadges en jouw privacy",
+    "badgePrivacyReadButton": "Ik heb dit gelezen",
+    "badgePrivacyViewFullText": "Bekijk volledige tekst",
+    "badgeClaimSuccessTitle": "Gefeliciteerd!",
+    "badgeClaimSuccessSubtitle": "Je hebt een nieuwe edubadge geclaimed",
+    "claimNextBadge": "{count, plural, =1{Claim nog 1 edubadge} other{Claim nog {count} edubadges}}",
+    "@claimNextBadge": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "goToOverview": "Ga naar jouw overzicht"
 }

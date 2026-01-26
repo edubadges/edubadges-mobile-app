@@ -70,7 +70,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get save => 'Opslaan';
 
   @override
-  String get cancel => 'Annuleer';
+  String get cancel => 'Annuleren';
 
   @override
   String get collectionNameRequired => 'Naam is verplicht';
@@ -425,4 +425,67 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get never => 'Nooit';
+
+  @override
+  String get claimEdubadge => 'Claim edubadge';
+
+  @override
+  String get decline => 'Weigeren';
+
+  @override
+  String get declineBadgeTitle => 'Edubadge weigeren';
+
+  @override
+  String get declineBadgeConfirmation =>
+      'Je staat op het punt deze edubadge te weigeren. Deze actie is definitief en kan niet worden teruggedraaid.';
+
+  @override
+  String badgesRemainingToClaim(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Nog $countString edubadges te claimen',
+      one: 'Nog 1 edubadge te claimen',
+      zero: 'Geen edubadges meer te claimen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get badgePrivacyTitle => 'Edubadges en jouw privacy';
+
+  @override
+  String get badgePrivacyReadButton => 'Ik heb dit gelezen';
+
+  @override
+  String get badgePrivacyViewFullText => 'Bekijk volledige tekst';
+
+  @override
+  String get badgeClaimSuccessTitle => 'Gefeliciteerd!';
+
+  @override
+  String get badgeClaimSuccessSubtitle =>
+      'Je hebt een nieuwe edubadge geclaimed';
+
+  @override
+  String claimNextBadge(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Claim nog $countString edubadges',
+      one: 'Claim nog 1 edubadge',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get goToOverview => 'Ga naar jouw overzicht';
 }

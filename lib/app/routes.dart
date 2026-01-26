@@ -5,6 +5,9 @@ import 'package:edubadges/features/account/presentation/pages/agreement_details_
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/features/badge_details/presentation/pages/badge_details_page.dart';
+import 'package:edubadges/features/badges_overview/presentation/pages/badge_claim_page.dart';
+import 'package:edubadges/features/badges_overview/presentation/pages/badge_claim_success_page.dart';
+import 'package:edubadges/features/badges_overview/presentation/pages/badge_privacy_page.dart';
 import 'package:edubadges/features/badges_overview/presentation/pages/badges_overview_page.dart';
 import 'package:edubadges/features/catalog/presentation/pages/catalog_page.dart';
 import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
@@ -62,7 +65,7 @@ final appRouter = Provider<GoRouter>((ref) {
         name: 'general-terms',
         builder: (context, state) {
           return const GeneralTermsPage();
-        }
+        },
       ),
 
       GoRoute(
@@ -150,6 +153,40 @@ final appRouter = Provider<GoRouter>((ref) {
           );
 
           return BadgeDetailsPage(badge: badge);
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.badgeClaim,
+        name: 'badge-claim',
+        builder: (context, state) {
+          final badgeId = state.pathParameters['id'] ?? '';
+          final remainingCountStr =
+              state.uri.queryParameters['remainingCount'] ?? '0';
+          final remainingCount = int.tryParse(remainingCountStr) ?? 0;
+
+          return BadgeClaimPage(
+            badgeId: badgeId,
+            remainingCount: remainingCount,
+          );
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.badgePrivacy,
+        name: 'badge-privacy',
+        builder: (context, state) {
+          final badgeId = state.pathParameters['id'] ?? '';
+          return BadgePrivacyPage(badgeId: badgeId);
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.badgeClaimSuccess,
+        name: 'badge-claim-success',
+        builder: (context, state) {
+          final badgeId = state.uri.queryParameters['id'] ?? '';
+          return BadgeClaimSuccessPage(badgeId: badgeId);
         },
       ),
 

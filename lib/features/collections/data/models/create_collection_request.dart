@@ -14,7 +14,8 @@ class CreateCollectionRequest {
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      if (description != null && description!.isNotEmpty) 'description': description,
+      if (description != null && description!.isNotEmpty)
+        'description': description,
       'public': public,
       'badge_instances': badgeInstances,
     };

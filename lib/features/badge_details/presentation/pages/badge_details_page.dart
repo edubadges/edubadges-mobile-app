@@ -9,7 +9,7 @@ import 'package:edubadges/features/badge_details/domain/enums/badge_details_rout
 import 'package:edubadges/features/badge_details/domain/extensions/badge_instance_extensions.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
-import 'package:edubadges/shared/data/models/badge_instance_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/domain/enums/assessment_type.dart';
 import 'package:edubadges/shared/domain/enums/participation_type.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
@@ -25,7 +25,7 @@ class BadgeDetailsPage extends ConsumerStatefulWidget {
   const BadgeDetailsPage({super.key, required this.badge});
 
   @override
-  _BadgeDetailsPageState createState() => _BadgeDetailsPageState();
+  ConsumerState<BadgeDetailsPage> createState() => _BadgeDetailsPageState();
 }
 
 class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
@@ -42,7 +42,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   @override
   void initState() {
     super.initState();
-    
+
     if (_shouldShowCarousel) {
       ref.listenManual(badgesListProvider, (previous, next) {
         if (!_hasInitializedPage && next is AsyncData) {
@@ -79,11 +79,12 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     });
   }
 
-  String? getAssessmentSupervisedStatus(BadgeInstanceModel? details) {
+  String? getAssessmentSupervisedStatus(BadgeInstanceEntity? details) {
+    if (details == null) return null;
     final l10n = AppLocalizations.of(context)!;
-    final badgeclass = details?.badgeclass;
-    final isIdVerified = badgeclass?.assessmentIdVerified == true;
-    final isSupervised = badgeclass?.assessmentSupervised == true;
+    final badgeclass = details.badgeclass;
+    final isIdVerified = badgeclass.assessmentIdVerified == true;
+    final isSupervised = badgeclass.assessmentSupervised == true;
 
     return switch ((isIdVerified, isSupervised)) {
       (true, true) => l10n.assessmentSupervisedWithIdentityVerification,
@@ -199,7 +200,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     );
   }
 
-  List<Widget> _buildBadgeDetails(BadgeInstanceModel? details) {
+  List<Widget> _buildBadgeDetails(BadgeInstanceEntity? details) {
     final l10n = AppLocalizations.of(context)!;
 
     final learningOutcome = details?.getExtensionValue<String?>(
