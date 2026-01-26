@@ -650,6 +650,12 @@ abstract class AppLocalizations {
   /// **'The Edubadge'**
   String get theEdubadge;
 
+  /// No description provided for @issuedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Issued on'**
+  String get issuedOn;
+
   /// No description provided for @expiresOn.
   ///
   /// In en, this message translates to:
