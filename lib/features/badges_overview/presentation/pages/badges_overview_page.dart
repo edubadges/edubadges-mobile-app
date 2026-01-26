@@ -59,9 +59,11 @@ class BadgesOverviewPage extends ConsumerWidget {
               SliverToBoxAdapter(
                 child: InkWell(
                   onTap: () {
-                    context.push(
-                      '${RoutePath.badgeClaim.replaceAll(':id', firstBadge.id.toString())}?remainingCount=$remainingCount',
+                    final claimRoute = RoutePath.badgeClaim.replaceAll(
+                      ':id',
+                      firstBadge.id.toString(),
                     );
+                    context.push('$claimRoute?remainingCount=$remainingCount');
                   },
                   borderRadius: BorderRadius.circular(12),
                   child: Container(

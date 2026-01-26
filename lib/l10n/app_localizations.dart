@@ -889,6 +889,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Go to your overview'**
   String get goToOverview;
+
+  /// No description provided for @badgeClaimErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get badgeClaimErrorTitle;
+
+  /// No description provided for @badgeClaimErrorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your edubadge cannot be claimed at this time. Don\'t worry, your progress has been saved. Please try again later.'**
+  String get badgeClaimErrorSubtitle;
 }
 
 class _AppLocalizationsDelegate

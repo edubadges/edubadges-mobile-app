@@ -28,6 +28,7 @@ class Assets {
   static const String iconEdit = '$_iconsPath/ic_edit.svg';
   static const String iconFeedback = '$_iconsPath/ic_feedback.svg';
   static const String iconIndicatif = '$_iconsPath/ic_indicatif.svg';
+  static const String iconInfo = '$_iconsPath/ic_info.svg';
   static const String iconLanguage = '$_iconsPath/ic_language.svg';
   static const String iconLinkedIn = '$_iconsPath/ic_linked_in.svg';
   static const String iconLocked = '$_iconsPath/ic_locked.svg';

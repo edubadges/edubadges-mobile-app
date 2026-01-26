@@ -4,12 +4,12 @@ import 'package:collection/collection.dart';
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/widgets/info_state_view.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 class BadgeClaimSuccessPage extends ConsumerStatefulWidget {
@@ -93,50 +93,13 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
 
           return Stack(
             children: [
-              // Initial screen
               if (!_showDetails)
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: Column(
-                      spacing: 16,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          Assets.iconBackpack,
-                          width: 48,
-                          height: 48,
-                          colorFilter: const ColorFilter.mode(
-                            AppColors.primary,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              l10n.badgeClaimSuccessTitle,
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: colorScheme.onSurface,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              l10n.badgeClaimSuccessSubtitle,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                InfoStateView(
+                  assetPath: Assets.iconBackpack,
+                  title: l10n.badgeClaimSuccessTitle,
+                  description: l10n.badgeClaimSuccessSubtitle,
                 ),
 
-              // Animated details
               if (_showDetails)
                 ScaleTransition(
                   scale: _scaleAnimation,
@@ -168,13 +131,16 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Error: $err')),
+        error: (err, stack) => InfoStateView(
+          title: l10n.badgeClaimErrorTitle,
+          description: l10n.badgeClaimErrorSubtitle,
+        ),
       ),
     );
   }
 
   Widget _buildVisibilityPlaceholder(BuildContext context) {
-    // TODO: Implement visibility container
+    // TODO: Implement public/unpublic container
     return SizedBox(height: 100, child: Placeholder());
   }
 

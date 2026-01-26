@@ -487,4 +487,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goToOverview => 'Go to your overview';
+
+  @override
+  String get badgeClaimErrorTitle => 'Something went wrong';
+
+  @override
+  String get badgeClaimErrorSubtitle =>
+      'Your edubadge cannot be claimed at this time. Don\'t worry, your progress has been saved. Please try again later.';
 }
