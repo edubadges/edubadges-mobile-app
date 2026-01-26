@@ -2,6 +2,9 @@ import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/presentation/pages/account_page.dart';
 import 'package:edubadges/features/account/presentation/pages/agreement_details_page.dart';
+import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
+import 'package:edubadges/features/badge_details/presentation/pages/badge_details_page.dart';
 import 'package:edubadges/features/badges_overview/presentation/pages/badges_overview_page.dart';
 import 'package:edubadges/features/catalog/presentation/pages/catalog_page.dart';
 import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
@@ -132,6 +135,21 @@ final appRouter = Provider<GoRouter>((ref) {
           final description = state.uri.queryParameters['description'];
 
           return BadgeSelectionPage(name: name, description: description);
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.badge,
+        name: 'badgedetails',
+        builder: (context, state) {
+          final badge = BadgeDetailsRouteModel(
+            id: state.pathParameters['id'] ?? '',
+            from: BadgeDetailsRouteFromExtension.fromString(
+              state.uri.queryParameters['from'],
+            ),
+          );
+
+          return BadgeDetailsPage(badge: badge);
         },
       ),
 

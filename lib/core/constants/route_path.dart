@@ -7,6 +7,7 @@ class RoutePath {
   static const String collection = '/collection/:id';
   static const String newCollection = '/new-collection';
   static const String newCollectionBadgeSelection = '/new-collection/badges';
+  static const String badge = '/badge/:id';
   static const String catalog = '/catalog';
   static const String account = '/account';
   static const String notificationPermission = '/notification-permission';

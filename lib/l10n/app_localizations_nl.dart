@@ -332,4 +332,97 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get feedbackRequired => 'Feedback is verplicht';
+
+  @override
+  String get aboutThisEdubadge => 'Over deze Edubadge';
+
+  @override
+  String get theEdubadge => 'De Edubadge';
+
+  @override
+  String get expiresOn => 'Verloopt op';
+
+  @override
+  String get type => 'Type';
+
+  @override
+  String get badgeTheProgram => 'Het programma';
+
+  @override
+  String get badgeTheAssessment => 'De beoordeling';
+
+  @override
+  String get learningOutcomes => 'Leeruitkomsten';
+
+  @override
+  String get studyLoad => 'Studielast';
+
+  @override
+  String get language => 'Taal';
+
+  @override
+  String get languageDutch => 'Nederlands';
+
+  @override
+  String get languageEnglish => 'Engels';
+
+  @override
+  String get assessmentWrittenExam => 'Tentamen';
+
+  @override
+  String get assessmentReportPaper => 'Rapport / paper';
+
+  @override
+  String get assessmentBehaviouralAssessment => 'Gedragsassessment';
+
+  @override
+  String get assessmentProfessionalProduct => 'Beroepsproduct';
+
+  @override
+  String get assessmentDevelopmentReport =>
+      'Ontwikkelverslag / reflectieverslag';
+
+  @override
+  String get assessmentPortfolioAssessment =>
+      'Portfolio / portfolio assessment';
+
+  @override
+  String get assessmentOramExam => 'Presentatie / mondeling examen';
+
+  @override
+  String get assessmentPersonalizedAssessment => 'Gepersonaliseerde toetsing';
+
+  @override
+  String get supervised => 'Onder toezicht';
+
+  @override
+  String get assessmentSupervisedWithIdentityVerification =>
+      'Onder toezicht, met identiteit verificatie';
+
+  @override
+  String get assessmentWithIdentityVerification => 'Met identiteit verificatie';
+
+  @override
+  String get assessmentType => 'Beoordelingstype';
+
+  @override
+  String get online => 'Online';
+
+  @override
+  String get onsite => 'Op locatie';
+
+  @override
+  String get blended => 'Blended';
+
+  @override
+  String get workExperience => 'Werkervaring';
+
+  @override
+  String get formOfParticipation => 'Vorm van participatie';
+
+  @override
+  String get indicativeLevel => '(Indicatief) EQF/NLQF';
+
+  @override
+  String get never => 'Nooit';
 }

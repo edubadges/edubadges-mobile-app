@@ -1,6 +1,8 @@
 import 'package:edubadges/shared/data/models/badge_class_extension_model.dart';
 import 'package:edubadges/shared/data/models/issuer_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_class_entity.dart';
+import 'package:edubadges/shared/domain/enums/assessment_type.dart';
+import 'package:edubadges/shared/domain/enums/participation_type.dart';
 
 class BadgeClassModel extends BadgeClassEntity {
   const BadgeClassModel({
@@ -27,8 +29,8 @@ class BadgeClassModel extends BadgeClassEntity {
       image: json['image'] as String? ?? json['image_url'] as String?, // Depending on the endpoint called the field could be one or the other
       description: json['description'] as String?,
       formal: json['formal'] as bool?,
-      participation: json['participation'] as String?,
-      assessmentType: json['assessment_type'] as String?,
+      participation: ParticipationType.fromString(json['participation'] as String?),
+      assessmentType: AssessmentType.fromString(json['assessment_type'] as String?),
       assessmentIdVerified: json['assessment_id_verified'] as bool?,
       assessmentSupervised: json['assessment_supervised'] as bool?,
       qualityAssuranceName: json['quality_assurance_name'] as String?,
@@ -51,8 +53,8 @@ class BadgeClassModel extends BadgeClassEntity {
       if (image != null) 'image': image,
       if (description != null) 'description': description,
       if (formal != null) 'formal': formal,
-      if (participation != null) 'participation': participation,
-      if (assessmentType != null) 'assessment_type': assessmentType,
+      if (participation != null) 'participation': participation!.value,
+      if (assessmentType != null) 'assessment_type': assessmentType!.value,
       if (assessmentIdVerified != null) 'assessment_id_verified': assessmentIdVerified,
       if (assessmentSupervised != null) 'assessment_supervised': assessmentSupervised,
       if (qualityAssuranceName != null) 'quality_assurance_name': qualityAssuranceName,

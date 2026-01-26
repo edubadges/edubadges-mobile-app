@@ -1,6 +1,7 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
 class AppThemes {
   // Private constructor to prevent instantiation
@@ -227,6 +228,62 @@ class AppThemes {
         fontWeight: FontWeight.w700,
         color: AppColors.onSurface,
       ),
+    );
+  }
+
+  static MarkdownStyleSheet markdownStyleSheet(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+
+    return MarkdownStyleSheet(
+      h1: textTheme.displayLarge?.copyWith(color: colorScheme.onSurface),
+      h2: textTheme.displayMedium?.copyWith(color: colorScheme.onSurface),
+      h3: textTheme.displaySmall?.copyWith(color: colorScheme.onSurface),
+      h4: textTheme.headlineMedium?.copyWith(color: colorScheme.onSurface),
+      h5: textTheme.headlineSmall?.copyWith(color: colorScheme.onSurface),
+      h6: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
+      p: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+      code: textTheme.bodyMedium?.copyWith(
+        fontFamily: 'monospace',
+        backgroundColor: colorScheme.surfaceContainerHighest,
+        color: colorScheme.onSurface,
+      ),
+      codeblockDecoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.2)),
+      ),
+      a: textTheme.bodyMedium?.copyWith(
+        color: colorScheme.primary,
+        decoration: TextDecoration.underline,
+      ),
+      listBullet: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+      blockquote: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+      blockquoteDecoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(0),
+        border: Border(
+          left: BorderSide(
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.4),
+            width: 4,
+          ),
+        ),
+      ),
+      em: const TextStyle(fontStyle: FontStyle.italic),
+      strong: const TextStyle(fontWeight: FontWeight.bold),
+      del: TextStyle(
+        decoration: TextDecoration.lineThrough,
+        color: colorScheme.onSurface.withValues(alpha: 0.6),
+      ),
+      horizontalRuleDecoration: BoxDecoration(
+        border: Border(top: BorderSide(color: colorScheme.outlineVariant)),
+      ),
+      tableHead: textTheme.titleSmall?.copyWith(
+        fontWeight: FontWeight.bold,
+        color: colorScheme.onSurface,
+      ),
+      tableBody: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+      tableBorder: TableBorder.all(color: colorScheme.outlineVariant, width: 1),
     );
   }
 }
