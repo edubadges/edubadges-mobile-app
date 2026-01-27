@@ -340,6 +340,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get theEdubadge => 'De Edubadge';
 
   @override
+  String get issuedOn => 'Uitgegeven op';
+
+  @override
   String get expiresOn => 'Verloopt op';
 
   @override

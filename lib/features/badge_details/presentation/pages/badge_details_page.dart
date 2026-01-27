@@ -42,7 +42,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   @override
   void initState() {
     super.initState();
-    
+
     if (_shouldShowCarousel) {
       ref.listenManual(badgesListProvider, (previous, next) {
         if (!_hasInitializedPage && next is AsyncData) {
@@ -236,20 +236,22 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         title: l10n.theEdubadge,
         items: [
           BadgeDetailItemModel(
+            icon: Assets.iconUnlockedAlternate,
+            title: l10n.issuedOn,
+            subtitle: DateFormat(
+              AppConstants.mediumDateFormat,
+              l10n.localeName,
+            ).format(details!.issuedOn),
+          ),
+          BadgeDetailItemModel(
             icon: Assets.iconBadgeExpireDate,
             title: l10n.expiresOn,
-            subtitle: details?.expiresAt == null
+            subtitle: details.expiresAt == null
                 ? l10n.never
                 : DateFormat(
                     AppConstants.mediumDateFormat,
                     l10n.localeName,
-                  ).format(details!.expiresAt!),
-          ),
-          BadgeDetailItemModel(
-            icon: Assets.iconCollections,
-            title: l10n.type,
-            subtitle:
-                'Extracurriculair', // TODO: Add real data (https://digitalclub.atlassian.net/browse/SURF-539)
+                  ).format(details.expiresAt!),
           ),
         ],
       ),

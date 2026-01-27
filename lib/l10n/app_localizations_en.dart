@@ -339,6 +339,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get theEdubadge => 'The Edubadge';
 
   @override
+  String get issuedOn => 'Issued on';
+
+  @override
   String get expiresOn => 'Expires on';
 
   @override
