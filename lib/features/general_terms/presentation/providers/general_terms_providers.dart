@@ -4,36 +4,23 @@ import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/features/general_terms/data/datasources/general_terms_datasource.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// Provider for the data source
 final generalTermsDataSourceProvider = Provider<GeneralTermsDataSource>((ref) {
   final apiClient = ref.watch(apiClientProvider);
   return GeneralTermsDataSourceImpl(apiClient);
 });
 
-final termsUrlProvider = FutureProvider<String>((ref) {
-  final dataSource = ref.watch(generalTermsDataSourceProvider);
-  return dataSource.getTermsUrl();
-});
+// Provider that accepts a URL and fetches the markdown content from it.
+final markdownContentProvider = FutureProvider.family<String, String>((ref, url) async {
+  logger.i('Fetching markdown content from URL: $url');
+  // Use a new Dio instance for the external request to avoid sending auth headers.
+  final dio = Dio();
+  final response = await dio.get<String>(url);
 
-final markdownContentProvider = FutureProvider<String>((ref) async {
-  final urlAsyncValue = ref.watch(termsUrlProvider);
-
-  // When the async value is ready, fetch the content from the URL
-  return urlAsyncValue.when(
-    data: (url) async {
-      logger.i('Fetching markdown content from URL: $url');
-      // Use a new Dio instance for the external request to avoid sending auth headers.
-      final dio = Dio();
-      final response = await dio.get<String>(url);
-
-      if (response.statusCode == 200 && response.data != null) {
-        return response.data!;
-      } else {
-        throw Exception('Failed to load terms content from $url. Status: ${response.statusCode}');
-      }
-    },
-    // While the URL is loading, we don't have content yet.
-    loading: () => '', // Return empty string while loading
-    // If fetching the URL fails, propagate the error.
-    error: (err, stack) => throw err,
-  );
+  if (response.statusCode == 200 && response.data != null) {
+    logger.i('Successfully fetched markdown content from URL: $url');
+    return response.data!;
+  } else {
+    throw Exception('Failed to load terms content from $url. Status: ${response.statusCode}');
+  }
 });
