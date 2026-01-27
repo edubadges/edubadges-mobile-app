@@ -80,6 +80,7 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
     final markdownAsync = ref.watch(markdownContentProvider(widget.url));
 
