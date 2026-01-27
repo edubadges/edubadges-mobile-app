@@ -7,6 +7,7 @@ class EnvironmentConfig {
     required String openIdClientId,
     required bool enableAnalytics,
     required bool enableCrashlytics,
+    required String publicCollectionBaseUrl,
   }) {
     if (_instance.isInitialized) {
       throw StateError('EnvironmentConfig has already been initialized.');
@@ -17,6 +18,7 @@ class EnvironmentConfig {
       openIdClientId: openIdClientId,
       enableAnalytics: enableAnalytics,
       enableCrashlytics: enableCrashlytics,
+      publicCollectionBaseUrl: publicCollectionBaseUrl,
     );
     return _instance;
   }
@@ -30,6 +32,7 @@ class EnvironmentConfig {
   late final String _openIdClientId;
   late final bool _enableAnalytics;
   late final bool _enableCrashlytics;
+  late final String _publicCollectionBaseUrl;
   bool isInitialized = false;
 
   void init({
@@ -38,6 +41,7 @@ class EnvironmentConfig {
     required String openIdClientId,
     required bool enableAnalytics,
     required bool enableCrashlytics,
+    required String publicCollectionBaseUrl,
   }) {
     if (isInitialized) {
       throw StateError('EnvironmentConfig has already been initialized.');
@@ -47,6 +51,7 @@ class EnvironmentConfig {
     _openIdClientId = openIdClientId;
     _enableAnalytics = enableAnalytics;
     _enableCrashlytics = enableCrashlytics;
+    _publicCollectionBaseUrl = publicCollectionBaseUrl;
     isInitialized = true;
   }
 
@@ -55,4 +60,5 @@ class EnvironmentConfig {
   String get openIdClientId => _openIdClientId;
   bool get enableAnalytics => _enableAnalytics;
   bool get enableCrashlytics => _enableCrashlytics;
+  String get publicCollectionBaseUrl => _publicCollectionBaseUrl;
 }

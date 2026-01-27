@@ -1,0 +1,46 @@
+import 'package:edubadges/core/network/network_providers.dart';
+import 'package:edubadges/features/account/data/datasources/account_datasource.dart';
+import 'package:edubadges/features/account/data/datasources/account_remote_datasource.dart';
+import 'package:edubadges/features/account/data/repositories/account_repository_impl.dart';
+import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
+import 'package:edubadges/features/account/domain/repositories/account_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final accountRemoteDataSourceProvider = Provider<AccountRemoteDataSourceImpl>((
+  ref,
+) {
+  final client = ref.watch(apiClientProvider);
+  return AccountRemoteDataSourceImpl(client);
+});
+
+final accountDataSourceProvider = Provider<AccountDataSource>((ref) {
+  return ref.watch(accountRemoteDataSourceProvider);
+});
+
+final accountRepositoryProvider = Provider<AccountRepository>((ref) {
+  final dataSource = ref.watch(accountDataSourceProvider);
+  return AccountRepositoryImpl(dataSource);
+});
+
+final profileProvider = AsyncNotifierProvider<ProfileNotifier, ProfileEntity?>(
+  ProfileNotifier.new,
+);
+
+class ProfileNotifier extends AsyncNotifier<ProfileEntity?> {
+  @override
+  Future<ProfileEntity?> build() async {
+    final accountRepository = ref.read(accountRepositoryProvider);
+    final result = await accountRepository.getProfile();
+    return result.fold((failure) => throw failure, (profile) => profile);
+  }
+
+  Future<void> refresh() async {
+    state = const AsyncLoading();
+    final accountRepository = ref.read(accountRepositoryProvider);
+    final result = await accountRepository.getProfile();
+    state = result.fold(
+      (failure) => AsyncError(failure, StackTrace.current),
+      (profile) => AsyncData(profile),
+    );
+  }
+}

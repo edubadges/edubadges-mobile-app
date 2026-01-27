@@ -3,11 +3,184 @@
     "@@last_modified": "2026-01-12T10:13:17+01:00",
     "appName": "Edubadges",
     "loginCardButton": "Ga naar mijn edubadges",
-    "loginCardText": "Mijn badges is de plek om edubadges te ontvangen en verzamelen. Een eduID is nodig om ‘mijn badges’ aan te maken en te gebruiken. Het maken van een eduID duurt minder dan 30 seconden.",
+    "loginCardText": "Mijn badges is de plek om edubadges te ontvangen en verzamelen. Een eduID is nodig om 'mijn badges' aan te maken en te gebruiken. Het maken van een eduID duurt minder dan 30 seconden.",
     "loginSubtitle": "Edubadges zijn digitale certificaten die aantonen welke kennis of vaardigheden iemand heeft opgedaan, binnen of buiten het formele onderwijs.",
     "loginTitle": "Never stop learning",
+    "generalAgreementTitle": "Privacy voorwaarden",
+    "generalAgreementButtonReadMore": "Lees meer",
+    "generalAgreementButtonRead": "Gelezen",
     "tabAccount": "Account",
     "tabBadges": "Edubadges",
     "tabCatalog": "Catalogus",
-    "tabCollections": "Collecties"
+    "tabCollections": "Collecties",
+    "newCollection": "Nieuwe collectie",
+    "newCollectionDescription": "Maak een nieuwe collectie aan en deel deze met bekenden.",
+    "collectionName": "Naam",
+    "collectionNamePlaceholder": "Naam van de collectie",
+    "collectionDescription": "Omschrijving",
+    "collectionDescriptionPlaceholder": "Beschrijving van de collectie",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "collectionNameRequired": "Naam is verplicht",
+    "addEdubadgesToCollection": "Voeg edubadges toe aan je collectie",
+    "addEdubadgesToCollectionDescription": "Bundel edubadges in je collectie om ze overzichtelijk te beheren en eenvoudig te delen.",
+    "addEdubadge": "Edubadge toevoegen",
+    "areYouSure": "Weet je het zeker?",
+    "deleteCollectionConfirmation": "Je staat op het punt om een collectie te verwijderen.",
+    "delete": "Verwijderen",
+    "notificationPermissionsTitle": "Blijf op de hoogte",
+    "notificationPermissionsSubtitle": "Edubadge kan je een melding sturen wanneer er iets voor je klaarstaat, zoals een nieuwe badge of een belangrijke update.",
+    "notificationPermissionsLabel": "Je kunt dit later altijd aanpassen in de instellingen.",
+    "notificationPermissionsButtonAllow": "Notificaties toestaan",
+    "notificationPermissionsButtonDeny": "Niet nu",
+    "accountData": "Gegevens",
+    "confirmedName": "Bevestigde naam",
+    "providedByInstitution": "Geleverd door je instelling",
+    "emailAddress": "E-mailadres",
+    "institution": "Instelling",
+    "eduid": "#eduid",
+    "memberSince": "Lid sinds",
+    "notificationSettings": "Notificatieinstellingen",
+    "generalNotifications": "Algemene meldingen",
+    "givenAgreements": "Gegeven akkoordverklaring(en)",
+    "agreementsDescription": "Je kan je gegeven akkoordverklaring(en) intrekken.",
+    "deleteAccount": "Je edubadges account verwijderen",
+    "deleteAccountDescription": "Je kunt je edubadges account verwijderen als je dat wilt.\n\nWees je dan wel bewust dat hierna al je edubadges niet meer gevalideerd kunnen worden. Het verwijderen van je edubadges account betekent overigens niet dat je eduID ook verwijderd wordt.\n\nOm het proces van het verwijderen van je edubadges account te voltooien, moet je je browser sluiten nadat je account is verwijderd.",
+    "deleteMyAccount": "Verwijder mijn account",
+    "somethingWentWrong": "Er is iets misgegaan",
+    "retry": "Opnieuw proberen",
+    "noProfileData": "Geen profielgegevens",
+    "logoutConfirmationTitle": "Weet je het zeker?",
+    "logoutConfirmationMessage": "Je staat op het punt om uit te loggen.",
+    "logout": "Uitloggen",
+    "deleteAccountConfirmationTitle": "Verwijder mijn account",
+    "deleteAccountConfirmationMessage": "Wees je dan wel bewust dat hierna al je edubadges niet meer gevalideerd kunnen worden. Het verwijderen van je edubadges account betekent overigens niet dat je eduID ook verwijderd wordt.",
+    "deleteAccountConfirmationPrompt": "Typ het woord 'verwijderen' om mijn badges definitief te verwijderen",
+    "deleteAccountInputPlaceholder": "Typ 'verwijderen'",
+    "deleteAccountRequiredText": "verwijderen",
+    "privacyConditions": "Privacy voorwaarden",
+    "withdraw": "Intrekken",
+    "viewFullText": "Bekijk volledige tekst",
+    "viewShortText": "Bekijk korte tekst",
+    "withdrawAgreementTitle": "Mijn akkoordverklaring intrekken",
+    "withdrawAgreementMessage": "Weet je zeker dat je je akkoordverklaring wil intrekken voor {institution}?",
+    "@withdrawAgreementMessage": {
+        "placeholders": {
+            "institution": {
+                "type": "String"
+            }
+        }
+    },
+    "confirm": "Bevestig",
+    "countHours": "{count, plural, =1{1 uur} other{{count} uur}}",
+    "@countHours": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "noCollectionsYet": "Je hebt nog geen collecties",
+    "countEdubadges": "{count, plural, =1{1 edubadge} other{{count} edubadges}}",
+    "@countEdubadges": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "errorLoadingCollections": "Fout bij het laden van collecties",
+    "collectionVisibleAndShareable": "Collectie zichtbaar en deelbaar",
+    "publicCollectionRequires": "Een openbare collectie vereist op zijn minst 1 openbare edubadge",
+    "privateBadgesError": "Er staan één of meerdere badges op privé, maak deze openbaar om deze collectie openbaar te kunnen maken.",
+    "linkCopied": "Link gekopieerd",
+    "copyLink": "Kopieer link",
+    "errorLoadingCollection": "Fout bij het laden van collectie",
+    "goBack": "Ga terug",
+    "editCollection": "Bewerk collectie",
+    "editCollectionDescription": "Werk de details van je collectie bij",
+    "continueText": "Doorgaan",
+    "addEdubadges": "Edubadges toevoegen",
+    "selectAtLeastOneBadge": "Selecteer minimaal één badge",
+    "noBadgesAvailable": "Geen badges beschikbaar",
+    "add": "Toevoegen",
+    "newBadgeReady": "{count, plural, =1{Er staat 1 nieuwe edubadge klaar} other{Er staan {count} nieuwe edubadges klaar}}",
+    "@newBadgeReady": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "requestedBadges": "Aangevraagde edubadges",
+    "noEdubadgesYet": "Je hebt nog geen edubadges",
+    "giveFeedback": "Feedback geven",
+    "giveFeedbackDescription": "We horen graag wat je van de app vindt. Laat hieronder je feedback achter.",
+    "feedback": "Feedback",
+    "feedbackPlaceholder": "Typ hier je feedback...",
+    "feedbackRequired": "Feedback is verplicht",
+    "aboutThisEdubadge": "Over deze Edubadge",
+    "theEdubadge": "De Edubadge",
+    "issuedOn": "Uitgegeven op",
+    "expiresOn": "Verloopt op",
+    "type": "Type",
+    "badgeTheProgram": "Het programma",
+    "badgeTheAssessment": "De beoordeling",
+    "learningOutcomes": "Leeruitkomsten",
+    "studyLoad": "Studielast",
+    "language": "Taal",
+    "languageDutch": "Nederlands",
+    "languageEnglish": "Engels",
+    "assessmentWrittenExam": "Tentamen",
+    "assessmentReportPaper": "Rapport / paper",
+    "assessmentBehaviouralAssessment": "Gedragsassessment",
+    "assessmentProfessionalProduct": "Beroepsproduct",
+    "assessmentDevelopmentReport": "Ontwikkelverslag / reflectieverslag",
+    "assessmentPortfolioAssessment": "Portfolio / portfolio assessment",
+    "assessmentOramExam": "Presentatie / mondeling examen",
+    "assessmentPersonalizedAssessment": "Gepersonaliseerde toetsing",
+    "supervised": "Onder toezicht",
+    "assessmentSupervisedWithIdentityVerification": "Onder toezicht, met identiteit verificatie",
+    "assessmentWithIdentityVerification": "Met identiteit verificatie",
+    "assessmentType": "Beoordelingstype",
+    "online": "Online",
+    "onsite": "Op locatie",
+    "blended": "Blended",
+    "workExperience": "Werkervaring",
+    "formOfParticipation": "Vorm van participatie",
+    "indicativeLevel": "(Indicatief) EQF/NLQF",
+    "never": "Nooit",
+    "claimEdubadge": "Claim edubadge",
+    "decline": "Weigeren",
+    "declineBadgeTitle": "Edubadge weigeren",
+    "declineBadgeConfirmation": "Je staat op het punt deze edubadge te weigeren. Deze actie is definitief en kan niet worden teruggedraaid.",
+    "badgesRemainingToClaim": "{count, plural, =0{Geen edubadges meer te claimen} =1{Nog 1 edubadge te claimen} other{Nog {count} edubadges te claimen}}",
+    "@badgesRemainingToClaim": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "badgePrivacyTitle": "Edubadges en jouw privacy",
+    "badgePrivacyReadButton": "Ik heb dit gelezen",
+    "badgePrivacyViewFullText": "Bekijk volledige tekst",
+    "badgeClaimSuccessTitle": "Gefeliciteerd!",
+    "badgeClaimSuccessSubtitle": "Je hebt een nieuwe edubadge geclaimed",
+    "claimNextBadge": "{count, plural, =1{Claim nog 1 edubadge} other{Claim nog {count} edubadges}}",
+    "@claimNextBadge": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "goToOverview": "Ga naar jouw overzicht",
+    "badgeClaimErrorTitle": "Het is even niet gelukt",
+    "badgeClaimErrorSubtitle": "Je edubadge kan op dit moment niet worden geclaimd. Geen zorgen, je voortgang is bewaard. Probeer het later nog eens."
 }
