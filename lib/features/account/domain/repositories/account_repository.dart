@@ -4,4 +4,5 @@ import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 
 abstract class AccountRepository {
   Future<Either<Failure, ProfileEntity>> getProfile();
+  Future<Either<Failure, bool>> deleteProfile();
 }

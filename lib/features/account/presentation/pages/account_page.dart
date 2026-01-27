@@ -1,5 +1,6 @@
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
@@ -362,19 +363,33 @@ By clicking 'I have read this', you declare that you have read the [full privacy
     );
   }
 
-  Future<void> _showDeleteAccountConfirmation(BuildContext context) async {
+  Future<void> _showDeleteAccountConfirmation(BuildContext context, WidgetRef ref) async {
     await showDialog(
       context: context,
       builder: (context) => DeleteAccountDialog(
         onDelete: () async {
-          // TODO: Implement delete account functionality https://digitalclub.atlassian.net/browse/SURF-514
-          Navigator.of(context).pop();
+          final either = await ref.read(accountRepositoryProvider).deleteProfile();
+
+          either.fold(
+                (failure) {
+              logger.e(failure.message);
+              // TODO: add a snackbar are something when we know how we are gonna do error handling
+            },
+                (success) async {
+              if (success == true) {
+                await ref.read(authProvider.notifier).logout();
+                if (context.mounted) {
+                  context.go(RoutePath.login);
+                }
+              }
+            },
+          );
         },
       ),
     );
   }
 
-  Widget _buildDeleteAccountSection(BuildContext context) {
+  Widget _buildDeleteAccountSection(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -394,7 +409,7 @@ By clicking 'I have read this', you declare that you have read the [full privacy
         SizedBox(
           width: double.infinity,
           child: OutlinedButton(
-            onPressed: () => _showDeleteAccountConfirmation(context),
+            onPressed: () => _showDeleteAccountConfirmation(context, ref),
             style: OutlinedButton.styleFrom(
               foregroundColor: colorScheme.error,
               side: BorderSide(color: colorScheme.error),
@@ -483,7 +498,7 @@ By clicking 'I have read this', you declare that you have read the [full privacy
                   _buildDataSection(context, profile),
                   _buildNotificationSection(context, profile),
                   _buildAgreementsSection(context),
-                  _buildDeleteAccountSection(context),
+                  _buildDeleteAccountSection(context, ref),
                 ],
               ),
             );

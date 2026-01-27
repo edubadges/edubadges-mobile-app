@@ -21,4 +21,16 @@ class AccountRepositoryImpl implements AccountRepository {
       return Left(NetworkFailure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> deleteProfile() async {
+    try {
+      await accountDataSource.deleteProfile();
+      return const Right(true);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.statusCode));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    }
+  }
 }
