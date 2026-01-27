@@ -1,11 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
-import 'package:edubadges/shared/data/models/badge_instance_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 
 abstract class CollectionsRepository {
-  Future<Either<Failure, List<CollectionsEntity>>> getCollectionss(
-    List<BadgeInstanceModel> badgeInstances,
+  Future<Either<Failure, List<CollectionsEntity>>> getCollections(
+    List<BadgeInstanceEntity> badgeInstances,
   );
 
   Future<Either<Failure, void>> deleteCollection(String entityId);

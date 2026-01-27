@@ -1,14 +1,14 @@
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/app_text_field.dart';
 import 'package:edubadges/core/widgets/base_form_bottom_sheet.dart';
-import 'package:edubadges/features/collections/data/models/collections_model.dart';
+import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EditCollectionBottomSheet extends ConsumerStatefulWidget {
-  final CollectionsModel collection;
+  final CollectionsEntity collection;
 
   const EditCollectionBottomSheet({super.key, required this.collection});
 
@@ -45,7 +45,10 @@ class _EditCollectionBottomSheetState
           name,
           description.isNotEmpty ? description : null,
           widget.collection.public,
-          widget.collection.badgeInstanceIds,
+          widget.collection.badgeInstanceIds
+              .map((id) => int.tryParse(id) ?? -1)
+              .where((id) => id != -1)
+              .toList(),
         );
 
     if (success && mounted) {
@@ -61,7 +64,7 @@ class _EditCollectionBottomSheetState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    ref.listen<AsyncValue<List<CollectionsModel>>>(collectionsProvider, (
+    ref.listen<AsyncValue<List<CollectionsEntity>>>(collectionsProvider, (
       previous,
       next,
     ) {

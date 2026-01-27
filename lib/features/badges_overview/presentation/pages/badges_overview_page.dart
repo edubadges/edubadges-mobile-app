@@ -1,4 +1,5 @@
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
@@ -51,48 +52,61 @@ class BadgesOverviewPage extends ConsumerWidget {
           final slivers = <Widget>[];
 
           if (state.unclaimedCount > 0) {
+            final firstBadge = state.unclaimedBadges.first;
+            final remainingCount = state.unclaimedBadges.length;
+
             slivers.add(
               SliverToBoxAdapter(
-                child: Container(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 16,
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: colorScheme.primary,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        Assets.iconParty,
-                        colorFilter: ColorFilter.mode(
-                          colorScheme.onPrimary,
-                          BlendMode.srcIn,
+                child: InkWell(
+                  onTap: () {
+                    final claimRoute = RoutePath.badgeClaim.replaceAll(
+                      ':id',
+                      firstBadge.id.toString(),
+                    );
+                    context.push('$claimRoute?remainingCount=$remainingCount');
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
+                          Assets.iconParty,
+                          colorFilter: ColorFilter.mode(
+                            colorScheme.onPrimary,
+                            BlendMode.srcIn,
+                          ),
+                          width: 24,
+                          height: 24,
                         ),
-                        width: 24,
-                        height: 24,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          l10n.newBadgeReady(state.unclaimedCount),
-                          style: textTheme.labelMedium?.copyWith(
-                            color: colorScheme.onPrimary,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            l10n.newBadgeReady(state.unclaimedCount),
+                            style: textTheme.labelMedium?.copyWith(
+                              color: colorScheme.onPrimary,
+                            ),
                           ),
                         ),
-                      ),
-                      SvgPicture.asset(
-                        Assets.iconChevron,
-                        colorFilter: ColorFilter.mode(
-                          colorScheme.onPrimary,
-                          BlendMode.srcIn,
+                        SvgPicture.asset(
+                          Assets.iconChevron,
+                          colorFilter: ColorFilter.mode(
+                            colorScheme.onPrimary,
+                            BlendMode.srcIn,
+                          ),
+                          width: 12,
+                          height: 12,
                         ),
-                        width: 12,
-                        height: 12,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

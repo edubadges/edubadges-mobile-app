@@ -428,4 +428,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get never => 'Never';
+
+  @override
+  String get claimEdubadge => 'Claim edubadge';
+
+  @override
+  String get decline => 'Decline';
+
+  @override
+  String get declineBadgeTitle => 'Decline edubadge';
+
+  @override
+  String get declineBadgeConfirmation =>
+      'You are about to decline this edubadge. This action is final and cannot be undone.';
+
+  @override
+  String badgesRemainingToClaim(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Still $countString edu-badges to claim',
+      one: 'Still 1 edu-badge to claim',
+      zero: 'No more edu-badges to claim',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get badgePrivacyTitle => 'Edubadges and your privacy';
+
+  @override
+  String get badgePrivacyReadButton => 'I have read this';
+
+  @override
+  String get badgePrivacyViewFullText => 'View full text';
+
+  @override
+  String get badgeClaimSuccessTitle => 'Congratulations!';
+
+  @override
+  String get badgeClaimSuccessSubtitle => 'You have claimed a new edubadge';
+
+  @override
+  String claimNextBadge(num count) {
+    final intl.NumberFormat countNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Claim $countString more edubadges',
+      one: 'Claim 1 more edubadge',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get goToOverview => 'Go to your overview';
+
+  @override
+  String get badgeClaimErrorTitle => 'Something went wrong';
+
+  @override
+  String get badgeClaimErrorSubtitle =>
+      'Your edubadge cannot be claimed at this time. Don\'t worry, your progress has been saved. Please try again later.';
 }

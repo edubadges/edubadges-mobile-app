@@ -3,7 +3,7 @@ import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/network/errors/exceptions.dart';
 import 'package:edubadges/features/badge_details/data/datasources/badge_details_datasource.dart';
 import 'package:edubadges/features/badge_details/domain/repositories/badge_details_repository.dart';
-import 'package:edubadges/shared/data/models/badge_instance_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 
 class BadgeDetailsRepositoryImpl implements BadgeDetailsRepository {
   final BadgeDetailsDataSource dataSource;
@@ -11,7 +11,7 @@ class BadgeDetailsRepositoryImpl implements BadgeDetailsRepository {
   BadgeDetailsRepositoryImpl(this.dataSource);
 
   @override
-  Future<Either<Failure, BadgeInstanceModel>> getBadgeDetails(
+  Future<Either<Failure, BadgeInstanceEntity>> getBadgeDetails(
     String entityId,
   ) async {
     try {

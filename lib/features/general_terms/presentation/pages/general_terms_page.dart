@@ -37,7 +37,8 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
 
   void _scrollListener() {
     // Check if the scroll position is within 100px of the bottom
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 100) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 100) {
       if (!_isNearBottom) {
         setState(() {
           _isNearBottom = true;
@@ -79,7 +80,6 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
     final markdownAsync = ref.watch(markdownContentProvider(widget.url));
 
@@ -114,7 +114,9 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
             error: (err, stack) => Center(
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
-                child: Text('Error loading terms: $err'), // TODO: add localisation when we know more about error handling
+                child: Text(
+                  'Error loading terms: $err',
+                ), // TODO: add localisation when we know more about error handling
               ),
             ),
           ),

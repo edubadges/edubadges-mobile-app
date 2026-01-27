@@ -1,13 +1,14 @@
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/collections/data/models/collections_model.dart';
+import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
-import 'package:edubadges/shared/data/models/badge_instance_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CollectionsNotifier extends AsyncNotifier<List<CollectionsModel>> {
+class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
   @override
-  Future<List<CollectionsModel>> build() async {
+  Future<List<CollectionsEntity>> build() async {
     final badgesState = await ref.read(badgesOverviewProvider.future);
     final badgeInstances = [
       ...badgesState.claimedBadges,
@@ -23,12 +24,12 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsModel>> {
         .map((json) => CollectionsModel.fromJson(json as Map<String, dynamic>))
         .toList();
 
-    final badgeMap = {for (var badge in badgeInstances) badge.id: badge};
+    final badgeMap = {for (var badge in badgeInstances) badge.entityId: badge};
 
     return collections.map((collection) {
       final matchedBadges = collection.badgeInstanceIds
           .map((id) => badgeMap[id])
-          .whereType<BadgeInstanceModel>()
+          .whereType<BadgeInstanceEntity>()
           .toList();
       return collection.copyWith(badgeInstances: matchedBadges);
     }).toList();
@@ -53,12 +54,14 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsModel>> {
           )
           .toList();
 
-      final badgeMap = {for (var badge in badgeInstances) badge.id: badge};
+      final badgeMap = {
+        for (var badge in badgeInstances) badge.entityId: badge,
+      };
 
       final collectionsWithBadges = collections.map((collection) {
         final matchedBadges = collection.badgeInstanceIds
             .map((id) => badgeMap[id])
-            .whereType<BadgeInstanceModel>()
+            .whereType<BadgeInstanceEntity>()
             .toList();
         return collection.copyWith(badgeInstances: matchedBadges);
       }).toList();
@@ -108,7 +111,7 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsModel>> {
       },
       (_) {
         final currentState = state;
-        if (currentState is AsyncData<List<CollectionsModel>>) {
+        if (currentState is AsyncData<List<CollectionsEntity>>) {
           final collections = currentState.value;
           final updatedCollections = collections.map((collection) {
             if (collection.entityId == entityId) {
@@ -116,7 +119,9 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsModel>> {
                 name: name,
                 description: description,
                 public: public,
-                badgeInstanceIds: badgeInstanceIds,
+                badgeInstanceIds: badgeInstanceIds
+                    .map((e) => e.toString())
+                    .toList(),
               );
             }
             return collection;

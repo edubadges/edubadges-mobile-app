@@ -823,6 +823,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Never'**
   String get never;
+
+  /// No description provided for @claimEdubadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim edubadge'**
+  String get claimEdubadge;
+
+  /// No description provided for @decline.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get decline;
+
+  /// No description provided for @declineBadgeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline edubadge'**
+  String get declineBadgeTitle;
+
+  /// No description provided for @declineBadgeConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'You are about to decline this edubadge. This action is final and cannot be undone.'**
+  String get declineBadgeConfirmation;
+
+  /// No description provided for @badgesRemainingToClaim.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No more edu-badges to claim} =1{Still 1 edu-badge to claim} other{Still {count} edu-badges to claim}}'**
+  String badgesRemainingToClaim(num count);
+
+  /// No description provided for @badgePrivacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edubadges and your privacy'**
+  String get badgePrivacyTitle;
+
+  /// No description provided for @badgePrivacyReadButton.
+  ///
+  /// In en, this message translates to:
+  /// **'I have read this'**
+  String get badgePrivacyReadButton;
+
+  /// No description provided for @badgePrivacyViewFullText.
+  ///
+  /// In en, this message translates to:
+  /// **'View full text'**
+  String get badgePrivacyViewFullText;
+
+  /// No description provided for @badgeClaimSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Congratulations!'**
+  String get badgeClaimSuccessTitle;
+
+  /// No description provided for @badgeClaimSuccessSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You have claimed a new edubadge'**
+  String get badgeClaimSuccessSubtitle;
+
+  /// No description provided for @claimNextBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Claim 1 more edubadge} other{Claim {count} more edubadges}}'**
+  String claimNextBadge(num count);
+
+  /// No description provided for @goToOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to your overview'**
+  String get goToOverview;
+
+  /// No description provided for @badgeClaimErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get badgeClaimErrorTitle;
+
+  /// No description provided for @badgeClaimErrorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your edubadge cannot be claimed at this time. Don\'t worry, your progress has been saved. Please try again later.'**
+  String get badgeClaimErrorSubtitle;
 }
 
 class _AppLocalizationsDelegate

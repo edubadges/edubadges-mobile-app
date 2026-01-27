@@ -6,7 +6,7 @@ import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/features/collections/presentation/widgets/create_collection_bottom_sheet.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
-import 'package:edubadges/shared/data/models/badge_instance_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -170,7 +170,7 @@ class CollectionsPage extends ConsumerWidget {
   }
 
   Widget _buildBadgeGrid(
-    List<BadgeInstanceModel> badges,
+    List<BadgeInstanceEntity> badges,
     int badgeCount,
     ColorScheme colorScheme,
   ) {

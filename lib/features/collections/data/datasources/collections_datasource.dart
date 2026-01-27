@@ -5,7 +5,7 @@ import 'package:edubadges/features/collections/data/models/collections_model.dar
 import 'package:edubadges/features/collections/data/models/create_collection_request.dart';
 
 abstract class CollectionsDataSource {
-  Future<List<CollectionsModel>> getCollectionss();
+  Future<List<CollectionsModel>> getCollections();
   Future<void> deleteCollection(String entityId);
   Future<void> updateCollection(String entityId, Map<String, dynamic> data);
   Future<CollectionsModel> createCollection(CreateCollectionRequest request);
@@ -17,7 +17,7 @@ class CollectionsDataSourceImpl implements CollectionsDataSource {
   CollectionsDataSourceImpl(this.apiClient);
 
   @override
-  Future<List<CollectionsModel>> getCollectionss() async {
+  Future<List<CollectionsModel>> getCollections() async {
     final response = await apiClient.get<List<dynamic>>('/badge-collections');
     final data = response.data ?? [];
 
@@ -52,7 +52,9 @@ class CollectionsDataSourceImpl implements CollectionsDataSource {
   }
 
   @override
-  Future<CollectionsModel> createCollection(CreateCollectionRequest request) async {
+  Future<CollectionsModel> createCollection(
+    CreateCollectionRequest request,
+  ) async {
     final response = await apiClient.post<Map<String, dynamic>>(
       '/badge-collections',
       data: request.toJson(),

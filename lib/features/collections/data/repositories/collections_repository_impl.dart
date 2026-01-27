@@ -5,7 +5,7 @@ import 'package:edubadges/features/collections/data/datasources/collections_data
 import 'package:edubadges/features/collections/data/models/create_collection_request.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
 import 'package:edubadges/features/collections/domain/repositories/collections_repository.dart';
-import 'package:edubadges/shared/data/models/badge_instance_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 
 class CollectionsRepositoryImpl implements CollectionsRepository {
   final CollectionsDataSource collectionsDataSource;
@@ -13,20 +13,20 @@ class CollectionsRepositoryImpl implements CollectionsRepository {
   CollectionsRepositoryImpl(this.collectionsDataSource);
 
   @override
-  Future<Either<Failure, List<CollectionsEntity>>> getCollectionss(
-    List<BadgeInstanceModel> badgeInstances,
+  Future<Either<Failure, List<CollectionsEntity>>> getCollections(
+    List<BadgeInstanceEntity> badgeInstances,
   ) async {
     try {
-      final collections = await collectionsDataSource.getCollectionss();
+      final collections = await collectionsDataSource.getCollections();
 
       final badgeInstanceMap = {
-        for (var instance in badgeInstances) instance.id: instance,
+        for (var instance in badgeInstances) instance.entityId: instance,
       };
 
       final collectionsWithBadges = collections.map((collection) {
         final matchedBadges = collection.badgeInstanceIds
             .map((id) => badgeInstanceMap[id])
-            .whereType<BadgeInstanceModel>()
+            .whereType<BadgeInstanceEntity>()
             .toList();
 
         return (collection).copyWith(badgeInstances: matchedBadges);

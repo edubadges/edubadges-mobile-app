@@ -152,5 +152,35 @@
     "workExperience": "Work experience",
     "formOfParticipation": "Form of participation",
     "indicativeLevel": "(Indicative) EQF/NLQF",
-    "never": "Never"
+    "never": "Never",
+    "claimEdubadge": "Claim edubadge",
+    "decline": "Decline",
+    "declineBadgeTitle": "Decline edubadge",
+    "declineBadgeConfirmation": "You are about to decline this edubadge. This action is final and cannot be undone.",
+    "badgesRemainingToClaim": "{count, plural, =0{No more edu-badges to claim} =1{Still 1 edu-badge to claim} other{Still {count} edu-badges to claim}}",
+    "@badgesRemainingToClaim": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "badgePrivacyTitle": "Edubadges and your privacy",
+    "badgePrivacyReadButton": "I have read this",
+    "badgePrivacyViewFullText": "View full text",
+    "badgeClaimSuccessTitle": "Congratulations!",
+    "badgeClaimSuccessSubtitle": "You have claimed a new edubadge",
+    "claimNextBadge": "{count, plural, =1{Claim 1 more edubadge} other{Claim {count} more edubadges}}",
+    "@claimNextBadge": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "goToOverview": "Go to your overview",
+    "badgeClaimErrorTitle": "Something went wrong",
+    "badgeClaimErrorSubtitle": "Your edubadge cannot be claimed at this time. Don't worry, your progress has been saved. Please try again later."
 }

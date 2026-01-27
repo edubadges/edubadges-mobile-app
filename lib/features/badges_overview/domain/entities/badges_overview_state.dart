@@ -1,10 +1,10 @@
-import 'package:edubadges/shared/data/models/badge_instance_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:equatable/equatable.dart';
 
 class BadgesOverviewState extends Equatable {
-  final List<BadgeInstanceModel> claimedBadges;
-  final List<BadgeInstanceModel> unclaimedBadges;
-  final List<BadgeInstanceModel> requestedBadges;
+  final List<BadgeInstanceEntity> claimedBadges;
+  final List<BadgeInstanceEntity> unclaimedBadges;
+  final List<BadgeInstanceEntity> requestedBadges;
 
   const BadgesOverviewState({
     required this.claimedBadges,

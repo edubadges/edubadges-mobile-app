@@ -6,11 +6,11 @@ import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
-import 'package:edubadges/features/collections/data/models/collections_model.dart';
+import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/features/collections/presentation/widgets/edit_collection_bottom_sheet.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
-import 'package:edubadges/shared/data/models/badge_instance_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,8 +25,8 @@ class CollectionPage extends ConsumerWidget {
   Widget _buildVisibilitySection(
     BuildContext context,
     WidgetRef ref,
-    CollectionsModel collection,
-    List<BadgeInstanceModel> badges,
+    CollectionsEntity collection,
+    List<BadgeInstanceEntity> badges,
     ValueNotifier<bool> publicNotifier,
   ) {
     final l10n = AppLocalizations.of(context)!;
@@ -102,7 +102,10 @@ class CollectionPage extends ConsumerWidget {
                                   collection.name,
                                   collection.description,
                                   state,
-                                  collection.badgeInstanceIds,
+                                  collection.badgeInstanceIds
+                                      .map((id) => int.tryParse(id) ?? -1)
+                                      .where((id) => id != -1)
+                                      .toList(),
                                 );
                             if (!success) {
                               publicNotifier.value = !state;
@@ -235,7 +238,7 @@ class CollectionPage extends ConsumerWidget {
     final colorScheme = theme.colorScheme;
     final collectionsAsync = ref.watch(collectionsProvider);
 
-    ref.listen<AsyncValue<List<CollectionsModel>>>(collectionsProvider, (
+    ref.listen<AsyncValue<List<CollectionsEntity>>>(collectionsProvider, (
       previous,
       next,
     ) {
@@ -296,8 +299,9 @@ class CollectionPage extends ConsumerWidget {
                       enableDrag: true,
                       isScrollControlled: true,
                       backgroundColor: Colors.transparent,
-                      builder: (context) =>
-                          EditCollectionBottomSheet(collection: foundCollection),
+                      builder: (context) => EditCollectionBottomSheet(
+                        collection: foundCollection,
+                      ),
                     );
                   } catch (e) {
                     if (context.mounted && context.canPop()) {
@@ -383,7 +387,9 @@ class CollectionPage extends ConsumerWidget {
               );
 
               final badges = foundCollection.badgeInstances ?? [];
-              final publicNotifier = ValueNotifier<bool>(foundCollection.public);
+              final publicNotifier = ValueNotifier<bool>(
+                foundCollection.public,
+              );
 
               if (badges.isEmpty) {
                 return Padding(
