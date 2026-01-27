@@ -19,11 +19,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 String? appFlavor;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  initializeDateFormatting();
 
   // Configure system UI for edge-to-edge display
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -54,6 +57,7 @@ void main() async {
     openIdClientId: dotenv.env[EnvKeys.openIdClientId] ?? '',
     enableAnalytics: dotenv.env[EnvKeys.enableAnalytics] == 'true',
     enableCrashlytics: dotenv.env[EnvKeys.enableCrashlytics] == 'true',
+    publicCollectionBaseUrl: dotenv.env[EnvKeys.publicCollectionBaseUrl] ?? '',
   );
 
   // Initialize Firebase

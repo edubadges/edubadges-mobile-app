@@ -10,7 +10,9 @@ class CatalogPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.tabCatalog)),
-      body: const Center(child: Text('Catalog Page')),
+      body: Center(
+        child: const Text('Catalog'),
+      ),
     );
   }
 }

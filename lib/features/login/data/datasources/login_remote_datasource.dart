@@ -1,7 +1,8 @@
 import 'package:edubadges/core/network/api_client.dart';
+import 'package:edubadges/features/login/data/models/login_user_status.dart';
 
 abstract class LoginRemoteDataSource {
-  Future<void> login();
+  Future<LoginUserAuthStatus> login();
 }
 
 class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
@@ -10,8 +11,19 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
   LoginRemoteDataSourceImpl(this.apiClient);
 
   @override
-  Future<void> login() async {
-    final response = await apiClient.get('/login');
-    print(response);
+  Future<LoginUserAuthStatus> login() async {
+    try {
+      final response = await apiClient.get('/login');
+
+      if (response.statusCode == 200 && response.data != null) {
+        final jsonBody = response.data as Map<String, dynamic>;
+        final status = parseUserAuthStatus(jsonBody);
+        return status;
+      } else {
+        throw Exception('Login API call failed');
+      }
+    } catch (e, _) {
+      rethrow;
+    }
   }
 }

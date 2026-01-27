@@ -6,8 +6,181 @@
     "loginCardText": "My Badges is the place to receive and collect edubadges. An eduID is required to create and use \"My Badges.\" Creating an eduID takes less than 30 seconds.",
     "loginSubtitle": "Edubadges are digital certificates that demonstrate the knowledge or skills someone has acquired, within or outside formal education.",
     "loginTitle": "Never stop learning",
+    "generalAgreementTitle": "Privacy Policy",
+    "generalAgreementButtonReadMore": "Read more",
+    "generalAgreementButtonRead": "Read",
     "tabAccount": "Account",
     "tabBadges": "Edubadges",
     "tabCatalog": "Catalog",
-    "tabCollections": "Collections"
+    "tabCollections": "Collections",
+    "newCollection": "New collection",
+    "newCollectionDescription": "Create a new collection and share it with acquaintances.",
+    "collectionName": "Name",
+    "collectionNamePlaceholder": "Name of the collection",
+    "collectionDescription": "Description",
+    "collectionDescriptionPlaceholder": "Description of the collection",
+    "save": "Save",
+    "cancel": "Cancel",
+    "collectionNameRequired": "Name is required",
+    "addEdubadgesToCollection": "Add edubadges to your collection",
+    "addEdubadgesToCollectionDescription": "Bundle edubadges in your collection to manage them clearly and share them easily.",
+    "addEdubadge": "Add Edubadge",
+    "areYouSure": "Are you sure?",
+    "deleteCollectionConfirmation": "You are about to delete a collection.",
+    "delete": "Delete",
+    "notificationPermissionsTitle": "Stay informed",
+    "notificationPermissionsSubtitle": "Edubadge can send you a notification when something is ready for you, such as a new badge or an important update.",
+    "notificationPermissionsLabel": "You can always change this later in the settings.",
+    "notificationPermissionsButtonAllow": "Allow notifications",
+    "notificationPermissionsButtonDeny": "Not now",
+    "accountData": "Data",
+    "confirmedName": "Confirmed name",
+    "providedByInstitution": "Provided by your institution",
+    "emailAddress": "Email address",
+    "institution": "Institution",
+    "eduid": "#eduid",
+    "memberSince": "Member since",
+    "notificationSettings": "Notification settings",
+    "generalNotifications": "General notifications",
+    "givenAgreements": "Given agreement(s)",
+    "agreementsDescription": "You can withdraw your given agreement(s).",
+    "deleteAccount": "Delete your edubadges account",
+    "deleteAccountDescription": "You can delete your edubadges account if you wish. Be aware that after this, all your edubadges can no longer be validated.\n\nDeleting your edubadges account does not mean that your eduID will also be deleted.\n\nTo complete the process of deleting your edubadges account, you must close your browser after your account has been deleted.",
+    "deleteMyAccount": "Delete my account",
+    "somethingWentWrong": "Something went wrong",
+    "retry": "Retry",
+    "noProfileData": "No profile data",
+    "logoutConfirmationTitle": "Are you sure?",
+    "logoutConfirmationMessage": "You are about to log out.",
+    "logout": "Log out",
+    "deleteAccountConfirmationTitle": "Delete my account",
+    "deleteAccountConfirmationMessage": "Be aware that after this, all your edubadges can no longer be validated. Deleting your edubadges account does not mean that your eduID will also be deleted.",
+    "deleteAccountConfirmationPrompt": "Type the word 'delete' to permanently delete my badges",
+    "deleteAccountInputPlaceholder": "Type 'delete'",
+    "deleteAccountRequiredText": "delete",
+    "privacyConditions": "Privacy conditions",
+    "withdraw": "Withdraw",
+    "viewFullText": "View full text",
+    "viewShortText": "View short text",
+    "withdrawAgreementTitle": "Withdraw my agreement statement",
+    "withdrawAgreementMessage": "Are you sure you want to withdraw your agreement statement for {institution}?",
+    "@withdrawAgreementMessage": {
+        "placeholders": {
+            "institution": {
+                "type": "String"
+            }
+        }
+    },
+    "confirm": "Confirm",
+    "countHours": "{count, plural, =1{1 hour} other{{count} hours}}",
+    "@countHours": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "noCollectionsYet": "No collections yet",
+    "countEdubadges": "{count, plural, =1{1 edubadge} other{{count} edubadges}}",
+    "@countEdubadges": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "errorLoadingCollections": "Error loading collections",
+    "collectionVisibleAndShareable": "Collection visible and shareable",
+    "publicCollectionRequires": "A public collection requires at least 1 public edubadge",
+    "privateBadgesError": "One or more badges are private, make them public to make this collection public.",
+    "linkCopied": "Link copied",
+    "copyLink": "Copy link",
+    "errorLoadingCollection": "Error loading collection",
+    "goBack": "Go Back",
+    "editCollection": "Edit collection",
+    "editCollectionDescription": "Update your collection details",
+    "continueText": "Continue",
+    "addEdubadges": "Add Edubadges",
+    "selectAtLeastOneBadge": "Select at least one badge",
+    "noBadgesAvailable": "No badges available",
+    "add": "Add",
+    "newBadgeReady": "{count, plural, =1{There is 1 new edubadge ready} other{There are {count} new edubadges ready}}",
+    "@newBadgeReady": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "requestedBadges": "Requested badges",
+    "noEdubadgesYet": "You don't have any edubadges yet",
+    "giveFeedback": "Give feedback",
+    "giveFeedbackDescription": "We'd love to hear what you think about the app. Leave your feedback below.",
+    "feedback": "Feedback",
+    "feedbackPlaceholder": "Type your feedback here...",
+    "feedbackRequired": "Feedback is required",
+    "aboutThisEdubadge": "About this Edubadge",
+    "theEdubadge": "The Edubadge",
+    "issuedOn": "Issued on",
+    "expiresOn": "Expires on",
+    "type": "Type",
+    "badgeTheProgram": "The program",
+    "badgeTheAssessment": "The assessment",
+    "learningOutcomes": "Learning outcomes",
+    "studyLoad": "Study load",
+    "language": "Language",
+    "languageDutch": "Dutch",
+    "languageEnglish": "English",
+    "assessmentWrittenExam": "(Written) Exam",
+    "assessmentReportPaper": "Report / paper",
+    "assessmentBehaviouralAssessment": "Behavioural assessment",
+    "assessmentProfessionalProduct": "Professional product",
+    "assessmentDevelopmentReport": "Development report / reflection report",
+    "assessmentPortfolioAssessment": "Portfolio / portfolio assessment",
+    "assessmentOramExam": "Presentation / Oral exam",
+    "assessmentPersonalizedAssessment": "Personalized type of assessment",
+    "supervised": "Supervised",
+    "assessmentSupervisedWithIdentityVerification": "Supervised with identity verification",
+    "assessmentWithIdentityVerification": "With identity verification",
+    "assessmentType": "Assessment type",
+    "online": "Online",
+    "onsite": "On-site",
+    "blended": "Blended",
+    "workExperience": "Work experience",
+    "formOfParticipation": "Form of participation",
+    "indicativeLevel": "(Indicative) EQF/NLQF",
+    "never": "Never",
+    "claimEdubadge": "Claim edubadge",
+    "decline": "Decline",
+    "declineBadgeTitle": "Decline edubadge",
+    "declineBadgeConfirmation": "You are about to decline this edubadge. This action is final and cannot be undone.",
+    "badgesRemainingToClaim": "{count, plural, =0{No more edu-badges to claim} =1{Still 1 edu-badge to claim} other{Still {count} edu-badges to claim}}",
+    "@badgesRemainingToClaim": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "badgePrivacyTitle": "Edubadges and your privacy",
+    "badgePrivacyReadButton": "I have read this",
+    "badgePrivacyViewFullText": "View full text",
+    "badgeClaimSuccessTitle": "Congratulations!",
+    "badgeClaimSuccessSubtitle": "You have claimed a new edubadge",
+    "claimNextBadge": "{count, plural, =1{Claim 1 more edubadge} other{Claim {count} more edubadges}}",
+    "@claimNextBadge": {
+        "placeholders": {
+            "count": {
+                "type": "num",
+                "format": "decimalPattern"
+            }
+        }
+    },
+    "goToOverview": "Go to your overview",
+    "badgeClaimErrorTitle": "Something went wrong",
+    "badgeClaimErrorSubtitle": "Your edubadge cannot be claimed at this time. Don't worry, your progress has been saved. Please try again later."
 }

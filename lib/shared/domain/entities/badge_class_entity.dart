@@ -1,0 +1,54 @@
+import 'package:edubadges/shared/domain/entities/badge_class_extension_entity.dart';
+import 'package:edubadges/shared/domain/entities/issuer_entity.dart';
+import 'package:edubadges/shared/domain/enums/assessment_type.dart';
+import 'package:edubadges/shared/domain/enums/participation_type.dart';
+import 'package:equatable/equatable.dart';
+
+class BadgeClassEntity extends Equatable {
+  final int id;
+  final String name;
+  final String entityId;
+  final String? image;
+  final String? description;
+  final bool? formal;
+  final ParticipationType? participation;
+  final AssessmentType? assessmentType;
+  final bool? assessmentIdVerified;
+  final bool? assessmentSupervised;
+  final String? qualityAssuranceName;
+  final List<BadgeClassExtensionEntity>? badgeclassextensionSet;
+  final IssuerEntity? issuer;
+
+  const BadgeClassEntity({
+    required this.id,
+    required this.name,
+    required this.entityId,
+    this.image,
+    this.description,
+    this.formal,
+    this.participation,
+    this.assessmentType,
+    this.assessmentIdVerified,
+    this.assessmentSupervised,
+    this.qualityAssuranceName,
+    this.badgeclassextensionSet,
+    this.issuer,
+  });
+
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        entityId,
+        image,
+        description,
+        formal,
+        participation,
+        assessmentType,
+        assessmentIdVerified,
+        assessmentSupervised,
+        qualityAssuranceName,
+        badgeclassextensionSet,
+        issuer,
+      ];
+}

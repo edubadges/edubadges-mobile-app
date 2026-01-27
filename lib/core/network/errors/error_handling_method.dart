@@ -34,12 +34,10 @@ class ErrorHandlingConfig {
         types = null;
 
   /// Exclude specific error types from AromaError handling
-  const ErrorHandlingConfig.excludeTypes(List<String> types)
-      : method = ErrorHandlingMethod.excludeTypes,
-        types = types;
+  const ErrorHandlingConfig.excludeTypes(List<String> this.types)
+      : method = ErrorHandlingMethod.excludeTypes;
 
   /// Only handle specific error types with AromaError
-  const ErrorHandlingConfig.onlyHandleTypes(List<String> types)
-      : method = ErrorHandlingMethod.onlyHandleTypes,
-        types = types;
+  const ErrorHandlingConfig.onlyHandleTypes(List<String> this.types)
+      : method = ErrorHandlingMethod.onlyHandleTypes;
 }

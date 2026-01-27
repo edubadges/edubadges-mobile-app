@@ -1,6 +1,6 @@
-import 'package:edubadges/features/account/data/models/account_model.dart';
+import 'package:edubadges/features/account/data/models/profile_model.dart';
 
 abstract class AccountDataSource {
-  Future<List<AccountModel>> getAccounts();
-  Future<AccountModel> getAccountById(String id);
+  Future<ProfileModel> getProfile();
+  Future<bool> deleteProfile();
 }
