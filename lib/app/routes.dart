@@ -1,4 +1,5 @@
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/presentation/pages/account_page.dart';
 import 'package:edubadges/features/account/presentation/pages/agreement_details_page.dart';
@@ -13,7 +14,10 @@ import 'package:edubadges/features/collections/presentation/pages/collection_pag
 import 'package:edubadges/features/collections/presentation/pages/collections_page.dart';
 import 'package:edubadges/features/collections/presentation/pages/new_collection_page.dart';
 import 'package:edubadges/features/general_terms/presentation/pages/general_terms_page.dart';
+import 'package:edubadges/features/login/data/models/login_terms.dart';
+import 'package:edubadges/features/login/data/models/login_user_status.dart';
 import 'package:edubadges/features/login/presentation/pages/login_page.dart';
+import 'package:edubadges/features/login/presentation/providers/login_providers.dart';
 import 'package:edubadges/features/main/main_page.dart';
 import 'package:edubadges/features/notification_permission/presentation/pages/notification_permission_page.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
@@ -34,13 +38,27 @@ final appRouter = Provider<GoRouter>((ref) {
 
       if (!loggedIn && !isGoingToLogin) return RoutePath.login;
 
-      // After login, decide where to go.
+      // After login, decide where to go based on a priority system.
       if (loggedIn && isGoingToLogin) {
-        // If the permission has not been determined yet, show the permission screen.
+        final loginStatus = ref.read(loginStatusProvider).asData?.value;
+        final language = ref.read(appLanguageProvider);
+
+        // Check if terms need to be agreed to.
+        if (loginStatus is LoginTermsAgreementRequired) {
+          final termsAgreement = loginStatus.termsAgreementSet.firstWhere(
+                (element) => element.terms.termsType == 'terms_of_service',
+          );
+
+          final termsUrl = termsAgreement.terms.termsUrls.urlForLanguage(language.code);
+          context.go(RoutePath.generalTerms, extra: termsUrl);
+        }
+
+        // Check if notification permissions need to be asked.
         // This packages means user has not decided yet with .denied
         if (notificationStatus.asData?.value == PermissionStatus.denied) {
           return RoutePath.notificationPermission;
         }
+
         // Otherwise, go directly to the main page.
         return RoutePath.main;
       }
@@ -58,18 +76,26 @@ final appRouter = Provider<GoRouter>((ref) {
       ),
 
       GoRoute(
-        path: RoutePath.generalTerms,
-        name: 'general-terms',
-        builder: (context, state) {
-          return const GeneralTermsPage();
-        }
-      ),
-
-      GoRoute(
         path: RoutePath.notificationPermission,
         name: 'notification-permission',
         builder: (context, state) {
           return const NotificationPermissionPage();
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.generalTerms,
+        name: 'general-terms',
+        redirect: (context, state) {
+          final extra = state.extra;
+          if (extra == null || extra is! String || extra.isEmpty) {
+            return null;
+          }
+          return null;
+        },
+        builder: (context, state) {
+          final url = state.extra as String;
+          return GeneralTermsPage(url: url);
         },
       ),
 

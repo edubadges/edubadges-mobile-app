@@ -2,13 +2,17 @@ import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:edubadges/features/general_terms/presentation/providers/general_terms_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/presentation/providers/permission_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class GeneralTermsPage extends ConsumerStatefulWidget {
-  const GeneralTermsPage({super.key});
+  final String url;
+
+  const GeneralTermsPage({super.key, required this.url});
 
   @override
   ConsumerState<GeneralTermsPage> createState() => _GeneralTermsPageState();
@@ -57,7 +61,18 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
   }
 
   Future<void> _acceptTerms() async {
-      context.go(RoutePath.main);
+    final dataSource = ref.watch(generalTermsDataSourceProvider);
+    dataSource.acceptTermsUrl();
+
+    final notificationStatus = ref.watch(notificationPermissionStatusProvider);
+
+    if (mounted) {
+      if (notificationStatus.value == PermissionStatus.denied) {
+        context.go(RoutePath.notificationPermission);
+      } else {
+        context.go(RoutePath.main);
+      }
+    }
   }
 
   @override
@@ -66,8 +81,8 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
+    final markdownAsync = ref.watch(markdownContentProvider(widget.url));
 
-    final markdownAsync = ref.watch(markdownContentProvider);
     final buttonText = _isNearBottom ? l10n.generalAgreementButtonRead : l10n.generalAgreementButtonReadMore;
     final buttonOnPressed = _isNearBottom ? _acceptTerms : _scrollToBottom;
 
@@ -87,10 +102,10 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
               return SingleChildScrollView(
                 controller: _scrollController,
                 padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
-                child: Markdown(
+                child: MarkdownBody(
                   data: markdownContent,
                   styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
-                    p: textTheme.bodyMedium!.copyWith(fontSize: 16),
+                    p: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
                   ),
                 ),
               );
