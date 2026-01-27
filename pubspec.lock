@@ -429,6 +429,22 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  fresh:
+    dependency: transitive
+    description:
+      name: fresh
+      sha256: "1e67823865ec04d5979567ca4a4f629250ca7731ac4c83cdc6df23f16090d9b7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.4"
+  fresh_dio:
+    dependency: "direct main"
+    description:
+      name: fresh_dio
+      sha256: "00851b22f18422a67b25d061c16137b6ae0d89ff9ac7e613f83d86a919440632"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.5"
   frontend_server_client:
     dependency: transitive
     description:
