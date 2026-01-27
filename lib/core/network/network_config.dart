@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:edubadges/core/network/interceptors/auth_interceptor.dart';
 import 'package:edubadges/core/network/interceptors/header_interceptor.dart';
 import 'package:edubadges/core/network/interceptors/logging_interceptor.dart';
 import 'package:edubadges/core/network/interceptors/retry_interceptor.dart';
+import 'package:fresh_dio/fresh_dio.dart';
 import 'package:logger/logger.dart';
 
 /// Configuration for creating a Dio instance with interceptors
@@ -10,14 +10,11 @@ class NetworkConfig {
   /// Base URL for API requests
   final String baseUrl;
 
-  /// Optional access token getter for authentication
-  final Future<String?> Function()? getAccessToken;
+  /// Token storage for OAuth2 tokens
+  final TokenStorage<OAuth2Token>? tokenStorage;
 
-  /// Optional refresh token getter
-  final Future<String?> Function()? getRefreshToken;
-
-  /// Optional callback when unauthorized (401) is received
-  final Future<void> Function()? onUnauthorized;
+  /// Callback to refresh the token when it expires
+  final Future<OAuth2Token> Function()? onRefreshToken;
 
   /// Optional logger instance (if not provided, logging interceptor is skipped)
   final Logger? logger;
@@ -52,11 +49,10 @@ class NetworkConfig {
   /// Accept language header
   final String? acceptLanguage;
 
-  const NetworkConfig({
+  NetworkConfig({
     required this.baseUrl,
-    this.getAccessToken,
-    this.getRefreshToken,
-    this.onUnauthorized,
+    this.tokenStorage,
+    this.onRefreshToken,
     this.logger,
     this.logRequestBody = true,
     this.logResponseBody = true,
@@ -69,6 +65,11 @@ class NetworkConfig {
     this.userAgent,
     this.acceptLanguage,
   });
+
+  Fresh<OAuth2Token>? _fresh;
+
+  /// Get the Fresh instance for manual token updates
+  Fresh<OAuth2Token>? get fresh => _fresh;
 
   /// Creates a configured Dio instance based on this config
   Dio createDio() {
@@ -104,21 +105,31 @@ class NetworkConfig {
 
     // Retry interceptor
     interceptors.add(
-      RetryInterceptor(
-        maxRetries: maxRetries,
-        retryDelay: retryDelay,
-      ),
+      RetryInterceptor(maxRetries: maxRetries, retryDelay: retryDelay),
     );
 
-    // Auth interceptor (only if getAccessToken is provided)
-    if (getAccessToken != null) {
-      interceptors.add(
-        AuthInterceptor(
-          getAccessToken: getAccessToken!,
-          getRefreshToken: getRefreshToken,
-          onUnauthorized: onUnauthorized,
-        ),
+    // Auth interceptor (only if tokenStorage is provided)
+    if (tokenStorage != null && onRefreshToken != null) {
+      _fresh = Fresh.oAuth2(
+        tokenStorage: tokenStorage!,
+        tokenHeader: (token) {
+          return {'Authorization': 'Bearer ${token.accessToken}'};
+        },
+        shouldRefresh: (response) {
+          // TODO: 403 is temp till demo server is updated to just use 401
+          const authErrorCodes = {401, 403};
+          return response != null &&
+              authErrorCodes.contains(response.statusCode);
+        },
+        refreshToken: (token, client) async {
+          try {
+            return await onRefreshToken!();
+          } catch (e) {
+            throw RevokeTokenException();
+          }
+        },
       );
+      interceptors.add(_fresh!);
     }
 
     dio.interceptors.addAll(interceptors);
