@@ -187,5 +187,11 @@
     "regular": "Regular",
     "extraCurricular": "Extra curricular",
     "badgeVisibleAndShareable": "Edubadge visible and shareable",
-    "badgeVisibleAndShareableDescription": "With this setting, you determine whether your edubadge is public and can be viewed by others when you share it."
+    "badgeVisibleAndShareableDescription": "With this setting, you determine whether your edubadge is public and can be viewed by others when you share it.",
+    "toMakePublic": "To make public",
+    "badgePublicShareWarning": "To share this Edubadge, it must be made public.",
+    "makePublic": "Make public",
+    "actionMakePrivate": "Make private",
+    "labelMakePrivate": "Make private",
+    "badgeMakePrivateWarning": "Are you sure you want to make this edubadge private?"
 }

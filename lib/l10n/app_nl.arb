@@ -187,5 +187,11 @@
     "regular": "Regulier",
     "extraCurricular": "Extracurriculair",
     "badgeVisibleAndShareable": "Edubadge zichtbaar en deelbaar",
-    "badgeVisibleAndShareableDescription": "Met deze instelling bepaal je of je edubadge openbaar is en door anderen kan worden bekeken wanneer je deze deelt."
+    "badgeVisibleAndShareableDescription": "Met deze instelling bepaal je of je edubadge openbaar is en door anderen kan worden bekeken wanneer je deze deelt.",
+    "toMakePublic": "Openbaar maken",
+    "badgePublicShareWarning": "Om deze Edubadge te kunnen delen, moet hij openbaar worden gemaakt.",
+    "makePublic": "Maak openbaar",
+    "actionMakePrivate": "Maak privé",
+    "labelMakePrivate": "Privé maken",
+    "badgeMakePrivateWarning": "Weet je het zeker dat je deze edubadge privé wilt maken?"
 }

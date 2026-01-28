@@ -513,4 +513,24 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get badgeVisibleAndShareableDescription =>
       'With this setting, you determine whether your edubadge is public and can be viewed by others when you share it.';
+
+  @override
+  String get toMakePublic => 'To make public';
+
+  @override
+  String get badgePublicShareWarning =>
+      'To share this Edubadge, it must be made public.';
+
+  @override
+  String get makePublic => 'Make public';
+
+  @override
+  String get actionMakePrivate => 'Make private';
+
+  @override
+  String get labelMakePrivate => 'Make private';
+
+  @override
+  String get badgeMakePrivateWarning =>
+      'Are you sure you want to make this edubadge private?';
 }

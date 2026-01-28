@@ -1,15 +1,18 @@
 import 'package:collection/collection.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/utils/image.dart';
+import 'package:edubadges/core/widgets/adaptive_dialog.dart';
+import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
 enum BadgeCardStyle { small, large }
 
-class BadgeCard extends StatelessWidget {
+class BadgeCard extends ConsumerWidget {
   final BadgeInstanceEntity instance;
   final BadgeCardStyle style;
   final bool isSelected;
@@ -27,8 +30,34 @@ class BadgeCard extends StatelessWidget {
     return match != null ? int.tryParse(match.value) : null;
   }
 
+  void _updatePrivateState(
+    bool isPublic,
+    WidgetRef ref,
+    BuildContext context,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    await AdaptiveDialog.show(
+      context: context,
+      config: AdaptiveDialogConfig(
+        title: isPublic ? l10n.toMakePublic : l10n.labelMakePrivate,
+        description: isPublic
+            ? l10n.badgePublicShareWarning
+            : l10n.badgeMakePrivateWarning,
+        firstButtonText: l10n.cancel,
+        secondButtonText: isPublic ? l10n.makePublic : l10n.actionMakePrivate,
+        isDestructiveAction: false,
+        onFirstButtonPressed: () {},
+        onSecondButtonPressed: () async {
+          final updateFunction = ref.read(updateBadgeVisibilityProvider);
+          updateFunction(instance.entityId, isPublic);
+        },
+      ),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
@@ -124,8 +153,14 @@ class BadgeCard extends StatelessWidget {
               SizedBox(
                 height: 32,
                 width: 32,
-                child: SvgPicture.asset(
-                  instance.public ? Assets.iconUnlocked : Assets.iconLocked,
+                child: GestureDetector(
+                  child: SvgPicture.asset(
+                    instance.public ? Assets.iconUnlocked : Assets.iconLocked,
+                  ),
+                  onTap: () {
+                    // TODO: Add error message if for some reason it fails
+                    _updatePrivateState(!instance.public, ref, context);
+                  },
                 ),
               ),
             ],
