@@ -925,6 +925,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Extra curricular'**
   String get extraCurricular;
+
+  /// No description provided for @badgeVisibleAndShareable.
+  ///
+  /// In en, this message translates to:
+  /// **'Edubadge visible and shareable'**
+  String get badgeVisibleAndShareable;
+
+  /// No description provided for @badgeVisibleAndShareableDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'With this setting, you determine whether your edubadge is public and can be viewed by others when you share it.'**
+  String get badgeVisibleAndShareableDescription;
 }
 
 class _AppLocalizationsDelegate

@@ -185,5 +185,7 @@
     "badgeClaimErrorSubtitle": "Your edubadge cannot be claimed at this time. Don't worry, your progress has been saved. Please try again later.",
     "microCredential": "Microcredential",
     "regular": "Regular",
-    "extraCurricular": "Extra curricular"
+    "extraCurricular": "Extra curricular",
+    "badgeVisibleAndShareable": "Edubadge visible and shareable",
+    "badgeVisibleAndShareableDescription": "With this setting, you determine whether your edubadge is public and can be viewed by others when you share it."
 }

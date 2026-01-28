@@ -507,4 +507,11 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get extraCurricular => 'Extracurriculair';
+
+  @override
+  String get badgeVisibleAndShareable => 'Edubadge zichtbaar en deelbaar';
+
+  @override
+  String get badgeVisibleAndShareableDescription =>
+      'Met deze instelling bepaal je of je edubadge openbaar is en door anderen kan worden bekeken wanneer je deze deelt.';
 }

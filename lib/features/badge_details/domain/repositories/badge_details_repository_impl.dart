@@ -23,4 +23,22 @@ class BadgeDetailsRepositoryImpl implements BadgeDetailsRepository {
       return Left(NetworkFailure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> updateBadgeVisibility(
+    String entityId,
+    bool isPublic,
+  ) async {
+    try {
+      await dataSource.updateBadgeVisibility(
+        entityId,
+        {'public': isPublic},
+      );
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.statusCode));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    }
+  }
 }

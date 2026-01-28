@@ -8,6 +8,7 @@ import 'package:edubadges/features/badge_details/domain/constants/badge_extensio
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/features/badge_details/domain/extensions/badge_instance_extensions.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
+import 'package:edubadges/features/badge_details/presentation/widgets/badge_visibility_card.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/domain/enums/assessment_type.dart';
@@ -218,6 +219,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     final eQF = details?.getExtensionValue<double?>(BadgeExtensionKeys.eQF);
 
     return [
+      if (details != null) BadgeVisibilityCard(badge: details),
       if (details?.badgeclass.description != null)
         _buildSectionCard(
           title: l10n.aboutThisEdubadge,

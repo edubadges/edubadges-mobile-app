@@ -5,6 +5,7 @@ import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 
 abstract class BadgeDetailsDataSource {
   Future<BadgeInstanceModel> getBadgeDetails(String entityId);
+  Future<void> updateBadgeVisibility(String entityId, Map<String, dynamic> data);
 }
 
 class BadgeDetailsDataSourceImpl implements BadgeDetailsDataSource {
@@ -35,5 +36,13 @@ class BadgeDetailsDataSourceImpl implements BadgeDetailsDataSource {
         stackTrace: stackTrace,
       );
     }
+  }
+
+  @override
+  Future<void> updateBadgeVisibility(
+    String entityId,
+    Map<String, dynamic> data,
+  ) async {
+    await apiClient.put<void>('/badge-instances/$entityId', data: data);
   }
 }

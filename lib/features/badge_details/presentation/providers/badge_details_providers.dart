@@ -44,3 +44,21 @@ final badgeByIdProvider = Provider.family<BadgeInstanceEntity?, String>((
 });
 
 final badgesListProvider = badgesOverviewProvider;
+
+final updateBadgeVisibilityProvider = Provider<
+  Future<bool> Function(String entityId, bool isPublic)
+>((ref) {
+  return (String entityId, bool isPublic) async {
+    final repository = ref.read(badgeDetailsRepositoryProvider);
+    final result = await repository.updateBadgeVisibility(entityId, isPublic);
+    
+    return result.fold(
+      (failure) => false,
+      (_) {
+        ref.invalidate(badgeDetailsProvider(entityId));
+        ref.invalidate(badgesOverviewProvider);
+        return true;
+      },
+    );
+  };
+});
