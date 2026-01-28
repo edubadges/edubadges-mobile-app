@@ -1,6 +1,7 @@
 import 'package:edubadges/shared/domain/entities/badge_class_extension_entity.dart';
 import 'package:edubadges/shared/domain/entities/issuer_entity.dart';
 import 'package:edubadges/shared/domain/enums/assessment_type.dart';
+import 'package:edubadges/shared/domain/enums/badge_class_type.dart';
 import 'package:edubadges/shared/domain/enums/participation_type.dart';
 import 'package:equatable/equatable.dart';
 
@@ -16,6 +17,7 @@ class BadgeClassEntity extends Equatable {
   final bool? assessmentIdVerified;
   final bool? assessmentSupervised;
   final String? qualityAssuranceName;
+  final BadgeClassType badgeClassType;
   final List<BadgeClassExtensionEntity>? badgeclassextensionSet;
   final IssuerEntity? issuer;
 
@@ -23,6 +25,7 @@ class BadgeClassEntity extends Equatable {
     required this.id,
     required this.name,
     required this.entityId,
+    required this.badgeClassType,
     this.image,
     this.description,
     this.formal,
@@ -48,6 +51,7 @@ class BadgeClassEntity extends Equatable {
         assessmentIdVerified,
         assessmentSupervised,
         qualityAssuranceName,
+        badgeClassType,
         badgeclassextensionSet,
         issuer,
       ];

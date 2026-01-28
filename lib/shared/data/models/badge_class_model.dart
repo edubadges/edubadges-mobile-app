@@ -2,6 +2,7 @@ import 'package:edubadges/shared/data/models/badge_class_extension_model.dart';
 import 'package:edubadges/shared/data/models/issuer_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_class_entity.dart';
 import 'package:edubadges/shared/domain/enums/assessment_type.dart';
+import 'package:edubadges/shared/domain/enums/badge_class_type.dart';
 import 'package:edubadges/shared/domain/enums/participation_type.dart';
 
 class BadgeClassModel extends BadgeClassEntity {
@@ -9,6 +10,7 @@ class BadgeClassModel extends BadgeClassEntity {
     required super.id,
     required super.name,
     required super.entityId,
+    required super.badgeClassType,
     super.image,
     super.description,
     super.formal,
@@ -26,6 +28,7 @@ class BadgeClassModel extends BadgeClassEntity {
       id: json['id'] as int,
       name: json['name'] as String,
       entityId: json['entity_id'] as String,
+      badgeClassType: BadgeClassType.fromString(json['badge_class_type'] as String?) ?? BadgeClassType.regular,
       image: json['image'] as String? ?? json['image_url'] as String?, // Depending on the endpoint called the field could be one or the other
       description: json['description'] as String?,
       formal: json['formal'] as bool?,
@@ -50,6 +53,7 @@ class BadgeClassModel extends BadgeClassEntity {
       'id': id,
       'name': name,
       'entity_id': entityId,
+      'badge_class_type': badgeClassType.value,
       if (image != null) 'image': image,
       if (description != null) 'description': description,
       if (formal != null) 'formal': formal,

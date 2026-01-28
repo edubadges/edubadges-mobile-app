@@ -497,4 +497,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get badgeClaimErrorSubtitle =>
       'Your edubadge cannot be claimed at this time. Don\'t worry, your progress has been saved. Please try again later.';
+
+  @override
+  String get microCredential => 'Microcredential';
+
+  @override
+  String get regular => 'Regular';
+
+  @override
+  String get extraCurricular => 'Extra curricular';
 }
