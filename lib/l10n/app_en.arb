@@ -182,5 +182,8 @@
     },
     "goToOverview": "Go to your overview",
     "badgeClaimErrorTitle": "Something went wrong",
-    "badgeClaimErrorSubtitle": "Your edubadge cannot be claimed at this time. Don't worry, your progress has been saved. Please try again later."
+    "badgeClaimErrorSubtitle": "Your edubadge cannot be claimed at this time. Don't worry, your progress has been saved. Please try again later.",
+    "microCredential": "Microcredential",
+    "regular": "Regular",
+    "extraCurricular": "Extra curricular"
 }

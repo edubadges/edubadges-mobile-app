@@ -907,6 +907,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your edubadge cannot be claimed at this time. Don\'t worry, your progress has been saved. Please try again later.'**
   String get badgeClaimErrorSubtitle;
+
+  /// No description provided for @microCredential.
+  ///
+  /// In en, this message translates to:
+  /// **'Microcredential'**
+  String get microCredential;
+
+  /// No description provided for @regular.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular'**
+  String get regular;
+
+  /// No description provided for @extraCurricular.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra curricular'**
+  String get extraCurricular;
 }
 
 class _AppLocalizationsDelegate

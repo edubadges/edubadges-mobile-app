@@ -498,4 +498,13 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get badgeClaimErrorSubtitle =>
       'Je edubadge kan op dit moment niet worden geclaimd. Geen zorgen, je voortgang is bewaard. Probeer het later nog eens.';
+
+  @override
+  String get microCredential => 'Microcredential';
+
+  @override
+  String get regular => 'Regulier';
+
+  @override
+  String get extraCurricular => 'Extracurriculair';
 }

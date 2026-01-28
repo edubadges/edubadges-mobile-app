@@ -11,6 +11,7 @@ import 'package:edubadges/features/badge_details/presentation/providers/badge_de
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/domain/enums/assessment_type.dart';
+import 'package:edubadges/shared/domain/enums/badge_class_type.dart';
 import 'package:edubadges/shared/domain/enums/participation_type.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
 import 'package:flutter/material.dart';
@@ -262,8 +263,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           BadgeDetailItemModel(
             icon: Assets.iconType,
             title: l10n.type,
-            subtitle:
-                'Microcredential', // TODO: Add real data (https://digitalclub.atlassian.net/browse/SURF-539)
+            subtitle: details.badgeclass.badgeClassType.getLocalizedName(l10n),
           ),
           if (eCTS != null)
             BadgeDetailItemModel(
