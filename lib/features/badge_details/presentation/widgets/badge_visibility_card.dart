@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BadgeVisibilityCard extends ConsumerStatefulWidget {
+  final EdgeInsets margin;
   final BadgeInstanceEntity badge;
 
   const BadgeVisibilityCard({
     super.key,
     required this.badge,
+    this.margin = const EdgeInsets.only(left: 20, right: 20, bottom: 8, top: 16),
   });
 
   @override
@@ -47,7 +49,7 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
         border: Border.all(color: colorScheme.outlineVariant),
         color: colorScheme.surfaceContainer,
       ),
-      margin: const EdgeInsets.only(left: 20, right: 20, bottom: 8, top: 16),
+      margin: widget.margin,
       padding: const EdgeInsets.all(16),
       child: Column(
         spacing: 16,

@@ -114,7 +114,10 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
                             instance: claimedBadge,
                             style: BadgeCardStyle.large,
                           ),
-                          BadgeVisibilityCard(badge: claimedBadge),
+                          BadgeVisibilityCard(
+                            margin: const EdgeInsets.only(bottom: 8, top: 16),
+                            badge: claimedBadge,
+                          ),
                           const Spacer(),
                           _buildBottomButton(
                             context,
