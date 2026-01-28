@@ -151,12 +151,12 @@ class BadgeCard extends StatelessWidget {
                   text: l10n.countHours(timeInvestment),
                   context: context,
                 ),
-              // TODO: Add real data (https://digitalclub.atlassian.net/browse/SURF-515)
-              buildChip(
-                icon: Assets.iconCollections,
-                text: '8,0',
-                context: context,
-              ),
+              if (instance.gradeAchieved != null)
+                buildChip(
+                  icon: Assets.iconCollections,
+                  text: instance.gradeAchieved!,
+                  context: context,
+                ),
               buildChip(
                 icon: Assets.iconDate,
                 text: DateFormat(
