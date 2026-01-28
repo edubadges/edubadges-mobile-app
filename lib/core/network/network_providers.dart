@@ -15,16 +15,21 @@ final networkConfigProvider = Provider<NetworkConfig>((ref) {
   final oidcAuth = ref.watch(oidcAuthDataSourceProvider);
   return NetworkConfig(
     baseUrl: EnvironmentConfig.instance.apiUrl,
-    getAccessToken: oidcAuth.getAccessToken,
-    onUnauthorized: oidcAuth.logout,
+    tokenStorage: oidcAuth.tokenStorage,
+    onRefreshToken: oidcAuth.refreshToken,
     logger: logger,
   );
 });
 
 final dioProvider = Provider<Dio>((ref) {
   final config = ref.watch(networkConfigProvider);
+  final oidcAuth = ref.watch(oidcAuthDataSourceProvider);
+  
   final dio = config.createDio();
   dio.options.headers['x-requested-with'] = 'mobile';
+  
+  oidcAuth.setFresh(config.fresh);
+  
   return dio;
 });
 
