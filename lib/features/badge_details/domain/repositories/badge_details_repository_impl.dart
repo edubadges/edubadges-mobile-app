@@ -32,7 +32,7 @@ class BadgeDetailsRepositoryImpl implements BadgeDetailsRepository {
     try {
       await dataSource.updateBadgeVisibility(
         entityId,
-        {'public': isPublic},
+        isPublic,
       );
       return const Right(null);
     } on ServerException catch (e) {
