@@ -1,6 +1,8 @@
 import 'package:edubadges/core/constants/environment_config.dart';
+import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/shared/data/datasources/secure_token_storage.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fresh_dio/fresh_dio.dart';
 
 final EnvironmentConfig config = EnvironmentConfig.instance;
 final String issuer = config.openIdUrl;
@@ -9,15 +11,15 @@ const String redirectUri = 'edubadges://oauth/callback';
 
 class OidcAuthDataSource {
   final FlutterAppAuth _appAuth = const FlutterAppAuth();
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  final SecureTokenStorage _tokenStorage = SecureTokenStorage();
+  Fresh<OAuth2Token>? _fresh;
 
-  static const String _accessTokenKey = 'access_token';
-  static const String _refreshTokenKey = 'refresh_token';
-  static const String _expirationKey = 'access_token_expiration';
+  final List<String> _scopes = ['openid', 'eduid.nl/links', 'offline_access'];
 
-  final List<String> _scopes = ['openid', 'eduid.nl/links'];
+  void setFresh(Fresh<OAuth2Token>? fresh) {
+    _fresh = fresh;
+  }
 
-  /// Perform login – called when app opens if no valid token
   Future<void> login({bool addAcrValues = false}) async {
     try {
       final Map<String, String> additionalParameters = {};
@@ -41,12 +43,30 @@ class OidcAuthDataSource {
       );
 
       if (result.accessToken != null) {
+        final token = OAuth2Token(
+          accessToken: result.accessToken!,
+          refreshToken: result.refreshToken,
+        );
+        
         await _saveTokens(
           result.accessToken!,
           result.refreshToken,
           result.accessTokenExpirationDateTime,
           result.idToken,
         );
+        
+        logger.i('Auth: Notifying fresh about new token');
+        if (_fresh != null) {
+          await _fresh!.setToken(token);
+          logger.i('Auth: Token set in fresh');
+          
+          // Verify token was set
+          final storedToken = await _tokenStorage.read();
+          logger.i('Auth: Verified token in storage - accessToken exists: ${storedToken?.accessToken != null}');
+        } else {
+          logger.w('Auth: Fresh instance is null, cannot set token!');
+        }
+        logger.i('Auth: Login successful, token set');
       } else {
         throw Exception('Login failed: no token received');
       }
@@ -61,57 +81,50 @@ class OidcAuthDataSource {
       DateTime? expirationDateTime,
       String? idToken,
       ) async {
-    await _secureStorage.write(key: _accessTokenKey, value: accessToken);
-    if (refreshToken != null) {
-      await _secureStorage.write(key: _refreshTokenKey, value: refreshToken);
-    }
-    if (expirationDateTime != null) {
-      await _secureStorage.write(
-        key: _expirationKey,
-        value: expirationDateTime.toIso8601String(),
-      );
-    } else {
-      await _secureStorage.delete(key: _expirationKey);
-    }
+    await _tokenStorage.write(OAuth2Token(
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    ));
+    await _tokenStorage.writeExpiration(expirationDateTime);
   }
 
-  /// Get valid access token – auto-refreshes if possible
   Future<String?> getAccessToken({bool forceRefresh = false}) async {
-    final String? token = await _secureStorage.read(key: _accessTokenKey);
-    final String? expirationIso = await _secureStorage.read(key: _expirationKey);
-
-    DateTime? expirationDateTime;
-    if (expirationIso != null) {
-      expirationDateTime = DateTime.tryParse(expirationIso);
-    }
-
-    final bool isExpired = expirationDateTime != null &&
-        expirationDateTime.isBefore(DateTime.now().subtract(const Duration(minutes: 5)));
+    final token = await _tokenStorage.read();
+    final isExpired = await _tokenStorage.isExpired();
 
     if (token == null || isExpired || forceRefresh) {
+      logger.i('Auth: Token needs a refresh');
       await _refreshTokenIfPossible();
-      return await _secureStorage.read(key: _accessTokenKey);
+      final refreshedToken = await _tokenStorage.read();
+      return refreshedToken?.accessToken;
     }
 
-    return token;
+    return token.accessToken;
   }
 
   Future<void> _refreshTokenIfPossible() async {
-    final String? refreshToken = await _secureStorage.read(key: _refreshTokenKey);
-    if (refreshToken == null) return;
+    final token = await _tokenStorage.read();
+    if (token?.refreshToken == null) {
+      logger.w('Auth: No refresh token, logging out');
+      return;
+    }
 
     try {
+      logger.i('Auth: Getting new auth token');
+
       final TokenResponse result = await _appAuth.token(
         TokenRequest(
           clientId,
           redirectUri,
           issuer: issuer,
-          refreshToken: refreshToken,
+          refreshToken: token!.refreshToken,
           scopes: _scopes,
         ),
       );
 
       if (result.accessToken != null) {
+        logger.i('Auth: Got new access token');
+
         await _saveTokens(
           result.accessToken!,
           result.refreshToken,
@@ -119,20 +132,74 @@ class OidcAuthDataSource {
           result.idToken,
         );
       } else {
+        logger.e('Auth: Failed to get new access token (logging out)');
         await logout();
       }
     } catch (e) {
+      logger.e('Auth: Failed to get new access token', error: e);
       await logout();
     }
   }
 
-  Future<void> logout() async {
-    await _secureStorage.deleteAll();
+  Future<OAuth2Token> refreshToken() async {
+    final token = await _tokenStorage.read();
+    if (token?.refreshToken == null) {
+      logger.w('Auth: No refresh token available');
+      throw Exception('No refresh token available');
+    }
+
+    try {
+      logger.i('Auth: Refreshing token via OIDC');
+
+      final TokenResponse result = await _appAuth.token(
+        TokenRequest(
+          clientId,
+          redirectUri,
+          issuer: issuer,
+          refreshToken: token!.refreshToken,
+          scopes: _scopes,
+        ),
+      );
+
+      if (result.accessToken != null) {
+        logger.i('Auth: Token refresh successful');
+
+        final newToken = OAuth2Token(
+          accessToken: result.accessToken!,
+          refreshToken: result.refreshToken,
+        );
+
+        await _saveTokens(
+          result.accessToken!,
+          result.refreshToken,
+          result.accessTokenExpirationDateTime,
+          result.idToken,
+        );
+
+        return newToken;
+      } else {
+        logger.e('Auth: Token refresh failed - no access token received');
+        await logout();
+        throw Exception('Token refresh failed');
+      }
+    } catch (e) {
+      logger.e('Auth: Token refresh failed', error: e);
+      await logout();
+      rethrow;
+    }
   }
 
-  /// Helper: Check if user is authenticated (valid token)
+  Future<void> logout() async {
+    logger.e('Auth: Logout called');
+    await _tokenStorage.delete();
+  }
+
   Future<bool> isAuthenticated() async {
     final String? token = await getAccessToken();
     return token != null;
+  }
+
+  SecureTokenStorage get tokenStorage {
+    return _tokenStorage;
   }
 }
