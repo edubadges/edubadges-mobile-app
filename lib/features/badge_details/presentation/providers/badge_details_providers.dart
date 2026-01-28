@@ -3,6 +3,7 @@ import 'package:edubadges/features/badge_details/data/datasources/badge_details_
 import 'package:edubadges/features/badge_details/domain/repositories/badge_details_repository.dart';
 import 'package:edubadges/features/badge_details/domain/repositories/badge_details_repository_impl.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
+import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -55,6 +56,7 @@ final updateBadgeVisibilityProvider = Provider<
     return result.fold(
       (failure) => false,
       (_) {
+        ref.invalidate(collectionsProvider);
         ref.invalidate(badgeDetailsProvider(entityId));
         ref.invalidate(badgesOverviewProvider);
         return true;
