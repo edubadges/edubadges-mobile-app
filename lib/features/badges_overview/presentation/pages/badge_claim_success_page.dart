@@ -5,6 +5,7 @@ import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
+import 'package:edubadges/features/badge_details/presentation/widgets/badge_visibility_card.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
@@ -113,8 +114,7 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
                             instance: claimedBadge,
                             style: BadgeCardStyle.large,
                           ),
-                          const SizedBox(height: 16),
-                          _buildVisibilityPlaceholder(context),
+                          BadgeVisibilityCard(badge: claimedBadge),
                           const Spacer(),
                           _buildBottomButton(
                             context,
@@ -137,11 +137,6 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
         ),
       ),
     );
-  }
-
-  Widget _buildVisibilityPlaceholder(BuildContext context) {
-    // TODO: Implement public/unpublic container
-    return SizedBox(height: 100, child: Placeholder());
   }
 
   Widget _buildBottomButton(
