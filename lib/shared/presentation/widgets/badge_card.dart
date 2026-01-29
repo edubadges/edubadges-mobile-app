@@ -3,13 +3,15 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_visibility_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 
 enum BadgeCardStyle { small, large }
 
-class BadgeCard extends StatelessWidget {
+class BadgeCard extends ConsumerWidget {
   final BadgeInstanceEntity instance;
   final BadgeCardStyle style;
   final bool isSelected;
@@ -28,7 +30,7 @@ class BadgeCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
@@ -124,8 +126,18 @@ class BadgeCard extends StatelessWidget {
               SizedBox(
                 height: 32,
                 width: 32,
-                child: SvgPicture.asset(
-                  instance.public ? Assets.iconUnlocked : Assets.iconLocked,
+                child: GestureDetector(
+                  child: SvgPicture.asset(
+                    instance.public ? Assets.iconUnlocked : Assets.iconLocked,
+                  ),
+                  onTap: () {
+                    BadgeVisibilityDialog.show(
+                      context: context,
+                      ref: ref,
+                      badgeEntityId: instance.entityId,
+                      isPublic: !instance.public,
+                    );
+                  },
                 ),
               ),
             ],

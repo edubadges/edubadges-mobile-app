@@ -4,4 +4,10 @@ import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 
 abstract class BadgeDetailsRepository {
   Future<Either<Failure, BadgeInstanceEntity>> getBadgeDetails(String entityId);
+  Future<Either<Failure, void>> updateBadgeVisibility(
+    String entityId,
+    bool isPublic,
+    bool includeEvidence,
+    bool includeGradeAchieved,
+  );
 }

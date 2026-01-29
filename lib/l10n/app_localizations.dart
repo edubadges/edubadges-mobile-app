@@ -925,6 +925,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Extra curricular'**
   String get extraCurricular;
+
+  /// No description provided for @badgeVisibleAndShareable.
+  ///
+  /// In en, this message translates to:
+  /// **'Edubadge visible and shareable'**
+  String get badgeVisibleAndShareable;
+
+  /// No description provided for @badgeVisibleAndShareableDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'With this setting, you determine whether your edubadge is public and can be viewed by others when you share it.'**
+  String get badgeVisibleAndShareableDescription;
+
+  /// No description provided for @toMakePublic.
+  ///
+  /// In en, this message translates to:
+  /// **'To make public'**
+  String get toMakePublic;
+
+  /// No description provided for @badgePublicShareWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'To share this Edubadge, it must be made public.'**
+  String get badgePublicShareWarning;
+
+  /// No description provided for @makePublic.
+  ///
+  /// In en, this message translates to:
+  /// **'Make public'**
+  String get makePublic;
+
+  /// No description provided for @makeBadgePublicIncludeEvidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Include evidence/personal message in the public information for this edubadge?'**
+  String get makeBadgePublicIncludeEvidence;
+
+  /// No description provided for @makeBadgePublicIncludeGradeAchieved.
+  ///
+  /// In en, this message translates to:
+  /// **'Include the earned grade in the public information for this edubadge?'**
+  String get makeBadgePublicIncludeGradeAchieved;
+
+  /// No description provided for @actionMakePrivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Make private'**
+  String get actionMakePrivate;
+
+  /// No description provided for @labelMakePrivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Make private'**
+  String get labelMakePrivate;
+
+  /// No description provided for @badgeMakePrivateWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to make this edubadge private?'**
+  String get badgeMakePrivateWarning;
 }
 
 class _AppLocalizationsDelegate
