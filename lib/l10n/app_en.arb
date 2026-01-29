@@ -191,6 +191,8 @@
     "toMakePublic": "To make public",
     "badgePublicShareWarning": "To share this Edubadge, it must be made public.",
     "makePublic": "Make public",
+    "makeBadgePublicIncludeEvidence": "Include evidence/personal message in the public information for this edubadge?",
+    "makeBadgePublicIncludeGradeAchieved": "Include the earned grade in the public information for this edubadge?",
     "actionMakePrivate": "Make private",
     "labelMakePrivate": "Make private",
     "badgeMakePrivateWarning": "Are you sure you want to make this edubadge private?"

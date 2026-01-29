@@ -8,6 +8,8 @@ abstract class BadgeDetailsDataSource {
   Future<void> updateBadgeVisibility(
     String entityId,
     bool isPublic,
+    bool includeEvidence,
+    bool includeGradeAchieved,
   );
 }
 
@@ -42,10 +44,19 @@ class BadgeDetailsDataSourceImpl implements BadgeDetailsDataSource {
   }
 
   @override
-  Future<void> updateBadgeVisibility(String entityId, bool isPublic) async {
+  Future<void> updateBadgeVisibility(
+    String entityId,
+    bool isPublic,
+    bool includeEvidence,
+    bool includeGradeAchieved,
+  ) async {
     await apiClient.put<void>(
       '/badge-instances/$entityId',
-      data: {'public': isPublic},
+      data: {
+        'public': isPublic,
+        'include_evidence': includeEvidence,
+        'include_grade_achieved': includeGradeAchieved,
+      },
     );
   }
 }

@@ -956,6 +956,18 @@ abstract class AppLocalizations {
   /// **'Make public'**
   String get makePublic;
 
+  /// No description provided for @makeBadgePublicIncludeEvidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Include evidence/personal message in the public information for this edubadge?'**
+  String get makeBadgePublicIncludeEvidence;
+
+  /// No description provided for @makeBadgePublicIncludeGradeAchieved.
+  ///
+  /// In en, this message translates to:
+  /// **'Include the earned grade in the public information for this edubadge?'**
+  String get makeBadgePublicIncludeGradeAchieved;
+
   /// No description provided for @actionMakePrivate.
   ///
   /// In en, this message translates to:

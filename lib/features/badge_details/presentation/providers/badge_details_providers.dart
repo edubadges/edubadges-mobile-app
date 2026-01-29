@@ -46,21 +46,34 @@ final badgeByIdProvider = Provider.family<BadgeInstanceEntity?, String>((
 
 final badgesListProvider = badgesOverviewProvider;
 
-final updateBadgeVisibilityProvider = Provider<
-  Future<bool> Function(String entityId, bool isPublic)
->((ref) {
-  return (String entityId, bool isPublic) async {
-    final repository = ref.read(badgeDetailsRepositoryProvider);
-    final result = await repository.updateBadgeVisibility(entityId, isPublic);
-    
-    return result.fold(
-      (failure) => false,
-      (_) {
-        ref.invalidate(collectionsProvider);
-        ref.invalidate(badgeDetailsProvider(entityId));
-        ref.invalidate(badgesOverviewProvider);
-        return true;
-      },
-    );
-  };
-});
+final updateBadgeVisibilityProvider =
+    Provider<
+      Future<bool> Function(
+        String entityId,
+        bool isPublic,
+        bool includeEvidence,
+        bool includeGradeAchieved,
+      )
+    >((ref) {
+      return (
+        String entityId,
+        bool isPublic,
+        bool includeEvidence,
+        bool includeGradeAchieved,
+      ) async {
+        final repository = ref.read(badgeDetailsRepositoryProvider);
+        final result = await repository.updateBadgeVisibility(
+          entityId,
+          isPublic,
+          includeEvidence,
+          includeGradeAchieved,
+        );
+
+        return result.fold((failure) => false, (_) {
+          ref.invalidate(collectionsProvider);
+          ref.invalidate(badgeDetailsProvider(entityId));
+          ref.invalidate(badgesOverviewProvider);
+          return true;
+        });
+      };
+    });

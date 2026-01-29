@@ -1,7 +1,7 @@
 import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
-import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_visibility_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -97,23 +97,14 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                 inactiveIconSize: 16,
                 borderRadius: 14,
                 onChanged: (bool state) async {
-                  setState(() {
-                    isPublic = state;
-                  });
-
                   //TODO: Add snackbar error if it fails
                   
-                  final updateFunction = ref.read(updateBadgeVisibilityProvider);
-                  final success = await updateFunction(
-                    widget.badge.entityId,
-                    state,
+                  await BadgeVisibilityDialog.show(
+                    context: context,
+                    ref: ref,
+                    badgeEntityId: widget.badge.entityId,
+                    isPublic: state,
                   );
-                  
-                  if (!success) {
-                    setState(() {
-                      isPublic = !state;
-                    });
-                  }
                 },
               ),
             ],

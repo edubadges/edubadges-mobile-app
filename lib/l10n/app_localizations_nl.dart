@@ -526,6 +526,14 @@ class AppLocalizationsNl extends AppLocalizations {
   String get makePublic => 'Maak openbaar';
 
   @override
+  String get makeBadgePublicIncludeEvidence =>
+      'Bewijs/persoonlijk bericht (evidence) ook toevoegen aan de publiek beschikbare informatie van deze edubadge?';
+
+  @override
+  String get makeBadgePublicIncludeGradeAchieved =>
+      'Behaald cijfer ook toevoegen aan de publiek beschikbare informatie van deze edubadge?';
+
+  @override
   String get actionMakePrivate => 'Maak privé';
 
   @override

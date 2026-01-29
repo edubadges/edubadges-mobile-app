@@ -525,6 +525,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get makePublic => 'Make public';
 
   @override
+  String get makeBadgePublicIncludeEvidence =>
+      'Include evidence/personal message in the public information for this edubadge?';
+
+  @override
+  String get makeBadgePublicIncludeGradeAchieved =>
+      'Include the earned grade in the public information for this edubadge?';
+
+  @override
   String get actionMakePrivate => 'Make private';
 
   @override

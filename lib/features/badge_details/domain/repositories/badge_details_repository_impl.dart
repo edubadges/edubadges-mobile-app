@@ -28,11 +28,15 @@ class BadgeDetailsRepositoryImpl implements BadgeDetailsRepository {
   Future<Either<Failure, void>> updateBadgeVisibility(
     String entityId,
     bool isPublic,
+    bool includeEvidence,
+    bool includeGradeAchieved,
   ) async {
     try {
       await dataSource.updateBadgeVisibility(
         entityId,
         isPublic,
+        includeEvidence,
+        includeGradeAchieved,
       );
       return const Right(null);
     } on ServerException catch (e) {

@@ -1,10 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/utils/image.dart';
-import 'package:edubadges/core/widgets/adaptive_dialog.dart';
-import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_visibility_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -28,32 +27,6 @@ class BadgeCard extends ConsumerWidget {
       (element) => element.name == 'extensions:TimeInvestmentExtension',
     );
     return match != null ? int.tryParse(match.value) : null;
-  }
-
-  void _updatePrivateState(
-    bool isPublic,
-    WidgetRef ref,
-    BuildContext context,
-  ) async {
-    final l10n = AppLocalizations.of(context)!;
-
-    await AdaptiveDialog.show(
-      context: context,
-      config: AdaptiveDialogConfig(
-        title: isPublic ? l10n.toMakePublic : l10n.labelMakePrivate,
-        description: isPublic
-            ? l10n.badgePublicShareWarning
-            : l10n.badgeMakePrivateWarning,
-        firstButtonText: l10n.cancel,
-        secondButtonText: isPublic ? l10n.makePublic : l10n.actionMakePrivate,
-        isDestructiveAction: false,
-        onFirstButtonPressed: () {},
-        onSecondButtonPressed: () async {
-          final updateFunction = ref.read(updateBadgeVisibilityProvider);
-          updateFunction(instance.entityId, isPublic);
-        },
-      ),
-    );
   }
 
   @override
@@ -158,8 +131,12 @@ class BadgeCard extends ConsumerWidget {
                     instance.public ? Assets.iconUnlocked : Assets.iconLocked,
                   ),
                   onTap: () {
-                    // TODO: Add error message if for some reason it fails
-                    _updatePrivateState(!instance.public, ref, context);
+                    BadgeVisibilityDialog.show(
+                      context: context,
+                      ref: ref,
+                      badgeEntityId: instance.entityId,
+                      isPublic: !instance.public,
+                    );
                   },
                 ),
               ),
