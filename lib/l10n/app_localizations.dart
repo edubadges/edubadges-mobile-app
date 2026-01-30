@@ -985,6 +985,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Are you sure you want to make this edubadge private?'**
   String get badgeMakePrivateWarning;
+
+  /// No description provided for @badgeLinkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Edubadge link copied to clipboard'**
+  String get badgeLinkCopied;
 }
 
 class _AppLocalizationsDelegate

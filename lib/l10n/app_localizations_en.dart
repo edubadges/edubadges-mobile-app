@@ -541,4 +541,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get badgeMakePrivateWarning =>
       'Are you sure you want to make this edubadge private?';
+
+  @override
+  String get badgeLinkCopied => 'Edubadge link copied to clipboard';
 }

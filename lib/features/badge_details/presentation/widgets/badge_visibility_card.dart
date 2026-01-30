@@ -1,18 +1,34 @@
+import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/branding.dart';
+import 'package:edubadges/core/utils/color.dart';
+import 'package:edubadges/core/utils/links.dart';
 import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
+import 'package:edubadges/shared/presentation/utils/snackbar_utils.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_visibility_dialog.dart';
+import 'package:edubadges/shared/presentation/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class BadgeVisibilityCard extends ConsumerStatefulWidget {
   final EdgeInsets margin;
   final BadgeInstanceEntity badge;
+  final bool showCopyLink;
 
   const BadgeVisibilityCard({
     super.key,
     required this.badge,
-    this.margin = const EdgeInsets.only(left: 20, right: 20, bottom: 8, top: 16),
+    this.margin = const EdgeInsets.only(
+      left: 20,
+      right: 20,
+      bottom: 8,
+      top: 16,
+    ),
+    this.showCopyLink = true,
   });
 
   @override
@@ -98,7 +114,7 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                 borderRadius: 14,
                 onChanged: (bool state) async {
                   //TODO: Add snackbar error if it fails
-                  
+
                   await BadgeVisibilityDialog.show(
                     context: context,
                     ref: ref,
@@ -109,7 +125,54 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
               ),
             ],
           ),
-          // TODO: Add copy link and Linkedin link
+          Column(
+            children: [
+              if (widget.showCopyLink)
+                WideButton(
+                  text: l10n.copyLink,
+                  icon: Icon(
+                    Icons.copy,
+                    size: 20,
+                    color: getContrastingTextColor(colorScheme.primary),
+                  ),
+                  color: colorScheme.primary,
+                  onTap: () async {
+                    String link = createBadgeInstanceLink(
+                      widget.badge.entityId,
+                      ref,
+                    );
+
+                    await Clipboard.setData(ClipboardData(text: link));
+
+                    if (context.mounted) {
+                      showSnackBar(
+                        text: l10n.badgeLinkCopied,
+                        context: context,
+                      );
+                    }
+                  },
+                ),
+              if (widget.showCopyLink && widget.badge.linkedinUrl != null)
+                const SizedBox(height: 8),
+              if (widget.badge.linkedinUrl != null)
+                WideButton(
+                  text: linkedinBrand,
+                  icon: SvgPicture.asset(
+                    Assets.imageLinkedInLogo,
+                    height: 18,
+                    width: 18,
+                  ),
+                  color: linkedinBrandColor,
+                  secondary: true,
+                  onTap: () {
+                    launchUrlString(
+                      widget.badge.linkedinUrl!,
+                      mode: LaunchMode.externalApplication,
+                    );
+                  },
+                ),
+            ],
+          ),
         ],
       ),
     );

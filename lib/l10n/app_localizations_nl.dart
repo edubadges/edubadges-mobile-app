@@ -542,4 +542,7 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get badgeMakePrivateWarning =>
       'Weet je het zeker dat je deze edubadge privé wilt maken?';
+
+  @override
+  String get badgeLinkCopied => 'Edubadge link is naar klembord gekopiëerd';
 }

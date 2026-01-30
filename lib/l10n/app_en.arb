@@ -195,5 +195,6 @@
     "makeBadgePublicIncludeGradeAchieved": "Include the earned grade in the public information for this edubadge?",
     "actionMakePrivate": "Make private",
     "labelMakePrivate": "Make private",
-    "badgeMakePrivateWarning": "Are you sure you want to make this edubadge private?"
+    "badgeMakePrivateWarning": "Are you sure you want to make this edubadge private?",
+    "badgeLinkCopied": "Edubadge link copied to clipboard"
 }

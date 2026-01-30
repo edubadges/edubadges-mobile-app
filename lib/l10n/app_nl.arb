@@ -195,5 +195,6 @@
     "makeBadgePublicIncludeGradeAchieved": "Behaald cijfer ook toevoegen aan de publiek beschikbare informatie van deze edubadge?",
     "actionMakePrivate": "Maak privé",
     "labelMakePrivate": "Privé maken",
-    "badgeMakePrivateWarning": "Weet je het zeker dat je deze edubadge privé wilt maken?"
+    "badgeMakePrivateWarning": "Weet je het zeker dat je deze edubadge privé wilt maken?",
+    "badgeLinkCopied": "Edubadge link is naar klembord gekopiëerd"
 }
