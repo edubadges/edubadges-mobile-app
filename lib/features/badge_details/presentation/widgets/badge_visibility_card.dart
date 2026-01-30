@@ -2,10 +2,10 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/branding.dart';
 import 'package:edubadges/core/utils/color.dart';
 import 'package:edubadges/core/utils/links.dart';
+import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
-import 'package:edubadges/shared/presentation/utils/snackbar_utils.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_visibility_dialog.dart';
 import 'package:edubadges/shared/presentation/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
@@ -145,10 +145,7 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                     await Clipboard.setData(ClipboardData(text: link));
 
                     if (context.mounted) {
-                      showSnackBar(
-                        text: l10n.badgeLinkCopied,
-                        context: context,
-                      );
+                      showAppSnackBar(context, l10n.badgeLinkCopied);
                     }
                   },
                 ),
