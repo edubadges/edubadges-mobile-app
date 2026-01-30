@@ -10,14 +10,13 @@ String _createBaseAndLang(String path, WidgetRef ref) {
   return 'https://$baseUrl/$path?lang=$lang';
 }
 
-/// Badge link
 String createBadgeCatalogLink(String entityId, WidgetRef ref) {
   return _createBaseAndLang('public/$entityId', ref);
 }
 
-/// Badge Instance link
+/// ## Badge Instance link
 ///
-/// (This is not a general link to the badge)
+/// This is not a general link to the badge, links to a users badge.
 String createBadgeInstanceLink(String entityId, WidgetRef ref) {
   return _createBaseAndLang('public/assertions/$entityId', ref);
 }
