@@ -1,6 +1,7 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -80,7 +81,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
           ),
         ),
       ),
-      body: SafeArea(
+      body: MaxWidthWrapper(
         child: Column(
           children: [
             Expanded(

@@ -28,7 +28,9 @@ class MainPage extends ConsumerWidget {
     final pillColor = colorScheme.primary.withValues(alpha: .15);
 
     return Scaffold(
-      body: navigationShell,
+      body: SafeArea(
+        child: navigationShell,
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,
         onDestinationSelected: (index) => _onTap(context, index),
