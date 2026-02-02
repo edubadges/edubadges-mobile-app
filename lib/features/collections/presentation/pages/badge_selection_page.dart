@@ -1,6 +1,7 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -34,7 +35,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
 
   Future<void> _handleCreate() async {
     if (_selectedBadgeIds.isEmpty) {
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       showAppSnackBar(context, l10n.selectAtLeastOneBadge);
       return;
     }
@@ -51,14 +52,14 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
     if (success && mounted) {
       context.go(RoutePath.collections);
     } else if (mounted) {
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       showAppSnackBar(context, l10n.somethingWentWrong);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final badgesAsync = ref.watch(badgesOverviewProvider);
@@ -80,7 +81,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
           ),
         ),
       ),
-      body: SafeArea(
+      body: MaxWidthWrapper(
         child: Column(
           children: [
             Expanded(

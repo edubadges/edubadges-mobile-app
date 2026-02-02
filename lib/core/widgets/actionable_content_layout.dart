@@ -1,4 +1,5 @@
 import 'package:edubadges/app/colors.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -41,7 +42,7 @@ class ActionableContentLayout extends StatelessWidget {
             : null,
         backgroundColor: colorScheme.surface,
       ),
-      body: SafeArea(
+      body: MaxWidthWrapper(
         child: Column(
           children: [
             Expanded(

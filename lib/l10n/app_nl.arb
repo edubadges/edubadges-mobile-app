@@ -182,5 +182,18 @@
     },
     "goToOverview": "Ga naar jouw overzicht",
     "badgeClaimErrorTitle": "Het is even niet gelukt",
-    "badgeClaimErrorSubtitle": "Je edubadge kan op dit moment niet worden geclaimd. Geen zorgen, je voortgang is bewaard. Probeer het later nog eens."
+    "badgeClaimErrorSubtitle": "Je edubadge kan op dit moment niet worden geclaimd. Geen zorgen, je voortgang is bewaard. Probeer het later nog eens.",
+    "microCredential": "Microcredential",
+    "regular": "Regulier",
+    "extraCurricular": "Extracurriculair",
+    "badgeVisibleAndShareable": "Edubadge zichtbaar en deelbaar",
+    "badgeVisibleAndShareableDescription": "Met deze instelling bepaal je of je edubadge openbaar is en door anderen kan worden bekeken wanneer je deze deelt.",
+    "toMakePublic": "Openbaar maken",
+    "badgePublicShareWarning": "Om deze Edubadge te kunnen delen, moet hij openbaar worden gemaakt.",
+    "makePublic": "Maak openbaar",
+    "makeBadgePublicIncludeEvidence": "Bewijs/persoonlijk bericht (evidence) ook toevoegen aan de publiek beschikbare informatie van deze edubadge?",
+    "makeBadgePublicIncludeGradeAchieved": "Behaald cijfer ook toevoegen aan de publiek beschikbare informatie van deze edubadge?",
+    "actionMakePrivate": "Maak privé",
+    "labelMakePrivate": "Privé maken",
+    "badgeMakePrivateWarning": "Weet je het zeker dat je deze edubadge privé wilt maken?"
 }

@@ -1,6 +1,7 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -122,7 +123,7 @@ class NewCollectionPage extends StatelessWidget {
         ),
         backgroundColor: AppColors.surface,
       ),
-      body: SafeArea(
+      body: MaxWidthWrapper(
         child: Column(
           children: [
             if (description != null && description!.isNotEmpty) ...[

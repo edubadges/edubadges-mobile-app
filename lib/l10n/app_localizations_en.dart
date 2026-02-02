@@ -497,4 +497,48 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get badgeClaimErrorSubtitle =>
       'Your edubadge cannot be claimed at this time. Don\'t worry, your progress has been saved. Please try again later.';
+
+  @override
+  String get microCredential => 'Microcredential';
+
+  @override
+  String get regular => 'Regular';
+
+  @override
+  String get extraCurricular => 'Extra curricular';
+
+  @override
+  String get badgeVisibleAndShareable => 'Edubadge visible and shareable';
+
+  @override
+  String get badgeVisibleAndShareableDescription =>
+      'With this setting, you determine whether your edubadge is public and can be viewed by others when you share it.';
+
+  @override
+  String get toMakePublic => 'To make public';
+
+  @override
+  String get badgePublicShareWarning =>
+      'To share this Edubadge, it must be made public.';
+
+  @override
+  String get makePublic => 'Make public';
+
+  @override
+  String get makeBadgePublicIncludeEvidence =>
+      'Include evidence/personal message in the public information for this edubadge?';
+
+  @override
+  String get makeBadgePublicIncludeGradeAchieved =>
+      'Include the earned grade in the public information for this edubadge?';
+
+  @override
+  String get actionMakePrivate => 'Make private';
+
+  @override
+  String get labelMakePrivate => 'Make private';
+
+  @override
+  String get badgeMakePrivateWarning =>
+      'Are you sure you want to make this edubadge private?';
 }
