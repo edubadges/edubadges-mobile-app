@@ -108,7 +108,7 @@ class AdaptiveDialog extends StatelessWidget {
 
   Widget _buildCupertinoDialog(BuildContext context) {
     final localizedFirstButtonText =
-        firstButtonText ?? AppLocalizations.of(context)?.cancel ?? '';
+        firstButtonText ?? AppLocalizations.of(context).cancel;
     final secondButtonColor = isDestructiveAction
         ? AppColors.error
         : AppColors.primary;
@@ -163,7 +163,7 @@ class AdaptiveDialog extends StatelessWidget {
 
   Widget _buildMaterialDialog(BuildContext context) {
     final localizedFirstButtonText =
-        firstButtonText ?? AppLocalizations.of(context)?.cancel ?? '';
+        firstButtonText ?? AppLocalizations.of(context).cancel;
 
     return AlertDialog(
       title: Text(title, style: Theme.of(context).textTheme.headlineSmall),

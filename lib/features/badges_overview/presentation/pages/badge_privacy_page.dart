@@ -29,7 +29,7 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
   bool _isShowingLongVersion = false;
 
   void _handleDecline(BadgeInstanceEntity badge) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     AdaptiveDialog.show(
       context: context,
@@ -106,7 +106,7 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
       if (mounted) {
         showAppSnackBar(
           context,
-          AppLocalizations.of(context)!.somethingWentWrong,
+          AppLocalizations.of(context).somethingWentWrong,
         );
         setState(() {
           _isClaiming = false;
@@ -117,7 +117,7 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     final badgesAsync = ref.watch(badgesOverviewProvider);

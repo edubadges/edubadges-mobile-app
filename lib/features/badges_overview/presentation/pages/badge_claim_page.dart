@@ -46,7 +46,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
   Future<void> _handleDecline(BadgeInstanceEntity badge) async {
     if (_isClaiming || _isDeclining) return;
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     AdaptiveDialog.show(
       context: context,
@@ -97,7 +97,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
   @override
   Widget build(BuildContext context) {
     final badgesAsync = ref.watch(badgesOverviewProvider);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 

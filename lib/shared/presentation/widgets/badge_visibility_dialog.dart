@@ -11,7 +11,7 @@ class BadgeVisibilityDialog {
     required String badgeEntityId,
     required bool isPublic,
   }) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     bool includeEvidence = true;
     bool includeGradeAchieved = true;

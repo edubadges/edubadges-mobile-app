@@ -131,7 +131,7 @@ class AccountPage extends ConsumerWidget {
   }
 
   Widget _buildDataSection(BuildContext context, ProfileEntity profile) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     final dataItems = [
@@ -188,7 +188,7 @@ class AccountPage extends ConsumerWidget {
     BuildContext context,
     ProfileEntity profile,
   ) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -285,7 +285,7 @@ class AccountPage extends ConsumerWidget {
   }
 
   Widget _buildAgreementsSection(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -371,7 +371,7 @@ class AccountPage extends ConsumerWidget {
   }
 
   Widget _buildDeleteAccountSection(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -415,7 +415,7 @@ class AccountPage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
   ) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     await AdaptiveDialog.show(
       context: context,
@@ -438,7 +438,7 @@ class AccountPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final profileAsync = ref.watch(profileProvider);
