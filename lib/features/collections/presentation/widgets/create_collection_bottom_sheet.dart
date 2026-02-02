@@ -49,7 +49,7 @@ class _CreateCollectionBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return BaseFormBottomSheet(
       title: l10n.newCollection,

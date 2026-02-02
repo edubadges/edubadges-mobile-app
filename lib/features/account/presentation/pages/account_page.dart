@@ -3,6 +3,7 @@ import 'package:edubadges/core/constants/mock_data.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
@@ -130,7 +131,7 @@ class AccountPage extends ConsumerWidget {
   }
 
   Widget _buildDataSection(BuildContext context, ProfileEntity profile) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     final dataItems = [
@@ -187,7 +188,7 @@ class AccountPage extends ConsumerWidget {
     BuildContext context,
     ProfileEntity profile,
   ) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -284,7 +285,7 @@ class AccountPage extends ConsumerWidget {
   }
 
   Widget _buildAgreementsSection(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -370,7 +371,7 @@ class AccountPage extends ConsumerWidget {
   }
 
   Widget _buildDeleteAccountSection(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -414,7 +415,7 @@ class AccountPage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
   ) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     await AdaptiveDialog.show(
       context: context,
@@ -437,7 +438,7 @@ class AccountPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final profileAsync = ref.watch(profileProvider);
@@ -459,7 +460,7 @@ class AccountPage extends ConsumerWidget {
           ),
         ],
       ),
-      body: SafeArea(
+      body: MaxWidthWrapper(
         child: profileAsync.when(
           data: (profile) {
             if (profile == null) {

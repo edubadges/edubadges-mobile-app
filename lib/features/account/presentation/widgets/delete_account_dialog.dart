@@ -28,7 +28,7 @@ class _DeleteAccountDialogState extends State<DeleteAccountDialog> {
   }
 
   void _onTextChanged() {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final text = _controller.text.trim().toLowerCase();
     final requiredText = l10n.deleteAccountRequiredText.toLowerCase();
     setState(() {
@@ -38,7 +38,7 @@ class _DeleteAccountDialogState extends State<DeleteAccountDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 

@@ -4,6 +4,7 @@ import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
@@ -29,7 +30,7 @@ class CollectionPage extends ConsumerWidget {
     List<BadgeInstanceEntity> badges,
     ValueNotifier<bool> publicNotifier,
   ) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final allBadgesPublic =
@@ -164,7 +165,7 @@ class CollectionPage extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(BuildContext context, double screenWidth) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -233,7 +234,7 @@ class CollectionPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final collectionsAsync = ref.watch(collectionsProvider);
@@ -378,7 +379,7 @@ class CollectionPage extends ConsumerWidget {
           ),
         ],
       ),
-      body: SafeArea(
+      body: MaxWidthWrapper(
         child: collectionsAsync.when(
           data: (collections) {
             try {

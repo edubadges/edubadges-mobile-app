@@ -498,4 +498,48 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get badgeClaimErrorSubtitle =>
       'Je edubadge kan op dit moment niet worden geclaimd. Geen zorgen, je voortgang is bewaard. Probeer het later nog eens.';
+
+  @override
+  String get microCredential => 'Microcredential';
+
+  @override
+  String get regular => 'Regulier';
+
+  @override
+  String get extraCurricular => 'Extracurriculair';
+
+  @override
+  String get badgeVisibleAndShareable => 'Edubadge zichtbaar en deelbaar';
+
+  @override
+  String get badgeVisibleAndShareableDescription =>
+      'Met deze instelling bepaal je of je edubadge openbaar is en door anderen kan worden bekeken wanneer je deze deelt.';
+
+  @override
+  String get toMakePublic => 'Openbaar maken';
+
+  @override
+  String get badgePublicShareWarning =>
+      'Om deze Edubadge te kunnen delen, moet hij openbaar worden gemaakt.';
+
+  @override
+  String get makePublic => 'Maak openbaar';
+
+  @override
+  String get makeBadgePublicIncludeEvidence =>
+      'Bewijs/persoonlijk bericht (evidence) ook toevoegen aan de publiek beschikbare informatie van deze edubadge?';
+
+  @override
+  String get makeBadgePublicIncludeGradeAchieved =>
+      'Behaald cijfer ook toevoegen aan de publiek beschikbare informatie van deze edubadge?';
+
+  @override
+  String get actionMakePrivate => 'Maak privé';
+
+  @override
+  String get labelMakePrivate => 'Privé maken';
+
+  @override
+  String get badgeMakePrivateWarning =>
+      'Weet je het zeker dat je deze edubadge privé wilt maken?';
 }

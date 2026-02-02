@@ -5,6 +5,8 @@ import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
+import 'package:edubadges/features/badge_details/presentation/widgets/badge_visibility_card.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
@@ -58,7 +60,7 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final badgesState = ref.watch(badgesOverviewProvider);
@@ -75,73 +77,72 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
           ),
         ],
       ),
-      body: badgesState.when(
-        data: (state) {
-          final claimedBadge =
-              state.claimedBadges.firstWhereOrNull(
-                (b) =>
-                    b.entityId == widget.badgeId ||
-                    b.id.toString() == widget.badgeId,
-              ) ??
-              state.claimedBadges.firstOrNull;
+      body: MaxWidthWrapper(
+        child: badgesState.when(
+          data: (state) {
+            final claimedBadge =
+                state.claimedBadges.firstWhereOrNull(
+                  (b) =>
+                      b.entityId == widget.badgeId ||
+                      b.id.toString() == widget.badgeId,
+                ) ??
+                state.claimedBadges.firstOrNull;
 
-          if (claimedBadge == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
+            if (claimedBadge == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          final hasMoreBadges = state.unclaimedBadges.isNotEmpty;
+            final hasMoreBadges = state.unclaimedBadges.isNotEmpty;
 
-          return Stack(
-            children: [
-              if (!_showDetails)
-                InfoStateView(
-                  assetPath: Assets.iconBackpack,
-                  title: l10n.badgeClaimSuccessTitle,
-                  description: l10n.badgeClaimSuccessSubtitle,
-                ),
+            return Stack(
+              children: [
+                if (!_showDetails)
+                  InfoStateView(
+                    assetPath: Assets.iconBackpack,
+                    title: l10n.badgeClaimSuccessTitle,
+                    description: l10n.badgeClaimSuccessSubtitle,
+                  ),
 
-              if (_showDetails)
-                ScaleTransition(
-                  scale: _scaleAnimation,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          BadgeCard(
-                            instance: claimedBadge,
-                            style: BadgeCardStyle.large,
-                          ),
-                          const SizedBox(height: 16),
-                          _buildVisibilityPlaceholder(context),
-                          const Spacer(),
-                          _buildBottomButton(
-                            context,
-                            hasMoreBadges,
-                            state.unclaimedBadges.length,
-                          ),
-                          const SizedBox(height: 40),
-                        ],
+                if (_showDetails)
+                  ScaleTransition(
+                    scale: _scaleAnimation,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            BadgeCard(
+                              instance: claimedBadge,
+                              style: BadgeCardStyle.large,
+                            ),
+                            BadgeVisibilityCard(
+                              margin: const EdgeInsets.only(bottom: 8, top: 16),
+                              badge: claimedBadge,
+                            ),
+                            const Spacer(),
+                            _buildBottomButton(
+                              context,
+                              hasMoreBadges,
+                              state.unclaimedBadges.length,
+                            ),
+                            const SizedBox(height: 40),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-            ],
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => InfoStateView(
-          title: l10n.badgeClaimErrorTitle,
-          description: l10n.badgeClaimErrorSubtitle,
+              ],
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (err, stack) => InfoStateView(
+            title: l10n.badgeClaimErrorTitle,
+            description: l10n.badgeClaimErrorSubtitle,
+          ),
         ),
       ),
     );
-  }
-
-  Widget _buildVisibilityPlaceholder(BuildContext context) {
-    // TODO: Implement public/unpublic container
-    return SizedBox(height: 100, child: Placeholder());
   }
 
   Widget _buildBottomButton(
@@ -149,7 +150,7 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
     bool hasMoreBadges,
     int count,
   ) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     if (hasMoreBadges) {

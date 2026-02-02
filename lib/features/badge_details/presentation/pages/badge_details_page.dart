@@ -2,15 +2,18 @@ import 'package:edubadges/app/constants.dart';
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/utils/string.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_detail_item_model.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/constants/badge_extensions.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/features/badge_details/domain/extensions/badge_instance_extensions.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
+import 'package:edubadges/features/badge_details/presentation/widgets/badge_visibility_card.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/domain/enums/assessment_type.dart';
+import 'package:edubadges/shared/domain/enums/badge_class_type.dart';
 import 'package:edubadges/shared/domain/enums/participation_type.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +25,7 @@ import 'package:intl/intl.dart';
 
 class BadgeDetailsPage extends ConsumerStatefulWidget {
   final BadgeDetailsRouteModel badge;
+
   const BadgeDetailsPage({super.key, required this.badge});
 
   @override
@@ -81,7 +85,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
 
   String? getAssessmentSupervisedStatus(BadgeInstanceEntity? details) {
     if (details == null) return null;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final badgeclass = details.badgeclass;
     final isIdVerified = badgeclass.assessmentIdVerified == true;
     final isSupervised = badgeclass.assessmentSupervised == true;
@@ -108,9 +112,11 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           ),
         ),
       ),
-      body: _shouldShowCarousel
-          ? _buildCarouselView()
-          : _buildSingleBadgeView(),
+      body: MaxWidthWrapper(
+        child: _shouldShowCarousel
+            ? _buildCarouselView()
+            : _buildSingleBadgeView(),
+      ),
     );
   }
 
@@ -201,7 +207,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   }
 
   List<Widget> _buildBadgeDetails(BadgeInstanceEntity? details) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final learningOutcome = details?.getExtensionValue<String?>(
       BadgeExtensionKeys.learningOutcome,
@@ -217,6 +223,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     final eQF = details?.getExtensionValue<double?>(BadgeExtensionKeys.eQF);
 
     return [
+      if (details != null) BadgeVisibilityCard(badge: details),
       if (details?.badgeclass.description != null)
         _buildSectionCard(
           title: l10n.aboutThisEdubadge,
@@ -262,8 +269,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           BadgeDetailItemModel(
             icon: Assets.iconType,
             title: l10n.type,
-            subtitle:
-                'Microcredential', // TODO: Add real data (https://digitalclub.atlassian.net/browse/SURF-539)
+            subtitle: details.badgeclass.badgeClassType.getLocalizedName(l10n),
           ),
           if (eCTS != null)
             BadgeDetailItemModel(

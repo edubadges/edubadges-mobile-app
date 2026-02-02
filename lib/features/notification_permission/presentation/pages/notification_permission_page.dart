@@ -1,5 +1,6 @@
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/outlined_button.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -24,14 +25,14 @@ class NotificationPermissionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return Scaffold(
       backgroundColor: colorScheme.surfaceContainer,
-      body: SafeArea(
+      body: MaxWidthWrapper(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24.0),
           child: Column(
