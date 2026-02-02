@@ -2,6 +2,7 @@ import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/image.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/features/collections/presentation/widgets/create_collection_bottom_sheet.dart';
@@ -44,125 +45,127 @@ class CollectionsPage extends ConsumerWidget {
           ),
         ],
       ),
-      body: collectionsAsync.when(
-        data: (collections) {
-          if (collections.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgIcon(
-                    assetPath: Assets.iconCollections,
-                    size: 40,
-                    color: colorScheme.primary,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.noCollectionsYet,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+      body: MaxWidthWrapper(
+        child: collectionsAsync.when(
+          data: (collections) {
+            if (collections.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgIcon(
+                      assetPath: Assets.iconCollections,
+                      size: 40,
+                      color: colorScheme.primary,
                     ),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: collections.length,
-            itemBuilder: (context, index) {
-              final collection = collections[index];
-              final badges = collection.badgeInstances ?? [];
-              final badgeCount = badges.length;
-
-              return Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainer,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: colorScheme.outlineVariant,
-                    width: 1,
-                  ),
-                ),
-                child: InkWell(
-                  onTap: () {
-                    final route = RoutePath.collection.replaceAll(
-                      ':id',
-                      collection.id,
-                    );
-                    final uri = Uri.parse(route).replace(
-                      queryParameters: {
-                        'title': collection.name,
-                        if (collection.description != null &&
-                            collection.description!.isNotEmpty)
-                          'description': collection.description!,
-                      },
-                    );
-                    context.push(uri.toString());
-                  },
-                  borderRadius: BorderRadius.circular(20),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 80,
-                          height: 80,
-                          child: _buildBadgeGrid(
-                            badges,
-                            badgeCount,
-                            colorScheme,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                collection.name,
-                                style: theme.textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                l10n.countEdubadges(badgeCount),
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 16),
+                    Text(
+                      l10n.noCollectionsYet,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               );
-            },
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                l10n.errorLoadingCollections,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: colorScheme.error,
+            }
+
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: collections.length,
+              itemBuilder: (context, index) {
+                final collection = collections[index];
+                final badges = collection.badgeInstances ?? [];
+                final badgeCount = badges.length;
+
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainer,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: colorScheme.outlineVariant,
+                      width: 1,
+                    ),
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      final route = RoutePath.collection.replaceAll(
+                        ':id',
+                        collection.id,
+                      );
+                      final uri = Uri.parse(route).replace(
+                        queryParameters: {
+                          'title': collection.name,
+                          if (collection.description != null &&
+                              collection.description!.isNotEmpty)
+                            'description': collection.description!,
+                        },
+                      );
+                      context.push(uri.toString());
+                    },
+                    borderRadius: BorderRadius.circular(20),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 80,
+                            height: 80,
+                            child: _buildBadgeGrid(
+                              badges,
+                              badgeCount,
+                              colorScheme,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  collection.name,
+                                  style: theme.textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  l10n.countEdubadges(badgeCount),
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stackTrace) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  l10n.errorLoadingCollections,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: colorScheme.error,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () =>
-                    ref.read(collectionsProvider.notifier).refresh(),
-                child: Text(l10n.retry),
-              ),
-            ],
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () =>
+                      ref.read(collectionsProvider.notifier).refresh(),
+                  child: Text(l10n.retry),
+                ),
+              ],
+            ),
           ),
         ),
       ),

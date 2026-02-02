@@ -3,6 +3,7 @@ import 'package:edubadges/core/constants/mock_data.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
@@ -459,7 +460,7 @@ class AccountPage extends ConsumerWidget {
           ),
         ],
       ),
-      body: SafeArea(
+      body: MaxWidthWrapper(
         child: profileAsync.when(
           data: (profile) {
             if (profile == null) {

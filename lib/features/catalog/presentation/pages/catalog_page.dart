@@ -1,3 +1,4 @@
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
@@ -10,8 +11,10 @@ class CatalogPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.tabCatalog)),
-      body: Center(
-        child: const Text('Catalog'),
+      body: MaxWidthWrapper(
+          child: Center(
+              child: const Text('Catalog')
+          )
       ),
     );
   }

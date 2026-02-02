@@ -1,4 +1,5 @@
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:edubadges/features/general_terms/presentation/providers/general_terms_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -84,7 +85,9 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
     final textTheme = theme.textTheme;
     final markdownAsync = ref.watch(markdownContentProvider(widget.url));
 
-    final buttonText = _isNearBottom ? l10n.generalAgreementButtonRead : l10n.generalAgreementButtonReadMore;
+    final buttonText = _isNearBottom
+        ? l10n.generalAgreementButtonRead
+        : l10n.generalAgreementButtonReadMore;
     final buttonOnPressed = _isNearBottom ? _acceptTerms : _scrollToBottom;
 
     return Scaffold(
@@ -93,48 +96,52 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
-      body: Stack(
-        children: [
-          markdownAsync.when(
-            data: (markdownContent) {
-              if (markdownContent.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              return SingleChildScrollView(
-                controller: _scrollController,
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
-                child: MarkdownBody(
-                  data: markdownContent,
-                  styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
-                    p: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+      body: MaxWidthWrapper(
+        child: Stack(
+          children: [
+            markdownAsync.when(
+              data: (markdownContent) {
+                if (markdownContent.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return SingleChildScrollView(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
+                  child: MarkdownBody(
+                    data: markdownContent,
+                    styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
+                      p: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
                   ),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (err, stack) => Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Text(
+                    'Error loading terms: $err',
+                  ), // TODO: add localisation when we know more about error handling
                 ),
-              );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (err, stack) => Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Text(
-                  'Error loading terms: $err',
-                ), // TODO: add localisation when we know more about error handling
               ),
             ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: PrimaryButton(
-                text: buttonText,
-                onPressed: buttonOnPressed,
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+                color: Theme.of(context).scaffoldBackgroundColor,
+                child: PrimaryButton(
+                  text: buttonText,
+                  onPressed: buttonOnPressed,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

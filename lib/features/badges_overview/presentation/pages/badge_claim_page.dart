@@ -5,6 +5,7 @@ import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -113,7 +114,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
           ),
         ],
       ),
-      body: SafeArea(
+      body: MaxWidthWrapper(
         child: badgesAsync.when(
           data: (state) {
             if (state.unclaimedBadges.isEmpty) {

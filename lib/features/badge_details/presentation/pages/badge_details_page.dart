@@ -2,6 +2,7 @@ import 'package:edubadges/app/constants.dart';
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/utils/string.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_detail_item_model.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/constants/badge_extensions.dart';
@@ -24,6 +25,7 @@ import 'package:intl/intl.dart';
 
 class BadgeDetailsPage extends ConsumerStatefulWidget {
   final BadgeDetailsRouteModel badge;
+
   const BadgeDetailsPage({super.key, required this.badge});
 
   @override
@@ -110,9 +112,11 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           ),
         ),
       ),
-      body: _shouldShowCarousel
-          ? _buildCarouselView()
-          : _buildSingleBadgeView(),
+      body: MaxWidthWrapper(
+        child: _shouldShowCarousel
+            ? _buildCarouselView()
+            : _buildSingleBadgeView(),
+      ),
     );
   }
 

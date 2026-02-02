@@ -6,6 +6,7 @@ import 'package:edubadges/core/widgets/actionable_content_layout.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/link_text.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
@@ -133,118 +134,121 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
         ? l10n.viewShortText
         : l10n.viewFullText;
 
-    return badgesAsync.when(
-      data: (state) {
-        final badge =
-            state.unclaimedBadges.firstWhereOrNull(
-              (b) => b.id.toString() == widget.badgeId,
-            ) ??
-            state.claimedBadges.firstWhereOrNull(
-              (b) => b.id.toString() == widget.badgeId,
-            ) ??
-            state.unclaimedBadges.firstOrNull ??
-            state.claimedBadges.firstOrNull;
+    return MaxWidthWrapper(
+      child: badgesAsync.when(
+        data: (state) {
+          final badge =
+              state.unclaimedBadges.firstWhereOrNull(
+                (b) => b.id.toString() == widget.badgeId,
+              ) ??
+              state.claimedBadges.firstWhereOrNull(
+                (b) => b.id.toString() == widget.badgeId,
+              ) ??
+              state.unclaimedBadges.firstOrNull ??
+              state.claimedBadges.firstOrNull;
 
-        if (badge == null) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+          if (badge == null) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          return ActionableContentLayout(
+            title: currentTitle,
+            content: LinkText(
+              text: currentText,
+              style: theme.textTheme.bodyMedium,
+            ),
+            actions: [
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isClaiming || _isDeclining
+                      ? null
+                      : () => _handleAccept(badge),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: _isClaiming
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          l10n.badgePrivacyReadButton,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: _isClaiming || _isDeclining
+                      ? null
+                      : () => _handleDecline(badge),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    side: const BorderSide(color: AppColors.primary),
+                  ),
+                  child: _isDeclining
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColors.primary,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          l10n.decline,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _isShowingLongVersion = !_isShowingLongVersion;
+                  });
+                },
+                child: Text(
+                  toggleButtonText,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.primary,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
           );
-        }
-
-        return ActionableContentLayout(
-          title: currentTitle,
-          content: LinkText(
-            text: currentText,
-            style: theme.textTheme.bodyMedium,
-          ),
-          actions: [
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isClaiming || _isDeclining
-                    ? null
-                    : () => _handleAccept(badge),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: _isClaiming
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white,
-                          ),
-                        ),
-                      )
-                    : Text(
-                        l10n.badgePrivacyReadButton,
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-              ),
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: _isClaiming || _isDeclining
-                    ? null
-                    : () => _handleDecline(badge),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  side: const BorderSide(color: AppColors.primary),
-                ),
-                child: _isDeclining
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColors.primary,
-                          ),
-                        ),
-                      )
-                    : Text(
-                        l10n.decline,
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _isShowingLongVersion = !_isShowingLongVersion;
-                });
-              },
-              child: Text(
-                toggleButtonText,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.primary,
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-      loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (err, stack) => Scaffold(body: Center(child: Text('Error: $err'))),
+        },
+        loading: () =>
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
+        error: (err, stack) =>
+            Scaffold(body: Center(child: Text('Error: $err'))),
+      ),
     );
   }
 }
