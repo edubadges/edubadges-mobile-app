@@ -7,7 +7,7 @@ class WithdrawAgreementDialog {
     required BuildContext context,
     required String institution,
   }) async {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     await AdaptiveDialog.show(
       context: context,

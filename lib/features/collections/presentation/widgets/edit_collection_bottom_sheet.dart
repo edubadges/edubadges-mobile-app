@@ -62,7 +62,7 @@ class _EditCollectionBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     ref.listen<AsyncValue<List<CollectionsEntity>>>(collectionsProvider, (
       previous,
@@ -73,7 +73,7 @@ class _EditCollectionBottomSheetState
           if (mounted) {
             showAppSnackBar(
               context,
-              AppLocalizations.of(context)!.somethingWentWrong,
+              AppLocalizations.of(context).somethingWentWrong,
             );
           }
         },

@@ -35,7 +35,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
 
   Future<void> _handleCreate() async {
     if (_selectedBadgeIds.isEmpty) {
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       showAppSnackBar(context, l10n.selectAtLeastOneBadge);
       return;
     }
@@ -52,14 +52,14 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
     if (success && mounted) {
       context.go(RoutePath.collections);
     } else if (mounted) {
-      final l10n = AppLocalizations.of(context)!;
+      final l10n = AppLocalizations.of(context);
       showAppSnackBar(context, l10n.somethingWentWrong);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final badgesAsync = ref.watch(badgesOverviewProvider);

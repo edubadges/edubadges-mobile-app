@@ -30,7 +30,7 @@ class CollectionPage extends ConsumerWidget {
     List<BadgeInstanceEntity> badges,
     ValueNotifier<bool> publicNotifier,
   ) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final allBadgesPublic =
@@ -165,7 +165,7 @@ class CollectionPage extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(BuildContext context, double screenWidth) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -234,7 +234,7 @@ class CollectionPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final collectionsAsync = ref.watch(collectionsProvider);
