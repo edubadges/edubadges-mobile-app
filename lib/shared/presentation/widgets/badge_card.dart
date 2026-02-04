@@ -172,7 +172,7 @@ class BadgeCard extends ConsumerWidget {
               buildChip(
                 icon: Assets.iconDate,
                 text: DateFormat(
-                  'd MMM, yyyy',
+                  'd MMM yyyy',
                   l10n.localeName,
                 ).format(instance.issuedOn),
                 context: context,
