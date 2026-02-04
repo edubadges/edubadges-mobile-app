@@ -87,7 +87,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
 
   String? getAssessmentSupervisedStatus(BadgeClassEntity? badgeclass) {
     if (badgeclass == null) return null;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isIdVerified = badgeclass.assessmentIdVerified == true;
     final isSupervised = badgeclass.assessmentSupervised == true;
 
@@ -246,7 +246,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   }
 
   List<Widget> _buildBadgeDetails(BadgeDetailsModel? details) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final learningOutcome = details?.badgeClass.getExtensionValue<String?>(
       BadgeExtensionKeys.learningOutcome,
