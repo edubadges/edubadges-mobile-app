@@ -133,6 +133,7 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
                       ),
                     ),
                   ),
+                ),
               ],
             );
           },

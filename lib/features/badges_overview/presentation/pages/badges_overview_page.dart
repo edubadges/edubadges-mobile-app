@@ -134,6 +134,7 @@ class BadgesOverviewPage extends ConsumerWidget {
                           },
                           child: BadgeCard(
                             instance: badge,
+                            badgeClass: badge.badgeclass as BadgeClassModel,
                             style: BadgeCardStyle.small,
                           ),
                         ),
