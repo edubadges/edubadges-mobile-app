@@ -303,7 +303,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
             _buildChip(
               icon: Assets.iconDate,
               text: DateFormat(
-                'd MMM, yyyy',
+                'd MMM yyyy',
                 l10n.localeName,
               ).format(badge.issuedOn),
               context: context,
