@@ -1,3 +1,4 @@
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/features/catalog/presentation/providers/catalog_providers.dart';
@@ -53,108 +54,121 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
         onTap: () {
           FocusScope.of(context).unfocus();
         },
-        child: catalogAsync.when(
-          data: (state) {
-            final displayBadges = state.displayBadges;
+        child: MaxWidthWrapper(
+          child: catalogAsync.when(
+            data: (state) {
+              final displayBadges = state.displayBadges;
 
-            return CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 0, left: 16, right: 16, bottom: 16),
-                  child: CatalogFilters(
-                    onLevelChanged: (institutionType) {
-                      ref.read(catalogProvider.notifier).filterByInstitutionType(institutionType);
-                    },
-                    onInstitutionChanged: (institutionId) {
-                      ref.read(catalogProvider.notifier).filterByInstitution(institutionId);
-                    },
-                    onSearchSubmitted: (searchText) {
-                      ref.read(catalogProvider.notifier).search(searchText);
-                    },
+              return CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 0,
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      child: CatalogFilters(
+                        onLevelChanged: (institutionType) {
+                          ref
+                              .read(catalogProvider.notifier)
+                              .filterByInstitutionType(institutionType);
+                        },
+                        onInstitutionChanged: (institutionId) {
+                          ref
+                              .read(catalogProvider.notifier)
+                              .filterByInstitution(institutionId);
+                        },
+                        onSearchSubmitted: (searchText) {
+                          ref.read(catalogProvider.notifier).search(searchText);
+                        },
+                      ),
+                    ),
                   ),
-                ),
-              ),
 
-              if (displayBadges.isEmpty)
+                  if (displayBadges.isEmpty)
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 48,
+                              color: colorScheme.primary,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              state.isSearching
+                                  ? l10n.catalogNoSearchResults
+                                  : l10n.catalogNoBadgesAvailable,
+                              style: textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            if (index < displayBadges.length) {
+                              final badge = displayBadges[index];
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: CatalogBadgeCard(
+                                  badge: badge,
+                                  onTap: () {
+                                    final routeModel = BadgeDetailsRouteModel(
+                                      id: badge.entityId,
+                                      from: BadgeDetailsRouteFrom.catalog,
+                                    );
+                                    context.push(routeModel.buildRouteUrl());
+                                  },
+                                ),
+                              );
+                            } else if (state.hasMore) {
+                              return const Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+                            return null;
+                          },
+                          childCount:
+                              displayBadges.length + (state.hasMore ? 1 : 0),
+                        ),
+                      ),
+                    ),
+
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                ],
+              );
+            },
+            loading: () => const CustomScrollView(
+              slivers: [
+                SliverFillRemaining(
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ],
+            ),
+            // TODO: Add error state
+            error: (error, stackTrace) => CustomScrollView(
+              slivers: [
                 SliverFillRemaining(
                   hasScrollBody: false,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.search_off,
-                          size: 48,
-                          color: colorScheme.primary,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          state.isSearching
-                              ? l10n.catalogNoSearchResults
-                              : l10n.catalogNoBadgesAvailable,
-                          style: textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              else
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        if (index < displayBadges.length) {
-                          final badge = displayBadges[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: CatalogBadgeCard(
-                              badge: badge,
-                              onTap: () {
-                                final routeModel = BadgeDetailsRouteModel(
-                                  id: badge.entityId,
-                                  from: BadgeDetailsRouteFrom.catalog,
-                                );
-                                context.push(routeModel.buildRouteUrl());
-                              },
-                            ),
-                          );
-                        } else if (state.hasMore) {
-                          return const Padding(
-                            padding: EdgeInsets.all(16),
-                            child: Center(child: CircularProgressIndicator()),
-                          );
-                        }
-                        return null;
-                      },
-                      childCount:
-                          displayBadges.length + (state.hasMore ? 1 : 0),
-                    ),
-                  ),
+                  child: SizedBox.shrink(),
                 ),
-
-              const SliverToBoxAdapter(child: SizedBox(height: 16)),
-            ],
-          );
-        },
-        loading: () => const CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator()),
+              ],
             ),
-          ],
-        ),
-        // TODO: Add error state
-        error: (error, stackTrace) => CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: SizedBox.shrink(),
-            ),
-          ],
-        ),
+          ),
         ),
       ),
     );
