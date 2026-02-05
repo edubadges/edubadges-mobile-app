@@ -14,18 +14,27 @@ class CatalogInstitution extends Equatable {
   bool matchesSearch(String query) {
     if (query.trim().isEmpty) return false;
 
-    final queryTerms = _normalizeString(query)
+    final queryTerms = query
+        .toLowerCase()
         .split(RegExp(r'\s+'))
         .where((term) => term.isNotEmpty)
         .toList();
 
     if (queryTerms.isEmpty) return false;
 
+    // Prepare both normalized and exact versions for matching
     final normalizedDutch = nameDutch != null ? _normalizeString(nameDutch!) : '';
     final normalizedEnglish = nameEnglish != null ? _normalizeString(nameEnglish!) : '';
-    final combinedNames = '$normalizedDutch $normalizedEnglish';
+    final normalizedCombined = '$normalizedDutch $normalizedEnglish';
 
-    return queryTerms.every((term) => combinedNames.contains(term));
+    final exactDutch = nameDutch?.toLowerCase() ?? '';
+    final exactEnglish = nameEnglish?.toLowerCase() ?? '';
+    final exactCombined = '$exactDutch $exactEnglish';
+
+    return queryTerms.every((term) {
+      final normalizedTerm = _normalizeString(term);
+      return exactCombined.contains(term) || normalizedCombined.contains(normalizedTerm);
+    });
   }
 
   String _normalizeString(String input) {
