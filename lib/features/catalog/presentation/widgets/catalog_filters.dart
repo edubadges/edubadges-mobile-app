@@ -151,6 +151,9 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
               ? colorScheme.primary
               : colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: colorScheme.outlineVariant,
+          )
         ),
         child: Center(
           child: Text(
