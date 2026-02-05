@@ -71,10 +71,7 @@ class BadgesOverviewPage extends ConsumerWidget {
                     },
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
-                      ),
+                      margin: const EdgeInsets.only(left: 16, right: 16, top: 16),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: colorScheme.primary,
@@ -120,7 +117,7 @@ class BadgesOverviewPage extends ConsumerWidget {
             if (state.claimedBadges.isNotEmpty) {
               slivers.add(
                 SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       final badge = state.claimedBadges[index];
