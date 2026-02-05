@@ -29,6 +29,8 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
   final TextEditingController _institutionController = TextEditingController();
   CatalogInstitution? _selectedInstitution;
 
+  static const searchBorderRadius = BorderRadius.all(Radius.circular(8));
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -106,7 +108,7 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
                     )
                   : null,
               border: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(4)),
+                borderRadius: searchBorderRadius,
               ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
@@ -200,7 +202,7 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     hintText: l10n.allInstitutions,
                     border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(4)),
+                      borderRadius: searchBorderRadius,
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -287,7 +289,7 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
           labelText: l10n.allInstitutions,
           hintText: l10n.allInstitutions,
           border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(4)),
+            borderRadius: searchBorderRadius,
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
@@ -309,7 +311,7 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
           labelText: l10n.allInstitutions,
           hintText: l10n.allInstitutions,
           border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(4)),
+            borderRadius: searchBorderRadius,
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
