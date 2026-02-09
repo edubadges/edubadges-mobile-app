@@ -207,5 +207,7 @@
     "badgeLinkCopied": "Edubadge link copied to clipboard",
     "catalogNoSearchResults": "No search results found",
     "catalogNoBadgesAvailable": "No badges available",
-    "catalogFailedToLoadInstitutions": "Failed to load institutions"
+    "catalogFailedToLoadInstitutions": "Failed to load institutions",
+    "unableToLoad": "Unable to load",
+    "unableToLoadSubtitle": "Please try again later"
 }

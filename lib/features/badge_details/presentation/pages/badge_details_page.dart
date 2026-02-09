@@ -2,6 +2,7 @@ import 'package:edubadges/app/constants.dart';
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/utils/string.dart';
+import 'package:edubadges/core/widgets/info_state_view.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_detail_item_model.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_model.dart';
@@ -18,6 +19,7 @@ import 'package:edubadges/shared/domain/enums/assessment_type.dart';
 import 'package:edubadges/shared/domain/enums/badge_class_type.dart';
 import 'package:edubadges/shared/domain/enums/participation_type.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
+import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -123,6 +125,8 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
 
   Widget _buildCarouselView() {
     final badgesAsync = ref.watch(badgesListProvider);
+    final l10n = AppLocalizations.of(context);
+
 
     return ListView(
       children: [
@@ -152,10 +156,8 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                 },
               );
             },
-            //TODO: Add loading indicator
-            loading: () => const Center(child: SizedBox()),
-            //TODO: Add error indicator
-            error: (error, _) => Center(child: SizedBox()),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, _) => Center(child: ErrorMessageWidget()),
           ),
         ),
 
@@ -163,16 +165,21 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           data: (badges) {
             if (badges.claimedBadges.isEmpty ||
                 _currentIndex >= badges.claimedBadges.length) {
-              return [const Center(child: Text('No badge'))];
+              return [
+                Center(
+                  child: InfoStateView(
+                    assetPath: Assets.iconBackpack,
+                    description: l10n.noEdubadgesYet,
+                  ),
+                ),
+              ];
             }
 
             final currentBadgeId = badges.claimedBadges[_currentIndex].entityId;
             return _buildBadgeDetailsContent(currentBadgeId, null);
           },
-          //TODO: Add loading indicator
-          loading: () => [const Center(child: SizedBox())],
-          //TODO: Add error indicator
-          error: (error, _) => [Center(child: SizedBox())],
+          loading: () => [const Center(child: CircularProgressIndicator())],
+          error: (error, _) => [Center(child: ErrorMessageWidget())],
         ),
       ],
     );
@@ -214,17 +221,18 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     );
   }
 
-  List<Widget> _buildBadgeDetailsContent(String badgeId, AsyncValue<BadgeDetailsModel?>? badgeDetailsAsync) {
-    AsyncValue<BadgeDetailsModel?> badgeDetailsValue = badgeDetailsAsync ?? ref.watch(
-      badgeDetailsModelProvider(_createBadgeParams(badgeId)),
-    );
+  List<Widget> _buildBadgeDetailsContent(
+    String badgeId,
+    AsyncValue<BadgeDetailsModel?>? badgeDetailsAsync,
+  ) {
+    AsyncValue<BadgeDetailsModel?> badgeDetailsValue =
+        badgeDetailsAsync ??
+        ref.watch(badgeDetailsModelProvider(_createBadgeParams(badgeId)));
 
     return badgeDetailsValue.when(
       data: (details) => [..._buildBadgeDetails(details)],
-      //TODO: Add loading indicator
-      loading: () => [const Center(child: SizedBox())],
-      //TODO: Add error indicator
-      error: (error, _) => [Center(child: SizedBox())],
+      loading: () => [const Center(child: CircularProgressIndicator())],
+      error: (error, _) => [Center(child: ErrorMessageWidget())],
     );
   }
 
