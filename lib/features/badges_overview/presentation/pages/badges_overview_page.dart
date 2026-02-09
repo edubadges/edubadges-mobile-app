@@ -141,6 +141,7 @@ class BadgesOverviewPage extends ConsumerWidget {
                             instance: badge,
                             badgeClass: badge.badgeclass as BadgeClassModel,
                             style: BadgeCardStyle.small,
+                            onTapFrom: BadgeDetailsRouteFrom.overview,
                           ),
                         ),
                       );
@@ -179,6 +180,7 @@ class BadgesOverviewPage extends ConsumerWidget {
                           instance: badge,
                           badgeClass: badge.badgeclass as BadgeClassModel,
                           style: BadgeCardStyle.small,
+                          onTapFrom: BadgeDetailsRouteFrom.overview,
                         ),
                       );
                     }, childCount: state.requestedBadges.length),

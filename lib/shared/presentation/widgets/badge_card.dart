@@ -3,6 +3,8 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/core/utils/string.dart';
+import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
@@ -10,6 +12,7 @@ import 'package:edubadges/shared/presentation/widgets/badge_visibility_dialog.da
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 enum BadgeCardStyle { small, large }
@@ -18,13 +21,16 @@ class BadgeCard extends ConsumerWidget {
   final BadgeInstanceEntity? instance;
   final BadgeClassModel badgeClass;
   final BadgeCardStyle style;
-  final bool isSelected;
+  final bool isSelected, onTapDisabled;
+  final BadgeDetailsRouteFrom onTapFrom;
   const BadgeCard({
     super.key,
     required this.instance,
     required this.badgeClass,
     this.style = BadgeCardStyle.large,
     this.isSelected = false,
+    this.onTapDisabled = false,
+    this.onTapFrom = BadgeDetailsRouteFrom.other,
   });
 
   int? getTimeInvestment() {
@@ -105,126 +111,141 @@ class BadgeCard extends ConsumerWidget {
 
     int? timeInvestment = getTimeInvestment();
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isSelected ? colorScheme.primary : colorScheme.outlineVariant,
+    return GestureDetector(
+      onTap: onTapDisabled
+          ? null
+          : () {
+              final routeModel = BadgeDetailsRouteModel(
+                id: instance?.entityId ?? badgeClass.entityId,
+                from: onTapFrom,
+              );
+              context.push(routeModel.buildRouteUrl());
+            },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected
+                ? colorScheme.primary
+                : colorScheme.outlineVariant,
+          ),
+          color: isSelected
+              ? colorScheme.surface
+              : colorScheme.surfaceContainer,
         ),
-        color: isSelected ? colorScheme.surface : colorScheme.surfaceContainer,
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 32, width: 32),
-              // TODO: add no image paceholder (https://digitalclub.atlassian.net/browse/SURF-517)
-              if (badgeImageUrl != null)
-                Expanded(
-                  child: Image.network(
-                    badgeImageUrl,
-                    height: 100,
-                    width: 100,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const SizedBox(height: 100, width: 100);
-                    },
-                  ),
-                ),
-              if (instance != null)
-                SizedBox(
-                  height: 32,
-                  width: 32,
-                  child: GestureDetector(
-                    child: SvgPicture.asset(
-                      instance!.public
-                          ? Assets.iconUnlocked
-                          : Assets.iconLocked,
-                    ),
-                    onTap: () {
-                      BadgeVisibilityDialog.show(
-                        context: context,
-                        ref: ref,
-                        badgeEntityId: instance!.entityId,
-                        isPublic: !instance!.public,
-                      );
-                    },
-                  ),
-                )
-              else
-                const SizedBox(height: 32, width: 32),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            badgeClass.name,
-            style: textTheme.titleMedium,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            softWrap: false,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            alignment: WrapAlignment.center,
-            spacing: 8,
-            children: [
-              if (timeInvestment != null)
-                buildChip(
-                  icon: Assets.iconTimeInvestment,
-                  text: l10n.countHours(timeInvestment),
-                  context: context,
-                ),
-              if (instance?.gradeAchieved != null)
-                buildChip(
-                  icon: Assets.iconCollections,
-                  text: instance!.gradeAchieved!,
-                  context: context,
-                ),
-              if (instance != null)
-                buildChip(
-                  icon: Assets.iconDate,
-                  text: DateFormat(
-                    'd MMM, yyyy',
-                    l10n.localeName,
-                  ).format(instance!.issuedOn),
-                  context: context,
-                ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          if (institution != null)
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 32, width: 32),
                 // TODO: add no image paceholder (https://digitalclub.atlassian.net/browse/SURF-517)
-                if (institutionImageUrl != null)
-                  Image.network(
-                    institutionImageUrl,
-                    height: 25,
-                    width: 25,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const SizedBox(height: 25, width: 25);
-                    },
+                if (badgeImageUrl != null)
+                  Expanded(
+                    child: Image.network(
+                      badgeImageUrl,
+                      height: 100,
+                      width: 100,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const SizedBox(height: 100, width: 100);
+                      },
+                    ),
                   ),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Text(
-                    institutionName,
-                    style: textTheme.bodySmall,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: false,
-                  ),
-                ),
+                if (instance != null)
+                  SizedBox(
+                    height: 32,
+                    width: 32,
+                    child: GestureDetector(
+                      child: SvgPicture.asset(
+                        instance!.public
+                            ? Assets.iconUnlocked
+                            : Assets.iconLocked,
+                      ),
+                      onTap: () {
+                        BadgeVisibilityDialog.show(
+                          context: context,
+                          ref: ref,
+                          badgeEntityId: instance!.entityId,
+                          isPublic: !instance!.public,
+                        );
+                      },
+                    ),
+                  )
+                else
+                  const SizedBox(height: 32, width: 32),
               ],
             ),
-        ],
+            const SizedBox(height: 12),
+            Text(
+              badgeClass.name,
+              style: textTheme.titleMedium,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.center,
+              spacing: 8,
+              children: [
+                if (timeInvestment != null)
+                  buildChip(
+                    icon: Assets.iconTimeInvestment,
+                    text: l10n.countHours(timeInvestment),
+                    context: context,
+                  ),
+                if (instance?.gradeAchieved != null)
+                  buildChip(
+                    icon: Assets.iconCollections,
+                    text: instance!.gradeAchieved!,
+                    context: context,
+                  ),
+                if (instance != null)
+                  buildChip(
+                    icon: Assets.iconDate,
+                    text: DateFormat(
+                      'd MMM, yyyy',
+                      l10n.localeName,
+                    ).format(instance!.issuedOn),
+                    context: context,
+                  ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            if (institution != null)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // TODO: add no image paceholder (https://digitalclub.atlassian.net/browse/SURF-517)
+                  if (institutionImageUrl != null)
+                    Image.network(
+                      institutionImageUrl,
+                      height: 25,
+                      width: 25,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const SizedBox(height: 25, width: 25);
+                      },
+                    ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      institutionName,
+                      style: textTheme.bodySmall,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: false,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
       ),
     );
   }

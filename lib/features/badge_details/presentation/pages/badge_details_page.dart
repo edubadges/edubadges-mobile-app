@@ -151,6 +151,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                           badges.claimedBadges[index].badgeclass
                               as BadgeClassModel,
                       style: BadgeCardStyle.large,
+                      onTapDisabled: true,
                     ),
                   );
                 },
@@ -212,6 +213,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                 instance: badgeDetailsAsync.value?.badgeInstance,
                 badgeClass: badgeDetailsAsync.value!.badgeClass,
                 style: BadgeCardStyle.large,
+                onTapDisabled: true,
               ),
             ),
           ),
