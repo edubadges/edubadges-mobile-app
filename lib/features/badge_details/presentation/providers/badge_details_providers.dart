@@ -1,9 +1,12 @@
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/features/badge_details/data/datasources/badge_details_datasource.dart';
+import 'package:edubadges/features/badge_details/data/models/badge_details_model.dart';
+import 'package:edubadges/features/badge_details/domain/entities/badge_details_params.dart';
 import 'package:edubadges/features/badge_details/domain/repositories/badge_details_repository.dart';
 import 'package:edubadges/features/badge_details/domain/repositories/badge_details_repository_impl.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
+import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,11 +21,43 @@ final badgeDetailsRepositoryProvider = Provider<BadgeDetailsRepository>((ref) {
 });
 
 final badgeDetailsProvider = FutureProvider.autoDispose
-    .family<BadgeInstanceEntity, String>((ref, badgeId) async {
+    .family<BadgeClassModel, String>((ref, badgeId) async {
       final repository = ref.read(badgeDetailsRepositoryProvider);
       final result = await repository.getBadgeDetails(badgeId);
 
       return result.fold((failure) => throw failure, (badge) => badge);
+    });
+
+final badgeDetailsModelProvider = FutureProvider.autoDispose
+    .family<BadgeDetailsModel?, BadgeDetailsParams>((ref, params) async {
+      final repository = ref.read(badgeDetailsRepositoryProvider);
+
+      if (params.badgeInstanceEntityId != null) {
+        final result = await repository.getBadgeInstance(
+          params.badgeInstanceEntityId!,
+        );
+        return result.fold(
+          (failure) => throw failure,
+          (badgeInstance) => BadgeDetailsModel(
+            badgeInstance: badgeInstance,
+            badgeClass: badgeInstance.badgeclass as BadgeClassModel,
+          ),
+        );
+      }
+
+      if (params.badgeClassEntityId != null) {
+        final result = await repository.getBadgeDetails(
+          params.badgeClassEntityId!,
+        );
+
+        return result.fold(
+          (failure) => throw failure,
+          (badgeClass) =>
+              BadgeDetailsModel(badgeInstance: null, badgeClass: badgeClass),
+        );
+      }
+
+      return null;
     });
 
 final badgeByIdProvider = Provider.family<BadgeInstanceEntity?, String>((

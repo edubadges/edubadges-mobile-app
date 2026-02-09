@@ -13,6 +13,14 @@
     "tabBadges": "Edubadges",
     "tabCatalog": "Catalog",
     "tabCollections": "Collections",
+    "search": "Search",
+    "filters": "Filters",
+    "allLevels": "All levels",
+    "mbo": "MBO",
+    "hbo": "HBO",
+    "wo": "WO",
+    "allInstitutions": "All educational institutions",
+    "searchPlaceholder": "Search...",
     "newCollection": "New collection",
     "newCollectionDescription": "Create a new collection and share it with acquaintances.",
     "collectionName": "Name",
@@ -196,5 +204,8 @@
     "actionMakePrivate": "Make private",
     "labelMakePrivate": "Make private",
     "badgeMakePrivateWarning": "Are you sure you want to make this edubadge private?",
-    "badgeLinkCopied": "Edubadge link copied to clipboard"
+    "badgeLinkCopied": "Edubadge link copied to clipboard",
+    "catalogNoSearchResults": "No search results found",
+    "catalogNoBadgesAvailable": "No badges available",
+    "catalogFailedToLoadInstitutions": "Failed to load institutions"
 }

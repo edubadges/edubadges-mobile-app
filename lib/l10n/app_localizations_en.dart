@@ -47,6 +47,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tabCollections => 'Collections';
 
   @override
+  String get search => 'Search';
+
+  @override
+  String get filters => 'Filters';
+
+  @override
+  String get allLevels => 'All levels';
+
+  @override
+  String get mbo => 'MBO';
+
+  @override
+  String get hbo => 'HBO';
+
+  @override
+  String get wo => 'WO';
+
+  @override
+  String get allInstitutions => 'All educational institutions';
+
+  @override
+  String get searchPlaceholder => 'Search...';
+
+  @override
   String get newCollection => 'New collection';
 
   @override
@@ -544,4 +568,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get badgeLinkCopied => 'Edubadge link copied to clipboard';
+
+  @override
+  String get catalogNoSearchResults => 'No search results found';
+
+  @override
+  String get catalogNoBadgesAvailable => 'No badges available';
+
+  @override
+  String get catalogFailedToLoadInstitutions => 'Failed to load institutions';
 }

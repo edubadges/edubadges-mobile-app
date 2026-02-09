@@ -6,6 +6,7 @@ import 'package:edubadges/features/badge_details/domain/enums/badge_details_rout
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/widgets/feedback_bottom_sheet.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -170,6 +171,7 @@ class BadgesOverviewPage extends ConsumerWidget {
                         padding: const EdgeInsets.only(bottom: 8),
                         child: BadgeCard(
                           instance: badge,
+                          badgeClass: badge.badgeclass as BadgeClassModel,
                           style: BadgeCardStyle.small,
                         ),
                       );
