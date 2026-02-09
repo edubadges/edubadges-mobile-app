@@ -1,7 +1,10 @@
 import 'package:collection/collection.dart';
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/image.dart';
+import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_visibility_dialog.dart';
 import 'package:flutter/material.dart';
@@ -12,20 +15,25 @@ import 'package:intl/intl.dart';
 enum BadgeCardStyle { small, large }
 
 class BadgeCard extends ConsumerWidget {
-  final BadgeInstanceEntity instance;
+  final BadgeInstanceEntity? instance;
+  final BadgeClassModel badgeClass;
   final BadgeCardStyle style;
   final bool isSelected;
   const BadgeCard({
     super.key,
     required this.instance,
+    required this.badgeClass,
     this.style = BadgeCardStyle.large,
     this.isSelected = false,
   });
 
   int? getTimeInvestment() {
-    final match = instance.badgeclass.badgeclassextensionSet?.firstWhereOrNull(
+    final match = badgeClass.badgeclassextensionSet?.firstWhereOrNull(
       (element) => element.name == 'extensions:TimeInvestmentExtension',
     );
+    if (match?.value is int) {
+      return match!.value;
+    }
     return match != null ? int.tryParse(match.value) : null;
   }
 
@@ -34,12 +42,15 @@ class BadgeCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
-    final institution = instance.badgeclass.issuer?.faculty?.institution;
-    // TODO: decide the approach we want to go with (at least one should never not be null)
-    final institutionName =
-        (institution?.nameDutch ?? institution?.nameEnglish) ?? 'Unknown';
+    final institution = badgeClass.issuer?.faculty?.institution;
+    final langCode = ref.read(appLanguageProvider).code;
+    final institutionName = getLocalizedString(
+      institution?.nameDutch,
+      institution?.nameEnglish,
+      langCode,
+    );
     final institutionImageUrl = buildImageUrl(institution?.imageDutch);
-    final badgeImageUrl = buildImageUrl(instance.badgeclass.image);
+    final badgeImageUrl = buildImageUrl(badgeClass.image);
 
     if (style == BadgeCardStyle.small) {
       return Container(
@@ -73,7 +84,7 @@ class BadgeCard extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    instance.badgeclass.name,
+                    badgeClass.name,
                     style: textTheme.titleSmall,
                     maxLines: 2,
                   ),
@@ -123,28 +134,33 @@ class BadgeCard extends ConsumerWidget {
                     },
                   ),
                 ),
-              SizedBox(
-                height: 32,
-                width: 32,
-                child: GestureDetector(
-                  child: SvgPicture.asset(
-                    instance.public ? Assets.iconUnlocked : Assets.iconLocked,
+              if (instance != null)
+                SizedBox(
+                  height: 32,
+                  width: 32,
+                  child: GestureDetector(
+                    child: SvgPicture.asset(
+                      instance!.public
+                          ? Assets.iconUnlocked
+                          : Assets.iconLocked,
+                    ),
+                    onTap: () {
+                      BadgeVisibilityDialog.show(
+                        context: context,
+                        ref: ref,
+                        badgeEntityId: instance!.entityId,
+                        isPublic: !instance!.public,
+                      );
+                    },
                   ),
-                  onTap: () {
-                    BadgeVisibilityDialog.show(
-                      context: context,
-                      ref: ref,
-                      badgeEntityId: instance.entityId,
-                      isPublic: !instance.public,
-                    );
-                  },
-                ),
-              ),
+                )
+              else
+                const SizedBox(height: 32, width: 32),
             ],
           ),
           const SizedBox(height: 12),
           Text(
-            instance.badgeclass.name,
+            badgeClass.name,
             style: textTheme.titleMedium,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -163,20 +179,21 @@ class BadgeCard extends ConsumerWidget {
                   text: l10n.countHours(timeInvestment),
                   context: context,
                 ),
-              if (instance.gradeAchieved != null)
+              if (instance?.gradeAchieved != null)
                 buildChip(
                   icon: Assets.iconCollections,
-                  text: instance.gradeAchieved!,
+                  text: instance!.gradeAchieved!,
                   context: context,
                 ),
-              buildChip(
-                icon: Assets.iconDate,
-                text: DateFormat(
-                  'd MMM yyyy',
-                  l10n.localeName,
-                ).format(instance.issuedOn),
-                context: context,
-              ),
+              if (instance != null)
+                buildChip(
+                  icon: Assets.iconDate,
+                  text: DateFormat(
+                    'd MMM, yyyy',
+                    l10n.localeName,
+                  ).format(instance!.issuedOn),
+                  context: context,
+                ),
             ],
           ),
           const SizedBox(height: 8),

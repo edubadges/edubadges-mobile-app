@@ -170,6 +170,54 @@ abstract class AppLocalizations {
   /// **'Collections'**
   String get tabCollections;
 
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @filters.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get filters;
+
+  /// No description provided for @allLevels.
+  ///
+  /// In en, this message translates to:
+  /// **'All levels'**
+  String get allLevels;
+
+  /// No description provided for @mbo.
+  ///
+  /// In en, this message translates to:
+  /// **'MBO'**
+  String get mbo;
+
+  /// No description provided for @hbo.
+  ///
+  /// In en, this message translates to:
+  /// **'HBO'**
+  String get hbo;
+
+  /// No description provided for @wo.
+  ///
+  /// In en, this message translates to:
+  /// **'WO'**
+  String get wo;
+
+  /// No description provided for @allInstitutions.
+  ///
+  /// In en, this message translates to:
+  /// **'All educational institutions'**
+  String get allInstitutions;
+
+  /// No description provided for @searchPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Search...'**
+  String get searchPlaceholder;
+
   /// No description provided for @newCollection.
   ///
   /// In en, this message translates to:
@@ -991,6 +1039,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edubadge link copied to clipboard'**
   String get badgeLinkCopied;
+
+  /// No description provided for @catalogNoSearchResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No search results found'**
+  String get catalogNoSearchResults;
+
+  /// No description provided for @catalogNoBadgesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No badges available'**
+  String get catalogNoBadgesAvailable;
+
+  /// No description provided for @catalogFailedToLoadInstitutions.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load institutions'**
+  String get catalogFailedToLoadInstitutions;
 }
 
 class _AppLocalizationsDelegate

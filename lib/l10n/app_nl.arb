@@ -13,6 +13,14 @@
     "tabBadges": "Edubadges",
     "tabCatalog": "Catalogus",
     "tabCollections": "Collecties",
+    "search": "Zoeken",
+    "filters": "Filters",
+    "allLevels": "Alle niveaus",
+    "mbo": "MBO",
+    "hbo": "HBO",
+    "wo": "WO",
+    "allInstitutions": "Alle onderwijsinstellingen",
+    "searchPlaceholder": "Zoek...",
     "newCollection": "Nieuwe collectie",
     "newCollectionDescription": "Maak een nieuwe collectie aan en deel deze met bekenden.",
     "collectionName": "Naam",
@@ -196,5 +204,8 @@
     "actionMakePrivate": "Maak privé",
     "labelMakePrivate": "Privé maken",
     "badgeMakePrivateWarning": "Weet je het zeker dat je deze edubadge privé wilt maken?",
-    "badgeLinkCopied": "Edubadge link is naar klembord gekopiëerd"
+    "badgeLinkCopied": "Edubadge link is naar klembord gekopiëerd",
+    "catalogNoSearchResults": "Geen zoekresultaten gevonden",
+    "catalogNoBadgesAvailable": "Geen badges beschikbaar",
+    "catalogFailedToLoadInstitutions": "Fout bij het laden van instellingen"
 }

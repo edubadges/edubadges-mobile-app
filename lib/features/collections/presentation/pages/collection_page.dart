@@ -11,6 +11,7 @@ import 'package:edubadges/features/collections/domain/entities/collections_entit
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/features/collections/presentation/widgets/edit_collection_bottom_sheet.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
 import 'package:flutter/material.dart';
@@ -417,6 +418,7 @@ class CollectionPage extends ConsumerWidget {
                       padding: const EdgeInsets.only(top: 16),
                       child: BadgeCard(
                         instance: badge,
+                        badgeClass: badge.badgeclass as BadgeClassModel,
                         style: BadgeCardStyle.large,
                       ),
                     ),
