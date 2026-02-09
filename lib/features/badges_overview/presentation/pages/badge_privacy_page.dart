@@ -10,6 +10,7 @@ import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
+import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -247,7 +248,7 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
         loading: () =>
             const Scaffold(body: Center(child: CircularProgressIndicator())),
         error: (err, stack) =>
-            Scaffold(body: Center(child: Text('Error: $err'))),
+            Scaffold(body: Center(child: ErrorMessageWidget())),
       ),
     );
   }

@@ -207,5 +207,7 @@
     "badgeLinkCopied": "Edubadge link is naar klembord gekopiëerd",
     "catalogNoSearchResults": "Geen zoekresultaten gevonden",
     "catalogNoBadgesAvailable": "Geen badges beschikbaar",
-    "catalogFailedToLoadInstitutions": "Fout bij het laden van instellingen"
+    "catalogFailedToLoadInstitutions": "Fout bij het laden van instellingen",
+    "unableToLoad": "Kon niet laden",
+    "unableToLoadSubtitle": "Probeer het later opnieuw"
 }

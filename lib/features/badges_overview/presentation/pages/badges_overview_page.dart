@@ -8,6 +8,7 @@ import 'package:edubadges/features/badges_overview/presentation/widgets/feedback
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
+import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -72,7 +73,11 @@ class BadgesOverviewPage extends ConsumerWidget {
                     },
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
-                      margin: const EdgeInsets.only(left: 16, right: 16, top: 16),
+                      margin: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 16,
+                      ),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: colorScheme.primary,
@@ -218,7 +223,9 @@ class BadgesOverviewPage extends ConsumerWidget {
             ],
           ),
           error: (error, stackTrace) => const CustomScrollView(
-            slivers: [SliverFillRemaining(child: Center(child: SizedBox()))],
+            slivers: [
+              SliverFillRemaining(child: Center(child: ErrorMessageWidget())),
+            ],
           ),
         ),
       ),

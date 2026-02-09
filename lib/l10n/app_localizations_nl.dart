@@ -579,4 +579,10 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get catalogFailedToLoadInstitutions =>
       'Fout bij het laden van instellingen';
+
+  @override
+  String get unableToLoad => 'Kon niet laden';
+
+  @override
+  String get unableToLoadSubtitle => 'Probeer het later opnieuw';
 }

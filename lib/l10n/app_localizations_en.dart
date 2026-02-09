@@ -577,4 +577,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get catalogFailedToLoadInstitutions => 'Failed to load institutions';
+
+  @override
+  String get unableToLoad => 'Unable to load';
+
+  @override
+  String get unableToLoadSubtitle => 'Please try again later';
 }

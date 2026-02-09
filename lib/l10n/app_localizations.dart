@@ -1057,6 +1057,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to load institutions'**
   String get catalogFailedToLoadInstitutions;
+
+  /// No description provided for @unableToLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load'**
+  String get unableToLoad;
+
+  /// No description provided for @unableToLoadSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please try again later'**
+  String get unableToLoadSubtitle;
 }
 
 class _AppLocalizationsDelegate

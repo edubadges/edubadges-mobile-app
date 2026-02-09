@@ -5,6 +5,7 @@ import 'package:edubadges/features/catalog/presentation/providers/catalog_provid
 import 'package:edubadges/features/catalog/presentation/widgets/catalog_badge_card.dart';
 import 'package:edubadges/features/catalog/presentation/widgets/catalog_filters.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -159,12 +160,13 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
                 ),
               ],
             ),
-            // TODO: Add error state
             error: (error, stackTrace) => CustomScrollView(
               slivers: [
                 SliverFillRemaining(
                   hasScrollBody: false,
-                  child: SizedBox.shrink(),
+                  child: Center(
+                    child: ErrorMessageWidget(),
+                  ),
                 ),
               ],
             ),
