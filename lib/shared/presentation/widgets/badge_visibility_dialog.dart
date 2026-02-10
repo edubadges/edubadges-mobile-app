@@ -1,6 +1,7 @@
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,7 +9,7 @@ class BadgeVisibilityDialog {
   static Future<void> show({
     required BuildContext context,
     required WidgetRef ref,
-    required String badgeEntityId,
+    required BadgeInstanceModel badgeInstance,
     required bool isPublic,
   }) async {
     final l10n = AppLocalizations.of(context);
@@ -29,7 +30,9 @@ class BadgeVisibilityDialog {
                 child: StatefulBuilder(
                   builder: (context, setState) {
                     return Column(
+                      spacing: 8,
                       children: [
+                        // TODO: Check against the api (https://digitalclub.atlassian.net/browse/SURF-557)
                         _CustomCheckboxRow(
                           value: includeEvidence,
                           onChanged: (value) {
@@ -39,16 +42,16 @@ class BadgeVisibilityDialog {
                           },
                           label: l10n.makeBadgePublicIncludeEvidence,
                         ),
-                        const SizedBox(height: 8),
-                        _CustomCheckboxRow(
-                          value: includeGradeAchieved,
-                          onChanged: (value) {
-                            setState(() {
-                              includeGradeAchieved = value ?? true;
-                            });
-                          },
-                          label: l10n.makeBadgePublicIncludeGradeAchieved,
-                        ),
+                        if (badgeInstance.gradeAchieved != null)
+                          _CustomCheckboxRow(
+                            value: includeGradeAchieved,
+                            onChanged: (value) {
+                              setState(() {
+                                includeGradeAchieved = value ?? true;
+                              });
+                            },
+                            label: l10n.makeBadgePublicIncludeGradeAchieved,
+                          ),
                       ],
                     );
                   },
@@ -62,7 +65,7 @@ class BadgeVisibilityDialog {
         onSecondButtonPressed: () async {
           final updateFunction = ref.read(updateBadgeVisibilityProvider);
           await updateFunction(
-            badgeEntityId,
+            badgeInstance.entityId,
             isPublic,
             includeEvidence,
             includeGradeAchieved,
@@ -87,7 +90,7 @@ class _CustomCheckboxRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    
+
     return GestureDetector(
       onTap: () {
         onChanged?.call(!value);
@@ -95,12 +98,7 @@ class _CustomCheckboxRow extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: Row(
         children: [
-          Expanded(
-            child: Text(
-              label,
-              style: textTheme.bodyMedium,
-            ),
-          ),
+          Expanded(child: Text(label, style: textTheme.bodyMedium)),
           const SizedBox(width: 8),
           Checkbox(
             value: value,

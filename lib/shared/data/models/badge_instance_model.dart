@@ -15,6 +15,8 @@ class BadgeInstanceModel extends BadgeInstanceEntity {
     required super.badgeclass,
     super.linkedinUrl,
     super.gradeAchieved,
+    super.includeGradeAchieved,
+    super.includeEvidence,
   });
 
   factory BadgeInstanceModel.fromJson(Map<String, dynamic> json) {
@@ -41,6 +43,8 @@ class BadgeInstanceModel extends BadgeInstanceEntity {
       ),
       linkedinUrl: json['linkedin_url'] as String?,
       gradeAchieved: json['grade_achieved'] as String?,
+      includeGradeAchieved: json['include_grade_achieved'] as bool? ?? false,
+      includeEvidence: json['include_evidence'] as bool? ?? false,
     );
   }
 
@@ -58,6 +62,8 @@ class BadgeInstanceModel extends BadgeInstanceEntity {
       'badgeclass': (badgeclass as BadgeClassModel).toJson(),
       if (linkedinUrl != null) 'linkedin_url': linkedinUrl,
       if (gradeAchieved != null) 'grade_achieved': gradeAchieved,
+      'include_grade_achieved': includeGradeAchieved,
+      'include_evidence': includeEvidence,
     };
   }
 }

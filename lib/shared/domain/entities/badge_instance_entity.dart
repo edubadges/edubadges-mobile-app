@@ -30,6 +30,8 @@ class BadgeInstanceEntity extends Equatable {
   final BadgeClassEntity badgeclass;
   final String? linkedinUrl;
   final String? gradeAchieved;
+  final bool includeGradeAchieved;
+  final bool includeEvidence;
 
   const BadgeInstanceEntity({
     required this.id,
@@ -44,6 +46,8 @@ class BadgeInstanceEntity extends Equatable {
     required this.badgeclass,
     this.linkedinUrl,
     this.gradeAchieved,
+    this.includeGradeAchieved = false,
+    this.includeEvidence = false,
   });
 
   @override
@@ -60,5 +64,7 @@ class BadgeInstanceEntity extends Equatable {
     badgeclass,
     linkedinUrl,
     gradeAchieved,
+    includeGradeAchieved,
+    includeEvidence,
   ];
 }
