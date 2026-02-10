@@ -7,6 +7,7 @@ import 'package:edubadges/features/badge_details/data/models/badge_details_route
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
+import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_visibility_dialog.dart';
 import 'package:flutter/material.dart';
@@ -168,7 +169,7 @@ class BadgeCard extends ConsumerWidget {
                         BadgeVisibilityDialog.show(
                           context: context,
                           ref: ref,
-                          badgeEntityId: instance!.entityId,
+                          badgeInstance: instance as BadgeInstanceModel,
                           isPublic: !instance!.public,
                         );
                       },
@@ -199,7 +200,7 @@ class BadgeCard extends ConsumerWidget {
                     text: l10n.countHours(timeInvestment),
                     context: context,
                   ),
-                if (instance?.gradeAchieved != null)
+                if (instance?.gradeAchieved != null && instance!.includeGradeAchieved)
                   buildChip(
                     icon: Assets.iconCollections,
                     text: instance!.gradeAchieved!,

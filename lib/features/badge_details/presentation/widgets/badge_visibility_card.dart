@@ -5,6 +5,7 @@ import 'package:edubadges/core/utils/links.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_visibility_dialog.dart';
 import 'package:edubadges/shared/presentation/widgets/wide_button.dart';
@@ -118,7 +119,7 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                   await BadgeVisibilityDialog.show(
                     context: context,
                     ref: ref,
-                    badgeEntityId: widget.badge.entityId,
+                    badgeInstance: widget.badge as BadgeInstanceModel,
                     isPublic: state,
                   );
                 },
