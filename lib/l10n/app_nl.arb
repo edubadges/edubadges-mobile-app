@@ -683,5 +683,34 @@
     "unableToLoadSubtitle": "Probeer het later opnieuw",
     "@unableToLoadSubtitle": {
         "description": "Subtitle message suggesting user to retry later after a loading failure"
+    },
+    "failedToLoadTermsFrom": "Fout bij het laden van voorwaarden van {institution}",
+    "@failedToLoadTermsFrom": {
+        "placeholders": {
+            "institution": {
+                "type": "String"
+            }
+        }
+    },
+    "agreedOnDateVersion": "Akkoord op {date}, versie {version}",
+    "@agreedOnDateVersion": {
+        "placeholders": {
+            "date": {
+                "type": "DateTime",
+                "isCustomDateFormat": true,
+                "format": "MMM d, yyyy"
+            },
+            "version": {
+                "type": "String"
+            }
+        }
+    },
+    "notYetAgreedVersion": "Nog niet akkoord, versie {version}",
+    "@notYetAgreedVersion": {
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
     }
 }
