@@ -2,69 +2,288 @@
     "@@locale": "en",
     "@@last_modified": "2026-01-12T10:13:17+01:00",
     "appName": "Edubadges",
+    "@appName": {
+        "description": "The name of the application displayed throughout the app"
+    },
     "loginCardButton": "Go to my edubadges",
+    "@loginCardButton": {
+        "description": "Button text on the login card to navigate to the user's edubadges"
+    },
     "loginCardText": "My Badges is the place to receive and collect edubadges. An eduID is required to create and use \"My Badges.\" Creating an eduID takes less than 30 seconds.",
+    "@loginCardText": {
+        "description": "Explanatory text on the login card describing the app and eduID requirement"
+    },
     "loginSubtitle": "Edubadges are digital certificates that demonstrate the knowledge or skills someone has acquired, within or outside formal education.",
+    "@loginSubtitle": {
+        "description": "Subtitle on the login page explaining what edubadges are"
+    },
     "loginTitle": "Never stop learning",
+    "@loginTitle": {
+        "description": "Main title displayed on the login page"
+    },
     "generalAgreementTitle": "Privacy Policy",
+    "@generalAgreementTitle": {
+        "description": "Title for the general privacy policy agreement section"
+    },
     "generalAgreementButtonReadMore": "Read more",
+    "@generalAgreementButtonReadMore": {
+        "description": "Button text to expand and read more of the agreement text"
+    },
     "generalAgreementButtonRead": "Read",
+    "@generalAgreementButtonRead": {
+        "description": "Button text to read the full agreement"
+    },
     "tabAccount": "Account",
+    "@tabAccount": {
+        "description": "Navigation tab label for the account section"
+    },
     "tabBadges": "Edubadges",
+    "@tabBadges": {
+        "description": "Navigation tab label for the edubadges section"
+    },
     "tabCatalog": "Catalog",
+    "@tabCatalog": {
+        "description": "Navigation tab label for the catalog section"
+    },
     "tabCollections": "Collections",
+    "@tabCollections": {
+        "description": "Navigation tab label for the collections section"
+    },
+    "search": "Search",
+    "@search": {
+        "description": "Label or button text for search functionality"
+    },
+    "filters": "Filters",
+    "@filters": {
+        "description": "Label or button text for filter options"
+    },
+    "allLevels": "All levels",
+    "@allLevels": {
+        "description": "Filter option to show badges from all educational levels"
+    },
+    "mbo": "MBO",
+    "@mbo": {
+        "description": "Filter option for MBO (Middelbaar Beroepsonderwijs - secondary vocational education) level"
+    },
+    "hbo": "HBO",
+    "@hbo": {
+        "description": "Filter option for HBO (Hoger Beroepsonderwijs - higher professional education) level"
+    },
+    "wo": "WO",
+    "@wo": {
+        "description": "Filter option for WO (Wetenschappelijk Onderwijs - university education) level"
+    },
+    "allInstitutions": "All educational institutions",
+    "@allInstitutions": {
+        "description": "Filter option to show badges from all educational institutions"
+    },
+    "searchPlaceholder": "Search...",
+    "@searchPlaceholder": {
+        "description": "Placeholder text displayed in search input fields"
+    },
     "newCollection": "New collection",
+    "@newCollection": {
+        "description": "Button text or title for creating a new collection"
+    },
     "newCollectionDescription": "Create a new collection and share it with acquaintances.",
+    "@newCollectionDescription": {
+        "description": "Description text explaining the purpose of creating a new collection"
+    },
     "collectionName": "Name",
+    "@collectionName": {
+        "description": "Label for the collection name input field"
+    },
     "collectionNamePlaceholder": "Name of the collection",
+    "@collectionNamePlaceholder": {
+        "description": "Placeholder text for the collection name input field"
+    },
     "collectionDescription": "Description",
+    "@collectionDescription": {
+        "description": "Label for the collection description input field"
+    },
     "collectionDescriptionPlaceholder": "Description of the collection",
+    "@collectionDescriptionPlaceholder": {
+        "description": "Placeholder text for the collection description input field"
+    },
     "save": "Save",
+    "@save": {
+        "description": "Button text to save changes or create new items"
+    },
     "cancel": "Cancel",
+    "@cancel": {
+        "description": "Button text to cancel an action or close a dialog"
+    },
     "collectionNameRequired": "Name is required",
+    "@collectionNameRequired": {
+        "description": "Error message shown when collection name is not provided"
+    },
     "addEdubadgesToCollection": "Add edubadges to your collection",
+    "@addEdubadgesToCollection": {
+        "description": "Title or header for the section where users can add edubadges to a collection"
+    },
     "addEdubadgesToCollectionDescription": "Bundle edubadges in your collection to manage them clearly and share them easily.",
+    "@addEdubadgesToCollectionDescription": {
+        "description": "Description explaining the benefits of adding edubadges to a collection"
+    },
     "addEdubadge": "Add Edubadge",
+    "@addEdubadge": {
+        "description": "Button text to add an edubadge to a collection"
+    },
     "areYouSure": "Are you sure?",
+    "@areYouSure": {
+        "description": "Confirmation dialog title asking for user confirmation"
+    },
     "deleteCollectionConfirmation": "You are about to delete a collection.",
+    "@deleteCollectionConfirmation": {
+        "description": "Confirmation message shown when user attempts to delete a collection"
+    },
     "delete": "Delete",
+    "@delete": {
+        "description": "Button text to delete an item"
+    },
     "notificationPermissionsTitle": "Stay informed",
+    "@notificationPermissionsTitle": {
+        "description": "Title for the notification permissions request dialog"
+    },
     "notificationPermissionsSubtitle": "Edubadge can send you a notification when something is ready for you, such as a new badge or an important update.",
+    "@notificationPermissionsSubtitle": {
+        "description": "Subtitle explaining what notifications will be used for"
+    },
     "notificationPermissionsLabel": "You can always change this later in the settings.",
+    "@notificationPermissionsLabel": {
+        "description": "Label informing users they can change notification settings later"
+    },
     "notificationPermissionsButtonAllow": "Allow notifications",
+    "@notificationPermissionsButtonAllow": {
+        "description": "Button text to allow notification permissions"
+    },
     "notificationPermissionsButtonDeny": "Not now",
+    "@notificationPermissionsButtonDeny": {
+        "description": "Button text to deny or postpone notification permissions"
+    },
     "accountData": "Data",
+    "@accountData": {
+        "description": "Section header for account data in the account settings"
+    },
     "confirmedName": "Confirmed name",
+    "@confirmedName": {
+        "description": "Label for the user's confirmed name field in account settings"
+    },
     "providedByInstitution": "Provided by your institution",
+    "@providedByInstitution": {
+        "description": "Label indicating information is provided by the user's educational institution"
+    },
     "emailAddress": "Email address",
+    "@emailAddress": {
+        "description": "Label for the email address field in account settings"
+    },
     "institution": "Institution",
+    "@institution": {
+        "description": "Label for the educational institution field"
+    },
     "eduid": "#eduid",
+    "@eduid": {
+        "description": "Label for the eduID identifier field"
+    },
     "memberSince": "Member since",
+    "@memberSince": {
+        "description": "Label showing when the user became a member"
+    },
     "notificationSettings": "Notification settings",
+    "@notificationSettings": {
+        "description": "Section header or link text for notification settings"
+    },
     "generalNotifications": "General notifications",
+    "@generalNotifications": {
+        "description": "Label for general notification settings toggle"
+    },
     "givenAgreements": "Given agreement(s)",
+    "@givenAgreements": {
+        "description": "Section header for agreements the user has given"
+    },
     "agreementsDescription": "You can withdraw your given agreement(s).",
+    "@agreementsDescription": {
+        "description": "Description explaining that users can withdraw their agreements"
+    },
     "deleteAccount": "Delete your edubadges account",
+    "@deleteAccount": {
+        "description": "Section header or button text for account deletion"
+    },
     "deleteAccountDescription": "You can delete your edubadges account if you wish. Be aware that after this, all your edubadges can no longer be validated.\n\nDeleting your edubadges account does not mean that your eduID will also be deleted.\n\nTo complete the process of deleting your edubadges account, you must close your browser after your account has been deleted.",
+    "@deleteAccountDescription": {
+        "description": "Detailed description explaining the consequences of deleting an edubadges account"
+    },
     "deleteMyAccount": "Delete my account",
+    "@deleteMyAccount": {
+        "description": "Button text to confirm account deletion"
+    },
     "somethingWentWrong": "Something went wrong",
+    "@somethingWentWrong": {
+        "description": "Generic error message displayed when an error occurs"
+    },
     "retry": "Retry",
+    "@retry": {
+        "description": "Button text to retry a failed operation"
+    },
     "noProfileData": "No profile data",
+    "@noProfileData": {
+        "description": "Message shown when no profile data is available"
+    },
     "logoutConfirmationTitle": "Are you sure?",
+    "@logoutConfirmationTitle": {
+        "description": "Title for the logout confirmation dialog"
+    },
     "logoutConfirmationMessage": "You are about to log out.",
+    "@logoutConfirmationMessage": {
+        "description": "Message in the logout confirmation dialog"
+    },
     "logout": "Log out",
+    "@logout": {
+        "description": "Button text to log out of the application"
+    },
     "deleteAccountConfirmationTitle": "Delete my account",
+    "@deleteAccountConfirmationTitle": {
+        "description": "Title for the account deletion confirmation dialog"
+    },
     "deleteAccountConfirmationMessage": "Be aware that after this, all your edubadges can no longer be validated. Deleting your edubadges account does not mean that your eduID will also be deleted.",
+    "@deleteAccountConfirmationMessage": {
+        "description": "Warning message in the account deletion confirmation dialog"
+    },
     "deleteAccountConfirmationPrompt": "Type the word 'delete' to permanently delete my badges",
+    "@deleteAccountConfirmationPrompt": {
+        "description": "Prompt asking user to type 'delete' to confirm account deletion"
+    },
     "deleteAccountInputPlaceholder": "Type 'delete'",
+    "@deleteAccountInputPlaceholder": {
+        "description": "Placeholder text for the account deletion confirmation input field"
+    },
     "deleteAccountRequiredText": "delete",
+    "@deleteAccountRequiredText": {
+        "description": "The text that must be typed to confirm account deletion"
+    },
     "privacyConditions": "Privacy conditions",
+    "@privacyConditions": {
+        "description": "Label or title for privacy conditions section"
+    },
     "withdraw": "Withdraw",
+    "@withdraw": {
+        "description": "Button text to withdraw an agreement or consent"
+    },
     "viewFullText": "View full text",
+    "@viewFullText": {
+        "description": "Button text to expand and view the full text of an agreement"
+    },
     "viewShortText": "View short text",
+    "@viewShortText": {
+        "description": "Button text to collapse and view the short version of text"
+    },
     "withdrawAgreementTitle": "Withdraw my agreement statement",
+    "@withdrawAgreementTitle": {
+        "description": "Title for the withdraw agreement confirmation dialog"
+    },
     "withdrawAgreementMessage": "Are you sure you want to withdraw your agreement statement for {institution}?",
     "@withdrawAgreementMessage": {
+        "description": "Confirmation message asking if user wants to withdraw their agreement for a specific institution",
         "placeholders": {
             "institution": {
                 "type": "String"
@@ -72,8 +291,12 @@
         }
     },
     "confirm": "Confirm",
+    "@confirm": {
+        "description": "Button text to confirm an action"
+    },
     "countHours": "{count, plural, =1{1 hour} other{{count} hours}}",
     "@countHours": {
+        "description": "Pluralized string displaying the number of hours",
         "placeholders": {
             "count": {
                 "type": "num",
@@ -82,8 +305,12 @@
         }
     },
     "noCollectionsYet": "No collections yet",
+    "@noCollectionsYet": {
+        "description": "Message shown when user has no collections"
+    },
     "countEdubadges": "{count, plural, =1{1 edubadge} other{{count} edubadges}}",
     "@countEdubadges": {
+        "description": "Pluralized string displaying the number of edubadges",
         "placeholders": {
             "count": {
                 "type": "num",
@@ -92,22 +319,68 @@
         }
     },
     "errorLoadingCollections": "Error loading collections",
+    "@errorLoadingCollections": {
+        "description": "Error message shown when collections fail to load"
+    },
     "collectionVisibleAndShareable": "Collection visible and shareable",
+    "@collectionVisibleAndShareable": {
+        "description": "Label indicating that a collection is publicly visible and can be shared"
+    },
     "publicCollectionRequires": "A public collection requires at least 1 public edubadge",
+    "@publicCollectionRequires": {
+        "description": "Informational message explaining the requirement for making a collection public"
+    },
     "privateBadgesError": "One or more badges are private, make them public to make this collection public.",
+    "@privateBadgesError": {
+        "description": "Error message shown when trying to make a collection public with private badges"
+    },
     "linkCopied": "Link copied",
+    "@linkCopied": {
+        "description": "Success message shown when a link is copied to clipboard"
+    },
     "copyLink": "Copy link",
+    "@copyLink": {
+        "description": "Button text to copy a link to clipboard"
+    },
     "errorLoadingCollection": "Error loading collection",
+    "@errorLoadingCollection": {
+        "description": "Error message shown when a collection fails to load"
+    },
     "goBack": "Go Back",
+    "@goBack": {
+        "description": "Button text to navigate back to the previous screen"
+    },
     "editCollection": "Edit collection",
+    "@editCollection": {
+        "description": "Button text or title for editing a collection"
+    },
     "editCollectionDescription": "Update your collection details",
+    "@editCollectionDescription": {
+        "description": "Description text for the edit collection screen"
+    },
     "continueText": "Continue",
+    "@continueText": {
+        "description": "Button text to continue to the next step"
+    },
     "addEdubadges": "Add Edubadges",
+    "@addEdubadges": {
+        "description": "Button text to add multiple edubadges"
+    },
     "selectAtLeastOneBadge": "Select at least one badge",
+    "@selectAtLeastOneBadge": {
+        "description": "Error or validation message requiring at least one badge to be selected"
+    },
     "noBadgesAvailable": "No badges available",
+    "@noBadgesAvailable": {
+        "description": "Message shown when there are no badges available to display or select"
+    },
     "add": "Add",
+    "@add": {
+        "description": "Button text to add an item"
+    },
     "newBadgeReady": "{count, plural, =1{There is 1 new edubadge ready} other{There are {count} new edubadges ready}}",
     "@newBadgeReady": {
+        "description": "Notification message informing user about new edubadges ready to claim",
         "placeholders": {
             "count": {
                 "type": "num",
@@ -116,49 +389,176 @@
         }
     },
     "requestedBadges": "Requested badges",
+    "@requestedBadges": {
+        "description": "Section header for badges that have been requested by the user"
+    },
     "noEdubadgesYet": "You don't have any edubadges yet",
+    "@noEdubadgesYet": {
+        "description": "Message shown when user has no edubadges in their collection"
+    },
     "giveFeedback": "Give feedback",
+    "@giveFeedback": {
+        "description": "Button text or title for providing feedback"
+    },
     "giveFeedbackDescription": "We'd love to hear what you think about the app. Leave your feedback below.",
+    "@giveFeedbackDescription": {
+        "description": "Description encouraging users to provide feedback about the app"
+    },
     "feedback": "Feedback",
+    "@feedback": {
+        "description": "Label for the feedback input field"
+    },
     "feedbackPlaceholder": "Type your feedback here...",
+    "@feedbackPlaceholder": {
+        "description": "Placeholder text for the feedback input field"
+    },
     "feedbackRequired": "Feedback is required",
+    "@feedbackRequired": {
+        "description": "Error message shown when feedback field is empty"
+    },
     "aboutThisEdubadge": "About this Edubadge",
+    "@aboutThisEdubadge": {
+        "description": "Section header for information about a specific edubadge"
+    },
     "theEdubadge": "The Edubadge",
+    "@theEdubadge": {
+        "description": "Section header for edubadge details"
+    },
     "issuedOn": "Issued on",
+    "@issuedOn": {
+        "description": "Label for the date when the edubadge was issued"
+    },
     "expiresOn": "Expires on",
+    "@expiresOn": {
+        "description": "Label for the date when the edubadge expires"
+    },
     "type": "Type",
+    "@type": {
+        "description": "Label for the type field of an edubadge"
+    },
     "badgeTheProgram": "The program",
+    "@badgeTheProgram": {
+        "description": "Section header for program information related to the badge"
+    },
     "badgeTheAssessment": "The assessment",
+    "@badgeTheAssessment": {
+        "description": "Section header for assessment information related to the badge"
+    },
     "learningOutcomes": "Learning outcomes",
+    "@learningOutcomes": {
+        "description": "Label for the learning outcomes section describing what was learned"
+    },
     "studyLoad": "Study load",
+    "@studyLoad": {
+        "description": "Label for the study load or time commitment required"
+    },
     "language": "Language",
+    "@language": {
+        "description": "Label for the language field"
+    },
     "languageDutch": "Dutch",
+    "@languageDutch": {
+        "description": "Language option for Dutch"
+    },
     "languageEnglish": "English",
+    "@languageEnglish": {
+        "description": "Language option for English"
+    },
     "assessmentWrittenExam": "(Written) Exam",
+    "@assessmentWrittenExam": {
+        "description": "Assessment type option for written or exam-based assessment"
+    },
     "assessmentReportPaper": "Report / paper",
+    "@assessmentReportPaper": {
+        "description": "Assessment type option for report or paper submission"
+    },
     "assessmentBehaviouralAssessment": "Behavioural assessment",
+    "@assessmentBehaviouralAssessment": {
+        "description": "Assessment type option for behavioural assessment"
+    },
     "assessmentProfessionalProduct": "Professional product",
+    "@assessmentProfessionalProduct": {
+        "description": "Assessment type option for professional product creation"
+    },
     "assessmentDevelopmentReport": "Development report / reflection report",
+    "@assessmentDevelopmentReport": {
+        "description": "Assessment type option for development or reflection report"
+    },
     "assessmentPortfolioAssessment": "Portfolio / portfolio assessment",
+    "@assessmentPortfolioAssessment": {
+        "description": "Assessment type option for portfolio-based assessment"
+    },
     "assessmentOramExam": "Presentation / Oral exam",
+    "@assessmentOramExam": {
+        "description": "Assessment type option for presentation or oral examination"
+    },
     "assessmentPersonalizedAssessment": "Personalized type of assessment",
+    "@assessmentPersonalizedAssessment": {
+        "description": "Assessment type option for personalized or custom assessment"
+    },
     "supervised": "Supervised",
+    "@supervised": {
+        "description": "Label indicating that an assessment was supervised"
+    },
     "assessmentSupervisedWithIdentityVerification": "Supervised with identity verification",
+    "@assessmentSupervisedWithIdentityVerification": {
+        "description": "Assessment supervision type with identity verification"
+    },
     "assessmentWithIdentityVerification": "With identity verification",
+    "@assessmentWithIdentityVerification": {
+        "description": "Assessment type that includes identity verification"
+    },
     "assessmentType": "Assessment type",
+    "@assessmentType": {
+        "description": "Label for the assessment type field"
+    },
     "online": "Online",
+    "@online": {
+        "description": "Option indicating online format or delivery"
+    },
     "onsite": "On-site",
+    "@onsite": {
+        "description": "Option indicating on-site or in-person format"
+    },
     "blended": "Blended",
+    "@blended": {
+        "description": "Option indicating blended (combination of online and on-site) format"
+    },
     "workExperience": "Work experience",
+    "@workExperience": {
+        "description": "Label for work experience section or requirement"
+    },
     "formOfParticipation": "Form of participation",
+    "@formOfParticipation": {
+        "description": "Label indicating how the user participated in the program"
+    },
     "indicativeLevel": "(Indicative) EQF/NLQF",
+    "@indicativeLevel": {
+        "description": "Label for the indicative level using European or Dutch Qualifications Framework"
+    },
     "never": "Never",
+    "@never": {
+        "description": "Option indicating 'never' for expiration or other temporal fields"
+    },
     "claimEdubadge": "Claim edubadge",
+    "@claimEdubadge": {
+        "description": "Button text to claim an edubadge that has been awarded"
+    },
     "decline": "Decline",
+    "@decline": {
+        "description": "Button text to decline or reject an offer or badge"
+    },
     "declineBadgeTitle": "Decline edubadge",
+    "@declineBadgeTitle": {
+        "description": "Title for the dialog confirming badge decline"
+    },
     "declineBadgeConfirmation": "You are about to decline this edubadge. This action is final and cannot be undone.",
+    "@declineBadgeConfirmation": {
+        "description": "Warning message shown when user is about to decline a badge"
+    },
     "badgesRemainingToClaim": "{count, plural, =0{No more edu-badges to claim} =1{Still 1 edu-badge to claim} other{Still {count} edu-badges to claim}}",
     "@badgesRemainingToClaim": {
+        "description": "Message showing how many edubadges remain to be claimed",
         "placeholders": {
             "count": {
                 "type": "num",
@@ -167,12 +567,28 @@
         }
     },
     "badgePrivacyTitle": "Edubadges and your privacy",
+    "@badgePrivacyTitle": {
+        "description": "Title for the privacy information section related to edubadges"
+    },
     "badgePrivacyReadButton": "I have read this",
+    "@badgePrivacyReadButton": {
+        "description": "Button text to acknowledge reading privacy information"
+    },
     "badgePrivacyViewFullText": "View full text",
+    "@badgePrivacyViewFullText": {
+        "description": "Button text to view the full privacy policy text"
+    },
     "badgeClaimSuccessTitle": "Congratulations!",
+    "@badgeClaimSuccessTitle": {
+        "description": "Title shown on successful badge claim"
+    },
     "badgeClaimSuccessSubtitle": "You have claimed a new edubadge",
+    "@badgeClaimSuccessSubtitle": {
+        "description": "Subtitle shown on successful badge claim"
+    },
     "claimNextBadge": "{count, plural, =1{Claim 1 more edubadge} other{Claim {count} more edubadges}}",
     "@claimNextBadge": {
+        "description": "Button text to claim additional edubadges showing how many remain",
         "placeholders": {
             "count": {
                 "type": "num",
@@ -181,19 +597,120 @@
         }
     },
     "goToOverview": "Go to your overview",
+    "@goToOverview": {
+        "description": "Button text to navigate to the overview screen"
+    },
     "badgeClaimErrorTitle": "Something went wrong",
+    "@badgeClaimErrorTitle": {
+        "description": "Title shown when badge claim fails"
+    },
     "badgeClaimErrorSubtitle": "Your edubadge cannot be claimed at this time. Don't worry, your progress has been saved. Please try again later.",
+    "@badgeClaimErrorSubtitle": {
+        "description": "Subtitle explaining the badge claim error and next steps"
+    },
     "microCredential": "Microcredential",
+    "@microCredential": {
+        "description": "Badge type label for microcredential badges"
+    },
     "regular": "Regular",
+    "@regular": {
+        "description": "Badge type label for regular badges"
+    },
     "extraCurricular": "Extra curricular",
+    "@extraCurricular": {
+        "description": "Badge type label for extra-curricular activities"
+    },
     "badgeVisibleAndShareable": "Edubadge visible and shareable",
+    "@badgeVisibleAndShareable": {
+        "description": "Toggle label for making a badge publicly visible and shareable"
+    },
     "badgeVisibleAndShareableDescription": "With this setting, you determine whether your edubadge is public and can be viewed by others when you share it.",
+    "@badgeVisibleAndShareableDescription": {
+        "description": "Description explaining the badge visibility and sharing setting"
+    },
     "toMakePublic": "To make public",
+    "@toMakePublic": {
+        "description": "Label or button text for making something public"
+    },
     "badgePublicShareWarning": "To share this Edubadge, it must be made public.",
+    "@badgePublicShareWarning": {
+        "description": "Warning message that badge must be public to share"
+    },
     "makePublic": "Make public",
+    "@makePublic": {
+        "description": "Button text to make a badge public"
+    },
     "makeBadgePublicIncludeEvidence": "Include evidence/personal message in the public information for this edubadge?",
+    "@makeBadgePublicIncludeEvidence": {
+        "description": "Checkbox label asking if evidence should be included when making badge public"
+    },
     "makeBadgePublicIncludeGradeAchieved": "Include the earned grade in the public information for this edubadge?",
+    "@makeBadgePublicIncludeGradeAchieved": {
+        "description": "Checkbox label asking if grade should be included when making badge public"
+    },
     "actionMakePrivate": "Make private",
+    "@actionMakePrivate": {
+        "description": "Button text to make a badge private"
+    },
     "labelMakePrivate": "Make private",
-    "badgeMakePrivateWarning": "Are you sure you want to make this edubadge private?"
+    "@labelMakePrivate": {
+        "description": "Label for the make private action"
+    },
+    "badgeMakePrivateWarning": "Are you sure you want to make this edubadge private?",
+    "@badgeMakePrivateWarning": {
+        "description": "Confirmation message when making a badge private"
+    },
+    "badgeLinkCopied": "Edubadge link copied to clipboard",
+    "@badgeLinkCopied": {
+        "description": "Success message shown when badge link is copied"
+    },
+    "catalogNoSearchResults": "No search results found",
+    "@catalogNoSearchResults": {
+        "description": "Message shown when catalog search returns no results"
+    },
+    "catalogNoBadgesAvailable": "No badges available",
+    "@catalogNoBadgesAvailable": {
+        "description": "Message shown when catalog has no badges to display"
+    },
+    "catalogFailedToLoadInstitutions": "Failed to load institutions",
+    "@catalogFailedToLoadInstitutions": {
+        "description": "Error message shown when institutions fail to load in catalog"
+    },
+    "unableToLoad": "Unable to load",
+    "@unableToLoad": {
+        "description": "Generic error message for loading failures"
+    },
+    "unableToLoadSubtitle": "Please try again later",
+    "@unableToLoadSubtitle": {
+        "description": "Subtitle message suggesting user to retry later after a loading failure"
+    },
+    "failedToLoadTermsFrom": "Failed to load terms from {institution}",
+    "@failedToLoadTermsFrom": {
+        "placeholders": {
+            "institution": {
+                "type": "String"
+            }
+        }
+    },
+    "agreedOnDateVersion": "Agreed on {date}, version {version}",
+    "@agreedOnDateVersion": {
+        "placeholders": {
+            "date": {
+                "type": "DateTime",
+                "isCustomDateFormat": true,
+                "format": "MMM d, yyyy"
+            },
+            "version": {
+                "type": "String"
+            }
+        }
+    },
+    "notYetAgreedVersion": "Not yet agreed, version {version}",
+    "@notYetAgreedVersion": {
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
+    }
 }

@@ -47,6 +47,30 @@ class AppLocalizationsNl extends AppLocalizations {
   String get tabCollections => 'Collecties';
 
   @override
+  String get search => 'Zoeken';
+
+  @override
+  String get filters => 'Filters';
+
+  @override
+  String get allLevels => 'Alle niveaus';
+
+  @override
+  String get mbo => 'MBO';
+
+  @override
+  String get hbo => 'HBO';
+
+  @override
+  String get wo => 'WO';
+
+  @override
+  String get allInstitutions => 'Alle onderwijsinstellingen';
+
+  @override
+  String get searchPlaceholder => 'Zoek...';
+
+  @override
   String get newCollection => 'Nieuwe collectie';
 
   @override
@@ -542,4 +566,44 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get badgeMakePrivateWarning =>
       'Weet je het zeker dat je deze edubadge privé wilt maken?';
+
+  @override
+  String get badgeLinkCopied => 'Edubadge link is naar klembord gekopiëerd';
+
+  @override
+  String get catalogNoSearchResults => 'Geen zoekresultaten gevonden';
+
+  @override
+  String get catalogNoBadgesAvailable => 'Geen badges beschikbaar';
+
+  @override
+  String get catalogFailedToLoadInstitutions =>
+      'Fout bij het laden van instellingen';
+
+  @override
+  String get unableToLoad => 'Kon niet laden';
+
+  @override
+  String get unableToLoadSubtitle => 'Probeer het later opnieuw';
+
+  @override
+  String failedToLoadTermsFrom(String institution) {
+    return 'Fout bij het laden van voorwaarden van $institution';
+  }
+
+  @override
+  String agreedOnDateVersion(DateTime date, String version) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat(
+      'MMM d, yyyy',
+      localeName,
+    );
+    final String dateString = dateDateFormat.format(date);
+
+    return 'Akkoord op $dateString, versie $version';
+  }
+
+  @override
+  String notYetAgreedVersion(String version) {
+    return 'Nog niet akkoord, versie $version';
+  }
 }

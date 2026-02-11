@@ -25,9 +25,9 @@ By clicking 'I have read this', you declare that you have read the [full privacy
     return AgreementRouteModel(
       agreementId: agreementId,
       titleLong: privacyAgreementTitleLong,
-      textLong: privacyAgreementTextLong,
+      textUrlLong: privacyAgreementTextLong,
       titleShort: privacyAgreementTitle,
-      textShort: privacyAgreementTextShort,
+      textUrlShort: privacyAgreementTextShort,
     );
   }
 }

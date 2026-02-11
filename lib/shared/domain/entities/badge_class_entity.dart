@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:edubadges/shared/domain/entities/badge_class_extension_entity.dart';
 import 'package:edubadges/shared/domain/entities/issuer_entity.dart';
 import 'package:edubadges/shared/domain/enums/assessment_type.dart';
@@ -55,4 +56,22 @@ class BadgeClassEntity extends Equatable {
         badgeclassextensionSet,
         issuer,
       ];
+}
+
+extension BadgeClassExtensions on BadgeClassEntity {
+  T? getExtensionValue<T>(String extensionName) {
+    final match = badgeclassextensionSet?.firstWhereOrNull(
+      (element) => element.name == extensionName,
+    );
+
+    final value = match?.value;
+    if (match?.value == null) return null;
+
+    // Handle int to double conversion when T expects a double
+    if (value is int && T.toString().contains('double')) {
+      return value.toDouble() as T;
+    }
+
+    return value as T?;
+  }
 }

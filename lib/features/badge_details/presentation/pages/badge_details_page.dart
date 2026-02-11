@@ -2,20 +2,24 @@ import 'package:edubadges/app/constants.dart';
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/utils/string.dart';
+import 'package:edubadges/core/widgets/info_state_view.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_detail_item_model.dart';
+import 'package:edubadges/features/badge_details/data/models/badge_details_model.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/constants/badge_extensions.dart';
+import 'package:edubadges/features/badge_details/domain/entities/badge_details_params.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
-import 'package:edubadges/features/badge_details/domain/extensions/badge_instance_extensions.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/features/badge_details/presentation/widgets/badge_visibility_card.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
-import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
+import 'package:edubadges/shared/data/models/badge_class_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_class_entity.dart';
 import 'package:edubadges/shared/domain/enums/assessment_type.dart';
 import 'package:edubadges/shared/domain/enums/badge_class_type.dart';
 import 'package:edubadges/shared/domain/enums/participation_type.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
+import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -83,10 +87,9 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     });
   }
 
-  String? getAssessmentSupervisedStatus(BadgeInstanceEntity? details) {
-    if (details == null) return null;
+  String? getAssessmentSupervisedStatus(BadgeClassEntity? badgeclass) {
+    if (badgeclass == null) return null;
     final l10n = AppLocalizations.of(context);
-    final badgeclass = details.badgeclass;
     final isIdVerified = badgeclass.assessmentIdVerified == true;
     final isSupervised = badgeclass.assessmentSupervised == true;
 
@@ -122,6 +125,8 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
 
   Widget _buildCarouselView() {
     final badgesAsync = ref.watch(badgesListProvider);
+    final l10n = AppLocalizations.of(context);
+
 
     return ListView(
       children: [
@@ -142,16 +147,18 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: BadgeCard(
                       instance: badges.claimedBadges[index],
+                      badgeClass:
+                          badges.claimedBadges[index].badgeclass
+                              as BadgeClassModel,
                       style: BadgeCardStyle.large,
+                      onTapDisabled: true,
                     ),
                   );
                 },
               );
             },
-            //TODO: Add loading indicator
-            loading: () => const Center(child: SizedBox()),
-            //TODO: Add error indicator
-            error: (error, _) => Center(child: SizedBox()),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, _) => Center(child: ErrorMessageWidget()),
           ),
         ),
 
@@ -159,76 +166,125 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           data: (badges) {
             if (badges.claimedBadges.isEmpty ||
                 _currentIndex >= badges.claimedBadges.length) {
-              return [const Center(child: Text('No badge'))];
+              return [
+                Center(
+                  child: InfoStateView(
+                    assetPath: Assets.iconBackpack,
+                    description: l10n.noEdubadgesYet,
+                  ),
+                ),
+              ];
             }
 
             final currentBadgeId = badges.claimedBadges[_currentIndex].entityId;
-            return _buildBadgeDetailsContent(currentBadgeId);
+            return _buildBadgeDetailsContent(currentBadgeId, null);
           },
-          //TODO: Add loading indicator
-          loading: () => [const Center(child: SizedBox())],
-          //TODO: Add error indicator
-          error: (error, _) => [Center(child: SizedBox())],
+          loading: () => [const Center(child: CircularProgressIndicator())],
+          error: (error, _) => [Center(child: ErrorMessageWidget())],
         ),
       ],
     );
   }
 
   Widget _buildSingleBadgeView() {
-    final badge = ref.watch(badgeByIdProvider(widget.badge.id));
+    final badgeDetailsAsync = ref.watch(
+      badgeDetailsModelProvider(
+        BadgeDetailsParams(
+          badgeInstanceEntityId:
+              widget.badge.from == BadgeDetailsRouteFrom.overview
+              ? widget.badge.id
+              : null,
+          badgeClassEntityId: widget.badge.from == BadgeDetailsRouteFrom.catalog
+              ? widget.badge.id
+              : null,
+        ),
+      ),
+    );
 
     return ListView(
       children: [
         // TODO: Add error message
-        if (badge != null)
+        if (badgeDetailsAsync.value?.badgeClass != null)
           Container(
             height: _badgeCardHeight,
             margin: const EdgeInsets.symmetric(horizontal: 20),
             child: Center(
-              child: BadgeCard(instance: badge, style: BadgeCardStyle.large),
+              child: BadgeCard(
+                instance: badgeDetailsAsync.value?.badgeInstance,
+                badgeClass: badgeDetailsAsync.value!.badgeClass,
+                style: BadgeCardStyle.large,
+                onTapDisabled: true,
+              ),
             ),
           ),
 
-        ..._buildBadgeDetailsContent(widget.badge.id),
+        ..._buildBadgeDetailsContent(widget.badge.id, badgeDetailsAsync),
       ],
     );
   }
 
-  List<Widget> _buildBadgeDetailsContent(String badgeId) {
-    final badgeDetailsAsync = ref.watch(badgeDetailsProvider(badgeId));
+  List<Widget> _buildBadgeDetailsContent(
+    String badgeId,
+    AsyncValue<BadgeDetailsModel?>? badgeDetailsAsync,
+  ) {
+    AsyncValue<BadgeDetailsModel?> badgeDetailsValue =
+        badgeDetailsAsync ??
+        ref.watch(badgeDetailsModelProvider(_createBadgeParams(badgeId)));
 
-    return badgeDetailsAsync.when(
+    return badgeDetailsValue.when(
       data: (details) => [..._buildBadgeDetails(details)],
-      //TODO: Add loading indicator
-      loading: () => [const Center(child: SizedBox())],
-      //TODO: Add error indicator
-      error: (error, _) => [Center(child: SizedBox())],
+      loading: () => [const Center(child: CircularProgressIndicator())],
+      error: (error, _) => [Center(child: ErrorMessageWidget())],
     );
   }
 
-  List<Widget> _buildBadgeDetails(BadgeInstanceEntity? details) {
+  BadgeDetailsParams _createBadgeParams(String badgeId) {
+    return switch (widget.badge.from) {
+      BadgeDetailsRouteFrom.overview => BadgeDetailsParams(
+        badgeInstanceEntityId: badgeId,
+        badgeClassEntityId: null,
+      ),
+      BadgeDetailsRouteFrom.catalog => BadgeDetailsParams(
+        badgeInstanceEntityId: null,
+        badgeClassEntityId: badgeId,
+      ),
+      BadgeDetailsRouteFrom.other => BadgeDetailsParams(
+        badgeInstanceEntityId: null,
+        badgeClassEntityId: null,
+      ),
+    };
+  }
+
+  List<Widget> _buildBadgeDetails(BadgeDetailsModel? details) {
     final l10n = AppLocalizations.of(context);
 
-    final learningOutcome = details?.getExtensionValue<String?>(
+    final learningOutcome = details?.badgeClass.getExtensionValue<String?>(
       BadgeExtensionKeys.learningOutcome,
     );
-    final eCTS = details?.getExtensionValue<double?>(BadgeExtensionKeys.ects);
+    final eCTS = details?.badgeClass.getExtensionValue<double?>(
+      BadgeExtensionKeys.ects,
+    );
     final language = languageCodeToString(
-      details?.getExtensionValue<String?>(BadgeExtensionKeys.language),
+      details?.badgeClass.getExtensionValue<String?>(
+        BadgeExtensionKeys.language,
+      ),
       context,
     );
-    final supervisedStatus = getAssessmentSupervisedStatus(details);
-    final assessmentType = details?.badgeclass.assessmentType;
-    final participation = details?.badgeclass.participation;
-    final eQF = details?.getExtensionValue<double?>(BadgeExtensionKeys.eQF);
+    final supervisedStatus = getAssessmentSupervisedStatus(details?.badgeClass);
+    final assessmentType = details?.badgeClass.assessmentType;
+    final participation = details?.badgeClass.participation;
+    final eQF = details?.badgeClass.getExtensionValue<double?>(
+      BadgeExtensionKeys.eQF,
+    );
 
     return [
-      if (details != null) BadgeVisibilityCard(badge: details),
-      if (details?.badgeclass.description != null)
+      if (details?.badgeInstance != null)
+        BadgeVisibilityCard(badge: details!.badgeInstance!),
+      if (details?.badgeClass.description != null)
         _buildSectionCard(
           title: l10n.aboutThisEdubadge,
           item: MarkdownBody(
-            data: filterBadMarkdown(details!.badgeclass.description!),
+            data: filterBadMarkdown(details!.badgeClass.description!),
             styleSheet: AppThemes.markdownStyleSheet(context),
           ),
         ),
@@ -240,37 +296,41 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             styleSheet: AppThemes.markdownStyleSheet(context),
           ),
         ),
-      _buildSectionCard(
-        title: l10n.theEdubadge,
-        items: [
-          BadgeDetailItemModel(
-            icon: Assets.iconUnlockedAlternate,
-            title: l10n.issuedOn,
-            subtitle: DateFormat(
-              AppConstants.mediumDateFormat,
-              l10n.localeName,
-            ).format(details!.issuedOn),
-          ),
-          BadgeDetailItemModel(
-            icon: Assets.iconBadgeExpireDate,
-            title: l10n.expiresOn,
-            subtitle: details.expiresAt == null
-                ? l10n.never
-                : DateFormat(
-                    AppConstants.mediumDateFormat,
-                    l10n.localeName,
-                  ).format(details.expiresAt!),
-          ),
-        ],
-      ),
+      if (details?.badgeInstance != null)
+        _buildSectionCard(
+          title: l10n.theEdubadge,
+          items: [
+            BadgeDetailItemModel(
+              icon: Assets.iconUnlockedAlternate,
+              title: l10n.issuedOn,
+              subtitle: DateFormat(
+                AppConstants.mediumDateFormat,
+                l10n.localeName,
+              ).format(details!.badgeInstance!.issuedOn),
+            ),
+            BadgeDetailItemModel(
+              icon: Assets.iconBadgeExpireDate,
+              title: l10n.expiresOn,
+              subtitle: details.badgeInstance!.expiresAt == null
+                  ? l10n.never
+                  : DateFormat(
+                      AppConstants.mediumDateFormat,
+                      l10n.localeName,
+                    ).format(details.badgeInstance!.expiresAt!),
+            ),
+          ],
+        ),
       _buildSectionCard(
         title: l10n.badgeTheProgram,
         items: [
-          BadgeDetailItemModel(
-            icon: Assets.iconType,
-            title: l10n.type,
-            subtitle: details.badgeclass.badgeClassType.getLocalizedName(l10n),
-          ),
+          if (details != null)
+            BadgeDetailItemModel(
+              icon: Assets.iconType,
+              title: l10n.type,
+              subtitle: details.badgeClass.badgeClassType.getLocalizedName(
+                l10n,
+              ),
+            ),
           if (eCTS != null)
             BadgeDetailItemModel(
               icon: Assets.iconTimeInvestment,

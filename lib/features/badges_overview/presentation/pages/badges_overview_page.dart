@@ -6,7 +6,9 @@ import 'package:edubadges/features/badge_details/domain/enums/badge_details_rout
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/widgets/feedback_bottom_sheet.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
+import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -71,9 +73,10 @@ class BadgesOverviewPage extends ConsumerWidget {
                     },
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
+                      margin: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 16,
                       ),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -120,7 +123,7 @@ class BadgesOverviewPage extends ConsumerWidget {
             if (state.claimedBadges.isNotEmpty) {
               slivers.add(
                 SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       final badge = state.claimedBadges[index];
@@ -136,7 +139,9 @@ class BadgesOverviewPage extends ConsumerWidget {
                           },
                           child: BadgeCard(
                             instance: badge,
+                            badgeClass: badge.badgeclass as BadgeClassModel,
                             style: BadgeCardStyle.small,
+                            onTapFrom: BadgeDetailsRouteFrom.overview,
                           ),
                         ),
                       );
@@ -173,7 +178,9 @@ class BadgesOverviewPage extends ConsumerWidget {
                         padding: const EdgeInsets.only(bottom: 8),
                         child: BadgeCard(
                           instance: badge,
+                          badgeClass: badge.badgeclass as BadgeClassModel,
                           style: BadgeCardStyle.small,
+                          onTapFrom: BadgeDetailsRouteFrom.overview,
                         ),
                       );
                     }, childCount: state.requestedBadges.length),
@@ -218,7 +225,9 @@ class BadgesOverviewPage extends ConsumerWidget {
             ],
           ),
           error: (error, stackTrace) => const CustomScrollView(
-            slivers: [SliverFillRemaining(child: Center(child: SizedBox()))],
+            slivers: [
+              SliverFillRemaining(child: Center(child: ErrorMessageWidget())),
+            ],
           ),
         ),
       ),

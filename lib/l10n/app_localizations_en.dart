@@ -47,6 +47,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tabCollections => 'Collections';
 
   @override
+  String get search => 'Search';
+
+  @override
+  String get filters => 'Filters';
+
+  @override
+  String get allLevels => 'All levels';
+
+  @override
+  String get mbo => 'MBO';
+
+  @override
+  String get hbo => 'HBO';
+
+  @override
+  String get wo => 'WO';
+
+  @override
+  String get allInstitutions => 'All educational institutions';
+
+  @override
+  String get searchPlaceholder => 'Search...';
+
+  @override
   String get newCollection => 'New collection';
 
   @override
@@ -541,4 +565,43 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get badgeMakePrivateWarning =>
       'Are you sure you want to make this edubadge private?';
+
+  @override
+  String get badgeLinkCopied => 'Edubadge link copied to clipboard';
+
+  @override
+  String get catalogNoSearchResults => 'No search results found';
+
+  @override
+  String get catalogNoBadgesAvailable => 'No badges available';
+
+  @override
+  String get catalogFailedToLoadInstitutions => 'Failed to load institutions';
+
+  @override
+  String get unableToLoad => 'Unable to load';
+
+  @override
+  String get unableToLoadSubtitle => 'Please try again later';
+
+  @override
+  String failedToLoadTermsFrom(String institution) {
+    return 'Failed to load terms from $institution';
+  }
+
+  @override
+  String agreedOnDateVersion(DateTime date, String version) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat(
+      'MMM d, yyyy',
+      localeName,
+    );
+    final String dateString = dateDateFormat.format(date);
+
+    return 'Agreed on $dateString, version $version';
+  }
+
+  @override
+  String notYetAgreedVersion(String version) {
+    return 'Not yet agreed, version $version';
+  }
 }

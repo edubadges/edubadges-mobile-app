@@ -98,893 +98,995 @@ abstract class AppLocalizations {
     Locale('nl'),
   ];
 
-  /// No description provided for @appName.
+  /// The name of the application displayed throughout the app
   ///
   /// In en, this message translates to:
   /// **'Edubadges'**
   String get appName;
 
-  /// No description provided for @loginCardButton.
+  /// Button text on the login card to navigate to the user's edubadges
   ///
   /// In en, this message translates to:
   /// **'Go to my edubadges'**
   String get loginCardButton;
 
-  /// No description provided for @loginCardText.
+  /// Explanatory text on the login card describing the app and eduID requirement
   ///
   /// In en, this message translates to:
   /// **'My Badges is the place to receive and collect edubadges. An eduID is required to create and use \"My Badges.\" Creating an eduID takes less than 30 seconds.'**
   String get loginCardText;
 
-  /// No description provided for @loginSubtitle.
+  /// Subtitle on the login page explaining what edubadges are
   ///
   /// In en, this message translates to:
   /// **'Edubadges are digital certificates that demonstrate the knowledge or skills someone has acquired, within or outside formal education.'**
   String get loginSubtitle;
 
-  /// No description provided for @loginTitle.
+  /// Main title displayed on the login page
   ///
   /// In en, this message translates to:
   /// **'Never stop learning'**
   String get loginTitle;
 
-  /// No description provided for @generalAgreementTitle.
+  /// Title for the general privacy policy agreement section
   ///
   /// In en, this message translates to:
   /// **'Privacy Policy'**
   String get generalAgreementTitle;
 
-  /// No description provided for @generalAgreementButtonReadMore.
+  /// Button text to expand and read more of the agreement text
   ///
   /// In en, this message translates to:
   /// **'Read more'**
   String get generalAgreementButtonReadMore;
 
-  /// No description provided for @generalAgreementButtonRead.
+  /// Button text to read the full agreement
   ///
   /// In en, this message translates to:
   /// **'Read'**
   String get generalAgreementButtonRead;
 
-  /// No description provided for @tabAccount.
+  /// Navigation tab label for the account section
   ///
   /// In en, this message translates to:
   /// **'Account'**
   String get tabAccount;
 
-  /// No description provided for @tabBadges.
+  /// Navigation tab label for the edubadges section
   ///
   /// In en, this message translates to:
   /// **'Edubadges'**
   String get tabBadges;
 
-  /// No description provided for @tabCatalog.
+  /// Navigation tab label for the catalog section
   ///
   /// In en, this message translates to:
   /// **'Catalog'**
   String get tabCatalog;
 
-  /// No description provided for @tabCollections.
+  /// Navigation tab label for the collections section
   ///
   /// In en, this message translates to:
   /// **'Collections'**
   String get tabCollections;
 
-  /// No description provided for @newCollection.
+  /// Label or button text for search functionality
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// Label or button text for filter options
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get filters;
+
+  /// Filter option to show badges from all educational levels
+  ///
+  /// In en, this message translates to:
+  /// **'All levels'**
+  String get allLevels;
+
+  /// Filter option for MBO (Middelbaar Beroepsonderwijs - secondary vocational education) level
+  ///
+  /// In en, this message translates to:
+  /// **'MBO'**
+  String get mbo;
+
+  /// Filter option for HBO (Hoger Beroepsonderwijs - higher professional education) level
+  ///
+  /// In en, this message translates to:
+  /// **'HBO'**
+  String get hbo;
+
+  /// Filter option for WO (Wetenschappelijk Onderwijs - university education) level
+  ///
+  /// In en, this message translates to:
+  /// **'WO'**
+  String get wo;
+
+  /// Filter option to show badges from all educational institutions
+  ///
+  /// In en, this message translates to:
+  /// **'All educational institutions'**
+  String get allInstitutions;
+
+  /// Placeholder text displayed in search input fields
+  ///
+  /// In en, this message translates to:
+  /// **'Search...'**
+  String get searchPlaceholder;
+
+  /// Button text or title for creating a new collection
   ///
   /// In en, this message translates to:
   /// **'New collection'**
   String get newCollection;
 
-  /// No description provided for @newCollectionDescription.
+  /// Description text explaining the purpose of creating a new collection
   ///
   /// In en, this message translates to:
   /// **'Create a new collection and share it with acquaintances.'**
   String get newCollectionDescription;
 
-  /// No description provided for @collectionName.
+  /// Label for the collection name input field
   ///
   /// In en, this message translates to:
   /// **'Name'**
   String get collectionName;
 
-  /// No description provided for @collectionNamePlaceholder.
+  /// Placeholder text for the collection name input field
   ///
   /// In en, this message translates to:
   /// **'Name of the collection'**
   String get collectionNamePlaceholder;
 
-  /// No description provided for @collectionDescription.
+  /// Label for the collection description input field
   ///
   /// In en, this message translates to:
   /// **'Description'**
   String get collectionDescription;
 
-  /// No description provided for @collectionDescriptionPlaceholder.
+  /// Placeholder text for the collection description input field
   ///
   /// In en, this message translates to:
   /// **'Description of the collection'**
   String get collectionDescriptionPlaceholder;
 
-  /// No description provided for @save.
+  /// Button text to save changes or create new items
   ///
   /// In en, this message translates to:
   /// **'Save'**
   String get save;
 
-  /// No description provided for @cancel.
+  /// Button text to cancel an action or close a dialog
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
 
-  /// No description provided for @collectionNameRequired.
+  /// Error message shown when collection name is not provided
   ///
   /// In en, this message translates to:
   /// **'Name is required'**
   String get collectionNameRequired;
 
-  /// No description provided for @addEdubadgesToCollection.
+  /// Title or header for the section where users can add edubadges to a collection
   ///
   /// In en, this message translates to:
   /// **'Add edubadges to your collection'**
   String get addEdubadgesToCollection;
 
-  /// No description provided for @addEdubadgesToCollectionDescription.
+  /// Description explaining the benefits of adding edubadges to a collection
   ///
   /// In en, this message translates to:
   /// **'Bundle edubadges in your collection to manage them clearly and share them easily.'**
   String get addEdubadgesToCollectionDescription;
 
-  /// No description provided for @addEdubadge.
+  /// Button text to add an edubadge to a collection
   ///
   /// In en, this message translates to:
   /// **'Add Edubadge'**
   String get addEdubadge;
 
-  /// No description provided for @areYouSure.
+  /// Confirmation dialog title asking for user confirmation
   ///
   /// In en, this message translates to:
   /// **'Are you sure?'**
   String get areYouSure;
 
-  /// No description provided for @deleteCollectionConfirmation.
+  /// Confirmation message shown when user attempts to delete a collection
   ///
   /// In en, this message translates to:
   /// **'You are about to delete a collection.'**
   String get deleteCollectionConfirmation;
 
-  /// No description provided for @delete.
+  /// Button text to delete an item
   ///
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
 
-  /// No description provided for @notificationPermissionsTitle.
+  /// Title for the notification permissions request dialog
   ///
   /// In en, this message translates to:
   /// **'Stay informed'**
   String get notificationPermissionsTitle;
 
-  /// No description provided for @notificationPermissionsSubtitle.
+  /// Subtitle explaining what notifications will be used for
   ///
   /// In en, this message translates to:
   /// **'Edubadge can send you a notification when something is ready for you, such as a new badge or an important update.'**
   String get notificationPermissionsSubtitle;
 
-  /// No description provided for @notificationPermissionsLabel.
+  /// Label informing users they can change notification settings later
   ///
   /// In en, this message translates to:
   /// **'You can always change this later in the settings.'**
   String get notificationPermissionsLabel;
 
-  /// No description provided for @notificationPermissionsButtonAllow.
+  /// Button text to allow notification permissions
   ///
   /// In en, this message translates to:
   /// **'Allow notifications'**
   String get notificationPermissionsButtonAllow;
 
-  /// No description provided for @notificationPermissionsButtonDeny.
+  /// Button text to deny or postpone notification permissions
   ///
   /// In en, this message translates to:
   /// **'Not now'**
   String get notificationPermissionsButtonDeny;
 
-  /// No description provided for @accountData.
+  /// Section header for account data in the account settings
   ///
   /// In en, this message translates to:
   /// **'Data'**
   String get accountData;
 
-  /// No description provided for @confirmedName.
+  /// Label for the user's confirmed name field in account settings
   ///
   /// In en, this message translates to:
   /// **'Confirmed name'**
   String get confirmedName;
 
-  /// No description provided for @providedByInstitution.
+  /// Label indicating information is provided by the user's educational institution
   ///
   /// In en, this message translates to:
   /// **'Provided by your institution'**
   String get providedByInstitution;
 
-  /// No description provided for @emailAddress.
+  /// Label for the email address field in account settings
   ///
   /// In en, this message translates to:
   /// **'Email address'**
   String get emailAddress;
 
-  /// No description provided for @institution.
+  /// Label for the educational institution field
   ///
   /// In en, this message translates to:
   /// **'Institution'**
   String get institution;
 
-  /// No description provided for @eduid.
+  /// Label for the eduID identifier field
   ///
   /// In en, this message translates to:
   /// **'#eduid'**
   String get eduid;
 
-  /// No description provided for @memberSince.
+  /// Label showing when the user became a member
   ///
   /// In en, this message translates to:
   /// **'Member since'**
   String get memberSince;
 
-  /// No description provided for @notificationSettings.
+  /// Section header or link text for notification settings
   ///
   /// In en, this message translates to:
   /// **'Notification settings'**
   String get notificationSettings;
 
-  /// No description provided for @generalNotifications.
+  /// Label for general notification settings toggle
   ///
   /// In en, this message translates to:
   /// **'General notifications'**
   String get generalNotifications;
 
-  /// No description provided for @givenAgreements.
+  /// Section header for agreements the user has given
   ///
   /// In en, this message translates to:
   /// **'Given agreement(s)'**
   String get givenAgreements;
 
-  /// No description provided for @agreementsDescription.
+  /// Description explaining that users can withdraw their agreements
   ///
   /// In en, this message translates to:
   /// **'You can withdraw your given agreement(s).'**
   String get agreementsDescription;
 
-  /// No description provided for @deleteAccount.
+  /// Section header or button text for account deletion
   ///
   /// In en, this message translates to:
   /// **'Delete your edubadges account'**
   String get deleteAccount;
 
-  /// No description provided for @deleteAccountDescription.
+  /// Detailed description explaining the consequences of deleting an edubadges account
   ///
   /// In en, this message translates to:
   /// **'You can delete your edubadges account if you wish. Be aware that after this, all your edubadges can no longer be validated.\n\nDeleting your edubadges account does not mean that your eduID will also be deleted.\n\nTo complete the process of deleting your edubadges account, you must close your browser after your account has been deleted.'**
   String get deleteAccountDescription;
 
-  /// No description provided for @deleteMyAccount.
+  /// Button text to confirm account deletion
   ///
   /// In en, this message translates to:
   /// **'Delete my account'**
   String get deleteMyAccount;
 
-  /// No description provided for @somethingWentWrong.
+  /// Generic error message displayed when an error occurs
   ///
   /// In en, this message translates to:
   /// **'Something went wrong'**
   String get somethingWentWrong;
 
-  /// No description provided for @retry.
+  /// Button text to retry a failed operation
   ///
   /// In en, this message translates to:
   /// **'Retry'**
   String get retry;
 
-  /// No description provided for @noProfileData.
+  /// Message shown when no profile data is available
   ///
   /// In en, this message translates to:
   /// **'No profile data'**
   String get noProfileData;
 
-  /// No description provided for @logoutConfirmationTitle.
+  /// Title for the logout confirmation dialog
   ///
   /// In en, this message translates to:
   /// **'Are you sure?'**
   String get logoutConfirmationTitle;
 
-  /// No description provided for @logoutConfirmationMessage.
+  /// Message in the logout confirmation dialog
   ///
   /// In en, this message translates to:
   /// **'You are about to log out.'**
   String get logoutConfirmationMessage;
 
-  /// No description provided for @logout.
+  /// Button text to log out of the application
   ///
   /// In en, this message translates to:
   /// **'Log out'**
   String get logout;
 
-  /// No description provided for @deleteAccountConfirmationTitle.
+  /// Title for the account deletion confirmation dialog
   ///
   /// In en, this message translates to:
   /// **'Delete my account'**
   String get deleteAccountConfirmationTitle;
 
-  /// No description provided for @deleteAccountConfirmationMessage.
+  /// Warning message in the account deletion confirmation dialog
   ///
   /// In en, this message translates to:
   /// **'Be aware that after this, all your edubadges can no longer be validated. Deleting your edubadges account does not mean that your eduID will also be deleted.'**
   String get deleteAccountConfirmationMessage;
 
-  /// No description provided for @deleteAccountConfirmationPrompt.
+  /// Prompt asking user to type 'delete' to confirm account deletion
   ///
   /// In en, this message translates to:
   /// **'Type the word \'delete\' to permanently delete my badges'**
   String get deleteAccountConfirmationPrompt;
 
-  /// No description provided for @deleteAccountInputPlaceholder.
+  /// Placeholder text for the account deletion confirmation input field
   ///
   /// In en, this message translates to:
   /// **'Type \'delete\''**
   String get deleteAccountInputPlaceholder;
 
-  /// No description provided for @deleteAccountRequiredText.
+  /// The text that must be typed to confirm account deletion
   ///
   /// In en, this message translates to:
   /// **'delete'**
   String get deleteAccountRequiredText;
 
-  /// No description provided for @privacyConditions.
+  /// Label or title for privacy conditions section
   ///
   /// In en, this message translates to:
   /// **'Privacy conditions'**
   String get privacyConditions;
 
-  /// No description provided for @withdraw.
+  /// Button text to withdraw an agreement or consent
   ///
   /// In en, this message translates to:
   /// **'Withdraw'**
   String get withdraw;
 
-  /// No description provided for @viewFullText.
+  /// Button text to expand and view the full text of an agreement
   ///
   /// In en, this message translates to:
   /// **'View full text'**
   String get viewFullText;
 
-  /// No description provided for @viewShortText.
+  /// Button text to collapse and view the short version of text
   ///
   /// In en, this message translates to:
   /// **'View short text'**
   String get viewShortText;
 
-  /// No description provided for @withdrawAgreementTitle.
+  /// Title for the withdraw agreement confirmation dialog
   ///
   /// In en, this message translates to:
   /// **'Withdraw my agreement statement'**
   String get withdrawAgreementTitle;
 
-  /// No description provided for @withdrawAgreementMessage.
+  /// Confirmation message asking if user wants to withdraw their agreement for a specific institution
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to withdraw your agreement statement for {institution}?'**
   String withdrawAgreementMessage(String institution);
 
-  /// No description provided for @confirm.
+  /// Button text to confirm an action
   ///
   /// In en, this message translates to:
   /// **'Confirm'**
   String get confirm;
 
-  /// No description provided for @countHours.
+  /// Pluralized string displaying the number of hours
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 hour} other{{count} hours}}'**
   String countHours(num count);
 
-  /// No description provided for @noCollectionsYet.
+  /// Message shown when user has no collections
   ///
   /// In en, this message translates to:
   /// **'No collections yet'**
   String get noCollectionsYet;
 
-  /// No description provided for @countEdubadges.
+  /// Pluralized string displaying the number of edubadges
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 edubadge} other{{count} edubadges}}'**
   String countEdubadges(num count);
 
-  /// No description provided for @errorLoadingCollections.
+  /// Error message shown when collections fail to load
   ///
   /// In en, this message translates to:
   /// **'Error loading collections'**
   String get errorLoadingCollections;
 
-  /// No description provided for @collectionVisibleAndShareable.
+  /// Label indicating that a collection is publicly visible and can be shared
   ///
   /// In en, this message translates to:
   /// **'Collection visible and shareable'**
   String get collectionVisibleAndShareable;
 
-  /// No description provided for @publicCollectionRequires.
+  /// Informational message explaining the requirement for making a collection public
   ///
   /// In en, this message translates to:
   /// **'A public collection requires at least 1 public edubadge'**
   String get publicCollectionRequires;
 
-  /// No description provided for @privateBadgesError.
+  /// Error message shown when trying to make a collection public with private badges
   ///
   /// In en, this message translates to:
   /// **'One or more badges are private, make them public to make this collection public.'**
   String get privateBadgesError;
 
-  /// No description provided for @linkCopied.
+  /// Success message shown when a link is copied to clipboard
   ///
   /// In en, this message translates to:
   /// **'Link copied'**
   String get linkCopied;
 
-  /// No description provided for @copyLink.
+  /// Button text to copy a link to clipboard
   ///
   /// In en, this message translates to:
   /// **'Copy link'**
   String get copyLink;
 
-  /// No description provided for @errorLoadingCollection.
+  /// Error message shown when a collection fails to load
   ///
   /// In en, this message translates to:
   /// **'Error loading collection'**
   String get errorLoadingCollection;
 
-  /// No description provided for @goBack.
+  /// Button text to navigate back to the previous screen
   ///
   /// In en, this message translates to:
   /// **'Go Back'**
   String get goBack;
 
-  /// No description provided for @editCollection.
+  /// Button text or title for editing a collection
   ///
   /// In en, this message translates to:
   /// **'Edit collection'**
   String get editCollection;
 
-  /// No description provided for @editCollectionDescription.
+  /// Description text for the edit collection screen
   ///
   /// In en, this message translates to:
   /// **'Update your collection details'**
   String get editCollectionDescription;
 
-  /// No description provided for @continueText.
+  /// Button text to continue to the next step
   ///
   /// In en, this message translates to:
   /// **'Continue'**
   String get continueText;
 
-  /// No description provided for @addEdubadges.
+  /// Button text to add multiple edubadges
   ///
   /// In en, this message translates to:
   /// **'Add Edubadges'**
   String get addEdubadges;
 
-  /// No description provided for @selectAtLeastOneBadge.
+  /// Error or validation message requiring at least one badge to be selected
   ///
   /// In en, this message translates to:
   /// **'Select at least one badge'**
   String get selectAtLeastOneBadge;
 
-  /// No description provided for @noBadgesAvailable.
+  /// Message shown when there are no badges available to display or select
   ///
   /// In en, this message translates to:
   /// **'No badges available'**
   String get noBadgesAvailable;
 
-  /// No description provided for @add.
+  /// Button text to add an item
   ///
   /// In en, this message translates to:
   /// **'Add'**
   String get add;
 
-  /// No description provided for @newBadgeReady.
+  /// Notification message informing user about new edubadges ready to claim
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =1{There is 1 new edubadge ready} other{There are {count} new edubadges ready}}'**
   String newBadgeReady(num count);
 
-  /// No description provided for @requestedBadges.
+  /// Section header for badges that have been requested by the user
   ///
   /// In en, this message translates to:
   /// **'Requested badges'**
   String get requestedBadges;
 
-  /// No description provided for @noEdubadgesYet.
+  /// Message shown when user has no edubadges in their collection
   ///
   /// In en, this message translates to:
   /// **'You don\'t have any edubadges yet'**
   String get noEdubadgesYet;
 
-  /// No description provided for @giveFeedback.
+  /// Button text or title for providing feedback
   ///
   /// In en, this message translates to:
   /// **'Give feedback'**
   String get giveFeedback;
 
-  /// No description provided for @giveFeedbackDescription.
+  /// Description encouraging users to provide feedback about the app
   ///
   /// In en, this message translates to:
   /// **'We\'d love to hear what you think about the app. Leave your feedback below.'**
   String get giveFeedbackDescription;
 
-  /// No description provided for @feedback.
+  /// Label for the feedback input field
   ///
   /// In en, this message translates to:
   /// **'Feedback'**
   String get feedback;
 
-  /// No description provided for @feedbackPlaceholder.
+  /// Placeholder text for the feedback input field
   ///
   /// In en, this message translates to:
   /// **'Type your feedback here...'**
   String get feedbackPlaceholder;
 
-  /// No description provided for @feedbackRequired.
+  /// Error message shown when feedback field is empty
   ///
   /// In en, this message translates to:
   /// **'Feedback is required'**
   String get feedbackRequired;
 
-  /// No description provided for @aboutThisEdubadge.
+  /// Section header for information about a specific edubadge
   ///
   /// In en, this message translates to:
   /// **'About this Edubadge'**
   String get aboutThisEdubadge;
 
-  /// No description provided for @theEdubadge.
+  /// Section header for edubadge details
   ///
   /// In en, this message translates to:
   /// **'The Edubadge'**
   String get theEdubadge;
 
-  /// No description provided for @issuedOn.
+  /// Label for the date when the edubadge was issued
   ///
   /// In en, this message translates to:
   /// **'Issued on'**
   String get issuedOn;
 
-  /// No description provided for @expiresOn.
+  /// Label for the date when the edubadge expires
   ///
   /// In en, this message translates to:
   /// **'Expires on'**
   String get expiresOn;
 
-  /// No description provided for @type.
+  /// Label for the type field of an edubadge
   ///
   /// In en, this message translates to:
   /// **'Type'**
   String get type;
 
-  /// No description provided for @badgeTheProgram.
+  /// Section header for program information related to the badge
   ///
   /// In en, this message translates to:
   /// **'The program'**
   String get badgeTheProgram;
 
-  /// No description provided for @badgeTheAssessment.
+  /// Section header for assessment information related to the badge
   ///
   /// In en, this message translates to:
   /// **'The assessment'**
   String get badgeTheAssessment;
 
-  /// No description provided for @learningOutcomes.
+  /// Label for the learning outcomes section describing what was learned
   ///
   /// In en, this message translates to:
   /// **'Learning outcomes'**
   String get learningOutcomes;
 
-  /// No description provided for @studyLoad.
+  /// Label for the study load or time commitment required
   ///
   /// In en, this message translates to:
   /// **'Study load'**
   String get studyLoad;
 
-  /// No description provided for @language.
+  /// Label for the language field
   ///
   /// In en, this message translates to:
   /// **'Language'**
   String get language;
 
-  /// No description provided for @languageDutch.
+  /// Language option for Dutch
   ///
   /// In en, this message translates to:
   /// **'Dutch'**
   String get languageDutch;
 
-  /// No description provided for @languageEnglish.
+  /// Language option for English
   ///
   /// In en, this message translates to:
   /// **'English'**
   String get languageEnglish;
 
-  /// No description provided for @assessmentWrittenExam.
+  /// Assessment type option for written or exam-based assessment
   ///
   /// In en, this message translates to:
   /// **'(Written) Exam'**
   String get assessmentWrittenExam;
 
-  /// No description provided for @assessmentReportPaper.
+  /// Assessment type option for report or paper submission
   ///
   /// In en, this message translates to:
   /// **'Report / paper'**
   String get assessmentReportPaper;
 
-  /// No description provided for @assessmentBehaviouralAssessment.
+  /// Assessment type option for behavioural assessment
   ///
   /// In en, this message translates to:
   /// **'Behavioural assessment'**
   String get assessmentBehaviouralAssessment;
 
-  /// No description provided for @assessmentProfessionalProduct.
+  /// Assessment type option for professional product creation
   ///
   /// In en, this message translates to:
   /// **'Professional product'**
   String get assessmentProfessionalProduct;
 
-  /// No description provided for @assessmentDevelopmentReport.
+  /// Assessment type option for development or reflection report
   ///
   /// In en, this message translates to:
   /// **'Development report / reflection report'**
   String get assessmentDevelopmentReport;
 
-  /// No description provided for @assessmentPortfolioAssessment.
+  /// Assessment type option for portfolio-based assessment
   ///
   /// In en, this message translates to:
   /// **'Portfolio / portfolio assessment'**
   String get assessmentPortfolioAssessment;
 
-  /// No description provided for @assessmentOramExam.
+  /// Assessment type option for presentation or oral examination
   ///
   /// In en, this message translates to:
   /// **'Presentation / Oral exam'**
   String get assessmentOramExam;
 
-  /// No description provided for @assessmentPersonalizedAssessment.
+  /// Assessment type option for personalized or custom assessment
   ///
   /// In en, this message translates to:
   /// **'Personalized type of assessment'**
   String get assessmentPersonalizedAssessment;
 
-  /// No description provided for @supervised.
+  /// Label indicating that an assessment was supervised
   ///
   /// In en, this message translates to:
   /// **'Supervised'**
   String get supervised;
 
-  /// No description provided for @assessmentSupervisedWithIdentityVerification.
+  /// Assessment supervision type with identity verification
   ///
   /// In en, this message translates to:
   /// **'Supervised with identity verification'**
   String get assessmentSupervisedWithIdentityVerification;
 
-  /// No description provided for @assessmentWithIdentityVerification.
+  /// Assessment type that includes identity verification
   ///
   /// In en, this message translates to:
   /// **'With identity verification'**
   String get assessmentWithIdentityVerification;
 
-  /// No description provided for @assessmentType.
+  /// Label for the assessment type field
   ///
   /// In en, this message translates to:
   /// **'Assessment type'**
   String get assessmentType;
 
-  /// No description provided for @online.
+  /// Option indicating online format or delivery
   ///
   /// In en, this message translates to:
   /// **'Online'**
   String get online;
 
-  /// No description provided for @onsite.
+  /// Option indicating on-site or in-person format
   ///
   /// In en, this message translates to:
   /// **'On-site'**
   String get onsite;
 
-  /// No description provided for @blended.
+  /// Option indicating blended (combination of online and on-site) format
   ///
   /// In en, this message translates to:
   /// **'Blended'**
   String get blended;
 
-  /// No description provided for @workExperience.
+  /// Label for work experience section or requirement
   ///
   /// In en, this message translates to:
   /// **'Work experience'**
   String get workExperience;
 
-  /// No description provided for @formOfParticipation.
+  /// Label indicating how the user participated in the program
   ///
   /// In en, this message translates to:
   /// **'Form of participation'**
   String get formOfParticipation;
 
-  /// No description provided for @indicativeLevel.
+  /// Label for the indicative level using European or Dutch Qualifications Framework
   ///
   /// In en, this message translates to:
   /// **'(Indicative) EQF/NLQF'**
   String get indicativeLevel;
 
-  /// No description provided for @never.
+  /// Option indicating 'never' for expiration or other temporal fields
   ///
   /// In en, this message translates to:
   /// **'Never'**
   String get never;
 
-  /// No description provided for @claimEdubadge.
+  /// Button text to claim an edubadge that has been awarded
   ///
   /// In en, this message translates to:
   /// **'Claim edubadge'**
   String get claimEdubadge;
 
-  /// No description provided for @decline.
+  /// Button text to decline or reject an offer or badge
   ///
   /// In en, this message translates to:
   /// **'Decline'**
   String get decline;
 
-  /// No description provided for @declineBadgeTitle.
+  /// Title for the dialog confirming badge decline
   ///
   /// In en, this message translates to:
   /// **'Decline edubadge'**
   String get declineBadgeTitle;
 
-  /// No description provided for @declineBadgeConfirmation.
+  /// Warning message shown when user is about to decline a badge
   ///
   /// In en, this message translates to:
   /// **'You are about to decline this edubadge. This action is final and cannot be undone.'**
   String get declineBadgeConfirmation;
 
-  /// No description provided for @badgesRemainingToClaim.
+  /// Message showing how many edubadges remain to be claimed
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =0{No more edu-badges to claim} =1{Still 1 edu-badge to claim} other{Still {count} edu-badges to claim}}'**
   String badgesRemainingToClaim(num count);
 
-  /// No description provided for @badgePrivacyTitle.
+  /// Title for the privacy information section related to edubadges
   ///
   /// In en, this message translates to:
   /// **'Edubadges and your privacy'**
   String get badgePrivacyTitle;
 
-  /// No description provided for @badgePrivacyReadButton.
+  /// Button text to acknowledge reading privacy information
   ///
   /// In en, this message translates to:
   /// **'I have read this'**
   String get badgePrivacyReadButton;
 
-  /// No description provided for @badgePrivacyViewFullText.
+  /// Button text to view the full privacy policy text
   ///
   /// In en, this message translates to:
   /// **'View full text'**
   String get badgePrivacyViewFullText;
 
-  /// No description provided for @badgeClaimSuccessTitle.
+  /// Title shown on successful badge claim
   ///
   /// In en, this message translates to:
   /// **'Congratulations!'**
   String get badgeClaimSuccessTitle;
 
-  /// No description provided for @badgeClaimSuccessSubtitle.
+  /// Subtitle shown on successful badge claim
   ///
   /// In en, this message translates to:
   /// **'You have claimed a new edubadge'**
   String get badgeClaimSuccessSubtitle;
 
-  /// No description provided for @claimNextBadge.
+  /// Button text to claim additional edubadges showing how many remain
   ///
   /// In en, this message translates to:
   /// **'{count, plural, =1{Claim 1 more edubadge} other{Claim {count} more edubadges}}'**
   String claimNextBadge(num count);
 
-  /// No description provided for @goToOverview.
+  /// Button text to navigate to the overview screen
   ///
   /// In en, this message translates to:
   /// **'Go to your overview'**
   String get goToOverview;
 
-  /// No description provided for @badgeClaimErrorTitle.
+  /// Title shown when badge claim fails
   ///
   /// In en, this message translates to:
   /// **'Something went wrong'**
   String get badgeClaimErrorTitle;
 
-  /// No description provided for @badgeClaimErrorSubtitle.
+  /// Subtitle explaining the badge claim error and next steps
   ///
   /// In en, this message translates to:
   /// **'Your edubadge cannot be claimed at this time. Don\'t worry, your progress has been saved. Please try again later.'**
   String get badgeClaimErrorSubtitle;
 
-  /// No description provided for @microCredential.
+  /// Badge type label for microcredential badges
   ///
   /// In en, this message translates to:
   /// **'Microcredential'**
   String get microCredential;
 
-  /// No description provided for @regular.
+  /// Badge type label for regular badges
   ///
   /// In en, this message translates to:
   /// **'Regular'**
   String get regular;
 
-  /// No description provided for @extraCurricular.
+  /// Badge type label for extra-curricular activities
   ///
   /// In en, this message translates to:
   /// **'Extra curricular'**
   String get extraCurricular;
 
-  /// No description provided for @badgeVisibleAndShareable.
+  /// Toggle label for making a badge publicly visible and shareable
   ///
   /// In en, this message translates to:
   /// **'Edubadge visible and shareable'**
   String get badgeVisibleAndShareable;
 
-  /// No description provided for @badgeVisibleAndShareableDescription.
+  /// Description explaining the badge visibility and sharing setting
   ///
   /// In en, this message translates to:
   /// **'With this setting, you determine whether your edubadge is public and can be viewed by others when you share it.'**
   String get badgeVisibleAndShareableDescription;
 
-  /// No description provided for @toMakePublic.
+  /// Label or button text for making something public
   ///
   /// In en, this message translates to:
   /// **'To make public'**
   String get toMakePublic;
 
-  /// No description provided for @badgePublicShareWarning.
+  /// Warning message that badge must be public to share
   ///
   /// In en, this message translates to:
   /// **'To share this Edubadge, it must be made public.'**
   String get badgePublicShareWarning;
 
-  /// No description provided for @makePublic.
+  /// Button text to make a badge public
   ///
   /// In en, this message translates to:
   /// **'Make public'**
   String get makePublic;
 
-  /// No description provided for @makeBadgePublicIncludeEvidence.
+  /// Checkbox label asking if evidence should be included when making badge public
   ///
   /// In en, this message translates to:
   /// **'Include evidence/personal message in the public information for this edubadge?'**
   String get makeBadgePublicIncludeEvidence;
 
-  /// No description provided for @makeBadgePublicIncludeGradeAchieved.
+  /// Checkbox label asking if grade should be included when making badge public
   ///
   /// In en, this message translates to:
   /// **'Include the earned grade in the public information for this edubadge?'**
   String get makeBadgePublicIncludeGradeAchieved;
 
-  /// No description provided for @actionMakePrivate.
+  /// Button text to make a badge private
   ///
   /// In en, this message translates to:
   /// **'Make private'**
   String get actionMakePrivate;
 
-  /// No description provided for @labelMakePrivate.
+  /// Label for the make private action
   ///
   /// In en, this message translates to:
   /// **'Make private'**
   String get labelMakePrivate;
 
-  /// No description provided for @badgeMakePrivateWarning.
+  /// Confirmation message when making a badge private
   ///
   /// In en, this message translates to:
   /// **'Are you sure you want to make this edubadge private?'**
   String get badgeMakePrivateWarning;
+
+  /// Success message shown when badge link is copied
+  ///
+  /// In en, this message translates to:
+  /// **'Edubadge link copied to clipboard'**
+  String get badgeLinkCopied;
+
+  /// Message shown when catalog search returns no results
+  ///
+  /// In en, this message translates to:
+  /// **'No search results found'**
+  String get catalogNoSearchResults;
+
+  /// Message shown when catalog has no badges to display
+  ///
+  /// In en, this message translates to:
+  /// **'No badges available'**
+  String get catalogNoBadgesAvailable;
+
+  /// Error message shown when institutions fail to load in catalog
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load institutions'**
+  String get catalogFailedToLoadInstitutions;
+
+  /// Generic error message for loading failures
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load'**
+  String get unableToLoad;
+
+  /// Subtitle message suggesting user to retry later after a loading failure
+  ///
+  /// In en, this message translates to:
+  /// **'Please try again later'**
+  String get unableToLoadSubtitle;
+
+  /// No description provided for @failedToLoadTermsFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load terms from {institution}'**
+  String failedToLoadTermsFrom(String institution);
+
+  /// No description provided for @agreedOnDateVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Agreed on {date}, version {version}'**
+  String agreedOnDateVersion(DateTime date, String version);
+
+  /// No description provided for @notYetAgreedVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Not yet agreed, version {version}'**
+  String notYetAgreedVersion(String version);
 }
 
 class _AppLocalizationsDelegate
