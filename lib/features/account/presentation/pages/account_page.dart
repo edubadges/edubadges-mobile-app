@@ -1,4 +1,5 @@
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/branding.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/logger.dart';
@@ -252,7 +253,7 @@ class AccountPage extends ConsumerWidget {
             institution.nameEnglish,
             langCode,
           )
-        : 'edubadges';
+        : edubadges;
 
     return InkWell(
       onTap: () {
