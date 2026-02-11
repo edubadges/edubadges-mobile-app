@@ -21,6 +21,7 @@ class InfoStateView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final double size = title == null ? 38 : 48;
 
     return Center(
       child: Padding(
@@ -31,8 +32,8 @@ class InfoStateView extends StatelessWidget {
           children: [
             SvgPicture.asset(
               assetPath,
-              width: 48,
-              height: 48,
+              width: size,
+              height: size,
               colorFilter: iconColor != null
                   ? ColorFilter.mode(iconColor!, BlendMode.srcIn)
                   : null,

@@ -683,5 +683,34 @@
     "unableToLoadSubtitle": "Please try again later",
     "@unableToLoadSubtitle": {
         "description": "Subtitle message suggesting user to retry later after a loading failure"
+    },
+    "failedToLoadTermsFrom": "Failed to load terms from {institution}",
+    "@failedToLoadTermsFrom": {
+        "placeholders": {
+            "institution": {
+                "type": "String"
+            }
+        }
+    },
+    "agreedOnDateVersion": "Agreed on {date}, version {version}",
+    "@agreedOnDateVersion": {
+        "placeholders": {
+            "date": {
+                "type": "DateTime",
+                "isCustomDateFormat": true,
+                "format": "MMM d, yyyy"
+            },
+            "version": {
+                "type": "String"
+            }
+        }
+    },
+    "notYetAgreedVersion": "Not yet agreed, version {version}",
+    "@notYetAgreedVersion": {
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
     }
 }

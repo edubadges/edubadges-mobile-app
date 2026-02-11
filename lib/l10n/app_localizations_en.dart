@@ -583,4 +583,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unableToLoadSubtitle => 'Please try again later';
+
+  @override
+  String failedToLoadTermsFrom(String institution) {
+    return 'Failed to load terms from $institution';
+  }
+
+  @override
+  String agreedOnDateVersion(DateTime date, String version) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat(
+      'MMM d, yyyy',
+      localeName,
+    );
+    final String dateString = dateDateFormat.format(date);
+
+    return 'Agreed on $dateString, version $version';
+  }
+
+  @override
+  String notYetAgreedVersion(String version) {
+    return 'Not yet agreed, version $version';
+  }
 }

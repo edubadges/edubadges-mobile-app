@@ -585,4 +585,25 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get unableToLoadSubtitle => 'Probeer het later opnieuw';
+
+  @override
+  String failedToLoadTermsFrom(String institution) {
+    return 'Fout bij het laden van voorwaarden van $institution';
+  }
+
+  @override
+  String agreedOnDateVersion(DateTime date, String version) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat(
+      'MMM d, yyyy',
+      localeName,
+    );
+    final String dateString = dateDateFormat.format(date);
+
+    return 'Akkoord op $dateString, versie $version';
+  }
+
+  @override
+  String notYetAgreedVersion(String version) {
+    return 'Nog niet akkoord, versie $version';
+  }
 }

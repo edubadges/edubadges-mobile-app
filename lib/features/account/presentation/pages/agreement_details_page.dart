@@ -1,21 +1,38 @@
+import 'package:edubadges/app/themes.dart';
+import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/actionable_content_layout.dart';
-import 'package:edubadges/core/widgets/link_text.dart';
+import 'package:edubadges/core/widgets/info_state_view.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/presentation/widgets/withdraw_agreement_dialog.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/presentation/providers/markdown_fetcher.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AgreementDetailsPage extends StatefulWidget {
+class AgreementDetailsPage extends ConsumerStatefulWidget {
   final AgreementRouteModel agreement;
 
   const AgreementDetailsPage({super.key, required this.agreement});
 
   @override
-  State<AgreementDetailsPage> createState() => _AgreementDetailsPageState();
+  ConsumerState<AgreementDetailsPage> createState() =>
+      _AgreementDetailsPageState();
 }
 
-class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
+class _AgreementDetailsPageState extends ConsumerState<AgreementDetailsPage> {
   bool _isShowingLongVersion = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // No short version to show (null or empty)
+    if (widget.agreement.titleShort == null || 
+        widget.agreement.titleShort!.trim().isEmpty) {
+      _isShowingLongVersion = true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,17 +42,52 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
 
     final currentTitle = _isShowingLongVersion
         ? widget.agreement.titleLong
-        : widget.agreement.titleShort;
-    final currentText = _isShowingLongVersion
-        ? widget.agreement.textLong
-        : widget.agreement.textShort;
+        : (widget.agreement.titleShort?.trim().isEmpty ?? true
+            ? widget.agreement.titleLong
+            : widget.agreement.titleShort!);
+    final currentUrlText = _isShowingLongVersion
+        ? widget.agreement.textUrlLong
+        : (widget.agreement.textUrlShort?.trim().isEmpty ?? true
+            ? widget.agreement.textUrlLong
+            : widget.agreement.textUrlShort!);
     final toggleButtonText = _isShowingLongVersion
         ? l10n.viewShortText
         : l10n.viewFullText;
 
+    final markdownAsyncValue = ref.watch(
+      markdownFetcherProvider(currentUrlText),
+    );
+
     return ActionableContentLayout(
       title: currentTitle,
-      content: LinkText(text: currentText, style: theme.textTheme.bodyMedium),
+      error: markdownAsyncValue.hasError,
+      content: markdownAsyncValue.when(
+        data: (data) {
+          return MarkdownBody(
+            data: filterBadMarkdown(data),
+            styleSheet: AppThemes.markdownStyleSheet(context).copyWith(
+              h1: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurface,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          );
+        },
+        error: (error, stackTrace) {
+          return Center(
+            child: InfoStateView(
+              assetPath: Assets.iconInfo,
+              description: l10n.failedToLoadTermsFrom(
+                widget.agreement.titleLong,
+              ),
+            ),
+          );
+        },
+        loading: () {
+          return Center(child: CircularProgressIndicator());
+        },
+      ),
       actions: [
         SizedBox(
           width: double.infinity,
@@ -61,20 +113,23 @@ class _AgreementDetailsPageState extends State<AgreementDetailsPage> {
             ),
           ),
         ),
-        TextButton(
-          onPressed: () {
-            setState(() {
-              _isShowingLongVersion = !_isShowingLongVersion;
-            });
-          },
-          child: Text(
-            toggleButtonText,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.primary,
-              decoration: TextDecoration.underline,
+        if (widget.agreement.textUrlShort?.isEmpty == true)
+          const SizedBox(height: 12),
+        if (widget.agreement.textUrlShort?.isEmpty != true)
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _isShowingLongVersion = !_isShowingLongVersion;
+              });
+            },
+            child: Text(
+              toggleButtonText,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.primary,
+                decoration: TextDecoration.underline,
+              ),
             ),
           ),
-        ),
       ],
     );
   }

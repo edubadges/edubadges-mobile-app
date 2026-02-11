@@ -1069,6 +1069,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please try again later'**
   String get unableToLoadSubtitle;
+
+  /// No description provided for @failedToLoadTermsFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load terms from {institution}'**
+  String failedToLoadTermsFrom(String institution);
+
+  /// No description provided for @agreedOnDateVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Agreed on {date}, version {version}'**
+  String agreedOnDateVersion(DateTime date, String version);
+
+  /// No description provided for @notYetAgreedVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Not yet agreed, version {version}'**
+  String notYetAgreedVersion(String version);
 }
 
 class _AppLocalizationsDelegate
