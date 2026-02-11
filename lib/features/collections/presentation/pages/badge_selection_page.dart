@@ -5,6 +5,7 @@ import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -118,6 +119,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
                           borderRadius: BorderRadius.circular(20),
                           child: BadgeCard(
                             instance: badge,
+                            badgeClass: badge.badgeclass as BadgeClassModel,
                             style: BadgeCardStyle.small,
                             isSelected: isSelected,
                           ),

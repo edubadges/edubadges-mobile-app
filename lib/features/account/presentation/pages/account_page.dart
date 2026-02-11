@@ -1,10 +1,13 @@
 import 'package:edubadges/core/constants/assets.dart';
-import 'package:edubadges/core/constants/mock_data.dart';
+import 'package:edubadges/core/constants/branding.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
+import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/account/presentation/widgets/delete_account_dialog.dart';
@@ -13,7 +16,6 @@ import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 class AccountPage extends ConsumerWidget {
   const AccountPage({super.key});
@@ -222,27 +224,40 @@ class AccountPage extends ConsumerWidget {
     );
   }
 
-  String _formatAgreementDateText(String type, DateTime date, String version) {
-    final dateStr = DateFormat('MMM d, yyyy').format(date);
-    return type == 'agreed'
-        ? 'Akkoord op $dateStr, versie $version'
-        : 'Gelezen op $dateStr, versie $version';
+  String _formatAgreementDateText(
+    BuildContext context,
+    bool type,
+    DateTime? date,
+    String version,
+  ) {
+    final l10n = AppLocalizations.of(context);
+    return type && date != null
+        ? l10n.agreedOnDateVersion(date, version)
+        : l10n.notYetAgreedVersion(version);
   }
 
   Widget _buildAgreementItem(
+    WidgetRef ref,
     BuildContext context,
-    String institution,
     String dateText,
-    ({String institution, String type, DateTime date, String version})
-    agreement,
+    TermsAgreementEntity agreement,
   ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    final agreementModel = MockData.getMockAgreement(agreement.institution);
+    final langCode = ref.read(appLanguageProvider).code;
+    final institution = agreement.terms.institution;
+    final institutionName = institution != null
+        ? getLocalizedString(
+            institution.nameDutch,
+            institution.nameEnglish,
+            langCode,
+          )
+        : edubadges;
 
     return InkWell(
       onTap: () {
+        final agreementModel = AgreementRouteModel.create(institutionName, agreement, langCode);
         context.push(agreementModel.buildRouteUrl());
       },
       borderRadius: BorderRadius.circular(_badgeBorderRadius),
@@ -256,7 +271,7 @@ class AccountPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    institution,
+                    institutionName,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: colorScheme.onSurface,
                     ),
@@ -284,26 +299,14 @@ class AccountPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildAgreementsSection(BuildContext context) {
+  Widget _buildAgreementsSection(
+    WidgetRef ref,
+    BuildContext context,
+    ProfileEntity profile,
+  ) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
-    // Mock agreements data - TODO replace with actual API call when available
-    final mockAgreements = [
-      (
-        institution: 'University Voorbeeld',
-        type: 'agreed',
-        date: DateTime(2025, 11, 15),
-        version: '1',
-      ),
-      (
-        institution: 'University Voorbeeld',
-        type: 'read',
-        date: DateTime(2025, 11, 12),
-        version: '1',
-      ),
-    ];
 
     return _buildSectionCard(
       context: context,
@@ -318,24 +321,20 @@ class AccountPage extends ConsumerWidget {
         const SizedBox(height: _spacingSmall),
         _buildDivider(colorScheme),
         const SizedBox(height: _spacingSmall),
-        ...mockAgreements.asMap().entries.map((entry) {
+        ...profile.termsagreementSet.asMap().entries.map((entry) {
           final index = entry.key;
           final agreement = entry.value;
-          final isLast = index == mockAgreements.length - 1;
+          final isLast = index == profile.termsagreementSet.length - 1;
           final dateText = _formatAgreementDateText(
-            agreement.type,
-            agreement.date,
-            agreement.version,
+            context,
+            entry.value.agreed,
+            agreement.agreedAt,
+            agreement.agreedVersion.toString(),
           );
 
           return Column(
             children: [
-              _buildAgreementItem(
-                context,
-                agreement.institution,
-                dateText,
-                agreement,
-              ),
+              _buildAgreementItem(ref, context, dateText, agreement),
               if (!isLast) _buildDivider(colorScheme),
             ],
           );
@@ -344,19 +343,24 @@ class AccountPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _showDeleteAccountConfirmation(BuildContext context, WidgetRef ref) async {
+  Future<void> _showDeleteAccountConfirmation(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
     await showDialog(
       context: context,
       builder: (context) => DeleteAccountDialog(
         onDelete: () async {
-          final either = await ref.read(accountRepositoryProvider).deleteProfile();
+          final either = await ref
+              .read(accountRepositoryProvider)
+              .deleteProfile();
 
           either.fold(
-                (failure) {
+            (failure) {
               logger.e(failure.message);
               // TODO: add a snackbar are something when we know how we are gonna do error handling
             },
-                (success) async {
+            (success) async {
               if (success == true) {
                 await ref.read(authProvider.notifier).logout();
                 if (context.mounted) {
@@ -478,7 +482,7 @@ class AccountPage extends ConsumerWidget {
                 children: [
                   _buildDataSection(context, profile),
                   _buildNotificationSection(context, profile),
-                  _buildAgreementsSection(context),
+                  _buildAgreementsSection(ref, context, profile),
                   _buildDeleteAccountSection(context, ref),
                 ],
               ),

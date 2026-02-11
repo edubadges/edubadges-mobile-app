@@ -4,6 +4,7 @@ import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:edubadges/features/general_terms/presentation/providers/general_terms_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/permission_providers.dart';
+import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -118,14 +119,7 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, stack) => Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Text(
-                    'Error loading terms: $err',
-                  ), // TODO: add localisation when we know more about error handling
-                ),
-              ),
+              error: (error, _) => Center(child: ErrorMessageWidget()),
             ),
             Positioned(
               left: 0,

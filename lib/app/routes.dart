@@ -130,16 +130,16 @@ final appRouter = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final agreementId = state.pathParameters['id'] ?? '';
           final titleLong = state.uri.queryParameters['titleLong'] ?? '';
-          final textLong = state.uri.queryParameters['textLong'] ?? '';
+          final textUrlLong = state.uri.queryParameters['textUrlLong'] ?? '';
           final titleShort = state.uri.queryParameters['titleShort'] ?? '';
-          final textShort = state.uri.queryParameters['textShort'] ?? '';
+          final textUrlShort = state.uri.queryParameters['textUrlShort'] ?? '';
 
           final agreement = AgreementRouteModel(
             agreementId: agreementId,
             titleLong: titleLong,
-            textLong: textLong,
+            textUrlLong: textUrlLong,
             titleShort: titleShort,
-            textShort: textShort,
+            textUrlShort: textUrlShort,
           );
 
           return AgreementDetailsPage(agreement: agreement);

@@ -7,7 +7,7 @@ class ActionableContentLayout extends StatelessWidget {
   final String title;
   final Widget content;
   final List<Widget> actions;
-  final bool showBackButton;
+  final bool showBackButton, error;
 
   const ActionableContentLayout({
     super.key,
@@ -15,6 +15,7 @@ class ActionableContentLayout extends StatelessWidget {
     required this.content,
     required this.actions,
     this.showBackButton = true,
+    this.error = false,
   });
 
   @override
@@ -46,10 +47,14 @@ class ActionableContentLayout extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: content,
-              ),
+              child: error
+                  ? Center(
+                      child: content,
+                    )
+                  : SingleChildScrollView(
+                      padding: const EdgeInsets.all(20),
+                      child: content,
+                    ),
             ),
             Padding(
               padding: const EdgeInsets.all(20),
