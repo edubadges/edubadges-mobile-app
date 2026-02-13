@@ -1,13 +1,13 @@
 {
   "applinks": {
-      "apps": [],
-      "details": [
-          {
-              "appID": "ZYJ4TZX4UU.nl.surf.edubadges",
-              "paths": [
-                  "*"
-              ]
-          }
-      ]
+    "apps": [],
+    "details": [
+      {
+        "appID": "ZYJ4TZX4UU.nl.surf.edubadges",
+        "paths": [
+          "*/public/catalog/*"
+        ]
+      }
+    ]
   }
 }
