@@ -81,8 +81,14 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
       body: MaxWidthWrapper(
         child: badgesState.when(
           data: (state) {
-            final claimedBadge =
-                state.claimedBadges.firstWhereOrNull(
+            // Check claimed badges first, but also check unclaimed badges
+            // in case the state hasn't been updated yet from the claim page
+            final claimedBadge = state.claimedBadges.firstWhereOrNull(
+                  (b) =>
+                      b.entityId == widget.badgeId ||
+                      b.id.toString() == widget.badgeId,
+                ) ??
+                state.unclaimedBadges.firstWhereOrNull(
                   (b) =>
                       b.entityId == widget.badgeId ||
                       b.id.toString() == widget.badgeId,
