@@ -99,7 +99,7 @@ class CollectionsPage extends ConsumerWidget {
                           'title': collection.name,
                           if (collection.description != null &&
                               collection.description!.isNotEmpty)
-                            'description': collection.description!,
+                            'description': collection.description,
                         },
                       );
                       context.push(uri.toString());

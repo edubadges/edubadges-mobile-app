@@ -158,7 +158,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, _) => Center(child: ErrorMessageWidget()),
+            error: (error, _) => const Center(child: ErrorMessageWidget()),
           ),
         ),
 
@@ -180,7 +180,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             return _buildBadgeDetailsContent(currentBadgeId, null);
           },
           loading: () => [const Center(child: CircularProgressIndicator())],
-          error: (error, _) => [Center(child: ErrorMessageWidget())],
+          error: (error, _) => [const Center(child: ErrorMessageWidget())],
         ),
       ],
     );
@@ -227,14 +227,14 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     String badgeId,
     AsyncValue<BadgeDetailsModel?>? badgeDetailsAsync,
   ) {
-    AsyncValue<BadgeDetailsModel?> badgeDetailsValue =
+    final AsyncValue<BadgeDetailsModel?> badgeDetailsValue =
         badgeDetailsAsync ??
         ref.watch(badgeDetailsModelProvider(_createBadgeParams(badgeId)));
 
     return badgeDetailsValue.when(
       data: (details) => [..._buildBadgeDetails(details)],
       loading: () => [const Center(child: CircularProgressIndicator())],
-      error: (error, _) => [Center(child: ErrorMessageWidget())],
+      error: (error, _) => [const Center(child: ErrorMessageWidget())],
     );
   }
 
@@ -248,7 +248,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         badgeInstanceEntityId: null,
         badgeClassEntityId: badgeId,
       ),
-      BadgeDetailsRouteFrom.other => BadgeDetailsParams(
+      BadgeDetailsRouteFrom.other => const BadgeDetailsParams(
         badgeInstanceEntityId: null,
         badgeClassEntityId: null,
       ),
@@ -414,9 +414,9 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           if (items != null)
             ...List.generate(items.length * 2 - 1, (int index) {
               if (index.isOdd) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: const Divider(height: 1),
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Divider(height: 1),
                 );
               } else {
                 return _buildSectionItem(item: items[index ~/ 2]);

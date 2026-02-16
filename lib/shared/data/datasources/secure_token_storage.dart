@@ -23,7 +23,7 @@ class SecureTokenStorage implements TokenStorage<OAuth2Token> {
     if (tokenJson == null) return null;
     
     try {
-      final Map<String, dynamic> data = json.decode(tokenJson);
+      final Map<String, dynamic> data = json.decode(tokenJson) as Map<String, dynamic>;
       return OAuth2Token(
         accessToken: data['accessToken'] as String,
         refreshToken: data['refreshToken'] as String?,

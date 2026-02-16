@@ -3,10 +3,10 @@ import 'package:edubadges/core/utils/app_language.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 String _createBaseAndLang(String path, WidgetRef ref) {
-  String baseUrl = Uri.parse(
+  final String baseUrl = Uri.parse(
     EnvironmentConfig.instance.publicCollectionBaseUrl,
   ).host;
-  String lang = ref.read(appLanguageProvider).code;
+  final String lang = ref.read(appLanguageProvider).code;
   return 'https://$baseUrl/$path?lang=$lang';
 }
 

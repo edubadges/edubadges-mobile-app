@@ -248,7 +248,7 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
         loading: () =>
             const Scaffold(body: Center(child: CircularProgressIndicator())),
         error: (err, stack) =>
-            Scaffold(body: Center(child: ErrorMessageWidget())),
+            const Scaffold(body: Center(child: ErrorMessageWidget())),
       ),
     );
   }

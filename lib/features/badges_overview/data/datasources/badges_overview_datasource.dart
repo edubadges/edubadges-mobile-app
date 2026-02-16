@@ -25,7 +25,7 @@ class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
     try {
       return data.map((json) {
         if (json is! Map<String, dynamic>) {
-          throw FormatException('Invalid badge instance format');
+          throw const FormatException('Invalid badge instance format');
         }
         return BadgeInstanceModel.fromJson(json);
       }).toList();
