@@ -6,6 +6,7 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/features/badge_details/presentation/widgets/badge_visibility_card.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -42,6 +43,10 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
       parent: _animationController,
       curve: Curves.easeOutBack,
     );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(badgesOverviewProvider.notifier).refresh();
+    });
 
     Timer(const Duration(milliseconds: 750), () {
       if (mounted) {
@@ -123,6 +128,7 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
                             instance: claimedBadge,
                             badgeClass: claimedBadge.badgeclass as BadgeClassModel,
                             style: BadgeCardStyle.large,
+                            onTapFrom: BadgeDetailsRouteFrom.overview,
                           ),
                           BadgeVisibilityCard(
                             margin: const EdgeInsets.only(bottom: 8, top: 16),
