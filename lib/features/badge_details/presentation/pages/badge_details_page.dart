@@ -127,7 +127,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     final badgesAsync = ref.watch(badgesListProvider);
     final l10n = AppLocalizations.of(context);
 
-
     return ListView(
       children: [
         SizedBox(
@@ -411,7 +410,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           ),
           const SizedBox(height: 8),
           if (item != null) item,
-          if (items != null)
+          if (items != null && items.isNotEmpty)
             ...List.generate(items.length * 2 - 1, (int index) {
               if (index.isOdd) {
                 return const Padding(
