@@ -6,7 +6,7 @@ class BadgeInstanceModel extends BadgeInstanceEntity {
     required super.id,
     required super.createdAt,
     required super.entityId,
-    required super.issuedOn,
+    super.issuedOn,
     required super.awardType,
     required super.revoked,
     super.expiresAt,
@@ -26,9 +26,11 @@ class BadgeInstanceModel extends BadgeInstanceEntity {
           ? json['created_at'] as DateTime
           : DateTime.parse(json['created_at'] as String),
       entityId: json['entity_id'] as String,
-      issuedOn: json['issued_on'] is DateTime
-          ? json['issued_on'] as DateTime
-          : DateTime.parse(json['issued_on'] as String),
+      issuedOn: json['issued_on'] != null
+          ? (json['issued_on'] is DateTime
+                ? json['issued_on'] as DateTime
+                : DateTime.parse(json['issued_on'] as String))
+          : null,
       awardType: json['award_type'] as String,
       revoked: json['revoked'] as bool? ?? false,
       expiresAt: json['expires_at'] != null
@@ -53,7 +55,7 @@ class BadgeInstanceModel extends BadgeInstanceEntity {
       'id': id,
       'created_at': createdAt.toIso8601String(),
       'entity_id': entityId,
-      'issued_on': issuedOn.toIso8601String(),
+      if (issuedOn != null) 'issued_on': issuedOn!.toIso8601String(),
       'award_type': awardType,
       'revoked': revoked,
       if (expiresAt != null) 'expires_at': expiresAt!.toIso8601String(),

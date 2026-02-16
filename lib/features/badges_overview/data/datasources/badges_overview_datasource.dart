@@ -131,25 +131,15 @@ class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
           'entity_id': json['entity_id'],
         };
 
-        transformedJson['created_at'] =
-            json['date_created'] ?? json['created_at'];
-
-        if (json.containsKey('date_awarded') && json['date_awarded'] != null) {
-          transformedJson['issued_on'] = json['date_awarded'];
-        } else {
-          transformedJson['issued_on'] =
-              json['date_created'] ?? json['created_at'];
-        }
-
+        transformedJson['created_at'] = json['created_at'];
+        transformedJson['issued_on'] = json['issued_on'];
         transformedJson['award_type'] = 'requested';
         transformedJson['acceptance'] = json['denied'] == true
             ? 'Rejected'
             : 'Unaccepted';
         transformedJson['public'] = false;
         transformedJson['revoked'] = false;
-
-        transformedJson['badgeclass'] =
-            json['badge_class'] ?? json['badgeclass'];
+        transformedJson['badgeclass'] = json['badgeclass'];
 
         return BadgeInstanceModel.fromJson(transformedJson);
       }).toList();

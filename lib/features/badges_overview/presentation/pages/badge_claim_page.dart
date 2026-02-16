@@ -300,16 +300,17 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
               textTheme: textTheme,
               colorScheme: colorScheme,
             ),
-            _buildChip(
-              icon: Assets.iconDate,
-              text: DateFormat(
-                'd MMM yyyy',
-                l10n.localeName,
-              ).format(badge.issuedOn),
-              context: context,
-              textTheme: textTheme,
-              colorScheme: colorScheme,
-            ),
+            if (badge.issuedOn != null)
+              _buildChip(
+                icon: Assets.iconDate,
+                text: DateFormat(
+                  'd MMM yyyy',
+                  l10n.localeName,
+                ).format(badge.issuedOn!),
+                context: context,
+                textTheme: textTheme,
+                colorScheme: colorScheme,
+              ),
           ],
         ),
         const SizedBox(height: 8),

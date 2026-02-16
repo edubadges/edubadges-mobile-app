@@ -29,7 +29,7 @@ class BadgeClassModel extends BadgeClassEntity {
       name: json['name'] as String,
       entityId: json['entity_id'] as String,
       badgeClassType: BadgeClassType.fromString(json['badge_class_type'] as String?) ?? BadgeClassType.regular,
-      image: json['image'] as String? ?? json['image_url'] as String?, // Depending on the endpoint called the field could be one or the other
+      image: json['image'] as String?,
       description: json['description'] as String?,
       formal: json['formal'] as bool?,
       participation: ParticipationType.fromString(json['participation'] as String?),

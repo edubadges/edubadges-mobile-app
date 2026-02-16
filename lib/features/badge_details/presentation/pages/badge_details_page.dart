@@ -299,14 +299,15 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         _buildSectionCard(
           title: l10n.theEdubadge,
           items: [
-            BadgeDetailItemModel(
-              icon: Assets.iconUnlockedAlternate,
-              title: l10n.issuedOn,
-              subtitle: DateFormat(
-                AppConstants.mediumDateFormat,
-                l10n.localeName,
-              ).format(details!.badgeInstance!.issuedOn),
-            ),
+            if (details!.badgeInstance!.issuedOn != null)
+              BadgeDetailItemModel(
+                icon: Assets.iconUnlockedAlternate,
+                title: l10n.issuedOn,
+                subtitle: DateFormat(
+                  AppConstants.mediumDateFormat,
+                  l10n.localeName,
+                ).format(details.badgeInstance!.issuedOn!),
+              ),
             BadgeDetailItemModel(
               icon: Assets.iconBadgeExpireDate,
               title: l10n.expiresOn,
