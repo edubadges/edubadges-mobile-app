@@ -32,16 +32,16 @@ class BadgeVisibilityDialog {
                     return Column(
                       spacing: 8,
                       children: [
-                        // TODO: Check against the api (https://digitalclub.atlassian.net/browse/SURF-557)
-                        _CustomCheckboxRow(
-                          value: includeEvidence,
-                          onChanged: (value) {
-                            setState(() {
-                              includeEvidence = value ?? true;
-                            });
-                          },
-                          label: l10n.makeBadgePublicIncludeEvidence,
-                        ),
+                        if (badgeInstance.narrative != null)
+                          _CustomCheckboxRow(
+                            value: includeEvidence,
+                            onChanged: (value) {
+                              setState(() {
+                                includeEvidence = value ?? true;
+                              });
+                            },
+                            label: l10n.makeBadgePublicIncludeEvidence,
+                          ),
                         if (badgeInstance.gradeAchieved != null)
                           _CustomCheckboxRow(
                             value: includeGradeAchieved,
