@@ -2,7 +2,7 @@ class CreateCollectionRequest {
   final String name;
   final String? description;
   final bool public;
-  final List<int> badgeInstances;
+  final List<String> badgeInstances;
 
   const CreateCollectionRequest({
     required this.name,

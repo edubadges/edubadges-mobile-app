@@ -93,7 +93,7 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
     String name,
     String? description,
     bool public,
-    List<int> badgeInstanceIds,
+    List<String> badgeInstanceIds,
   ) async {
     final useCase = ref.read(updateCollectionUseCaseProvider);
     final result = await useCase(
@@ -120,7 +120,7 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
                 description: description,
                 public: public,
                 badgeInstanceIds: badgeInstanceIds
-                    .map((e) => e.toString())
+                    .map((e) => e)
                     .toList(),
               );
             }
@@ -139,7 +139,7 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
     required String name,
     String? description,
     required bool public,
-    required List<int> badgeInstanceIds,
+    required List<String> badgeInstanceIds,
   }) async {
     final useCase = ref.read(createCollectionUseCaseProvider);
     final result = await useCase(

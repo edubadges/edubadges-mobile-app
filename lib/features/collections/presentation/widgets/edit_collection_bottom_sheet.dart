@@ -45,10 +45,7 @@ class _EditCollectionBottomSheetState
           name,
           description.isNotEmpty ? description : null,
           widget.collection.public,
-          widget.collection.badgeInstanceIds
-              .map((id) => int.tryParse(id) ?? -1)
-              .where((id) => id != -1)
-              .toList(),
+          widget.collection.badgeInstanceIds,
         );
 
     if (success && mounted) {

@@ -15,13 +15,13 @@ abstract class CollectionsRepository {
     required String name,
     String? description,
     required bool public,
-    required List<int> badgeInstanceIds,
+    required List<String> badgeInstanceIds,
   });
 
   Future<Either<Failure, CollectionsEntity>> createCollection({
     required String name,
     String? description,
     required bool public,
-    required List<int> badgeInstanceIds,
+    required List<String> badgeInstanceIds,
   });
 }

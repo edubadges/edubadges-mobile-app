@@ -64,7 +64,7 @@ class CollectionsRepositoryImpl implements CollectionsRepository {
     required String name,
     String? description,
     required bool public,
-    required List<int> badgeInstanceIds,
+    required List<String> badgeInstanceIds,
   }) async {
     try {
       final data = <String, dynamic>{
@@ -93,7 +93,7 @@ class CollectionsRepositoryImpl implements CollectionsRepository {
     required String name,
     String? description,
     required bool public,
-    required List<int> badgeInstanceIds,
+    required List<String> badgeInstanceIds,
   }) async {
     try {
       final request = CreateCollectionRequest(

@@ -13,7 +13,7 @@ class UpdateCollectionUseCase {
     required String name,
     String? description,
     required bool public,
-    required List<int> badgeInstanceIds,
+    required List<String> badgeInstanceIds,
   }) async {
     if (entityId.isEmpty) {
       return left(
