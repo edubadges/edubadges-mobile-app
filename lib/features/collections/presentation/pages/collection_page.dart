@@ -104,10 +104,7 @@ class CollectionPage extends ConsumerWidget {
                                   collection.name,
                                   collection.description,
                                   state,
-                                  collection.badgeInstanceIds
-                                      .map((id) => int.tryParse(id) ?? -1)
-                                      .where((id) => id != -1)
-                                      .toList(),
+                                  collection.badgeInstanceIds,
                                 );
                             if (!success) {
                               publicNotifier.value = !state;
