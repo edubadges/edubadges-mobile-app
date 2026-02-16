@@ -26,10 +26,10 @@ String? appFlavor;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  initializeDateFormatting();
+  await initializeDateFormatting();
 
   // Configure system UI for edge-to-edge display
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   if (appFlavor == null) {
     const flutterAppFlavor = String.fromEnvironment('FLUTTER_APP_FLAVOR');

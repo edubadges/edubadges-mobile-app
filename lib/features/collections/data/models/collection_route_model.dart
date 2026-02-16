@@ -33,7 +33,7 @@ class CollectionRouteModel {
       queryParameters: {
         'title': title,
         if (description != null && description!.isNotEmpty)
-          'description': description!,
+          'description': description,
       },
     );
     return uri.toString();

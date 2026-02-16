@@ -65,7 +65,7 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
 
   Future<void> _acceptTerms() async {
     final dataSource = ref.watch(generalTermsDataSourceProvider);
-    dataSource.acceptTermsUrl();
+    await dataSource.acceptTermsUrl();
 
     final notificationStatus = ref.watch(notificationPermissionStatusProvider);
 
@@ -119,7 +119,7 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(child: ErrorMessageWidget()),
+              error: (error, _) => const Center(child: ErrorMessageWidget()),
             ),
             Positioned(
               left: 0,

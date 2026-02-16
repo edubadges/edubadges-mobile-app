@@ -337,7 +337,7 @@ class CollectionPage extends ConsumerWidget {
                   onSecondButtonPressed: () async {
                     context.pop();
                     final collectionsAsync = ref.read(collectionsProvider);
-                    final collections = await collectionsAsync.when(
+                    final List<CollectionsEntity> collections = await collectionsAsync.when(
                       data: (collections) => Future.value(collections),
                       loading: () => ref.read(collectionsProvider.future),
                       error: (error, stackTrace) =>

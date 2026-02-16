@@ -85,7 +85,7 @@ class _AgreementDetailsPageState extends ConsumerState<AgreementDetailsPage> {
           );
         },
         loading: () {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         },
       ),
       actions: [

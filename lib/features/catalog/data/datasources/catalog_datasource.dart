@@ -39,7 +39,7 @@ class CatalogDataSourceImpl implements CatalogDataSource {
 
     final data = response.data;
     if (data == null) {
-      throw ParsingException(
+      throw const ParsingException(
         message: 'No data returned from catalog API',
         code: ErrorCodes.parsingError,
       );
@@ -53,7 +53,7 @@ class CatalogDataSourceImpl implements CatalogDataSource {
 
       final badges = resultsData.map((json) {
         if (json is! Map<String, dynamic>) {
-          throw FormatException('Invalid catalog badge format');
+          throw const FormatException('Invalid catalog badge format');
         }
         return CatalogBadgeModel.fromJson(json);
       }).toList();

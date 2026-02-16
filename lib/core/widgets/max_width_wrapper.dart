@@ -55,7 +55,7 @@ class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
             ? widget.maxWidth
             : constraints.maxWidth;
 
-        Widget content = Center(
+        final Widget content = Center(
           child: SizedBox(
             width: effectiveWidth,
             child: widget.child,

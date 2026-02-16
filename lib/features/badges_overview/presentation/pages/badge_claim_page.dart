@@ -48,7 +48,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
 
     final l10n = AppLocalizations.of(context);
 
-    AdaptiveDialog.show(
+    await AdaptiveDialog.show(
       context: context,
       config: AdaptiveDialogConfig(
         title: l10n.declineBadgeTitle,
@@ -251,7 +251,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
           (element) => element.name == 'extensions:TimeInvestmentExtension',
         );
     final timeInvestment = timeInvestmentMatch != null
-        ? int.tryParse(timeInvestmentMatch.value)
+        ? int.tryParse(timeInvestmentMatch.value as String)
         : null;
 
     final screenWidth = MediaQuery.of(context).size.width;

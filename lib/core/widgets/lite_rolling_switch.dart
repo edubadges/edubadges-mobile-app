@@ -202,7 +202,7 @@ class _AnimatedIconSwitchState extends State<AnimatedIconSwitch>
       backgroundColorAnimationController.value =
           (translateAnimation.value - 3) / (widgetWidth - widgetHeight + 3);
       if (isDragging) {
-        double leftBounds = widgetWidth - widgetHeight;
+        final double leftBounds = widgetWidth - widgetHeight;
         popUpTween.begin =
             (1 - ((translateAnimation.value - 3) / leftBounds * 2)).abs().clamp(
               0,
@@ -312,8 +312,8 @@ class _AnimatedIconSwitchState extends State<AnimatedIconSwitch>
             ? null
             : (details) {
                 if (isPlayingAnimation || startHorizontal == null) return;
-                double leftVal = details.localPosition.dx - startHorizontal!;
-                double leftBounds = widgetWidth - widgetHeight + 3;
+                final double leftVal = details.localPosition.dx - startHorizontal!;
+                final double leftBounds = widgetWidth - widgetHeight + 3;
                 translateTween.begin = leftVal.clamp(3, leftBounds);
 
                 // Animation while dragging
@@ -334,7 +334,7 @@ class _AnimatedIconSwitchState extends State<AnimatedIconSwitch>
             : (details) {
                 if (isPlayingAnimation) return;
                 startHorizontal = null;
-                double center = (widgetWidth - widgetHeight + 3) / 2;
+                final double center = (widgetWidth - widgetHeight + 3) / 2;
                 if (center <= translateTween.begin!) {
                   translateTween.end = widgetWidth - widgetHeight + 3;
 

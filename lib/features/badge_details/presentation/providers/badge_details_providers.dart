@@ -52,7 +52,7 @@ final badgeDetailsModelProvider = FutureProvider.autoDispose
           params.badgeClassEntityId!,
         );
 
-        BadgeInstanceEntity? badgeInstance = ref
+        final BadgeInstanceEntity? badgeInstance = ref
             .read(badgesListProvider)
             .value
             ?.claimedBadges

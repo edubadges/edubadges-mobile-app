@@ -39,9 +39,9 @@ class BadgeCard extends ConsumerWidget {
       (element) => element.name == 'extensions:TimeInvestmentExtension',
     );
     if (match?.value is int) {
-      return match!.value;
+      return match!.value as int;
     }
-    return match != null ? int.tryParse(match.value) : null;
+    return match != null ? int.tryParse(match.value.toString()) : null;
   }
 
   @override
@@ -74,7 +74,6 @@ class BadgeCard extends ConsumerWidget {
         ),
         padding: const EdgeInsets.all(16),
         child: Row(
-          spacing: 12,
           children: [
             // TODO: add no image paceholder (https://digitalclub.atlassian.net/browse/SURF-517)
             if (badgeImageUrl != null)
@@ -86,6 +85,7 @@ class BadgeCard extends ConsumerWidget {
                   return const SizedBox(height: 64, width: 100);
                 },
               ),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +110,7 @@ class BadgeCard extends ConsumerWidget {
       );
     }
 
-    int? timeInvestment = getTimeInvestment();
+    final int? timeInvestment = getTimeInvestment();
 
     return GestureDetector(
       onTap: onTapDisabled
@@ -200,10 +200,12 @@ class BadgeCard extends ConsumerWidget {
                     text: l10n.countHours(timeInvestment),
                     context: context,
                   ),
-                if (instance?.gradeAchieved != null && instance!.includeGradeAchieved)
+                if (instance is BadgeInstanceModel &&
+                    (instance as BadgeInstanceModel).gradeAchieved != null &&
+                    (instance as BadgeInstanceModel).includeGradeAchieved)
                   buildChip(
                     icon: Assets.iconCollections,
-                    text: instance!.gradeAchieved!,
+                    text: (instance as BadgeInstanceModel).gradeAchieved!,
                     context: context,
                   ),
                 if (instance != null)
@@ -267,7 +269,6 @@ class BadgeCard extends ConsumerWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        spacing: 6,
         children: [
           SvgPicture.asset(
             icon,
@@ -275,6 +276,7 @@ class BadgeCard extends ConsumerWidget {
             width: 18,
             colorFilter: ColorFilter.mode(onPrimaryContainer, BlendMode.srcIn),
           ),
+          const SizedBox(width: 6),
           Text(
             text,
             style: textTheme.labelMedium?.copyWith(
