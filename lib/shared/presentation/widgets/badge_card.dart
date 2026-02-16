@@ -206,13 +206,13 @@ class BadgeCard extends ConsumerWidget {
                     text: instance!.gradeAchieved!,
                     context: context,
                   ),
-                if (instance != null)
+                if (instance?.issuedOn != null)
                   buildChip(
                     icon: Assets.iconDate,
                     text: DateFormat(
                       'd MMM, yyyy',
                       l10n.localeName,
-                    ).format(instance!.issuedOn),
+                    ).format(instance!.issuedOn!),
                     context: context,
                   ),
               ],
