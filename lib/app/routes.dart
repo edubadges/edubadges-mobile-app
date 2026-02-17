@@ -124,6 +124,24 @@ final appRouter = Provider<GoRouter>((ref) {
         },
       ),
 
+      // Deep link from public share → internal catalog page
+      GoRoute(
+        path: '/public/catalog/:id',
+        redirect: (context, state) {
+          final id = state.pathParameters['id'];
+          if (id == null || id.isEmpty) {
+            return RoutePath.catalog; // fallback
+          }
+
+          final routeModel = BadgeDetailsRouteModel(
+            id: id,
+            from: BadgeDetailsRouteFrom.catalog,
+          );
+
+          return routeModel.buildRouteUrl();
+        },
+      ),
+
       GoRoute(
         path: RoutePath.agreementDetails,
         name: 'agreement-details',

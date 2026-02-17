@@ -1,6 +1,7 @@
 import 'package:edubadges/app/constants.dart';
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
@@ -107,7 +108,11 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            context.pop();
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(RoutePath.catalog);
+            }
           },
           icon: Icon(
             Icons.arrow_back,
