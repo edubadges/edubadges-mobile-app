@@ -42,15 +42,14 @@ class ActionableContentLayout extends StatelessWidget {
               )
             : null,
         backgroundColor: colorScheme.surface,
+        actions: showBackButton ? [const SizedBox(width: 56)] : null,
       ),
       body: MaxWidthWrapper(
         child: Column(
           children: [
             Expanded(
               child: error
-                  ? Center(
-                      child: content,
-                    )
+                  ? Center(child: content)
                   : SingleChildScrollView(
                       padding: const EdgeInsets.all(20),
                       child: content,
