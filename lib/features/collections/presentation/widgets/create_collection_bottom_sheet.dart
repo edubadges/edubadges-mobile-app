@@ -33,7 +33,7 @@ class _CreateCollectionBottomSheetState
 
       Navigator.of(context).pop();
 
-      final uri = Uri.parse(RoutePath.newCollection).replace(
+      final uri = Uri.parse(RoutePath.newCollectionBadgeSelection).replace(
         queryParameters: {
           'name': name,
           if (description.isNotEmpty) 'description': description,
