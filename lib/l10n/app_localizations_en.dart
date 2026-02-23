@@ -604,4 +604,306 @@ class AppLocalizationsEn extends AppLocalizations {
   String notYetAgreedVersion(String version) {
     return 'Not yet agreed, version $version';
   }
+
+  @override
+  String get error100 => 'You don\'t have the required permissions.';
+
+  @override
+  String get error101 =>
+      'Could not register email address. Address already in use.';
+
+  @override
+  String get error102 =>
+      'You have already added this address. Please verify it.';
+
+  @override
+  String get error103 => 'Cannot remove primary email address.';
+
+  @override
+  String get error104 => 'Cannot remove only email address.';
+
+  @override
+  String get error105 =>
+      'Unverified email address cannot be made primary email address.';
+
+  @override
+  String get error201 =>
+      'May not request: you already requested this edubadge.';
+
+  @override
+  String get error202 =>
+      'May not request: you already have been awarded this edubadge.';
+
+  @override
+  String get error203 => 'May not request: you don\'t have a student account.';
+
+  @override
+  String get error204 => 'Invalid request-id.';
+
+  @override
+  String get error205 => 'Request not found.';
+
+  @override
+  String get error206 => 'Accepted requests for edubadges cannot be withdrawn.';
+
+  @override
+  String get error207 => 'Users can only withdraw their own requests.';
+
+  @override
+  String get error208 => 'Missing badge class-id.';
+
+  @override
+  String get error209 => 'Cannot request.';
+
+  @override
+  String get error210 =>
+      'You do not have permission. Check your assigned role in the badge class related to this request.';
+
+  @override
+  String get error211 => 'Request has already been denied.';
+
+  @override
+  String get error212 => 'Awarded requests can\'t be denied.';
+
+  @override
+  String get error213 =>
+      'Can\'t award requested edubadge, it has already been awarded.';
+
+  @override
+  String get error214 =>
+      'Cannot change any value, edubadges have already been awarded within this entity.';
+
+  @override
+  String get error215 =>
+      'Cannot create a formal badge class for an institution without the judicial basis for formal edubadges.';
+
+  @override
+  String get error216 =>
+      'Cannot create an non-formal badge class for an institution without the judicial basis for non-formal edubadges.';
+
+  @override
+  String get error500 =>
+      'Cannot remove the last staff member of this institution.';
+
+  @override
+  String get error501 => 'There may be only one invite per email address.';
+
+  @override
+  String get error502 =>
+      'Cannot invite user for this entity: there is a conflicting staff membership.';
+
+  @override
+  String get error503 =>
+      'Cannot invite user for this entity: there is a conflicting invite.';
+
+  @override
+  String get error504 => 'May not invite user from different institution.';
+
+  @override
+  String get error505 => 'This invite is for a student.';
+
+  @override
+  String get error506 => 'This invite is for a teacher.';
+
+  @override
+  String get error507 =>
+      'You do not have permission to invite user for this entity.';
+
+  @override
+  String get error508 =>
+      'You cannot edit an invitation that has been rejected.';
+
+  @override
+  String get error509 => 'Not a valid email address.';
+
+  @override
+  String get error510 => 'You entered this email address multiple times.';
+
+  @override
+  String get error601 =>
+      'You do not have permission. Check your assigned role in the issuer portal.';
+
+  @override
+  String get error701 => 'Unspecified share provider.';
+
+  @override
+  String get error702 => 'Invalid share provider.';
+
+  @override
+  String get error801 =>
+      'Cannot change grading table URL, edubadges have already been issued.';
+
+  @override
+  String get error802 =>
+      'Cannot change institution code, edubadges have already been issued.';
+
+  @override
+  String get error902 => 'Must be a valid URL or picture format.';
+
+  @override
+  String get error903 => 'This is a required attribute.';
+
+  @override
+  String get error904 => 'No file was uploaded.';
+
+  @override
+  String get error905 => 'Either criteria or criteria URL is required.';
+
+  @override
+  String get error906 =>
+      'Enter the number of study load hours or remove this section.';
+
+  @override
+  String get error907 => 'This is a reserved name for badge classes';
+
+  @override
+  String get error908 =>
+      'Cannot create Issuer with this English name in this issuer group. It already exists.';
+
+  @override
+  String get error909 =>
+      'Enter the programme identifier or remove this section.';
+
+  @override
+  String get error910 => 'Either narrative or url is required.';
+
+  @override
+  String get error911 =>
+      'Cannot create badge class with this name in this Issuer. It already exists.';
+
+  @override
+  String get error912 => 'An English or Dutch name is required.';
+
+  @override
+  String get error913 => 'An English or Dutch description is required.';
+
+  @override
+  String get error914 =>
+      'Cannot create Issuer with this Dutch name in this issuer group. It already exists.';
+
+  @override
+  String get error915 => 'A Dutch or English url is required.';
+
+  @override
+  String get error916 =>
+      'Cannot create Issuer Group with this Dutch name in this institution. It already exists.';
+
+  @override
+  String get error917 =>
+      'Cannot create Issuer Group with this English name in this institution. It already exists.';
+
+  @override
+  String get error918 => 'A Dutch or English image is required.';
+
+  @override
+  String get error919 =>
+      'Cannot create Institution with this Dutch name. It already exists.';
+
+  @override
+  String get error920 =>
+      'Cannot create Institution with this English name. It already exists.';
+
+  @override
+  String get error921 => 'Invalid URL';
+
+  @override
+  String get error922 =>
+      'Too many Related Educational Framework objects. The maximum is 8.';
+
+  @override
+  String get error923 => 'An English or Dutch url is required.';
+
+  @override
+  String get error924 => 'An English or Dutch name is required.';
+
+  @override
+  String get error925 => 'An English or Dutch description is required.';
+
+  @override
+  String get error926 => 'An English or Dutch image is required.';
+
+  @override
+  String get error927 => 'Email is invalid';
+
+  @override
+  String get error928 => 'EPPN is required';
+
+  @override
+  String get error929 => 'Email is duplicated';
+
+  @override
+  String get error930 => 'EPPN is duplicated';
+
+  @override
+  String get error931 =>
+      'There is already an unaccepted direct award for this EPPN.';
+
+  @override
+  String get error932 => 'This badge class requires a narrative for awarding.';
+
+  @override
+  String get error933 => 'This badge class requires evidence for awarding.';
+
+  @override
+  String get error934 =>
+      'The programme identifier is required when study points in ECTS/EC are specified.';
+
+  @override
+  String get error935 => 'Enter the time investment or remove this section.';
+
+  @override
+  String get error936 =>
+      'Cannot create edubadge collection with this name as it already exists.';
+
+  @override
+  String get error937 => 'ECTS/EC can not be empty or 0.';
+
+  @override
+  String get error938 => 'This edubadge requires a motivation for enrollment.';
+
+  @override
+  String get error939 =>
+      'This edubadge requires an evidence URL for enrollment.';
+
+  @override
+  String get error940 =>
+      'There is already an edubadge or unaccepted direct award for this email.';
+
+  @override
+  String get error941 =>
+      'There is already an edubadge request from this email.';
+
+  @override
+  String get error942 =>
+      'EPPN does not match the EPPN-format of your institution.';
+
+  @override
+  String get error943 => 'There is already a claimed assertion for this EPPN.';
+
+  @override
+  String get error944 => 'This badge class requires a grade for awarding.';
+
+  @override
+  String get error945 => 'The type of institution is required.';
+
+  @override
+  String get error946 =>
+      'Type of visibility is required for SURF institutions.';
+
+  @override
+  String get error947 =>
+      'An English or Dutch image is required when issued on behalf of other organisation.';
+
+  @override
+  String get error948 => 'First name is required.';
+
+  @override
+  String get error949 => 'Surname is required.';
+
+  @override
+  String get errorUnexpected => 'Unexpected error occurred.';
+
+  @override
+  String get errorDescription =>
+      'An unexpected error has occurred. Please try again later or contact support@edubadges.nl for support.';
 }

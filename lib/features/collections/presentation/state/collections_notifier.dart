@@ -1,4 +1,6 @@
+import 'package:dartz/dartz.dart';
 import 'package:edubadges/core/network/network_providers.dart';
+import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/collections/data/models/collections_model.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
@@ -135,7 +137,7 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
     );
   }
 
-  Future<bool> createCollection({
+  Future<Either<Failure, void>> createCollection({
     required String name,
     String? description,
     required bool public,
@@ -152,11 +154,11 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
     return result.fold(
       (failure) {
         state = AsyncError(failure, StackTrace.current);
-        return false;
+        return Left(failure);
       },
       (_) {
         refresh();
-        return true;
+        return const Right(null);
       },
     );
   }
