@@ -105,18 +105,21 @@ class NotFoundException extends AppException {
 /// Exception thrown when there's a validation error (400, 422)
 class ValidationException extends AppException {
   final Map<String, List<String>>? errors;
+  /// API error code number (e.g. 936) when the backend returns a numeric error_code in the response.
+  final int? apiErrorCode;
 
   const ValidationException({
     required super.message,
     this.errors,
     super.code,
+    this.apiErrorCode,
     super.originalError,
     super.stackTrace,
   });
 
   @override
   String toString() =>
-      'ValidationException(message: $message, errors: $errors, code: $code)';
+      'ValidationException(message: $message, errors: $errors, code: $code, apiErrorCode: $apiErrorCode)';
 }
 
 /// Exception thrown when there's a timeout

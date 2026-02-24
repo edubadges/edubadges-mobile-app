@@ -1,5 +1,6 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/error_message.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
@@ -41,7 +42,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
       return;
     }
 
-    final success = await ref
+    final result = await ref
         .read(collectionsProvider.notifier)
         .createCollection(
           name: widget.name,
@@ -50,12 +51,13 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
           badgeInstanceIds: _selectedBadgeIds.toList(),
         );
 
-    if (success && mounted) {
-      context.go(RoutePath.collections);
-    } else if (mounted) {
-      final l10n = AppLocalizations.of(context);
-      showAppSnackBar(context, l10n.somethingWentWrong);
-    }
+    if (!mounted) return;
+    handleFailureResult(
+      context,
+      result,
+      onSuccess: (_) => context.go(RoutePath.collections),
+      snackBarDuration: const Duration(seconds: 5),
+    );
   }
 
   @override
@@ -110,7 +112,9 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
                     itemCount: badges.length,
                     itemBuilder: (context, index) {
                       final badge = badges[index];
-                      final isSelected = _selectedBadgeIds.contains(badge.entityId);
+                      final isSelected = _selectedBadgeIds.contains(
+                        badge.entityId,
+                      );
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 8),
