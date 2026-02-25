@@ -290,6 +290,10 @@
             }
         }
     },
+    "withdrawAgreementSuccess": "Agreement withdrawn",
+    "@withdrawAgreementSuccess": {
+        "description": "Success message shown after withdrawing an agreement"
+    },
     "confirm": "Confirm",
     "@confirm": {
         "description": "Button text to confirm an action"

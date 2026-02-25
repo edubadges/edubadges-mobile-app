@@ -290,6 +290,10 @@
             }
         }
     },
+    "withdrawAgreementSuccess": "Akkoordverklaring ingetrokken",
+    "@withdrawAgreementSuccess": {
+        "description": "Success message shown after withdrawing an agreement"
+    },
     "confirm": "Bevestig",
     "@confirm": {
         "description": "Button text to confirm an action"

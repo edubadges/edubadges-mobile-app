@@ -18,4 +18,12 @@ class AccountRemoteDataSourceImpl implements AccountDataSource {
     final response = await apiClient.delete('/profile');
     return response.statusCode == 204;
   }
+
+  @override
+  Future<void> rejectTerms(String entityId) async {
+    await apiClient.patch<void>(
+      '/terms-agreements/$entityId',
+      data: {'agreed': false},
+    );
+  }
 }

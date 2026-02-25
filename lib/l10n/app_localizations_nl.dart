@@ -237,6 +237,9 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
+  String get withdrawAgreementSuccess => 'Akkoordverklaring ingetrokken';
+
+  @override
   String get confirm => 'Bevestig';
 
   @override
