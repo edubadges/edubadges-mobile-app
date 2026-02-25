@@ -524,6 +524,12 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to withdraw your agreement statement for {institution}?'**
   String withdrawAgreementMessage(String institution);
 
+  /// Success message shown after withdrawing an agreement
+  ///
+  /// In en, this message translates to:
+  /// **'Agreement withdrawn'**
+  String get withdrawAgreementSuccess;
+
   /// Button text to confirm an action
   ///
   /// In en, this message translates to:
@@ -1087,6 +1093,534 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not yet agreed, version {version}'**
   String notYetAgreedVersion(String version);
+
+  /// API error 100: shown when the user does not have the required permissions
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have the required permissions.'**
+  String get error100;
+
+  /// API error 101: email registration failed because the address is already in use
+  ///
+  /// In en, this message translates to:
+  /// **'Could not register email address. Address already in use.'**
+  String get error101;
+
+  /// API error 102: user has already added this email address and must verify it
+  ///
+  /// In en, this message translates to:
+  /// **'You have already added this address. Please verify it.'**
+  String get error102;
+
+  /// API error 103: user attempted to remove their primary email address
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot remove primary email address.'**
+  String get error103;
+
+  /// API error 104: user attempted to remove their only email address
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot remove only email address.'**
+  String get error104;
+
+  /// API error 105: unverified email cannot be set as primary
+  ///
+  /// In en, this message translates to:
+  /// **'Unverified email address cannot be made primary email address.'**
+  String get error105;
+
+  /// API error 201: user already requested this edubadge
+  ///
+  /// In en, this message translates to:
+  /// **'May not request: you already requested this edubadge.'**
+  String get error201;
+
+  /// API error 202: user has already been awarded this edubadge
+  ///
+  /// In en, this message translates to:
+  /// **'May not request: you already have been awarded this edubadge.'**
+  String get error202;
+
+  /// API error 203: request not allowed because user has no student account
+  ///
+  /// In en, this message translates to:
+  /// **'May not request: you don\'t have a student account.'**
+  String get error203;
+
+  /// API error 204: the request identifier is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid request-id.'**
+  String get error204;
+
+  /// API error 205: the requested resource was not found
+  ///
+  /// In en, this message translates to:
+  /// **'Request not found.'**
+  String get error205;
+
+  /// API error 206: user tried to withdraw an already accepted edubadge request
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted requests for edubadges cannot be withdrawn.'**
+  String get error206;
+
+  /// API error 207: user tried to withdraw someone else's request
+  ///
+  /// In en, this message translates to:
+  /// **'Users can only withdraw their own requests.'**
+  String get error207;
+
+  /// API error 208: badge class identifier is missing from the request
+  ///
+  /// In en, this message translates to:
+  /// **'Missing badge class-id.'**
+  String get error208;
+
+  /// API error 209: request operation is not allowed
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot request.'**
+  String get error209;
+
+  /// API error 210: insufficient permission in the badge class for this request
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission. Check your assigned role in the badge class related to this request.'**
+  String get error210;
+
+  /// API error 211: the request was already denied
+  ///
+  /// In en, this message translates to:
+  /// **'Request has already been denied.'**
+  String get error211;
+
+  /// API error 212: cannot deny an already awarded request
+  ///
+  /// In en, this message translates to:
+  /// **'Awarded requests can\'t be denied.'**
+  String get error212;
+
+  /// API error 213: edubadge has already been awarded
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t award requested edubadge, it has already been awarded.'**
+  String get error213;
+
+  /// API error 214: entity cannot be changed because edubadges have already been awarded
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot change any value, edubadges have already been awarded within this entity.'**
+  String get error214;
+
+  /// API error 215: institution lacks judicial basis for formal edubadges
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot create a formal badge class for an institution without the judicial basis for formal edubadges.'**
+  String get error215;
+
+  /// API error 216: institution lacks judicial basis for non-formal edubadges
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot create an non-formal badge class for an institution without the judicial basis for non-formal edubadges.'**
+  String get error216;
+
+  /// API error 500: cannot remove the last staff member of an institution
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot remove the last staff member of this institution.'**
+  String get error500;
+
+  /// API error 501: duplicate invite for the same email address
+  ///
+  /// In en, this message translates to:
+  /// **'There may be only one invite per email address.'**
+  String get error501;
+
+  /// API error 502: invite conflicts with existing staff membership
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot invite user for this entity: there is a conflicting staff membership.'**
+  String get error502;
+
+  /// API error 503: a conflicting invite already exists for this entity
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot invite user for this entity: there is a conflicting invite.'**
+  String get error503;
+
+  /// API error 504: cannot invite a user from a different institution
+  ///
+  /// In en, this message translates to:
+  /// **'May not invite user from different institution.'**
+  String get error504;
+
+  /// API error 505: invite is intended for a student
+  ///
+  /// In en, this message translates to:
+  /// **'This invite is for a student.'**
+  String get error505;
+
+  /// API error 506: invite is intended for a teacher
+  ///
+  /// In en, this message translates to:
+  /// **'This invite is for a teacher.'**
+  String get error506;
+
+  /// API error 507: user lacks permission to invite for this entity
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission to invite user for this entity.'**
+  String get error507;
+
+  /// API error 508: attempted to edit a rejected invitation
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot edit an invitation that has been rejected.'**
+  String get error508;
+
+  /// API error 509: invalid email address format
+  ///
+  /// In en, this message translates to:
+  /// **'Not a valid email address.'**
+  String get error509;
+
+  /// API error 510: same email address entered more than once
+  ///
+  /// In en, this message translates to:
+  /// **'You entered this email address multiple times.'**
+  String get error510;
+
+  /// API error 601: insufficient permission in the issuer portal
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission. Check your assigned role in the issuer portal.'**
+  String get error601;
+
+  /// API error 701: share provider was not specified
+  ///
+  /// In en, this message translates to:
+  /// **'Unspecified share provider.'**
+  String get error701;
+
+  /// API error 702: share provider is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid share provider.'**
+  String get error702;
+
+  /// API error 801: grading table URL cannot be changed after edubadges were issued
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot change grading table URL, edubadges have already been issued.'**
+  String get error801;
+
+  /// API error 802: institution code cannot be changed after edubadges were issued
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot change institution code, edubadges have already been issued.'**
+  String get error802;
+
+  /// API error 902: URL or image format is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Must be a valid URL or picture format.'**
+  String get error902;
+
+  /// API error 903: a required attribute is missing
+  ///
+  /// In en, this message translates to:
+  /// **'This is a required attribute.'**
+  String get error903;
+
+  /// API error 904: no file was provided in the upload
+  ///
+  /// In en, this message translates to:
+  /// **'No file was uploaded.'**
+  String get error904;
+
+  /// API error 905: either criteria or criteria URL must be provided
+  ///
+  /// In en, this message translates to:
+  /// **'Either criteria or criteria URL is required.'**
+  String get error905;
+
+  /// API error 906: study load hours required or section must be removed
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the number of study load hours or remove this section.'**
+  String get error906;
+
+  /// API error 907: the name is reserved for badge classes
+  ///
+  /// In en, this message translates to:
+  /// **'This is a reserved name for badge classes'**
+  String get error907;
+
+  /// API error 908: issuer with this English name already exists in this issuer group
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot create Issuer with this English name in this issuer group. It already exists.'**
+  String get error908;
+
+  /// API error 909: programme identifier required or section must be removed
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the programme identifier or remove this section.'**
+  String get error909;
+
+  /// API error 910: either narrative or URL must be provided
+  ///
+  /// In en, this message translates to:
+  /// **'Either narrative or url is required.'**
+  String get error910;
+
+  /// API error 911: badge class with this name already exists in this issuer
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot create badge class with this name in this Issuer. It already exists.'**
+  String get error911;
+
+  /// API error 912: name in English or Dutch is required
+  ///
+  /// In en, this message translates to:
+  /// **'An English or Dutch name is required.'**
+  String get error912;
+
+  /// API error 913: description in English or Dutch is required
+  ///
+  /// In en, this message translates to:
+  /// **'An English or Dutch description is required.'**
+  String get error913;
+
+  /// API error 914: issuer with this Dutch name already exists in this issuer group
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot create Issuer with this Dutch name in this issuer group. It already exists.'**
+  String get error914;
+
+  /// API error 915: URL in Dutch or English is required
+  ///
+  /// In en, this message translates to:
+  /// **'A Dutch or English url is required.'**
+  String get error915;
+
+  /// API error 916: issuer group with this Dutch name already exists in this institution
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot create Issuer Group with this Dutch name in this institution. It already exists.'**
+  String get error916;
+
+  /// API error 917: issuer group with this English name already exists in this institution
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot create Issuer Group with this English name in this institution. It already exists.'**
+  String get error917;
+
+  /// API error 918: image in Dutch or English is required
+  ///
+  /// In en, this message translates to:
+  /// **'A Dutch or English image is required.'**
+  String get error918;
+
+  /// API error 919: institution with this Dutch name already exists
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot create Institution with this Dutch name. It already exists.'**
+  String get error919;
+
+  /// API error 920: institution with this English name already exists
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot create Institution with this English name. It already exists.'**
+  String get error920;
+
+  /// API error 921: the URL is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid URL'**
+  String get error921;
+
+  /// API error 922: maximum number of Related Educational Framework objects (8) exceeded
+  ///
+  /// In en, this message translates to:
+  /// **'Too many Related Educational Framework objects. The maximum is 8.'**
+  String get error922;
+
+  /// API error 923: URL in English or Dutch is required
+  ///
+  /// In en, this message translates to:
+  /// **'An English or Dutch url is required.'**
+  String get error923;
+
+  /// API error 924: name in English or Dutch is required
+  ///
+  /// In en, this message translates to:
+  /// **'An English or Dutch name is required.'**
+  String get error924;
+
+  /// API error 925: description in English or Dutch is required
+  ///
+  /// In en, this message translates to:
+  /// **'An English or Dutch description is required.'**
+  String get error925;
+
+  /// API error 926: image in English or Dutch is required
+  ///
+  /// In en, this message translates to:
+  /// **'An English or Dutch image is required.'**
+  String get error926;
+
+  /// API error 927: email address is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Email is invalid'**
+  String get error927;
+
+  /// API error 928: EPPN (eduPerson Principal Name) is required
+  ///
+  /// In en, this message translates to:
+  /// **'EPPN is required'**
+  String get error928;
+
+  /// API error 929: duplicate email address
+  ///
+  /// In en, this message translates to:
+  /// **'Email is duplicated'**
+  String get error929;
+
+  /// API error 930: duplicate EPPN
+  ///
+  /// In en, this message translates to:
+  /// **'EPPN is duplicated'**
+  String get error930;
+
+  /// API error 931: unaccepted direct award already exists for this EPPN
+  ///
+  /// In en, this message translates to:
+  /// **'There is already an unaccepted direct award for this EPPN.'**
+  String get error931;
+
+  /// API error 932: narrative is required to award this badge class
+  ///
+  /// In en, this message translates to:
+  /// **'This badge class requires a narrative for awarding.'**
+  String get error932;
+
+  /// API error 933: evidence is required to award this badge class
+  ///
+  /// In en, this message translates to:
+  /// **'This badge class requires evidence for awarding.'**
+  String get error933;
+
+  /// API error 934: programme identifier required when ECTS/EC study points are given
+  ///
+  /// In en, this message translates to:
+  /// **'The programme identifier is required when study points in ECTS/EC are specified.'**
+  String get error934;
+
+  /// API error 935: time investment required or section must be removed
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the time investment or remove this section.'**
+  String get error935;
+
+  /// API error 936: edubadge collection with this name already exists
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot create edubadge collection with this name as it already exists.'**
+  String get error936;
+
+  /// API error 937: ECTS/EC must be non-empty and greater than zero
+  ///
+  /// In en, this message translates to:
+  /// **'ECTS/EC can not be empty or 0.'**
+  String get error937;
+
+  /// API error 938: motivation is required for enrollment in this edubadge
+  ///
+  /// In en, this message translates to:
+  /// **'This edubadge requires a motivation for enrollment.'**
+  String get error938;
+
+  /// API error 939: evidence URL is required for enrollment in this edubadge
+  ///
+  /// In en, this message translates to:
+  /// **'This edubadge requires an evidence URL for enrollment.'**
+  String get error939;
+
+  /// API error 940: edubadge or unaccepted direct award already exists for this email
+  ///
+  /// In en, this message translates to:
+  /// **'There is already an edubadge or unaccepted direct award for this email.'**
+  String get error940;
+
+  /// API error 941: an edubadge request from this email already exists
+  ///
+  /// In en, this message translates to:
+  /// **'There is already an edubadge request from this email.'**
+  String get error941;
+
+  /// API error 942: EPPN format does not match the institution's format
+  ///
+  /// In en, this message translates to:
+  /// **'EPPN does not match the EPPN-format of your institution.'**
+  String get error942;
+
+  /// API error 943: a claimed assertion already exists for this EPPN
+  ///
+  /// In en, this message translates to:
+  /// **'There is already a claimed assertion for this EPPN.'**
+  String get error943;
+
+  /// API error 944: grade is required to award this badge class
+  ///
+  /// In en, this message translates to:
+  /// **'This badge class requires a grade for awarding.'**
+  String get error944;
+
+  /// API error 945: institution type is required
+  ///
+  /// In en, this message translates to:
+  /// **'The type of institution is required.'**
+  String get error945;
+
+  /// API error 946: visibility type is required for SURF institutions
+  ///
+  /// In en, this message translates to:
+  /// **'Type of visibility is required for SURF institutions.'**
+  String get error946;
+
+  /// API error 947: English or Dutch image required when issuing on behalf of another organisation
+  ///
+  /// In en, this message translates to:
+  /// **'An English or Dutch image is required when issued on behalf of other organisation.'**
+  String get error947;
+
+  /// API error 948: first name is required
+  ///
+  /// In en, this message translates to:
+  /// **'First name is required.'**
+  String get error948;
+
+  /// API error 949: surname is required
+  ///
+  /// In en, this message translates to:
+  /// **'Surname is required.'**
+  String get error949;
+
+  /// Generic message when an unexpected or unknown error occurs
+  ///
+  /// In en, this message translates to:
+  /// **'Unexpected error occurred.'**
+  String get errorUnexpected;
+
+  /// Longer description for unexpected errors, with support contact information
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error has occurred. Please try again later or contact support@edubadges.nl for support.'**
+  String get errorDescription;
 }
 
 class _AppLocalizationsDelegate

@@ -355,7 +355,7 @@ class AccountPage extends ConsumerWidget {
               .read(accountRepositoryProvider)
               .deleteProfile();
 
-          either.fold(
+          await either.fold(
             (failure) {
               logger.e(failure.message);
               // TODO: add a snackbar are something when we know how we are gonna do error handling

@@ -60,7 +60,7 @@ class _EmptyState extends StatelessWidget {
                         'name': collectionName,
                         if (collectionDescription != null &&
                             collectionDescription!.isNotEmpty)
-                          'description': collectionDescription!,
+                          'description': collectionDescription,
                       },
                     );
                 context.push(uri.toString());

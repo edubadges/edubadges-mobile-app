@@ -21,7 +21,7 @@ class CatalogInstitutionDataSourceImpl implements CatalogInstitutionDataSource {
 
     final data = response.data;
     if (data == null) {
-      throw ParsingException(
+      throw const ParsingException(
         message: 'No data returned from institutions API',
         code: ErrorCodes.parsingError,
       );
@@ -30,7 +30,7 @@ class CatalogInstitutionDataSourceImpl implements CatalogInstitutionDataSource {
     try {
       final institutions = data.map((json) {
         if (json is! Map<String, dynamic>) {
-          throw FormatException('Invalid catalog institution format');
+          throw const FormatException('Invalid catalog institution format');
         }
         return CatalogInstitutionModel.fromJson(json);
       }).toList();

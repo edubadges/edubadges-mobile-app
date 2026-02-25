@@ -1,4 +1,6 @@
+import 'package:dartz/dartz.dart';
 import 'package:edubadges/core/network/network_providers.dart';
+import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/collections/data/models/collections_model.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
@@ -93,7 +95,7 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
     String name,
     String? description,
     bool public,
-    List<int> badgeInstanceIds,
+    List<String> badgeInstanceIds,
   ) async {
     final useCase = ref.read(updateCollectionUseCaseProvider);
     final result = await useCase(
@@ -120,7 +122,7 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
                 description: description,
                 public: public,
                 badgeInstanceIds: badgeInstanceIds
-                    .map((e) => e.toString())
+                    .map((e) => e)
                     .toList(),
               );
             }
@@ -135,11 +137,11 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
     );
   }
 
-  Future<bool> createCollection({
+  Future<Either<Failure, void>> createCollection({
     required String name,
     String? description,
     required bool public,
-    required List<int> badgeInstanceIds,
+    required List<String> badgeInstanceIds,
   }) async {
     final useCase = ref.read(createCollectionUseCaseProvider);
     final result = await useCase(
@@ -152,11 +154,11 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
     return result.fold(
       (failure) {
         state = AsyncError(failure, StackTrace.current);
-        return false;
+        return Left(failure);
       },
       (_) {
         refresh();
-        return true;
+        return const Right(null);
       },
     );
   }

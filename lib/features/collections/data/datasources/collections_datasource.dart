@@ -24,7 +24,7 @@ class CollectionsDataSourceImpl implements CollectionsDataSource {
     try {
       return data.map((json) {
         if (json is! Map<String, dynamic>) {
-          throw FormatException('Invalid badge collection format');
+          throw const FormatException('Invalid badge collection format');
         }
         return CollectionsModel.fromJson(json);
       }).toList();
@@ -61,7 +61,7 @@ class CollectionsDataSourceImpl implements CollectionsDataSource {
     );
     final json = response.data;
     if (json == null) {
-      throw FormatException('Invalid response from create collection');
+      throw const FormatException('Invalid response from create collection');
     }
     return CollectionsModel.fromJson(json);
   }

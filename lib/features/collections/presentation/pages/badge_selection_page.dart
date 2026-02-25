@@ -1,5 +1,6 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/error_message.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
@@ -22,14 +23,14 @@ class BadgeSelectionPage extends ConsumerStatefulWidget {
 }
 
 class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
-  final Set<int> _selectedBadgeIds = {};
+  final Set<String> _selectedBadgeIds = {};
 
-  void _toggleBadgeSelection(int badgeId) {
+  void _toggleBadgeSelection(String badgeEntityId) {
     setState(() {
-      if (_selectedBadgeIds.contains(badgeId)) {
-        _selectedBadgeIds.remove(badgeId);
+      if (_selectedBadgeIds.contains(badgeEntityId)) {
+        _selectedBadgeIds.remove(badgeEntityId);
       } else {
-        _selectedBadgeIds.add(badgeId);
+        _selectedBadgeIds.add(badgeEntityId);
       }
     });
   }
@@ -41,7 +42,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
       return;
     }
 
-    final success = await ref
+    final result = await ref
         .read(collectionsProvider.notifier)
         .createCollection(
           name: widget.name,
@@ -50,12 +51,13 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
           badgeInstanceIds: _selectedBadgeIds.toList(),
         );
 
-    if (success && mounted) {
-      context.go(RoutePath.collections);
-    } else if (mounted) {
-      final l10n = AppLocalizations.of(context);
-      showAppSnackBar(context, l10n.somethingWentWrong);
-    }
+    if (!mounted) return;
+    handleFailureResult(
+      context,
+      result,
+      onSuccess: (_) => context.go(RoutePath.collections),
+      snackBarDuration: const Duration(seconds: 5),
+    );
   }
 
   @override
@@ -110,12 +112,14 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
                     itemCount: badges.length,
                     itemBuilder: (context, index) {
                       final badge = badges[index];
-                      final isSelected = _selectedBadgeIds.contains(badge.id);
+                      final isSelected = _selectedBadgeIds.contains(
+                        badge.entityId,
+                      );
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 8),
                         child: InkWell(
-                          onTap: () => _toggleBadgeSelection(badge.id),
+                          onTap: () => _toggleBadgeSelection(badge.entityId),
                           borderRadius: BorderRadius.circular(20),
                           child: BadgeCard(
                             instance: badge,

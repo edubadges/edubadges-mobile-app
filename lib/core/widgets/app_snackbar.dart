@@ -22,7 +22,7 @@ void showAppSnackBar(
             ),
           ),
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.close,
               size: 24,
               color: AppColors.inverseOnSurface,

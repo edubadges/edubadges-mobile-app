@@ -104,10 +104,7 @@ class CollectionPage extends ConsumerWidget {
                                   collection.name,
                                   collection.description,
                                   state,
-                                  collection.badgeInstanceIds
-                                      .map((id) => int.tryParse(id) ?? -1)
-                                      .where((id) => id != -1)
-                                      .toList(),
+                                  collection.badgeInstanceIds,
                                 );
                             if (!success) {
                               publicNotifier.value = !state;
@@ -165,68 +162,100 @@ class CollectionPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, double screenWidth) {
+  Widget _buildCollectionDescription(BuildContext context, String? description) {
+    if (description == null || description.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Text(
+        description,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onSurface,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(
+    BuildContext context,
+    double screenWidth, {
+    String? collectionDescription,
+  }) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Center(
-          child: SvgIcon(
-            assetPath: Assets.iconCollections,
-            size: screenWidth / 3,
-            color: colorScheme.primary,
-          ),
-        ),
-        const SizedBox(height: 32),
-        Text(
-          l10n.addEdubadgesToCollection,
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          l10n.addEdubadgesToCollectionDescription,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: colorScheme.onSurfaceVariant,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 32),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 32.0),
-          child: SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colorScheme.primary,
-                foregroundColor: colorScheme.onPrimary,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+        if (collectionDescription != null && collectionDescription.isNotEmpty)
+          _buildCollectionDescription(context, collectionDescription),
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Center(
+                child: SvgIcon(
+                  assetPath: Assets.iconCollections,
+                  size: screenWidth / 3,
+                  color: colorScheme.primary,
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.add, color: colorScheme.onPrimary, size: 24),
-                  const SizedBox(width: 8),
-                  Text(
-                    l10n.addEdubadge,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: colorScheme.onPrimary,
+              const SizedBox(height: 32),
+              Text(
+                l10n.addEdubadgesToCollection,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.addEdubadgesToCollectionDescription,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 32.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: colorScheme.primary,
+                      foregroundColor: colorScheme.onPrimary,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.add,
+                            color: colorScheme.onPrimary, size: 24),
+                        const SizedBox(width: 8),
+                        Text(
+                          l10n.addEdubadge,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: colorScheme.onPrimary,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ],
@@ -337,7 +366,7 @@ class CollectionPage extends ConsumerWidget {
                   onSecondButtonPressed: () async {
                     context.pop();
                     final collectionsAsync = ref.read(collectionsProvider);
-                    final collections = await collectionsAsync.when(
+                    final List<CollectionsEntity> collections = await collectionsAsync.when(
                       data: (collections) => Future.value(collections),
                       loading: () => ref.read(collectionsProvider.future),
                       error: (error, stackTrace) =>
@@ -399,6 +428,7 @@ class CollectionPage extends ConsumerWidget {
                   child: _buildEmptyState(
                     context,
                     MediaQuery.of(context).size.width,
+                    collectionDescription: foundCollection.description,
                   ),
                 );
               }
@@ -406,6 +436,10 @@ class CollectionPage extends ConsumerWidget {
               return ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
+                  _buildCollectionDescription(
+                    context,
+                    foundCollection.description,
+                  ),
                   _buildVisibilitySection(
                     context,
                     ref,

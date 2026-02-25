@@ -27,7 +27,7 @@ class BadgeDetailsDataSourceImpl implements BadgeDetailsDataSource {
     );
 
     if (response.data == null) {
-      throw ParsingException(
+      throw const ParsingException(
         message: 'No data received for badge details',
         code: ErrorCodes.parsingError,
       );
@@ -52,7 +52,7 @@ class BadgeDetailsDataSourceImpl implements BadgeDetailsDataSource {
     );
 
     if (response.data == null) {
-      throw ParsingException(
+      throw const ParsingException(
         message: 'No data received for badge details',
         code: ErrorCodes.parsingError,
       );

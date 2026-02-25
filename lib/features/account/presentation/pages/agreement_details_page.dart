@@ -1,9 +1,12 @@
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/actionable_content_layout.dart';
+import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
+import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/account/presentation/widgets/withdraw_agreement_dialog.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/markdown_fetcher.dart';
@@ -32,6 +35,30 @@ class _AgreementDetailsPageState extends ConsumerState<AgreementDetailsPage> {
         widget.agreement.titleShort!.trim().isEmpty) {
       _isShowingLongVersion = true;
     }
+  }
+
+  Future<void> _handleWithdrawAgreement(String entityId) async {
+    final l10n = AppLocalizations.of(context);
+    final repository = ref.read(accountRepositoryProvider);
+    final result = await repository.rejectTerms(entityId);
+    if (!context.mounted) return;
+    result.fold(
+      (failure) {
+        final message = failure is ServerFailure
+            ? failure.message
+            : failure is NetworkFailure
+                ? failure.message
+                : l10n.somethingWentWrong;
+        showAppSnackBar(context, message);
+      },
+      (_) {
+        ref.read(profileProvider.notifier).refresh();
+        if (context.mounted) {
+          Navigator.of(context).pop();
+          showAppSnackBar(context, l10n.withdrawAgreementSuccess);
+        }
+      },
+    );
   }
 
   @override
@@ -85,7 +112,7 @@ class _AgreementDetailsPageState extends ConsumerState<AgreementDetailsPage> {
           );
         },
         loading: () {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         },
       ),
       actions: [
@@ -94,7 +121,9 @@ class _AgreementDetailsPageState extends ConsumerState<AgreementDetailsPage> {
           child: ElevatedButton(
             onPressed: () => WithdrawAgreementDialog.show(
               context: context,
-              institution: widget.agreement.agreementId,
+              institution: widget.agreement.titleLong,
+              entityId: widget.agreement.agreementId,
+              onWithdraw: _handleWithdrawAgreement,
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.primary,

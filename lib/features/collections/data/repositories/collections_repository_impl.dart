@@ -52,7 +52,7 @@ class CollectionsRepositoryImpl implements CollectionsRepository {
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));
     } on ValidationException catch (e) {
-      return Left(ValidationFailure(e.message));
+      return Left(ValidationFailure(e.message, code: e.code, apiErrorCode: e.apiErrorCode));
     } on AppException catch (e) {
       return Left(NetworkFailure(e.message));
     }
@@ -64,7 +64,7 @@ class CollectionsRepositoryImpl implements CollectionsRepository {
     required String name,
     String? description,
     required bool public,
-    required List<int> badgeInstanceIds,
+    required List<String> badgeInstanceIds,
   }) async {
     try {
       final data = <String, dynamic>{
@@ -82,7 +82,7 @@ class CollectionsRepositoryImpl implements CollectionsRepository {
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));
     } on ValidationException catch (e) {
-      return Left(ValidationFailure(e.message));
+      return Left(ValidationFailure(e.message, code: e.code, apiErrorCode: e.apiErrorCode));
     } on AppException catch (e) {
       return Left(NetworkFailure(e.message));
     }
@@ -93,7 +93,7 @@ class CollectionsRepositoryImpl implements CollectionsRepository {
     required String name,
     String? description,
     required bool public,
-    required List<int> badgeInstanceIds,
+    required List<String> badgeInstanceIds,
   }) async {
     try {
       final request = CreateCollectionRequest(
@@ -109,7 +109,7 @@ class CollectionsRepositoryImpl implements CollectionsRepository {
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));
     } on ValidationException catch (e) {
-      return Left(ValidationFailure(e.message));
+      return Left(ValidationFailure(e.message, code: e.code, apiErrorCode: e.apiErrorCode));
     } on AppException catch (e) {
       return Left(NetworkFailure(e.message));
     }

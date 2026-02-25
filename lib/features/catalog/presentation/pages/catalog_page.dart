@@ -160,7 +160,7 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
                 ),
               ],
             ),
-            error: (error, stackTrace) => CustomScrollView(
+            error: (error, stackTrace) => const CustomScrollView(
               slivers: [
                 SliverFillRemaining(
                   hasScrollBody: false,

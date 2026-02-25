@@ -20,9 +20,9 @@ class AppThemes {
 
   static SystemUiOverlayStyle get systemUiOverlayStyle {
     return const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
+      statusBarColor: AppColors.surface,
       statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarColor: AppColors.surfaceContainer,
       systemNavigationBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.dark,
     );
@@ -30,9 +30,9 @@ class AppThemes {
 
   static SystemUiOverlayStyle get systemUiOverlayStyleLight {
     return const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
+      statusBarColor: AppColors.surface,
       statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarColor: AppColors.surfaceContainer,
       systemNavigationBarIconBrightness: Brightness.light,
       statusBarBrightness: Brightness.light,
     );

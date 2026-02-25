@@ -1,17 +1,25 @@
 import 'package:collection/collection.dart';
 import 'package:edubadges/app/colors.dart';
-import 'package:edubadges/core/constants/mock_data.dart';
+import 'package:edubadges/app/themes.dart';
+import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/app_language.dart';
+import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/actionable_content_layout.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
-import 'package:edubadges/core/widgets/link_text.dart';
+import 'package:edubadges/core/widgets/info_state_view.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
+import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
+import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
+import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
+import 'package:edubadges/shared/presentation/providers/markdown_fetcher.dart';
 import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -28,6 +36,7 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
   bool _isClaiming = false;
   bool _isDeclining = false;
   bool _isShowingLongVersion = false;
+  bool _hasInitializedToggle = false;
 
   void _handleDecline(BadgeInstanceEntity badge) {
     final l10n = AppLocalizations.of(context);
@@ -120,20 +129,11 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final langCode = ref.watch(appLanguageProvider).code;
 
     final badgesAsync = ref.watch(badgesOverviewProvider);
-
-    final currentTitle = _isShowingLongVersion
-        ? MockData.privacyAgreementTitleLong
-        : MockData.privacyAgreementTitle;
-
-    final currentText = _isShowingLongVersion
-        ? MockData.privacyAgreementTextLong
-        : MockData.privacyAgreementTextShort;
-
-    final toggleButtonText = _isShowingLongVersion
-        ? l10n.viewShortText
-        : l10n.viewFullText;
+    final profileAsync = ref.watch(profileProvider);
 
     return MaxWidthWrapper(
       child: badgesAsync.when(
@@ -154,11 +154,101 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
             );
           }
 
+          final badgeInstitutionId =
+              badge.badgeclass.issuer?.faculty?.institution?.identifier;
+
+          final profile = profileAsync.whenOrNull(data: (p) => p);
+          if (profile == null) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          final matchingAgreement =
+              profile.termsagreementSet.firstWhereOrNull(
+            (TermsAgreementEntity ta) =>
+                ta.terms.institution?.identifier == badgeInstitutionId,
+          );
+
+          if (matchingAgreement == null) {
+            return Scaffold(
+              body: Center(
+                child: InfoStateView(
+                  assetPath: Assets.iconInfo,
+                  description: l10n.somethingWentWrong,
+                ),
+              ),
+            );
+          }
+
+          final institutionName = getLocalizedString(
+            matchingAgreement.terms.institution?.nameDutch,
+            matchingAgreement.terms.institution?.nameEnglish,
+            langCode,
+          );
+
+          final agreementModel = AgreementRouteModel.create(
+            institutionName,
+            matchingAgreement,
+            langCode,
+          );
+
+          // Initialize toggle state: default to long if no short version
+          if (!_hasInitializedToggle) {
+            _hasInitializedToggle = true;
+            if (agreementModel.titleShort == null ||
+                agreementModel.titleShort!.trim().isEmpty) {
+              _isShowingLongVersion = true;
+            }
+          }
+
+          final currentTitle = _isShowingLongVersion
+              ? agreementModel.titleLong
+              : (agreementModel.titleShort?.trim().isEmpty ?? true
+                  ? agreementModel.titleLong
+                  : agreementModel.titleShort!);
+          final currentUrlText = _isShowingLongVersion
+              ? agreementModel.textUrlLong
+              : (agreementModel.textUrlShort?.trim().isEmpty ?? true
+                  ? agreementModel.textUrlLong
+                  : agreementModel.textUrlShort!);
+          final toggleButtonText = _isShowingLongVersion
+              ? l10n.viewShortText
+              : l10n.viewFullText;
+
+          final markdownAsyncValue = ref.watch(
+            markdownFetcherProvider(currentUrlText),
+          );
+
           return ActionableContentLayout(
             title: currentTitle,
-            content: LinkText(
-              text: currentText,
-              style: theme.textTheme.bodyMedium,
+            error: markdownAsyncValue.hasError,
+            content: markdownAsyncValue.when(
+              data: (data) {
+                return MarkdownBody(
+                  data: filterBadMarkdown(data),
+                  styleSheet: AppThemes.markdownStyleSheet(context).copyWith(
+                    h1: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                );
+              },
+              error: (error, stackTrace) {
+                return Center(
+                  child: InfoStateView(
+                    assetPath: Assets.iconInfo,
+                    description: l10n.failedToLoadTermsFrom(
+                      agreementModel.titleLong,
+                    ),
+                  ),
+                );
+              },
+              loading: () {
+                return const Center(child: CircularProgressIndicator());
+              },
             ),
             actions: [
               SizedBox(
@@ -228,27 +318,28 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
                         ),
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    _isShowingLongVersion = !_isShowingLongVersion;
-                  });
-                },
-                child: Text(
-                  toggleButtonText,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.primary,
-                    decoration: TextDecoration.underline,
+              if (agreementModel.textUrlShort?.isEmpty != true)
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _isShowingLongVersion = !_isShowingLongVersion;
+                    });
+                  },
+                  child: Text(
+                    toggleButtonText,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.primary,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
-              ),
             ],
           );
         },
         loading: () =>
             const Scaffold(body: Center(child: CircularProgressIndicator())),
         error: (err, stack) =>
-            Scaffold(body: Center(child: ErrorMessageWidget())),
+            const Scaffold(body: Center(child: ErrorMessageWidget())),
       ),
     );
   }

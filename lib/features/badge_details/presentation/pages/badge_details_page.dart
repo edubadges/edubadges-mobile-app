@@ -1,6 +1,7 @@
 import 'package:edubadges/app/constants.dart';
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
@@ -107,7 +108,11 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            context.pop();
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(RoutePath.catalog);
+            }
           },
           icon: Icon(
             Icons.arrow_back,
@@ -126,7 +131,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   Widget _buildCarouselView() {
     final badgesAsync = ref.watch(badgesListProvider);
     final l10n = AppLocalizations.of(context);
-
 
     return ListView(
       children: [
@@ -158,7 +162,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, _) => Center(child: ErrorMessageWidget()),
+            error: (error, _) => const Center(child: ErrorMessageWidget()),
           ),
         ),
 
@@ -180,7 +184,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             return _buildBadgeDetailsContent(currentBadgeId, null);
           },
           loading: () => [const Center(child: CircularProgressIndicator())],
-          error: (error, _) => [Center(child: ErrorMessageWidget())],
+          error: (error, _) => [const Center(child: ErrorMessageWidget())],
         ),
       ],
     );
@@ -227,14 +231,14 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     String badgeId,
     AsyncValue<BadgeDetailsModel?>? badgeDetailsAsync,
   ) {
-    AsyncValue<BadgeDetailsModel?> badgeDetailsValue =
+    final AsyncValue<BadgeDetailsModel?> badgeDetailsValue =
         badgeDetailsAsync ??
         ref.watch(badgeDetailsModelProvider(_createBadgeParams(badgeId)));
 
     return badgeDetailsValue.when(
       data: (details) => [..._buildBadgeDetails(details)],
       loading: () => [const Center(child: CircularProgressIndicator())],
-      error: (error, _) => [Center(child: ErrorMessageWidget())],
+      error: (error, _) => [const Center(child: ErrorMessageWidget())],
     );
   }
 
@@ -248,7 +252,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         badgeInstanceEntityId: null,
         badgeClassEntityId: badgeId,
       ),
-      BadgeDetailsRouteFrom.other => BadgeDetailsParams(
+      BadgeDetailsRouteFrom.other => const BadgeDetailsParams(
         badgeInstanceEntityId: null,
         badgeClassEntityId: null,
       ),
@@ -300,14 +304,15 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         _buildSectionCard(
           title: l10n.theEdubadge,
           items: [
-            BadgeDetailItemModel(
-              icon: Assets.iconUnlockedAlternate,
-              title: l10n.issuedOn,
-              subtitle: DateFormat(
-                AppConstants.mediumDateFormat,
-                l10n.localeName,
-              ).format(details!.badgeInstance!.issuedOn),
-            ),
+            if (details!.badgeInstance!.issuedOn != null)
+              BadgeDetailItemModel(
+                icon: Assets.iconUnlockedAlternate,
+                title: l10n.issuedOn,
+                subtitle: DateFormat(
+                  AppConstants.mediumDateFormat,
+                  l10n.localeName,
+                ).format(details.badgeInstance!.issuedOn!),
+              ),
             BadgeDetailItemModel(
               icon: Assets.iconBadgeExpireDate,
               title: l10n.expiresOn,
@@ -411,12 +416,12 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           ),
           const SizedBox(height: 8),
           if (item != null) item,
-          if (items != null)
+          if (items != null && items.isNotEmpty)
             ...List.generate(items.length * 2 - 1, (int index) {
               if (index.isOdd) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: const Divider(height: 1),
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Divider(height: 1),
                 );
               } else {
                 return _buildSectionItem(item: items[index ~/ 2]);

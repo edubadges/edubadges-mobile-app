@@ -8,6 +8,21 @@
                  while the Flutter UI initializes. After that, this theme continues
                  to determine the Window background behind the Flutter UI. -->
       <meta-data android:name="io.flutter.embedding.android.NormalTheme" android:resource="@style/NormalTheme"/>
+        <!-- Enable Flutter deep linking (required in recent Flutter versions) -->
+        <meta-data
+            android:name="flutter_deeplinking_enabled"
+            android:value="true" />
+
+        <!-- App Links -->
+        <intent-filter android:autoVerify="true">
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+            <data android:host="demo.edubadges.nl" />
+            <data android:host="edubadges.nl" />
+            <data android:pathPrefix="/public/catalog/" />
+        </intent-filter>
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>

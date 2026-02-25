@@ -290,6 +290,10 @@
             }
         }
     },
+    "withdrawAgreementSuccess": "Akkoordverklaring ingetrokken",
+    "@withdrawAgreementSuccess": {
+        "description": "Success message shown after withdrawing an agreement"
+    },
     "confirm": "Bevestig",
     "@confirm": {
         "description": "Button text to confirm an action"
@@ -712,5 +716,357 @@
                 "type": "String"
             }
         }
+    },
+    "error100": "Je hebt niet de vereiste rechten.",
+    "@error100": {
+        "description": "API error 100: shown when the user does not have the required permissions"
+    },
+    "error101": "Kon e-mailadres niet registreren. Adres is al in gebruik.",
+    "@error101": {
+        "description": "API error 101: email registration failed because the address is already in use"
+    },
+    "error102": "Je hebt dit adres al toegevoegd. Verifieer het.",
+    "@error102": {
+        "description": "API error 102: user has already added this email address and must verify it"
+    },
+    "error103": "Primair e-mailadres kan niet worden verwijderd.",
+    "@error103": {
+        "description": "API error 103: user attempted to remove their primary email address"
+    },
+    "error104": "Enige e-mailadres kan niet worden verwijderd.",
+    "@error104": {
+        "description": "API error 104: user attempted to remove their only email address"
+    },
+    "error105": "Ongeverifieerd e-mailadres kan niet primair worden gemaakt.",
+    "@error105": {
+        "description": "API error 105: unverified email cannot be set as primary"
+    },
+    "error201": "Aanvraag niet mogelijk: je hebt deze edubadge al aangevraagd.",
+    "@error201": {
+        "description": "API error 201: user already requested this edubadge"
+    },
+    "error202": "Aanvraag niet mogelijk: je hebt deze edubadge al ontvangen.",
+    "@error202": {
+        "description": "API error 202: user has already been awarded this edubadge"
+    },
+    "error203": "Aanvraag niet mogelijk: je hebt geen studentaccount.",
+    "@error203": {
+        "description": "API error 203: request not allowed because user has no student account"
+    },
+    "error204": "Ongeldig request-id.",
+    "@error204": {
+        "description": "API error 204: the request identifier is invalid"
+    },
+    "error205": "Aanvraag niet gevonden.",
+    "@error205": {
+        "description": "API error 205: the requested resource was not found"
+    },
+    "error206": "Geaccepteerde aanvragen voor edubadges kunnen niet worden ingetrokken.",
+    "@error206": {
+        "description": "API error 206: user tried to withdraw an already accepted edubadge request"
+    },
+    "error207": "Gebruikers kunnen alleen hun eigen aanvragen intrekken.",
+    "@error207": {
+        "description": "API error 207: user tried to withdraw someone else's request"
+    },
+    "error208": "Badge class-id ontbreekt.",
+    "@error208": {
+        "description": "API error 208: badge class identifier is missing from the request"
+    },
+    "error209": "Aanvraag niet mogelijk.",
+    "@error209": {
+        "description": "API error 209: request operation is not allowed"
+    },
+    "error210": "Je hebt geen toestemming. Controleer je toegewezen rol in de badge class van deze aanvraag.",
+    "@error210": {
+        "description": "API error 210: insufficient permission in the badge class for this request"
+    },
+    "error211": "Aanvraag is al afgewezen.",
+    "@error211": {
+        "description": "API error 211: the request was already denied"
+    },
+    "error212": "Toegekende aanvragen kunnen niet worden afgewezen.",
+    "@error212": {
+        "description": "API error 212: cannot deny an already awarded request"
+    },
+    "error213": "Aangevraagde edubadge kan niet worden toegekend, deze is al toegekend.",
+    "@error213": {
+        "description": "API error 213: edubadge has already been awarded"
+    },
+    "error214": "Geen waarde wijzigen mogelijk, er zijn al edubadges toegekend binnen deze entiteit.",
+    "@error214": {
+        "description": "API error 214: entity cannot be changed because edubadges have already been awarded"
+    },
+    "error215": "Geen formele badge class aanmaken voor een instelling zonder juridische basis voor formele edubadges.",
+    "@error215": {
+        "description": "API error 215: institution lacks judicial basis for formal edubadges"
+    },
+    "error216": "Geen non-formele badge class aanmaken voor een instelling zonder juridische basis voor non-formele edubadges.",
+    "@error216": {
+        "description": "API error 216: institution lacks judicial basis for non-formal edubadges"
+    },
+    "error500": "Laatste medewerker van deze instelling kan niet worden verwijderd.",
+    "@error500": {
+        "description": "API error 500: cannot remove the last staff member of an institution"
+    },
+    "error501": "Er mag maar één uitnodiging per e-mailadres zijn.",
+    "@error501": {
+        "description": "API error 501: duplicate invite for the same email address"
+    },
+    "error502": "Gebruiker niet uitnodigen voor deze entiteit: er is een conflicterend medewerkerslidmaatschap.",
+    "@error502": {
+        "description": "API error 502: invite conflicts with existing staff membership"
+    },
+    "error503": "Gebruiker niet uitnodigen voor deze entiteit: er is een conflicterende uitnodiging.",
+    "@error503": {
+        "description": "API error 503: a conflicting invite already exists for this entity"
+    },
+    "error504": "Gebruiker van andere instelling mag niet worden uitgenodigd.",
+    "@error504": {
+        "description": "API error 504: cannot invite a user from a different institution"
+    },
+    "error505": "Deze uitnodiging is voor een student.",
+    "@error505": {
+        "description": "API error 505: invite is intended for a student"
+    },
+    "error506": "Deze uitnodiging is voor een docent.",
+    "@error506": {
+        "description": "API error 506: invite is intended for a teacher"
+    },
+    "error507": "Je hebt geen toestemming om gebruikers voor deze entiteit uit te nodigen.",
+    "@error507": {
+        "description": "API error 507: user lacks permission to invite for this entity"
+    },
+    "error508": "Je kunt een afgewezen uitnodiging niet bewerken.",
+    "@error508": {
+        "description": "API error 508: attempted to edit a rejected invitation"
+    },
+    "error509": "Geen geldig e-mailadres.",
+    "@error509": {
+        "description": "API error 509: invalid email address format"
+    },
+    "error510": "Je hebt dit e-mailadres meerdere keren ingevoerd.",
+    "@error510": {
+        "description": "API error 510: same email address entered more than once"
+    },
+    "error601": "Je hebt geen toestemming. Controleer je toegewezen rol in het issuerportaal.",
+    "@error601": {
+        "description": "API error 601: insufficient permission in the issuer portal"
+    },
+    "error701": "Share provider niet gespecificeerd.",
+    "@error701": {
+        "description": "API error 701: share provider was not specified"
+    },
+    "error702": "Ongeldige share provider.",
+    "@error702": {
+        "description": "API error 702: share provider is invalid"
+    },
+    "error801": "Grading table URL kan niet worden gewijzigd, er zijn al edubadges uitgegeven.",
+    "@error801": {
+        "description": "API error 801: grading table URL cannot be changed after edubadges were issued"
+    },
+    "error802": "Instellingscode kan niet worden gewijzigd, er zijn al edubadges uitgegeven.",
+    "@error802": {
+        "description": "API error 802: institution code cannot be changed after edubadges were issued"
+    },
+    "error902": "Moet een geldige URL of afbeeldingsindeling zijn.",
+    "@error902": {
+        "description": "API error 902: URL or image format is invalid"
+    },
+    "error903": "Dit is een verplicht veld.",
+    "@error903": {
+        "description": "API error 903: a required attribute is missing"
+    },
+    "error904": "Er is geen bestand geüpload.",
+    "@error904": {
+        "description": "API error 904: no file was provided in the upload"
+    },
+    "error905": "Criteria of criteria-URL is verplicht.",
+    "@error905": {
+        "description": "API error 905: either criteria or criteria URL must be provided"
+    },
+    "error906": "Vul het aantal studielasturen in of verwijder deze sectie.",
+    "@error906": {
+        "description": "API error 906: study load hours required or section must be removed"
+    },
+    "error907": "Dit is een gereserveerde naam voor badge classes.",
+    "@error907": {
+        "description": "API error 907: the name is reserved for badge classes"
+    },
+    "error908": "Issuer met deze Engelse naam kan niet worden aangemaakt in deze issuer group. Bestaat al.",
+    "@error908": {
+        "description": "API error 908: issuer with this English name already exists in this issuer group"
+    },
+    "error909": "Vul het programma-identificatienummer in of verwijder deze sectie.",
+    "@error909": {
+        "description": "API error 909: programme identifier required or section must be removed"
+    },
+    "error910": "Narrative of url is verplicht.",
+    "@error910": {
+        "description": "API error 910: either narrative or URL must be provided"
+    },
+    "error911": "Badge class met deze naam kan niet worden aangemaakt in deze Issuer. Bestaat al.",
+    "@error911": {
+        "description": "API error 911: badge class with this name already exists in this issuer"
+    },
+    "error912": "Een Engelse of Nederlandse naam is verplicht.",
+    "@error912": {
+        "description": "API error 912: name in English or Dutch is required"
+    },
+    "error913": "Een Engelse of Nederlandse beschrijving is verplicht.",
+    "@error913": {
+        "description": "API error 913: description in English or Dutch is required"
+    },
+    "error914": "Issuer met deze Nederlandse naam kan niet worden aangemaakt in deze issuer group. Bestaat al.",
+    "@error914": {
+        "description": "API error 914: issuer with this Dutch name already exists in this issuer group"
+    },
+    "error915": "Een Nederlandse of Engelse url is verplicht.",
+    "@error915": {
+        "description": "API error 915: URL in Dutch or English is required"
+    },
+    "error916": "Issuer Group met deze Nederlandse naam kan niet worden aangemaakt in deze instelling. Bestaat al.",
+    "@error916": {
+        "description": "API error 916: issuer group with this Dutch name already exists in this institution"
+    },
+    "error917": "Issuer Group met deze Engelse naam kan niet worden aangemaakt in deze instelling. Bestaat al.",
+    "@error917": {
+        "description": "API error 917: issuer group with this English name already exists in this institution"
+    },
+    "error918": "Een Nederlandse of Engelse afbeelding is verplicht.",
+    "@error918": {
+        "description": "API error 918: image in Dutch or English is required"
+    },
+    "error919": "Instelling met deze Nederlandse naam kan niet worden aangemaakt. Bestaat al.",
+    "@error919": {
+        "description": "API error 919: institution with this Dutch name already exists"
+    },
+    "error920": "Instelling met deze Engelse naam kan niet worden aangemaakt. Bestaat al.",
+    "@error920": {
+        "description": "API error 920: institution with this English name already exists"
+    },
+    "error921": "Ongeldige URL",
+    "@error921": {
+        "description": "API error 921: the URL is invalid"
+    },
+    "error922": "Te veel Related Educational Framework-objecten. Het maximum is 8.",
+    "@error922": {
+        "description": "API error 922: maximum number of Related Educational Framework objects (8) exceeded"
+    },
+    "error923": "Een Engelse of Nederlandse url is verplicht.",
+    "@error923": {
+        "description": "API error 923: URL in English or Dutch is required"
+    },
+    "error924": "Een Engelse of Nederlandse naam is verplicht.",
+    "@error924": {
+        "description": "API error 924: name in English or Dutch is required"
+    },
+    "error925": "Een Engelse of Nederlandse beschrijving is verplicht.",
+    "@error925": {
+        "description": "API error 925: description in English or Dutch is required"
+    },
+    "error926": "Een Engelse of Nederlandse afbeelding is verplicht.",
+    "@error926": {
+        "description": "API error 926: image in English or Dutch is required"
+    },
+    "error927": "E-mail is ongeldig",
+    "@error927": {
+        "description": "API error 927: email address is invalid"
+    },
+    "error928": "EPPN is verplicht",
+    "@error928": {
+        "description": "API error 928: EPPN (eduPerson Principal Name) is required"
+    },
+    "error929": "E-mail is gedupliceerd",
+    "@error929": {
+        "description": "API error 929: duplicate email address"
+    },
+    "error930": "EPPN is gedupliceerd",
+    "@error930": {
+        "description": "API error 930: duplicate EPPN"
+    },
+    "error931": "Er is al een niet-geaccepteerde directe toekenning voor dit EPPN.",
+    "@error931": {
+        "description": "API error 931: unaccepted direct award already exists for this EPPN"
+    },
+    "error932": "Deze badge class vereist een narrative voor toekenning.",
+    "@error932": {
+        "description": "API error 932: narrative is required to award this badge class"
+    },
+    "error933": "Deze badge class vereist evidence voor toekenning.",
+    "@error933": {
+        "description": "API error 933: evidence is required to award this badge class"
+    },
+    "error934": "Het programma-identificatienummer is verplicht wanneer studiepunten in ECTS/EC zijn opgegeven.",
+    "@error934": {
+        "description": "API error 934: programme identifier required when ECTS/EC study points are given"
+    },
+    "error935": "Vul de tijdsinvestering in of verwijder deze sectie.",
+    "@error935": {
+        "description": "API error 935: time investment required or section must be removed"
+    },
+    "error936": "Edubadge-collectie met deze naam kan niet worden aangemaakt omdat deze al bestaat.",
+    "@error936": {
+        "description": "API error 936: edubadge collection with this name already exists"
+    },
+    "error937": "ECTS/EC mag niet leeg of 0 zijn.",
+    "@error937": {
+        "description": "API error 937: ECTS/EC must be non-empty and greater than zero"
+    },
+    "error938": "Deze edubadge vereist een motivatie voor inschrijving.",
+    "@error938": {
+        "description": "API error 938: motivation is required for enrollment in this edubadge"
+    },
+    "error939": "Deze edubadge vereist een evidence-URL voor inschrijving.",
+    "@error939": {
+        "description": "API error 939: evidence URL is required for enrollment in this edubadge"
+    },
+    "error940": "Er is al een edubadge of niet-geaccepteerde directe toekenning voor dit e-mailadres.",
+    "@error940": {
+        "description": "API error 940: edubadge or unaccepted direct award already exists for this email"
+    },
+    "error941": "Er is al een edubadge-aanvraag van dit e-mailadres.",
+    "@error941": {
+        "description": "API error 941: an edubadge request from this email already exists"
+    },
+    "error942": "EPPN komt niet overeen met het EPPN-formaat van je instelling.",
+    "@error942": {
+        "description": "API error 942: EPPN format does not match the institution's format"
+    },
+    "error943": "Er is al een geclaimde assertion voor dit EPPN.",
+    "@error943": {
+        "description": "API error 943: a claimed assertion already exists for this EPPN"
+    },
+    "error944": "Deze badge class vereist een cijfer voor toekenning.",
+    "@error944": {
+        "description": "API error 944: grade is required to award this badge class"
+    },
+    "error945": "Het type instelling is verplicht.",
+    "@error945": {
+        "description": "API error 945: institution type is required"
+    },
+    "error946": "Type zichtbaarheid is verplicht voor SURF-instellingen.",
+    "@error946": {
+        "description": "API error 946: visibility type is required for SURF institutions"
+    },
+    "error947": "Een Engelse of Nederlandse afbeelding is verplicht bij uitgifte namens andere organisatie.",
+    "@error947": {
+        "description": "API error 947: English or Dutch image required when issuing on behalf of another organisation"
+    },
+    "error948": "Voornaam is verplicht.",
+    "@error948": {
+        "description": "API error 948: first name is required"
+    },
+    "error949": "Achternaam is verplicht.",
+    "@error949": {
+        "description": "API error 949: surname is required"
+    },
+    "errorUnexpected": "Er is een onverwachte fout opgetreden.",
+    "@errorUnexpected": {
+        "description": "Generic message when an unexpected or unknown error occurs"
+    },
+    "errorDescription": "Er is een onverwachte fout opgetreden. Probeer het later opnieuw of neem contact op met support@edubadges.nl.",
+    "@errorDescription": {
+        "description": "Longer description for unexpected errors, with support contact information"
     }
 }

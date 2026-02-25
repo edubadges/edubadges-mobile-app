@@ -21,7 +21,7 @@ class BadgeInstanceEntity extends Equatable {
   final int id;
   final DateTime createdAt;
   final String entityId;
-  final DateTime issuedOn;
+  final DateTime? issuedOn;
   final String awardType;
   final bool revoked;
   final DateTime? expiresAt;
@@ -30,6 +30,7 @@ class BadgeInstanceEntity extends Equatable {
   final BadgeClassEntity badgeclass;
   final String? linkedinUrl;
   final String? gradeAchieved;
+  final String? narrative;
   final bool includeGradeAchieved;
   final bool includeEvidence;
 
@@ -37,7 +38,7 @@ class BadgeInstanceEntity extends Equatable {
     required this.id,
     required this.createdAt,
     required this.entityId,
-    required this.issuedOn,
+    this.issuedOn,
     required this.awardType,
     required this.revoked,
     this.expiresAt,
@@ -46,6 +47,7 @@ class BadgeInstanceEntity extends Equatable {
     required this.badgeclass,
     this.linkedinUrl,
     this.gradeAchieved,
+    this.narrative,
     this.includeGradeAchieved = false,
     this.includeEvidence = false,
   });
@@ -64,6 +66,7 @@ class BadgeInstanceEntity extends Equatable {
     badgeclass,
     linkedinUrl,
     gradeAchieved,
+    narrative,
     includeGradeAchieved,
     includeEvidence,
   ];

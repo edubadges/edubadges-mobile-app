@@ -33,4 +33,16 @@ class AccountRepositoryImpl implements AccountRepository {
       return Left(NetworkFailure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> rejectTerms(String entityId) async {
+    try {
+      await accountDataSource.rejectTerms(entityId);
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.statusCode));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    }
+  }
 }

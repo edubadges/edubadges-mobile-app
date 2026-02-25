@@ -138,7 +138,7 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                   ),
                   color: colorScheme.primary,
                   onTap: () async {
-                    String link = createBadgeInstanceLink(
+                    final String link = createBadgeInstanceLink(
                       widget.badge.entityId,
                       ref,
                     );

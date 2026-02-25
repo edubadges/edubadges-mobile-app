@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -94,31 +95,49 @@ class NetworkExceptionHandler {
   ) {
     final response = error.response;
     final statusCode = response?.statusCode ?? 500;
-    final data = response?.data;
+    dynamic data = response?.data;
 
-    // Extract error message from response
+    int? apiErrorCodeFromWrapper;
+    if (error.error is HandledError) {
+      final original = (error.error as HandledError).originalError;
+      if (original is ValidationException && original.apiErrorCode != null) {
+        apiErrorCodeFromWrapper = original.apiErrorCode;
+      }
+    }
+
+    // Normalize body: parse if String, ensure we have a Map for extraction
+    if (data is String) {
+      try {
+        data = jsonDecode(data);
+      } catch (_) {
+        // Leave data as String, will use as message below
+      }
+    }
+    // Some platforms return Map with non-String keys; normalize for safe access
+    final dataMap = _toMap(data);
+
     String message = 'An error occurred';
     String? code;
     Map<String, List<String>>? validationErrors;
+    int? apiErrorCode = apiErrorCodeFromWrapper;
 
-    if (data is Map<String, dynamic>) {
+    if (dataMap != null) {
       message =
-          data['message'] as String? ??
-          data['error'] as String? ??
-          data['detail'] as String? ??
+          dataMap['message'] as String? ??
+          dataMap['error'] as String? ??
+          dataMap['detail'] as String? ??
           message;
 
-      // Handle code as either String or int
-      final codeValue = data['code'];
-      if (codeValue is String) {
-        code = codeValue;
-      } else if (codeValue is int) {
-        code = codeValue.toString();
+      // For 400/422 extract API error_code: try exact path first, then recursive
+      if (apiErrorCode == null && (statusCode == 400 || statusCode == 422)) {
+        apiErrorCode = _extractApiErrorCodeFromBody(dataMap);
+      }
+      if (apiErrorCode != null) {
+        code = apiErrorCode.toString();
       }
 
-      // Extract validation errors if present
-      if (data['errors'] != null) {
-        validationErrors = _extractValidationErrors(data['errors']);
+      if (dataMap['errors'] != null) {
+        validationErrors = _extractValidationErrors(dataMap['errors']);
       }
     } else if (data is String) {
       message = data;
@@ -130,6 +149,7 @@ class NetworkExceptionHandler {
           message: message,
           errors: validationErrors,
           code: code ?? ErrorCodes.badRequest,
+          apiErrorCode: apiErrorCode,
           originalError: error,
           stackTrace: stackTrace,
         );
@@ -163,6 +183,7 @@ class NetworkExceptionHandler {
           message: message,
           errors: validationErrors,
           code: code ?? ErrorCodes.validationError,
+          apiErrorCode: apiErrorCode,
           originalError: error,
           stackTrace: stackTrace,
         );
@@ -209,6 +230,108 @@ class NetworkExceptionHandler {
         }
       });
       return result.isEmpty ? null : result;
+    }
+    return null;
+  }
+
+  static Map<String, dynamic>? _toMap(dynamic data) {
+    if (data == null) return null;
+    if (data is Map<String, dynamic>) return data;
+    if (data is Map) {
+      try {
+        return Map<String, dynamic>.from(data);
+      } catch (_) {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  static int? _extractApiErrorCodeFromBody(Map<String, dynamic> dataMap) {
+    // Exact path: fields -> error_message -> name -> [0] -> error_code
+    try {
+      final fields = dataMap['fields'] ?? dataMap['field'];
+      if (fields is Map) {
+        final fm = Map<String, dynamic>.from(fields);
+        final errorMessage = fm['error_message'];
+        if (errorMessage is Map) {
+          final em = Map<String, dynamic>.from(errorMessage);
+          final nameList = em['name'];
+          if (nameList is List && nameList.isNotEmpty) {
+            final first = nameList.first;
+            if (first is Map) {
+              final firstMap = Map<String, dynamic>.from(first);
+              final code = firstMap['error_code'];
+              if (code is String) {
+                if (int.tryParse(code) != 999) {
+                  return int.tryParse(code);
+                }
+              }
+              if (code is int && code != 999) return code;
+              if (code is num) {
+                final n = code.toInt();
+                if (n != 999) return n;
+              }
+            }
+          }
+        }
+      }
+    } catch (_) {
+      // Fall through to recursive extraction
+    }
+    final fieldsRaw = dataMap['fields'] ?? dataMap['field'];
+    int? code = _extractApiErrorCode(fieldsRaw);
+    code ??= _extractApiErrorCode(dataMap);
+    code ??= _extractAnyApiErrorCode(fieldsRaw) ?? _extractAnyApiErrorCode(dataMap);
+    return code;
+  }
+
+  static int? _extractApiErrorCode(dynamic fields) {
+    if (fields == null) return null;
+    if (fields is int) return fields == 999 ? null : fields;
+    if (fields is num) {
+      final n = fields.toInt();
+      return n == 999 ? null : n;
+    }
+    if (fields is Map) {
+      for (final value in fields.values) {
+        final found = _extractApiErrorCode(value);
+        if (found != null) return found;
+      }
+      final codeValue = fields['error_code'];
+      if (codeValue is int) return codeValue == 999 ? null : codeValue;
+      if (codeValue is num) {
+        final n = codeValue.toInt();
+        return n == 999 ? null : n;
+      }
+    }
+    if (fields is List) {
+      for (final item in fields) {
+        final found = _extractApiErrorCode(item);
+        if (found != null) return found;
+      }
+    }
+    return null;
+  }
+
+  static int? _extractAnyApiErrorCode(dynamic fields) {
+    if (fields == null) return null;
+    if (fields is int) return fields;
+    if (fields is num) return fields.toInt();
+    if (fields is Map) {
+      for (final value in fields.values) {
+        final found = _extractAnyApiErrorCode(value);
+        if (found != null) return found;
+      }
+      final codeValue = fields['error_code'];
+      if (codeValue is int) return codeValue;
+      if (codeValue is num) return codeValue.toInt();
+    }
+    if (fields is List) {
+      for (final item in fields) {
+        final found = _extractAnyApiErrorCode(item);
+        if (found != null) return found;
+      }
     }
     return null;
   }
