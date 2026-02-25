@@ -6,6 +6,8 @@ class WithdrawAgreementDialog {
   static Future<void> show({
     required BuildContext context,
     required String institution,
+    required String entityId,
+    required Future<void> Function(String entityId) onWithdraw,
   }) async {
     final l10n = AppLocalizations.of(context);
 
@@ -18,7 +20,7 @@ class WithdrawAgreementDialog {
         secondButtonText: l10n.confirm,
         onFirstButtonPressed: () {},
         onSecondButtonPressed: () {
-          // TODO: Implement withdraw agreement functionality https://digitalclub.atlassian.net/browse/SURF-514
+          onWithdraw(entityId);
         },
       ),
     );

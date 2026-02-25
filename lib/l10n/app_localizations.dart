@@ -524,6 +524,12 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to withdraw your agreement statement for {institution}?'**
   String withdrawAgreementMessage(String institution);
 
+  /// Success message shown after withdrawing an agreement
+  ///
+  /// In en, this message translates to:
+  /// **'Agreement withdrawn'**
+  String get withdrawAgreementSuccess;
+
   /// Button text to confirm an action
   ///
   /// In en, this message translates to:

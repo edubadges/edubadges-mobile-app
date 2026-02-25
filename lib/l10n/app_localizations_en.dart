@@ -236,6 +236,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get withdrawAgreementSuccess => 'Agreement withdrawn';
+
+  @override
   String get confirm => 'Confirm';
 
   @override
