@@ -171,6 +171,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'You can withdraw your given agreement(s).';
 
   @override
+  String get agreementTypeInformalBadge => 'Non-formal edubadges';
+
+  @override
+  String get agreementTypeFormalBadge => 'Formal edubadges';
+
+  @override
+  String get agreementTypeTermsOfService => 'Terms of service';
+
+  @override
+  String get agreementTypeServiceAgreement => 'Service agreement';
+
+  @override
+  String get agreementTypeUnknown => 'Unknown';
+
+  @override
   String get deleteAccount => 'Delete your edubadges account';
 
   @override

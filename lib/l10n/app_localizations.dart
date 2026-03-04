@@ -404,6 +404,36 @@ abstract class AppLocalizations {
   /// **'You can withdraw your given agreement(s).'**
   String get agreementsDescription;
 
+  /// Display name for informal badge agreement type
+  ///
+  /// In en, this message translates to:
+  /// **'Non-formal edubadges'**
+  String get agreementTypeInformalBadge;
+
+  /// Display name for formal badge agreement type
+  ///
+  /// In en, this message translates to:
+  /// **'Formal edubadges'**
+  String get agreementTypeFormalBadge;
+
+  /// Display name for terms of service agreement type
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of service'**
+  String get agreementTypeTermsOfService;
+
+  /// Display name for service agreement type
+  ///
+  /// In en, this message translates to:
+  /// **'Service agreement'**
+  String get agreementTypeServiceAgreement;
+
+  /// Display name for unknown agreement type
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get agreementTypeUnknown;
+
   /// Section header or button text for account deletion
   ///
   /// In en, this message translates to:
