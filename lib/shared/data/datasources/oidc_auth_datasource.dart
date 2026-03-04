@@ -26,43 +26,47 @@ class OidcAuthDataSource {
       List<String>? promptValues;
 
       if (addAcrValues) {
-        additionalParameters['acr_values'] = 'https://eduid.nl/trust/validate-names';
+        additionalParameters['acr_values'] =
+            'https://eduid.nl/trust/validate-names';
       } else {
         promptValues = ['login'];
       }
 
-      final AuthorizationTokenResponse result = await _appAuth.authorizeAndExchangeCode(
-        AuthorizationTokenRequest(
-          clientId,
-          redirectUri,
-          issuer: issuer,
-          scopes: _scopes,
-          promptValues: promptValues,
-          additionalParameters: additionalParameters,
-        ),
-      );
+      final AuthorizationTokenResponse result = await _appAuth
+          .authorizeAndExchangeCode(
+            AuthorizationTokenRequest(
+              clientId,
+              redirectUri,
+              issuer: issuer,
+              scopes: _scopes,
+              promptValues: promptValues,
+              additionalParameters: additionalParameters,
+            ),
+          );
 
       if (result.accessToken != null) {
         final token = OAuth2Token(
           accessToken: result.accessToken!,
           refreshToken: result.refreshToken,
         );
-        
+
         await _saveTokens(
           result.accessToken!,
           result.refreshToken,
           result.accessTokenExpirationDateTime,
           result.idToken,
         );
-        
+
         logger.i('Auth: Notifying fresh about new token');
         if (_fresh != null) {
           await _fresh!.setToken(token);
           logger.i('Auth: Token set in fresh');
-          
+
           // Verify token was set
           final storedToken = await _tokenStorage.read();
-          logger.i('Auth: Verified token in storage - accessToken exists: ${storedToken?.accessToken != null}');
+          logger.i(
+            'Auth: Verified token in storage - accessToken exists: ${storedToken?.accessToken != null}',
+          );
         } else {
           logger.w('Auth: Fresh instance is null, cannot set token!');
         }
@@ -76,15 +80,17 @@ class OidcAuthDataSource {
   }
 
   Future<void> _saveTokens(
-      String accessToken,
-      String? refreshToken,
-      DateTime? expirationDateTime,
-      String? idToken,
-      ) async {
-    await _tokenStorage.write(OAuth2Token(
+    String accessToken,
+    String? refreshToken,
+    DateTime? expirationDateTime,
+    String? idToken,
+  ) async {
+    final oauth2token = OAuth2Token(
       accessToken: accessToken,
       refreshToken: refreshToken,
-    ));
+    );
+    await _tokenStorage.write(oauth2token);
+    await _fresh?.setToken(oauth2token);
     await _tokenStorage.writeExpiration(expirationDateTime);
   }
 
@@ -191,6 +197,7 @@ class OidcAuthDataSource {
 
   Future<void> logout() async {
     logger.e('Auth: Logout called');
+    await _fresh?.clearToken();
     await _tokenStorage.delete();
   }
 
