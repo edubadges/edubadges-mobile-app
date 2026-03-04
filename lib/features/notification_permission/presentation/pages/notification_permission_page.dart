@@ -4,16 +4,24 @@ import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/outlined_button.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/presentation/providers/device_registration_providers.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class NotificationPermissionPage extends StatelessWidget {
+class NotificationPermissionPage extends ConsumerWidget {
   const NotificationPermissionPage({super.key});
 
-  Future<void> _requestPermission(BuildContext context) async {
+  Future<void> _requestPermission(BuildContext context, WidgetRef ref) async {
     await Permission.notification.request();
-    // After the native dialog is dismissed, navigate to the main route.
+    final notificationSettings = await FirebaseMessaging.instance.requestPermission();
+
+    if (notificationSettings.authorizationStatus == AuthorizationStatus.authorized) {
+      await ref.read(deviceRegistrationServiceProvider).registerDevice();
+    }
+
     if (context.mounted) {
       context.go(RoutePath.main);
     }
@@ -24,7 +32,7 @@ class NotificationPermissionPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -81,7 +89,7 @@ class NotificationPermissionPage extends StatelessWidget {
                     const SizedBox(height: 16),
                     PrimaryButton(
                       text: l10n.notificationPermissionsButtonAllow,
-                      onPressed: () => _requestPermission(context),
+                      onPressed: () => _requestPermission(context, ref),
                     ),
                     const SizedBox(height: 16),
                     CustomOutlinedButton(
