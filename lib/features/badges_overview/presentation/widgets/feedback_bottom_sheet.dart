@@ -1,16 +1,25 @@
+import 'dart:io';
+
+import 'package:edubadges/core/utils/app_language.dart';
+import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/core/widgets/app_text_field.dart';
 import 'package:edubadges/core/widgets/base_form_bottom_sheet.dart';
+import 'package:edubadges/flavors.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class FeedbackBottomSheet extends StatefulWidget {
+class FeedbackBottomSheet extends ConsumerStatefulWidget {
   const FeedbackBottomSheet({super.key});
 
   @override
-  State<FeedbackBottomSheet> createState() => _FeedbackBottomSheetState();
+  ConsumerState<FeedbackBottomSheet> createState() =>
+      _FeedbackBottomSheetState();
 }
 
-class _FeedbackBottomSheetState extends State<FeedbackBottomSheet> {
+class _FeedbackBottomSheetState extends ConsumerState<FeedbackBottomSheet> {
   final _formKey = GlobalKey<FormState>();
   final _feedbackController = TextEditingController();
 
@@ -20,11 +29,40 @@ class _FeedbackBottomSheetState extends State<FeedbackBottomSheet> {
     super.dispose();
   }
 
-  void _handleSave() {
-    if (_formKey.currentState!.validate()) {
-      // TODO: Send feedback to backend
-      Navigator.of(context).pop();
+  Future<void> _handleSave() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final appLanguage = ref.read(appLanguageProvider);
+    final navigator = Navigator.of(context);
+
+    final packageInfo = await PackageInfo.fromPlatform();
+    final platform = Platform.isIOS ? 'iOS' : 'Android';
+    final version = '${packageInfo.version} (${packageInfo.buildNumber})';
+    final language = appLanguage.displayName;
+
+    final isProduction = F.appFlavor == Flavor.prod;
+    final subject = isProduction
+        ? 'Feedback Edubadge app'
+        : 'Feedback Edubadge app (${F.name})';
+
+    final body = '''${_feedbackController.text.trim()}
+
+---
+App versie: $version
+Taal: $language
+Platform: $platform''';
+
+    final uri = Uri.parse(
+      'mailto:support@edubadges.nl?subject=${Uri.encodeComponent(subject)}&body=${Uri.encodeComponent(body)}',
+    );
+
+    try {
+      await launchUrl(uri, mode: LaunchMode.platformDefault);
+    } catch (e) {
+      logger.e('Error launching email client: $e');
     }
+
+    navigator.pop();
   }
 
   void _handleCancel() {
