@@ -912,4 +912,10 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get errorDescription =>
       'Er is een onverwachte fout opgetreden. Probeer het later opnieuw of neem contact op met support@edubadges.nl.';
+
+  @override
+  String get badgeRequestButton => 'Aanvragen';
+
+  @override
+  String get edubadgeRequested => 'Edubadge aangevraagd';
 }

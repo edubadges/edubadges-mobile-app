@@ -3,13 +3,17 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/core/utils/string.dart';
+import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
+import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_visibility_dialog.dart';
+import 'package:edubadges/shared/presentation/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -22,7 +26,7 @@ class BadgeCard extends ConsumerWidget {
   final BadgeInstanceEntity? instance;
   final BadgeClassModel badgeClass;
   final BadgeCardStyle style;
-  final bool isSelected, onTapDisabled;
+  final bool isSelected, onTapDisabled, badgeRequested;
   final BadgeDetailsRouteFrom onTapFrom;
   const BadgeCard({
     super.key,
@@ -31,6 +35,7 @@ class BadgeCard extends ConsumerWidget {
     this.style = BadgeCardStyle.large,
     this.isSelected = false,
     this.onTapDisabled = false,
+    this.badgeRequested = false,
     this.onTapFrom = BadgeDetailsRouteFrom.other,
   });
 
@@ -247,8 +252,66 @@ class BadgeCard extends ConsumerWidget {
                   ),
                 ],
               ),
+            if (instance == null &&
+                badgeClass.userMayEnroll &&
+                badgeClass.selfEnrollmentEnabled)
+              _buildEnrollmentSection(context, ref, l10n, textTheme, colorScheme),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildEnrollmentSection(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+    TextTheme textTheme,
+    ColorScheme colorScheme,
+  ) {
+    if (badgeRequested) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: Container(
+          margin: const EdgeInsets.only(
+            left: 12,
+            right: 16,
+            top: 10,
+            bottom: 10,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 8,
+            children: [
+              SvgIcon(
+                assetPath: Assets.iconCheck,
+                size: 20,
+                color: colorScheme.primary,
+              ),
+              Text(
+                l10n.edubadgeRequested,
+                style: textTheme.labelLarge?.copyWith(
+                  color: colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: WideButton(
+        text: l10n.badgeRequestButton,
+        icon: null,
+        onTap: () async {
+          final enrolled =
+              await ref.read(enrollBadgeProvider)(badgeClass.entityId);
+          if (!enrolled && context.mounted) {
+            showAppSnackBar(context, l10n.somethingWentWrong);
+          }
+        },
+        color: colorScheme.primary,
       ),
     );
   }
