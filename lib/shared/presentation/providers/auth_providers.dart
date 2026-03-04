@@ -1,3 +1,8 @@
+import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
+import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
+import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
+import 'package:edubadges/features/catalog/presentation/providers/catalog_providers.dart';
+import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/features/login/presentation/providers/login_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,12 +18,25 @@ class AuthNotifier extends AsyncNotifier<bool> {
     return result.getOrElse(() => false);
   }
 
+  /// Invalidates all user-dependent and network providers so no stale or
+  /// sensitive state persists across logout or when a new user logs in.
+  void _clearUserDependentState() {
+    ref.invalidate(profileProvider, asReload: true);
+    ref.invalidate(badgesOverviewProvider, asReload: true);
+    ref.invalidate(collectionsProvider, asReload: true);
+    ref.invalidate(catalogProvider, asReload: true);
+    ref.invalidate(loginStatusProvider, asReload: true);
+    ref.invalidate(badgeDetailsProvider, asReload: true);
+    ref.invalidate(badgeDetailsModelProvider, asReload: true);
+  }
+
   /// Perform login (authorization code flow)
   Future<void> login() async {
     state = const AsyncLoading();
     final loginRepository = ref.read(loginRepositoryProvider);
 
     try {
+      _clearUserDependentState();
       await loginRepository.login();
       state = const AsyncData(true);
     } catch (error, stackTrace) {
@@ -30,6 +48,7 @@ class AuthNotifier extends AsyncNotifier<bool> {
   Future<void> logout() async {
     final loginRepository = ref.read(loginRepositoryProvider);
     await loginRepository.logout();
+    _clearUserDependentState();
     state = const AsyncData(false);
   }
 }
