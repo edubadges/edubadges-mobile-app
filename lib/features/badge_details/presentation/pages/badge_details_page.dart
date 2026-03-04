@@ -195,7 +195,8 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
       badgeDetailsModelProvider(
         BadgeDetailsParams(
           badgeInstanceEntityId:
-              widget.badge.from == BadgeDetailsRouteFrom.overview
+              widget.badge.from == BadgeDetailsRouteFrom.overview ||
+                  widget.badge.from == BadgeDetailsRouteFrom.collection
               ? widget.badge.id
               : null,
           badgeClassEntityId: widget.badge.from == BadgeDetailsRouteFrom.catalog
@@ -245,6 +246,10 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   BadgeDetailsParams _createBadgeParams(String badgeId) {
     return switch (widget.badge.from) {
       BadgeDetailsRouteFrom.overview => BadgeDetailsParams(
+        badgeInstanceEntityId: badgeId,
+        badgeClassEntityId: null,
+      ),
+      BadgeDetailsRouteFrom.collection => BadgeDetailsParams(
         badgeInstanceEntityId: badgeId,
         badgeClassEntityId: null,
       ),

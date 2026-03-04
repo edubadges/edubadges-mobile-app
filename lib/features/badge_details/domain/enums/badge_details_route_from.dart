@@ -1,4 +1,4 @@
-enum BadgeDetailsRouteFrom { overview, catalog, other }
+enum BadgeDetailsRouteFrom { overview, catalog, collection, other }
 
 extension BadgeDetailsRouteFromExtension on BadgeDetailsRouteFrom {
   String toValue() {
@@ -7,6 +7,8 @@ extension BadgeDetailsRouteFromExtension on BadgeDetailsRouteFrom {
         return 'overview';
       case BadgeDetailsRouteFrom.catalog:
         return 'catalog';
+      case BadgeDetailsRouteFrom.collection:
+        return 'collection';
       case BadgeDetailsRouteFrom.other:
         return 'other';
     }
@@ -18,6 +20,8 @@ extension BadgeDetailsRouteFromExtension on BadgeDetailsRouteFrom {
         return BadgeDetailsRouteFrom.overview;
       case 'catalog':
         return BadgeDetailsRouteFrom.catalog;
+      case 'collection':
+        return BadgeDetailsRouteFrom.collection;
       case 'other':
       default:
         return BadgeDetailsRouteFrom.other;
