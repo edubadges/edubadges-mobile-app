@@ -18,6 +18,8 @@ class BadgeClassModel extends BadgeClassEntity {
     super.assessmentType,
     super.assessmentIdVerified,
     super.assessmentSupervised,
+    super.selfEnrollmentEnabled,
+    super.userMayEnroll,
     super.qualityAssuranceName,
     super.badgeclassextensionSet,
     super.issuer,
@@ -36,6 +38,8 @@ class BadgeClassModel extends BadgeClassEntity {
       assessmentType: AssessmentType.fromString(json['assessment_type'] as String?),
       assessmentIdVerified: json['assessment_id_verified'] as bool?,
       assessmentSupervised: json['assessment_supervised'] as bool?,
+      selfEnrollmentEnabled: (json['self_enrollment_enabled'] as bool?) ?? false,
+      userMayEnroll: (json['user_may_enroll'] as bool?) ?? false,
       qualityAssuranceName: json['quality_assurance_name'] as String?,
       badgeclassextensionSet: json['badgeclassextension_set'] != null
           ? (json['badgeclassextension_set'] as List)
@@ -61,6 +65,8 @@ class BadgeClassModel extends BadgeClassEntity {
       if (assessmentType != null) 'assessment_type': assessmentType!.value,
       if (assessmentIdVerified != null) 'assessment_id_verified': assessmentIdVerified,
       if (assessmentSupervised != null) 'assessment_supervised': assessmentSupervised,
+      'self_enrollment_enabled': selfEnrollmentEnabled,
+      'user_may_enroll': userMayEnroll,
       if (qualityAssuranceName != null) 'quality_assurance_name': qualityAssuranceName,
       if (badgeclassextensionSet != null)
         'badgeclassextension_set': badgeclassextensionSet!

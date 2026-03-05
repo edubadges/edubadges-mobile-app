@@ -40,6 +40,18 @@ class BadgeDetailsRepositoryImpl implements BadgeDetailsRepository {
   }
 
   @override
+  Future<Either<Failure, void>> enroll(String badgeclassSlug) async {
+    try {
+      await dataSource.enroll(badgeclassSlug);
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.statusCode));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> updateBadgeVisibility(
     String entityId,
     bool isPublic,

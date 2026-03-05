@@ -909,4 +909,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorDescription =>
       'An unexpected error has occurred. Please try again later or contact support@edubadges.nl for support.';
+
+  @override
+  String get badgeRequestButton => 'Request';
+
+  @override
+  String get edubadgeRequested => 'Edubadge requested';
 }

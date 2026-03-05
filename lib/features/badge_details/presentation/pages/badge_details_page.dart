@@ -156,6 +156,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                               as BadgeClassModel,
                       style: BadgeCardStyle.large,
                       onTapDisabled: true,
+                      
                     ),
                   );
                 },
@@ -211,7 +212,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         // TODO: Add error message
         if (badgeDetailsAsync.value?.badgeClass != null)
           Container(
-            height: _badgeCardHeight,
             margin: const EdgeInsets.symmetric(horizontal: 20),
             child: Center(
               child: BadgeCard(
@@ -219,6 +219,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                 badgeClass: badgeDetailsAsync.value!.badgeClass,
                 style: BadgeCardStyle.large,
                 onTapDisabled: true,
+                badgeRequested: badgeDetailsAsync.value!.requested,
               ),
             ),
           ),

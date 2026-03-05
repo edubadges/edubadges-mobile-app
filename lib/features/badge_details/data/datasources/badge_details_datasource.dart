@@ -7,6 +7,7 @@ import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 abstract class BadgeDetailsDataSource {
   Future<BadgeClassModel> getBadgeDetails(String entityId);
   Future<BadgeInstanceModel> getBadgeInstance(String entityId);
+  Future<void> enroll(String badgeclassSlug);
   Future<void> updateBadgeVisibility(
     String entityId,
     bool isPublic,
@@ -68,6 +69,14 @@ class BadgeDetailsDataSourceImpl implements BadgeDetailsDataSource {
         stackTrace: stackTrace,
       );
     }
+  }
+
+  @override
+  Future<void> enroll(String badgeclassSlug) async {
+    await apiClient.post<void>(
+      '/enroll',
+      data: {'badgeclass_slug': badgeclassSlug},
+    );
   }
 
   @override

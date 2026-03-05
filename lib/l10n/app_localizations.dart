@@ -1621,6 +1621,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An unexpected error has occurred. Please try again later or contact support@edubadges.nl for support.'**
   String get errorDescription;
+
+  /// Button text to request an edubadge (self-enrollment)
+  ///
+  /// In en, this message translates to:
+  /// **'Request'**
+  String get badgeRequestButton;
+
+  /// Status text when the user has requested an edubadge and is waiting for it
+  ///
+  /// In en, this message translates to:
+  /// **'Edubadge requested'**
+  String get edubadgeRequested;
 }
 
 class _AppLocalizationsDelegate

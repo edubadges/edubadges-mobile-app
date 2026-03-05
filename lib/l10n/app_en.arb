@@ -1068,5 +1068,13 @@
     "errorDescription": "An unexpected error has occurred. Please try again later or contact support@edubadges.nl for support.",
     "@errorDescription": {
         "description": "Longer description for unexpected errors, with support contact information"
+    },
+    "badgeRequestButton": "Request",
+    "@badgeRequestButton": {
+        "description": "Button text to request an edubadge (self-enrollment)"
+    },
+    "edubadgeRequested": "Edubadge requested",
+    "@edubadgeRequested": {
+        "description": "Status text when the user has requested an edubadge and is waiting for it"
     }
 }

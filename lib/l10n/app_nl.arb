@@ -1068,5 +1068,13 @@
     "errorDescription": "Er is een onverwachte fout opgetreden. Probeer het later opnieuw of neem contact op met support@edubadges.nl.",
     "@errorDescription": {
         "description": "Longer description for unexpected errors, with support contact information"
+    },
+    "badgeRequestButton": "Aanvragen",
+    "@badgeRequestButton": {
+        "description": "Button text to request an edubadge (self-enrollment)"
+    },
+    "edubadgeRequested": "Edubadge aangevraagd",
+    "@edubadgeRequested": {
+        "description": "Status text when the user has requested an edubadge and is waiting for it"
     }
 }
