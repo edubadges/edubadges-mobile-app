@@ -242,6 +242,7 @@ class AccountPage extends ConsumerWidget {
     String dateText,
     TermsAgreementEntity agreement,
   ) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -257,7 +258,11 @@ class AccountPage extends ConsumerWidget {
 
     return InkWell(
       onTap: () {
-        final agreementModel = AgreementRouteModel.create(institutionName, agreement, langCode);
+        final agreementModel = AgreementRouteModel.create(
+          institutionName,
+          agreement,
+          langCode,
+        );
         context.push(agreementModel.buildRouteUrl());
       },
       borderRadius: BorderRadius.circular(_badgeBorderRadius),
@@ -271,9 +276,9 @@ class AccountPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    institutionName,
+                    agreement.getAgreementTypeName(l10n),
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      color: colorScheme.onSurface,
+                      color: colorScheme.primary,
                     ),
                   ),
                   Text(
@@ -319,26 +324,54 @@ class AccountPage extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: _spacingSmall),
-        _buildDivider(colorScheme),
-        const SizedBox(height: _spacingSmall),
-        ...profile.termsagreementSet.asMap().entries.map((entry) {
-          final index = entry.key;
-          final agreement = entry.value;
-          final isLast = index == profile.termsagreementSet.length - 1;
-          final dateText = _formatAgreementDateText(
-            context,
-            entry.value.agreed,
-            agreement.agreedAt,
-            agreement.agreedVersion.toString(),
-          );
+        ...() {
+          // Group agreements by terms.institution (identifier as key)
+          final grouped = <String, List<TermsAgreementEntity>>{};
+          for (final agreement in profile.termsagreementSet) {
+            final key = agreement.terms.institution?.identifier ?? '';
+            grouped.putIfAbsent(key, () => []).add(agreement);
+          }
 
-          return Column(
-            children: [
-              _buildAgreementItem(ref, context, dateText, agreement),
-              if (!isLast) _buildDivider(colorScheme),
-            ],
-          );
-        }),
+          final langCode = ref.read(appLanguageProvider).code;
+          final groupEntries = grouped.entries.toList();
+
+          return groupEntries.expand((groupEntry) {
+            final institution = groupEntry.value.first.terms.institution;
+            final institutionName = institution != null
+                ? getLocalizedString(
+                    institution.nameDutch,
+                    institution.nameEnglish,
+                    langCode,
+                  )
+                : edubadges;
+
+            return [
+              _buildDivider(colorScheme),
+              Padding(
+                padding: EdgeInsets.only(
+                  top: groupEntry == groupEntries.first ? 0 : _spacingMedium,
+                ),
+                child: Text(
+                  institutionName,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              const SizedBox(height: _spacingSmall),
+              ...groupEntry.value.asMap().entries.map((entry) {
+                final agreement = entry.value;
+                final dateText = _formatAgreementDateText(
+                  context,
+                  agreement.agreed,
+                  agreement.agreedAt,
+                  agreement.agreedVersion.toString(),
+                );
+                return _buildAgreementItem(ref, context, dateText, agreement);
+              }),
+            ];
+          });
+        }(),
       ],
     );
   }
