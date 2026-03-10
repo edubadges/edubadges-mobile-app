@@ -80,16 +80,14 @@ class BadgeCard extends ConsumerWidget {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            // TODO: add no image paceholder (https://digitalclub.atlassian.net/browse/SURF-517)
-            if (badgeImageUrl != null)
-              Image.network(
-                badgeImageUrl,
-                height: 64,
-                width: 64,
-                errorBuilder: (context, error, stackTrace) {
-                  return const SizedBox(height: 64, width: 100);
-                },
-              ),
+            Image.network(
+              badgeImageUrl ?? '',
+              height: 64,
+              width: 64,
+              errorBuilder: (context, error, stackTrace) {
+                return const SizedBox(height: 64, width: 100);
+              },
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -148,18 +146,16 @@ class BadgeCard extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 32, width: 32),
-                // TODO: add no image paceholder (https://digitalclub.atlassian.net/browse/SURF-517)
-                if (badgeImageUrl != null)
-                  Expanded(
-                    child: Image.network(
-                      badgeImageUrl,
-                      height: 100,
-                      width: 100,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const SizedBox(height: 100, width: 100);
-                      },
-                    ),
+                Expanded(
+                  child: Image.network(
+                    badgeImageUrl ?? '',
+                    height: 100,
+                    width: 100,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const SizedBox(height: 100, width: 100);
+                    },
                   ),
+                ),
                 if (instance != null)
                   SizedBox(
                     height: 32,
@@ -230,7 +226,6 @@ class BadgeCard extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // TODO: add no image paceholder (https://digitalclub.atlassian.net/browse/SURF-517)
                   if (institutionImageUrl != null)
                     Image.network(
                       institutionImageUrl,
@@ -255,7 +250,13 @@ class BadgeCard extends ConsumerWidget {
             if (instance == null &&
                 badgeClass.userMayEnroll &&
                 badgeClass.selfEnrollmentEnabled)
-              _buildEnrollmentSection(context, ref, l10n, textTheme, colorScheme),
+              _buildEnrollmentSection(
+                context,
+                ref,
+                l10n,
+                textTheme,
+                colorScheme,
+              ),
           ],
         ),
       ),
@@ -305,8 +306,9 @@ class BadgeCard extends ConsumerWidget {
         text: l10n.badgeRequestButton,
         icon: null,
         onTap: () async {
-          final enrolled =
-              await ref.read(enrollBadgeProvider)(badgeClass.entityId);
+          final enrolled = await ref.read(enrollBadgeProvider)(
+            badgeClass.entityId,
+          );
           if (!enrolled && context.mounted) {
             showAppSnackBar(context, l10n.somethingWentWrong);
           }
