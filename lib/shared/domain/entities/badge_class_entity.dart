@@ -10,7 +10,7 @@ class BadgeClassEntity extends Equatable {
   final int id;
   final String name;
   final String entityId;
-  final String? image;
+  final String image;
   final String? description;
   final bool? formal;
   final ParticipationType? participation;
@@ -29,7 +29,7 @@ class BadgeClassEntity extends Equatable {
     required this.name,
     required this.entityId,
     required this.badgeClassType,
-    this.image,
+    required this.image,
     this.description,
     this.formal,
     this.participation,
