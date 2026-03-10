@@ -16,9 +16,13 @@ class NotificationPermissionPage extends ConsumerWidget {
 
   Future<void> _requestPermission(BuildContext context, WidgetRef ref) async {
     await Permission.notification.request();
-    final notificationSettings = await FirebaseMessaging.instance.requestPermission();
+    final notificationSettings = await FirebaseMessaging.instance
+        .requestPermission();
 
-    if (notificationSettings.authorizationStatus == AuthorizationStatus.authorized) {
+    if (notificationSettings.authorizationStatus ==
+            AuthorizationStatus.authorized ||
+        notificationSettings.authorizationStatus ==
+            AuthorizationStatus.provisional) {
       await ref.read(deviceRegistrationServiceProvider).registerDevice();
     }
 
@@ -52,13 +56,17 @@ class NotificationPermissionPage extends ConsumerWidget {
                   children: [
                     Text(
                       l10n.notificationPermissionsTitle,
-                      style: textTheme.headlineLarge?.copyWith(color: colorScheme.onSurface),
+                      style: textTheme.headlineLarge?.copyWith(
+                        color: colorScheme.onSurface,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     Text(
                       l10n.notificationPermissionsSubtitle,
-                      style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -66,9 +74,7 @@ class NotificationPermissionPage extends ConsumerWidget {
               ),
               const SizedBox(height: 32),
               ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxHeight: 400,
-                ),
+                constraints: const BoxConstraints(maxHeight: 400),
                 child: Image.asset(
                   Assets.imageNotifications,
                   width: double.infinity,
@@ -83,7 +89,9 @@ class NotificationPermissionPage extends ConsumerWidget {
                   children: [
                     Text(
                       l10n.notificationPermissionsLabel,
-                      style: textTheme.labelMedium?.copyWith(color: colorScheme.onSurface),
+                      style: textTheme.labelMedium?.copyWith(
+                        color: colorScheme.onSurface,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
