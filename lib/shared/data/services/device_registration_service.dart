@@ -12,6 +12,20 @@ class DeviceRegistrationService {
   final DeviceRegistrationDataSource _dataSource;
   final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
 
+  /// Fetches the current device registration from the backend and returns the [active] flag.
+  /// Returns null if the device is not registered or the request fails.
+  Future<bool?> getNotificationActive() async {
+    final String? fcmToken = await FirebaseMessaging.instance.getToken();
+    if (fcmToken == null || fcmToken.isEmpty) return null;
+    try {
+      final device = await _dataSource.getDeviceRegistration(fcmToken);
+      return device?.active;
+    } catch (e, st) {
+      logger.w('Failed to get device registration', error: e, stackTrace: st);
+      return null;
+    }
+  }
+
   /// Fetches FCM token and device info, then POSTs to the backend.
   /// [active] is sent in the request body so the backend can enable or disable push for this device.
   Future<void> registerDevice({bool active = true}) async {
