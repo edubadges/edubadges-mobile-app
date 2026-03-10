@@ -1,6 +1,8 @@
 import 'package:edubadges/app/app.dart';
+import 'package:edubadges/app/routes.dart';
 import 'package:edubadges/core/constants/env_keys.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
+import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/firebase/firebase_options_acceptance.dart'
@@ -14,6 +16,7 @@ import 'package:edubadges/flavors.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,6 +25,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 String? appFlavor;
+
+ProviderContainer? _appContainer;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -94,8 +99,14 @@ void main() async {
 
   // Initialize Networking
   final container = ProviderContainer();
+  _appContainer = container;
   final apiClient = container.read(apiClientProvider);
   await apiClient.init();
+
+  // Navigate to main when a notification is tapped (background).
+  FirebaseMessaging.onMessageOpenedApp.listen((_) {
+    _appContainer?.read(appRouter).go(RoutePath.main);
+  });
 
   runApp(UncontrolledProviderScope(container: container, child: const App()));
 }

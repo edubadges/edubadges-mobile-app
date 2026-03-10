@@ -188,11 +188,13 @@ class AccountPage extends ConsumerWidget {
 
   Widget _buildNotificationSection(
     BuildContext context,
+    WidgetRef ref,
     ProfileEntity profile,
   ) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final notificationAsync = ref.watch(notificationEnabledProvider);
 
     return _buildSectionCard(
       context: context,
@@ -209,14 +211,33 @@ class AccountPage extends ConsumerWidget {
                 color: colorScheme.onSurfaceVariant,
               ),
             ),
-            Switch(
-              value:
-                  true, // TODO: Replace with real value later https://digitalclub.atlassian.net/browse/SURF-514
-              onChanged: (value) {
-                // TODO: Implement update notification settings https://digitalclub.atlassian.net/browse/SURF-514
-              },
-              activeThumbColor: colorScheme.surfaceContainer,
-              activeTrackColor: colorScheme.primary,
+            notificationAsync.when(
+              data: (enabled) => Switch(
+                value: enabled,
+                onChanged: (value) {
+                  ref
+                      .read(notificationEnabledProvider.notifier)
+                      .setEnabled(value);
+                },
+                activeThumbColor: colorScheme.surfaceContainer,
+                activeTrackColor: colorScheme.primary,
+              ),
+              loading: () => Switch(
+                value: true,
+                onChanged: null,
+                activeThumbColor: colorScheme.surfaceContainer,
+                activeTrackColor: colorScheme.primary,
+              ),
+              error: (_, __) => Switch(
+                value: false,
+                onChanged: (value) {
+                  ref
+                      .read(notificationEnabledProvider.notifier)
+                      .setEnabled(value);
+                },
+                activeThumbColor: colorScheme.surfaceContainer,
+                activeTrackColor: colorScheme.primary,
+              ),
             ),
           ],
         ),
@@ -514,7 +535,7 @@ class AccountPage extends ConsumerWidget {
                 spacing: 0,
                 children: [
                   _buildDataSection(context, profile),
-                  _buildNotificationSection(context, profile),
+                  _buildNotificationSection(context, ref, profile),
                   _buildAgreementsSection(ref, context, profile),
                   _buildDeleteAccountSection(context, ref),
                 ],
