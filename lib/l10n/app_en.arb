@@ -205,6 +205,26 @@
     "@agreementsDescription": {
         "description": "Description explaining that users can withdraw their agreements"
     },
+    "agreementTypeInformalBadge": "Non-formal edubadges",
+    "@agreementTypeInformalBadge": {
+        "description": "Display name for informal badge agreement type"
+    },
+    "agreementTypeFormalBadge": "Formal edubadges",
+    "@agreementTypeFormalBadge": {
+        "description": "Display name for formal badge agreement type"
+    },
+    "agreementTypeTermsOfService": "Terms of service",
+    "@agreementTypeTermsOfService": {
+        "description": "Display name for terms of service agreement type"
+    },
+    "agreementTypeServiceAgreement": "Service agreement",
+    "@agreementTypeServiceAgreement": {
+        "description": "Display name for service agreement type"
+    },
+    "agreementTypeUnknown": "Unknown",
+    "@agreementTypeUnknown": {
+        "description": "Display name for unknown agreement type"
+    },
     "deleteAccount": "Delete your edubadges account",
     "@deleteAccount": {
         "description": "Section header or button text for account deletion"
@@ -1068,5 +1088,13 @@
     "errorDescription": "An unexpected error has occurred. Please try again later or contact support@edubadges.nl for support.",
     "@errorDescription": {
         "description": "Longer description for unexpected errors, with support contact information"
+    },
+    "badgeRequestButton": "Request",
+    "@badgeRequestButton": {
+        "description": "Button text to request an edubadge (self-enrollment)"
+    },
+    "edubadgeRequested": "Edubadge requested",
+    "@edubadgeRequested": {
+        "description": "Status text when the user has requested an edubadge and is waiting for it"
     }
 }

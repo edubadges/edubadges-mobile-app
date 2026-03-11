@@ -188,11 +188,13 @@ class AccountPage extends ConsumerWidget {
 
   Widget _buildNotificationSection(
     BuildContext context,
+    WidgetRef ref,
     ProfileEntity profile,
   ) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final notificationAsync = ref.watch(notificationEnabledProvider);
 
     return _buildSectionCard(
       context: context,
@@ -209,14 +211,33 @@ class AccountPage extends ConsumerWidget {
                 color: colorScheme.onSurfaceVariant,
               ),
             ),
-            Switch(
-              value:
-                  true, // TODO: Replace with real value later https://digitalclub.atlassian.net/browse/SURF-514
-              onChanged: (value) {
-                // TODO: Implement update notification settings https://digitalclub.atlassian.net/browse/SURF-514
-              },
-              activeThumbColor: colorScheme.surfaceContainer,
-              activeTrackColor: colorScheme.primary,
+            notificationAsync.when(
+              data: (enabled) => Switch(
+                value: enabled,
+                onChanged: (value) {
+                  ref
+                      .read(notificationEnabledProvider.notifier)
+                      .setEnabled(value);
+                },
+                activeThumbColor: colorScheme.surfaceContainer,
+                activeTrackColor: colorScheme.primary,
+              ),
+              loading: () => Switch(
+                value: true,
+                onChanged: null,
+                activeThumbColor: colorScheme.surfaceContainer,
+                activeTrackColor: colorScheme.primary,
+              ),
+              error: (_, __) => Switch(
+                value: false,
+                onChanged: (value) {
+                  ref
+                      .read(notificationEnabledProvider.notifier)
+                      .setEnabled(value);
+                },
+                activeThumbColor: colorScheme.surfaceContainer,
+                activeTrackColor: colorScheme.primary,
+              ),
             ),
           ],
         ),
@@ -242,6 +263,7 @@ class AccountPage extends ConsumerWidget {
     String dateText,
     TermsAgreementEntity agreement,
   ) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -257,7 +279,11 @@ class AccountPage extends ConsumerWidget {
 
     return InkWell(
       onTap: () {
-        final agreementModel = AgreementRouteModel.create(institutionName, agreement, langCode);
+        final agreementModel = AgreementRouteModel.create(
+          institutionName,
+          agreement,
+          langCode,
+        );
         context.push(agreementModel.buildRouteUrl());
       },
       borderRadius: BorderRadius.circular(_badgeBorderRadius),
@@ -271,9 +297,9 @@ class AccountPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    institutionName,
+                    agreement.getAgreementTypeName(l10n),
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      color: colorScheme.onSurface,
+                      color: colorScheme.primary,
                     ),
                   ),
                   Text(
@@ -319,26 +345,54 @@ class AccountPage extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: _spacingSmall),
-        _buildDivider(colorScheme),
-        const SizedBox(height: _spacingSmall),
-        ...profile.termsagreementSet.asMap().entries.map((entry) {
-          final index = entry.key;
-          final agreement = entry.value;
-          final isLast = index == profile.termsagreementSet.length - 1;
-          final dateText = _formatAgreementDateText(
-            context,
-            entry.value.agreed,
-            agreement.agreedAt,
-            agreement.agreedVersion.toString(),
-          );
+        ...() {
+          // Group agreements by terms.institution (identifier as key)
+          final grouped = <String, List<TermsAgreementEntity>>{};
+          for (final agreement in profile.termsagreementSet) {
+            final key = agreement.terms.institution?.identifier ?? '';
+            grouped.putIfAbsent(key, () => []).add(agreement);
+          }
 
-          return Column(
-            children: [
-              _buildAgreementItem(ref, context, dateText, agreement),
-              if (!isLast) _buildDivider(colorScheme),
-            ],
-          );
-        }),
+          final langCode = ref.read(appLanguageProvider).code;
+          final groupEntries = grouped.entries.toList();
+
+          return groupEntries.expand((groupEntry) {
+            final institution = groupEntry.value.first.terms.institution;
+            final institutionName = institution != null
+                ? getLocalizedString(
+                    institution.nameDutch,
+                    institution.nameEnglish,
+                    langCode,
+                  )
+                : edubadges;
+
+            return [
+              _buildDivider(colorScheme),
+              Padding(
+                padding: EdgeInsets.only(
+                  top: groupEntry == groupEntries.first ? 0 : _spacingMedium,
+                ),
+                child: Text(
+                  institutionName,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              const SizedBox(height: _spacingSmall),
+              ...groupEntry.value.asMap().entries.map((entry) {
+                final agreement = entry.value;
+                final dateText = _formatAgreementDateText(
+                  context,
+                  agreement.agreed,
+                  agreement.agreedAt,
+                  agreement.agreedVersion.toString(),
+                );
+                return _buildAgreementItem(ref, context, dateText, agreement);
+              }),
+            ];
+          });
+        }(),
       ],
     );
   }
@@ -481,7 +535,7 @@ class AccountPage extends ConsumerWidget {
                 spacing: 0,
                 children: [
                   _buildDataSection(context, profile),
-                  _buildNotificationSection(context, profile),
+                  _buildNotificationSection(context, ref, profile),
                   _buildAgreementsSection(ref, context, profile),
                   _buildDeleteAccountSection(context, ref),
                 ],

@@ -6,6 +6,7 @@ import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 abstract class BadgeDetailsRepository {
   Future<Either<Failure, BadgeClassModel>> getBadgeDetails(String entityId);
   Future<Either<Failure, BadgeInstanceModel>> getBadgeInstance(String entityId);
+  Future<Either<Failure, void>> enroll(String badgeclassSlug);
   Future<Either<Failure, void>> updateBadgeVisibility(
     String entityId,
     bool isPublic,

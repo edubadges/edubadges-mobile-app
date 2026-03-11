@@ -10,13 +10,15 @@ class BadgeClassEntity extends Equatable {
   final int id;
   final String name;
   final String entityId;
-  final String? image;
+  final String image;
   final String? description;
   final bool? formal;
   final ParticipationType? participation;
   final AssessmentType? assessmentType;
   final bool? assessmentIdVerified;
   final bool? assessmentSupervised;
+  final bool selfEnrollmentEnabled;
+  final bool userMayEnroll;
   final String? qualityAssuranceName;
   final BadgeClassType badgeClassType;
   final List<BadgeClassExtensionEntity>? badgeclassextensionSet;
@@ -27,13 +29,15 @@ class BadgeClassEntity extends Equatable {
     required this.name,
     required this.entityId,
     required this.badgeClassType,
-    this.image,
+    required this.image,
     this.description,
     this.formal,
     this.participation,
     this.assessmentType,
     this.assessmentIdVerified,
     this.assessmentSupervised,
+    this.selfEnrollmentEnabled = false,
+    this.userMayEnroll = false,
     this.qualityAssuranceName,
     this.badgeclassextensionSet,
     this.issuer,
@@ -52,6 +56,8 @@ class BadgeClassEntity extends Equatable {
         assessmentIdVerified,
         assessmentSupervised,
         qualityAssuranceName,
+        selfEnrollmentEnabled,
+        userMayEnroll,
         badgeClassType,
         badgeclassextensionSet,
         issuer,

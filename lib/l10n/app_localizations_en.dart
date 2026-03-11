@@ -171,6 +171,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'You can withdraw your given agreement(s).';
 
   @override
+  String get agreementTypeInformalBadge => 'Non-formal edubadges';
+
+  @override
+  String get agreementTypeFormalBadge => 'Formal edubadges';
+
+  @override
+  String get agreementTypeTermsOfService => 'Terms of service';
+
+  @override
+  String get agreementTypeServiceAgreement => 'Service agreement';
+
+  @override
+  String get agreementTypeUnknown => 'Unknown';
+
+  @override
   String get deleteAccount => 'Delete your edubadges account';
 
   @override
@@ -909,4 +924,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorDescription =>
       'An unexpected error has occurred. Please try again later or contact support@edubadges.nl for support.';
+
+  @override
+  String get badgeRequestButton => 'Request';
+
+  @override
+  String get edubadgeRequested => 'Edubadge requested';
 }
