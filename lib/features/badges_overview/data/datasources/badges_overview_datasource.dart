@@ -134,9 +134,8 @@ class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
         transformedJson['created_at'] = json['created_at'];
         transformedJson['issued_on'] = json['issued_on'];
         transformedJson['award_type'] = 'requested';
-        transformedJson['acceptance'] = json['denied'] == true
-            ? 'Rejected'
-            : 'Unaccepted';
+        transformedJson['acceptance'] = json['acceptance'] as String? ??
+            (json['denied'] == true ? 'Rejected' : 'Unaccepted');
         transformedJson['public'] = false;
         transformedJson['revoked'] = false;
         transformedJson['badgeclass'] = json['badgeclass'];

@@ -1,3 +1,4 @@
+import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:equatable/equatable.dart';
 
 class ProfileEntity extends Equatable {
@@ -53,6 +54,22 @@ class TermsAgreementEntity extends Equatable {
     this.agreedAt,
     required this.terms,
   });
+
+  /// Returns the localized display name for this agreement's terms type.
+  String getAgreementTypeName(AppLocalizations l10n) {
+    switch (terms.termsType) {
+      case 'informal_badge':
+        return l10n.agreementTypeInformalBadge;
+      case 'formal_badge':
+        return l10n.agreementTypeFormalBadge;
+      case 'terms_of_service':
+        return l10n.agreementTypeTermsOfService;
+      case 'service_agreement_student':
+        return l10n.agreementTypeServiceAgreement;
+      default:
+        return l10n.agreementTypeUnknown;
+    }
+  }
 
   @override
   List<Object?> get props => [

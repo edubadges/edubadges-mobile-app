@@ -74,15 +74,11 @@ class CollectionsModel extends CollectionsEntity {
   }
 
   Map<String, dynamic> toJson() {
-    final badgeInstancePks = badgeInstanceIds.map((id) {
-      return int.tryParse(id) ?? id;
-    }).toList();
-
     return {
       'id': id,
       'name': name,
       if (description != null) 'description': description,
-      'badge_instances': badgeInstancePks,
+      'badge_instances': badgeInstanceIds,
       'public': public,
     };
   }

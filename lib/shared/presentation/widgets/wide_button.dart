@@ -2,7 +2,7 @@ import 'package:edubadges/core/utils/color.dart';
 import 'package:flutter/material.dart';
 
 class WideButton extends StatelessWidget {
-  final Widget icon;
+  final Widget? icon;
   final String text;
   final Color? color;
   final bool secondary;
@@ -47,8 +47,15 @@ class WideButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               spacing: 8,
               children: [
-                icon,
-                Text(text, style: textTheme.labelLarge?.copyWith(color: secondary ? mainColor : getContrastingTextColor(mainColor))),
+                if (icon != null) icon!,
+                Text(
+                  text,
+                  style: textTheme.labelLarge?.copyWith(
+                    color: secondary
+                        ? mainColor
+                        : getContrastingTextColor(mainColor),
+                  ),
+                ),
               ],
             ),
           ),

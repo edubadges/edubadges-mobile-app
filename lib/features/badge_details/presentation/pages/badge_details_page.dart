@@ -156,6 +156,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                               as BadgeClassModel,
                       style: BadgeCardStyle.large,
                       onTapDisabled: true,
+                      
                     ),
                   );
                 },
@@ -195,7 +196,8 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
       badgeDetailsModelProvider(
         BadgeDetailsParams(
           badgeInstanceEntityId:
-              widget.badge.from == BadgeDetailsRouteFrom.overview
+              widget.badge.from == BadgeDetailsRouteFrom.overview ||
+                  widget.badge.from == BadgeDetailsRouteFrom.collection
               ? widget.badge.id
               : null,
           badgeClassEntityId: widget.badge.from == BadgeDetailsRouteFrom.catalog
@@ -210,7 +212,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         // TODO: Add error message
         if (badgeDetailsAsync.value?.badgeClass != null)
           Container(
-            height: _badgeCardHeight,
             margin: const EdgeInsets.symmetric(horizontal: 20),
             child: Center(
               child: BadgeCard(
@@ -218,6 +219,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                 badgeClass: badgeDetailsAsync.value!.badgeClass,
                 style: BadgeCardStyle.large,
                 onTapDisabled: true,
+                badgeRequested: badgeDetailsAsync.value!.requested,
               ),
             ),
           ),
@@ -245,6 +247,10 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   BadgeDetailsParams _createBadgeParams(String badgeId) {
     return switch (widget.badge.from) {
       BadgeDetailsRouteFrom.overview => BadgeDetailsParams(
+        badgeInstanceEntityId: badgeId,
+        badgeClassEntityId: null,
+      ),
+      BadgeDetailsRouteFrom.collection => BadgeDetailsParams(
         badgeInstanceEntityId: badgeId,
         badgeClassEntityId: null,
       ),

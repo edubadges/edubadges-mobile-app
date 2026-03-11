@@ -40,6 +40,7 @@ class Assets {
   static const String iconStarFilled = '$_iconsPath/ic_star_filled.svg';
   static const String iconTimeInvestment = '$_iconsPath/ic_time_investment.svg';
   static const String iconType = '$_iconsPath/ic_type.svg';
+  static const String iconCheck = '$_iconsPath/ic_check.svg';
 
   // Images
   static const String _imagesPath = 'assets/images';
