@@ -197,6 +197,18 @@
     "@generalNotifications": {
         "description": "Label for general notification settings toggle"
     },
+    "notificationPermissionDeniedTitle": "Notificatiemachtiging vereist",
+    "@notificationPermissionDeniedTitle": {
+        "description": "Title for dialog when user has denied notification permission"
+    },
+    "notificationPermissionDeniedMessage": "Schakel notificaties in via de instellingen van je apparaat om updates te ontvangen.",
+    "@notificationPermissionDeniedMessage": {
+        "description": "Message asking user to enable notifications in system settings"
+    },
+    "openSettings": "Instellingen openen",
+    "@openSettings": {
+        "description": "Button to open app or system settings"
+    },
     "givenAgreements": "Gegeven akkoordverklaring(en)",
     "@givenAgreements": {
         "description": "Section header for agreements the user has given"
