@@ -293,13 +293,14 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
                 textTheme: textTheme,
                 colorScheme: colorScheme,
               ),
-            _buildChip(
-              icon: Assets.iconCollections,
-              text: '8,0',
-              context: context,
-              textTheme: textTheme,
-              colorScheme: colorScheme,
-            ),
+            if (badge.gradeAchieved != null)
+              _buildChip(
+                icon: Assets.iconCollections,
+                text: badge.gradeAchieved!,
+                context: context,
+                textTheme: textTheme,
+                colorScheme: colorScheme,
+              ),
             if (badge.issuedOn != null)
               _buildChip(
                 icon: Assets.iconDate,
