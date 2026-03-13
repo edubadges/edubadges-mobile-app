@@ -1,3 +1,4 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/branding.dart';
 import 'package:edubadges/core/constants/route_path.dart';
@@ -214,10 +215,19 @@ class AccountPage extends ConsumerWidget {
             notificationAsync.when(
               data: (enabled) => Switch(
                 value: enabled,
-                onChanged: (value) {
-                  ref
-                      .read(notificationEnabledProvider.notifier)
-                      .setEnabled(value);
+                onChanged: (value) async {
+                  try {
+                    await ref
+                        .read(notificationEnabledProvider.notifier)
+                        .setEnabled(value);
+                  } on NotificationPermissionDeniedException catch (_) {
+                    if (context.mounted) {
+                      await _showNotificationPermissionDeniedDialog(
+                        context,
+                        ref,
+                      );
+                    }
+                  }
                 },
                 activeThumbColor: colorScheme.surfaceContainer,
                 activeTrackColor: colorScheme.primary,
@@ -228,12 +238,21 @@ class AccountPage extends ConsumerWidget {
                 activeThumbColor: colorScheme.surfaceContainer,
                 activeTrackColor: colorScheme.primary,
               ),
-              error: (_, __) => Switch(
+              error: (_, _) => Switch(
                 value: false,
-                onChanged: (value) {
-                  ref
-                      .read(notificationEnabledProvider.notifier)
-                      .setEnabled(value);
+                onChanged: (value) async {
+                  try {
+                    await ref
+                        .read(notificationEnabledProvider.notifier)
+                        .setEnabled(value);
+                  } on NotificationPermissionDeniedException catch (_) {
+                    if (context.mounted) {
+                      await _showNotificationPermissionDeniedDialog(
+                        context,
+                        ref,
+                      );
+                    }
+                  }
                 },
                 activeThumbColor: colorScheme.surfaceContainer,
                 activeTrackColor: colorScheme.primary,
@@ -466,6 +485,30 @@ class AccountPage extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Future<void> _showNotificationPermissionDeniedDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+
+    await AdaptiveDialog.show(
+      context: context,
+      config: AdaptiveDialogConfig(
+        title: l10n.notificationPermissionDeniedTitle,
+        description: l10n.notificationPermissionDeniedMessage,
+        firstButtonText: l10n.cancel,
+        secondButtonText: l10n.openSettings,
+        isFirstButtonDefaultAction: false,
+        onFirstButtonPressed: () {},
+        onSecondButtonPressed: () async {
+          await AppSettings.openAppSettings(
+            type: AppSettingsType.notification,
+          );
+        },
+      ),
     );
   }
 

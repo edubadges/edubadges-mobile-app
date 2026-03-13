@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_positional_boolean_parameters
+
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/features/account/data/datasources/account_datasource.dart';
 import 'package:edubadges/features/account/data/datasources/account_remote_datasource.dart';
@@ -6,6 +8,7 @@ import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/features/account/domain/repositories/account_repository.dart';
 import 'package:edubadges/shared/presentation/providers/device_registration_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final accountRemoteDataSourceProvider = Provider<AccountRemoteDataSourceImpl>((
   ref,
@@ -46,22 +49,35 @@ class ProfileNotifier extends AsyncNotifier<ProfileEntity?> {
   }
 }
 
+class NotificationPermissionDeniedException implements Exception {}
+
 final notificationEnabledProvider =
     AsyncNotifierProvider<NotificationEnabledNotifier, bool>(
-  NotificationEnabledNotifier.new,
-);
+      NotificationEnabledNotifier.new,
+    );
 
 class NotificationEnabledNotifier extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
-    final active = await ref.read(deviceRegistrationServiceProvider).getNotificationActive();
+    final active = await ref
+        .read(deviceRegistrationServiceProvider)
+        .getNotificationActive();
     if (active != null) return active;
     return false;
   }
 
   /// Updates the toggle and sends the new [active] value to the backend.
   Future<void> setEnabled(bool enabled) async {
-    await ref.read(deviceRegistrationServiceProvider).registerDevice(active: enabled);
-    state = AsyncData(enabled);
+    final PermissionStatus notification = await Permission.notification.request();
+
+    if (notification == PermissionStatus.granted ||
+        notification == PermissionStatus.limited) {
+      await ref
+          .read(deviceRegistrationServiceProvider)
+          .registerDevice(active: enabled);
+      state = AsyncData(enabled);
+    } else {
+      throw NotificationPermissionDeniedException();
+    }
   }
 }

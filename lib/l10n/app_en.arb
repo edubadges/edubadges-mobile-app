@@ -197,6 +197,18 @@
     "@generalNotifications": {
         "description": "Label for general notification settings toggle"
     },
+    "notificationPermissionDeniedTitle": "Notification permission required",
+    "@notificationPermissionDeniedTitle": {
+        "description": "Title for dialog when user has denied notification permission"
+    },
+    "notificationPermissionDeniedMessage": "Please enable notifications in your device settings to receive updates.",
+    "@notificationPermissionDeniedMessage": {
+        "description": "Message asking user to enable notifications in system settings"
+    },
+    "openSettings": "Open settings",
+    "@openSettings": {
+        "description": "Button to open app or system settings"
+    },
     "givenAgreements": "Given agreement(s)",
     "@givenAgreements": {
         "description": "Section header for agreements the user has given"

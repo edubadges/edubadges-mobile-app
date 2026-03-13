@@ -392,6 +392,24 @@ abstract class AppLocalizations {
   /// **'General notifications'**
   String get generalNotifications;
 
+  /// Title for dialog when user has denied notification permission
+  ///
+  /// In en, this message translates to:
+  /// **'Notification permission required'**
+  String get notificationPermissionDeniedTitle;
+
+  /// Message asking user to enable notifications in system settings
+  ///
+  /// In en, this message translates to:
+  /// **'Please enable notifications in your device settings to receive updates.'**
+  String get notificationPermissionDeniedMessage;
+
+  /// Button to open app or system settings
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get openSettings;
+
   /// Section header for agreements the user has given
   ///
   /// In en, this message translates to:

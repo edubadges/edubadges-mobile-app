@@ -164,6 +164,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalNotifications => 'General notifications';
 
   @override
+  String get notificationPermissionDeniedTitle =>
+      'Notification permission required';
+
+  @override
+  String get notificationPermissionDeniedMessage =>
+      'Please enable notifications in your device settings to receive updates.';
+
+  @override
+  String get openSettings => 'Open settings';
+
+  @override
   String get givenAgreements => 'Given agreement(s)';
 
   @override

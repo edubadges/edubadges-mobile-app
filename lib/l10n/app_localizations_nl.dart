@@ -164,6 +164,17 @@ class AppLocalizationsNl extends AppLocalizations {
   String get generalNotifications => 'Algemene meldingen';
 
   @override
+  String get notificationPermissionDeniedTitle =>
+      'Notificatiemachtiging vereist';
+
+  @override
+  String get notificationPermissionDeniedMessage =>
+      'Schakel notificaties in via de instellingen van je apparaat om updates te ontvangen.';
+
+  @override
+  String get openSettings => 'Instellingen openen';
+
+  @override
   String get givenAgreements => 'Gegeven akkoordverklaring(en)';
 
   @override
