@@ -25,11 +25,11 @@ class RetryInterceptor extends Interceptor {
         err.requestOptions.extra['retries'] = retries + 1;
 
         // Wait before retrying
-        await Future.delayed(retryDelay * (retries + 1));
+        await Future.delayed(retryDelay * (retries + 1), () => null);
 
         try {
           // Retry the request
-          final response = await Dio().fetch(err.requestOptions);
+          final response = await Dio().fetch<Response<void>>(err.requestOptions);
           return handler.resolve(response);
         } on DioException catch (e) {
           return handler.reject(e);

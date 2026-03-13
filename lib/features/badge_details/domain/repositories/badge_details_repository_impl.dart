@@ -53,17 +53,17 @@ class BadgeDetailsRepositoryImpl implements BadgeDetailsRepository {
 
   @override
   Future<Either<Failure, void>> updateBadgeVisibility(
-    String entityId,
-    bool isPublic,
-    bool includeEvidence,
-    bool includeGradeAchieved,
-  ) async {
+    String entityId, {
+    required bool isPublic,
+    required bool includeEvidence,
+    required bool includeGradeAchieved,
+  }) async {
     try {
       await dataSource.updateBadgeVisibility(
         entityId,
-        isPublic,
-        includeEvidence,
-        includeGradeAchieved,
+        isPublic: isPublic,
+        includeEvidence: includeEvidence,
+        includeGradeAchieved: includeGradeAchieved,
       );
       return const Right(null);
     } on ServerException catch (e) {

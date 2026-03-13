@@ -30,7 +30,7 @@ class CollectionsDataSourceImpl implements CollectionsDataSource {
       }).toList();
     } catch (e, stackTrace) {
       throw ParsingException(
-        message: 'Failed to parse badge collections: ${e.toString()}',
+        message: 'Failed to parse badge collections: $e',
         code: ErrorCodes.parsingError,
         originalError: e,
         stackTrace: stackTrace,

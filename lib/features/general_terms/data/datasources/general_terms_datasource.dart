@@ -13,8 +13,7 @@ class GeneralTermsDataSourceImpl implements GeneralTermsDataSource {
   @override
   Future<String> acceptTermsUrl() async {
     try {
-      final response = await apiClient.get('/accept-general-terms');
-      logger.i('Get terms URL call completed with status code: ${response.statusCode}');
+      final response = await apiClient.get<Map<String, dynamic>>('/accept-general-terms');
 
       if (response.statusCode == 200 && response.data != null) {
         final url = response.data.toString();

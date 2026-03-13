@@ -13,7 +13,7 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
   @override
   Future<LoginUserAuthStatus> login() async {
     try {
-      final response = await apiClient.get('/login');
+      final response = await apiClient.get<Map<String, dynamic>>('/login');
 
       if (response.statusCode == 200 && response.data != null) {
         final jsonBody = response.data as Map<String, dynamic>;

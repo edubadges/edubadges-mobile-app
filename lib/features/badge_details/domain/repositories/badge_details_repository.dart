@@ -8,9 +8,9 @@ abstract class BadgeDetailsRepository {
   Future<Either<Failure, BadgeInstanceModel>> getBadgeInstance(String entityId);
   Future<Either<Failure, void>> enroll(String badgeclassSlug);
   Future<Either<Failure, void>> updateBadgeVisibility(
-    String entityId,
-    bool isPublic,
-    bool includeEvidence,
-    bool includeGradeAchieved,
-  );
+    String entityId, {
+    required bool isPublic,
+    required bool includeEvidence,
+    required bool includeGradeAchieved,
+  });
 }
