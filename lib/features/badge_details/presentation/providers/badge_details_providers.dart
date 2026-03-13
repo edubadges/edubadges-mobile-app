@@ -36,13 +36,12 @@ final badgeDetailsModelProvider = FutureProvider.autoDispose
 
       // Watch so this provider recomputes when overview/requested list updates
       final badgesListAsync = ref.watch(badgesListProvider);
-      final bool badgeRequested = badgesListAsync.value
-              ?.requestedBadges
-              .firstWhereOrNull(
-                (element) =>
-                    element.badgeclass.entityId == params.badgeClassEntityId ||
-                    element.entityId == params.badgeInstanceEntityId,
-              ) !=
+      final bool badgeRequested =
+          badgesListAsync.value?.requestedBadges.firstWhereOrNull(
+            (element) =>
+                element.badgeclass.entityId == params.badgeClassEntityId ||
+                element.entityId == params.badgeInstanceEntityId,
+          ) !=
           null;
 
       if (params.badgeInstanceEntityId != null) {
@@ -64,7 +63,8 @@ final badgeDetailsModelProvider = FutureProvider.autoDispose
           params.badgeClassEntityId!,
         );
 
-        final BadgeInstanceEntity? badgeInstance = badgesListAsync.value
+        final BadgeInstanceEntity? badgeInstance = badgesListAsync
+            .value
             ?.claimedBadges
             .firstWhereOrNull(
               (element) =>
@@ -107,40 +107,40 @@ final badgesListProvider = badgesOverviewProvider;
 
 final enrollBadgeProvider =
     Provider<Future<bool> Function(String badgeclassSlug)>((ref) {
-  return (String badgeclassSlug) async {
-    final repository = ref.read(badgeDetailsRepositoryProvider);
-    final result = await repository.enroll(badgeclassSlug);
+      return (String badgeclassSlug) async {
+        final repository = ref.read(badgeDetailsRepositoryProvider);
+        final result = await repository.enroll(badgeclassSlug);
 
-    return result.fold((failure) => false, (_) {
-      ref.invalidate(badgesOverviewProvider);
-      ref.invalidate(badgeDetailsModelProvider);
-      ref.invalidate(badgeDetailsProvider(badgeclassSlug));
-      return true;
+        return result.fold((failure) => false, (_) {
+          ref.invalidate(badgesOverviewProvider);
+          ref.invalidate(badgeDetailsModelProvider);
+          ref.invalidate(badgeDetailsProvider(badgeclassSlug));
+          return true;
+        });
+      };
     });
-  };
-});
 
 final updateBadgeVisibilityProvider =
     Provider<
       Future<bool> Function(
-        String entityId,
-        bool isPublic,
-        bool includeEvidence,
-        bool includeGradeAchieved,
-      )
+        String entityId, {
+        required bool isPublic,
+        required bool includeEvidence,
+        required bool includeGradeAchieved,
+      })
     >((ref) {
       return (
-        String entityId,
-        bool isPublic,
-        bool includeEvidence,
-        bool includeGradeAchieved,
-      ) async {
+        String entityId, {
+        required bool isPublic,
+        required bool includeEvidence,
+        required bool includeGradeAchieved,
+      }) async {
         final repository = ref.read(badgeDetailsRepositoryProvider);
         final result = await repository.updateBadgeVisibility(
           entityId,
-          isPublic,
-          includeEvidence,
-          includeGradeAchieved,
+          isPublic: isPublic,
+          includeEvidence: includeEvidence,
+          includeGradeAchieved: includeGradeAchieved,
         );
 
         return result.fold((failure) => false, (_) {

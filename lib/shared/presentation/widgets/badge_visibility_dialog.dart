@@ -66,9 +66,9 @@ class BadgeVisibilityDialog {
           final updateFunction = ref.read(updateBadgeVisibilityProvider);
           await updateFunction(
             badgeInstance.entityId,
-            isPublic,
-            includeEvidence,
-            includeGradeAchieved,
+            isPublic: isPublic,
+            includeEvidence: includeEvidence,
+            includeGradeAchieved: includeGradeAchieved,
           );
         },
       ),

@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CatalogFilters extends ConsumerStatefulWidget {
-  final Function(CatalogInstitutionType?)? onLevelChanged;
-  final Function(String?)? onInstitutionChanged;
-  final Function(String)? onSearchSubmitted;
+  final void Function(CatalogInstitutionType?)? onLevelChanged;
+  final void Function(String?)? onInstitutionChanged;
+  final void Function(String)? onSearchSubmitted;
 
   const CatalogFilters({
     super.key,

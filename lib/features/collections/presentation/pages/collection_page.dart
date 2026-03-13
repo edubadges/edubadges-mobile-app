@@ -101,11 +101,11 @@ class CollectionPage extends ConsumerWidget {
                             final success = await ref
                                 .read(collectionsProvider.notifier)
                                 .updateCollection(
-                                  collection.entityId,
-                                  collection.name,
-                                  collection.description,
-                                  state,
-                                  collection.badgeInstanceIds,
+                                  entityId: collection.entityId,
+                                  name: collection.name,
+                                  description: collection.description,
+                                  public: state,
+                                  badgeInstanceIds: collection.badgeInstanceIds,
                                 );
                             if (!success) {
                               publicNotifier.value = !state;
@@ -163,7 +163,10 @@ class CollectionPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildCollectionDescription(BuildContext context, String? description) {
+  Widget _buildCollectionDescription(
+    BuildContext context,
+    String? description,
+  ) {
     if (description == null || description.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -242,8 +245,7 @@ class CollectionPage extends ConsumerWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.add,
-                            color: colorScheme.onPrimary, size: 24),
+                        Icon(Icons.add, color: colorScheme.onPrimary, size: 24),
                         const SizedBox(width: 8),
                         Text(
                           l10n.addEdubadge,
@@ -367,12 +369,13 @@ class CollectionPage extends ConsumerWidget {
                   onSecondButtonPressed: () async {
                     context.pop();
                     final collectionsAsync = ref.read(collectionsProvider);
-                    final List<CollectionsEntity> collections = await collectionsAsync.when(
-                      data: (collections) => Future.value(collections),
-                      loading: () => ref.read(collectionsProvider.future),
-                      error: (error, stackTrace) =>
-                          Future.error(error, stackTrace),
-                    );
+                    final List<CollectionsEntity> collections =
+                        await collectionsAsync.when(
+                          data: (collections) => Future.value(collections),
+                          loading: () => ref.read(collectionsProvider.future),
+                          error: (error, stackTrace) =>
+                              Future.error(error, stackTrace),
+                        );
 
                     if (collections.isEmpty) {
                       if (context.mounted && context.canPop()) {

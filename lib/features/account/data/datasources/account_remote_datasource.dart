@@ -9,13 +9,13 @@ class AccountRemoteDataSourceImpl implements AccountDataSource {
 
   @override
   Future<ProfileModel> getProfile() async {
-    final response = await apiClient.get('/profile');
+    final response = await apiClient.get<Map<String, dynamic>>('/profile');
     return ProfileModel.fromJson(response.data as Map<String, dynamic>);
   }
 
   @override
   Future<bool> deleteProfile() async {
-    final response = await apiClient.delete('/profile');
+    final response = await apiClient.delete<void>('/profile');
     return response.statusCode == 204;
   }
 

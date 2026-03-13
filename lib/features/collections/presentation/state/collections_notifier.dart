@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/core/errors/failures.dart';
+import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/collections/data/models/collections_model.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
@@ -90,13 +90,13 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
     );
   }
 
-  Future<bool> updateCollection(
-    String entityId,
-    String name,
+  Future<bool> updateCollection({
+    required String entityId,
+    required String name,
     String? description,
-    bool public,
-    List<String> badgeInstanceIds,
-  ) async {
+    required bool public,
+    required List<String> badgeInstanceIds,
+  }) async {
     final useCase = ref.read(updateCollectionUseCaseProvider);
     final result = await useCase(
       entityId: entityId,
@@ -121,9 +121,7 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
                 name: name,
                 description: description,
                 public: public,
-                badgeInstanceIds: badgeInstanceIds
-                    .map((e) => e)
-                    .toList(),
+                badgeInstanceIds: badgeInstanceIds.map((e) => e).toList(),
               );
             }
             return collection;

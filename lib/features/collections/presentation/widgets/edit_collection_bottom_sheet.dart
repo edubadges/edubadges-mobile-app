@@ -41,11 +41,11 @@ class _EditCollectionBottomSheetState
     final success = await ref
         .read(collectionsProvider.notifier)
         .updateCollection(
-          widget.collection.entityId,
-          name,
-          description.isNotEmpty ? description : null,
-          widget.collection.public,
-          widget.collection.badgeInstanceIds,
+          entityId: widget.collection.entityId,
+          name: name,
+          description: description.isNotEmpty ? description : null,
+          public: widget.collection.public,
+          badgeInstanceIds: widget.collection.badgeInstanceIds,
         );
 
     if (success && mounted) {

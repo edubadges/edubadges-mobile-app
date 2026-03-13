@@ -39,7 +39,7 @@ class CatalogInstitutionDataSourceImpl implements CatalogInstitutionDataSource {
     } catch (e, stackTrace) {
       logger.e('Failed to parse catalog institutions', error: e, stackTrace: stackTrace);
       throw ParsingException(
-        message: 'Failed to parse catalog institutions: ${e.toString()}',
+        message: 'Failed to parse catalog institutions: $e',
         code: ErrorCodes.parsingError,
         originalError: e,
         stackTrace: stackTrace,

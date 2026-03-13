@@ -184,7 +184,7 @@ class ApiClient {
   /// Download file
   ///
   /// Throws [AppException] on error
-  Future<Response> download(
+  Future<Response<dynamic>> download(
     String urlPath,
     dynamic savePath, {
     ProgressCallback? onReceiveProgress,

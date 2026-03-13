@@ -228,7 +228,7 @@ class AccountPage extends ConsumerWidget {
                 activeThumbColor: colorScheme.surfaceContainer,
                 activeTrackColor: colorScheme.primary,
               ),
-              error: (_, __) => Switch(
+              error: (_, _) => Switch(
                 value: false,
                 onChanged: (value) {
                   ref
@@ -401,7 +401,7 @@ class AccountPage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
   ) async {
-    await showDialog(
+    await showDialog<void>(
       context: context,
       builder: (context) => DeleteAccountDialog(
         onDelete: () async {

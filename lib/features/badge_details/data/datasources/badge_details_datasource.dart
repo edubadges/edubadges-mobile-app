@@ -9,11 +9,11 @@ abstract class BadgeDetailsDataSource {
   Future<BadgeInstanceModel> getBadgeInstance(String entityId);
   Future<void> enroll(String badgeclassSlug);
   Future<void> updateBadgeVisibility(
-    String entityId,
-    bool isPublic,
-    bool includeEvidence,
-    bool includeGradeAchieved,
-  );
+    String entityId, {
+    required bool isPublic,
+    required bool includeEvidence,
+    required bool includeGradeAchieved,
+  });
 }
 
 class BadgeDetailsDataSourceImpl implements BadgeDetailsDataSource {
@@ -38,7 +38,7 @@ class BadgeDetailsDataSourceImpl implements BadgeDetailsDataSource {
       return BadgeClassModel.fromJson(response.data!);
     } catch (e, stackTrace) {
       throw ParsingException(
-        message: 'Failed to parse badge details: ${e.toString()}',
+        message: 'Failed to parse badge details: $e',
         code: ErrorCodes.parsingError,
         originalError: e,
         stackTrace: stackTrace,
@@ -46,7 +46,7 @@ class BadgeDetailsDataSourceImpl implements BadgeDetailsDataSource {
     }
   }
 
-   @override
+  @override
   Future<BadgeInstanceModel> getBadgeInstance(String entityId) async {
     final response = await apiClient.get<Map<String, dynamic>>(
       '/badge-instances/$entityId',
@@ -63,7 +63,7 @@ class BadgeDetailsDataSourceImpl implements BadgeDetailsDataSource {
       return BadgeInstanceModel.fromJson(response.data!);
     } catch (e, stackTrace) {
       throw ParsingException(
-        message: 'Failed to parse badge details: ${e.toString()}',
+        message: 'Failed to parse badge details: $e',
         code: ErrorCodes.parsingError,
         originalError: e,
         stackTrace: stackTrace,
@@ -81,11 +81,11 @@ class BadgeDetailsDataSourceImpl implements BadgeDetailsDataSource {
 
   @override
   Future<void> updateBadgeVisibility(
-    String entityId,
-    bool isPublic,
-    bool includeEvidence,
-    bool includeGradeAchieved,
-  ) async {
+    String entityId, {
+    required bool isPublic,
+    required bool includeEvidence,
+    required bool includeGradeAchieved,
+  }) async {
     await apiClient.put<void>(
       '/badge-instances/$entityId',
       data: {

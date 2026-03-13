@@ -7,7 +7,6 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
-import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/features/badge_details/presentation/widgets/badge_visibility_card.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';

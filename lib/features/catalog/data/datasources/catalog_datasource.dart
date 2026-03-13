@@ -67,7 +67,7 @@ class CatalogDataSourceImpl implements CatalogDataSource {
     } catch (e, stackTrace) {
       logger.e('Failed to parse catalog badges', error: e, stackTrace: stackTrace);
       throw ParsingException(
-        message: 'Failed to parse catalog badges: ${e.toString()}',
+        message: 'Failed to parse catalog badges: $e}',
         code: ErrorCodes.parsingError,
         originalError: e,
         stackTrace: stackTrace,

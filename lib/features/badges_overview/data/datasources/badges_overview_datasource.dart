@@ -31,7 +31,7 @@ class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
       }).toList();
     } catch (e, stackTrace) {
       throw ParsingException(
-        message: 'Failed to parse badge instances: ${e.toString()}',
+        message: 'Failed to parse badge instances: $e',
         code: ErrorCodes.parsingError,
         originalError: e,
         stackTrace: stackTrace,
@@ -87,7 +87,7 @@ class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
         stackTrace: stackTrace,
       );
       throw ParsingException(
-        message: 'Failed to parse direct awards: ${e.toString()}',
+        message: 'Failed to parse direct awards: $e',
         code: ErrorCodes.parsingError,
         originalError: e,
         stackTrace: stackTrace,
@@ -145,7 +145,7 @@ class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
     } catch (e, stackTrace) {
       logger.e('Failed to parse enrollments', error: e, stackTrace: stackTrace);
       throw ParsingException(
-        message: 'Failed to parse enrollments: ${e.toString()}',
+        message: 'Failed to parse enrollments: $e',
         code: ErrorCodes.parsingError,
         originalError: e,
         stackTrace: stackTrace,
@@ -155,7 +155,7 @@ class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
 
   @override
   Future<void> claimBadge(String entityId) async {
-    await apiClient.post(
+    await apiClient.post<void>(
       '/direct-awards-accept/$entityId',
       queryParameters: {'accept': 'true'},
       data: {'entity_id': entityId, 'accept': true},
@@ -164,7 +164,7 @@ class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
 
   @override
   Future<void> declineBadge(String entityId) async {
-    await apiClient.post(
+    await apiClient.post<void>(
       '/direct-awards-accept/$entityId',
       queryParameters: {'accept': 'false'},
       data: {'entity_id': entityId, 'accept': false},
