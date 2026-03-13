@@ -20,7 +20,6 @@ class LoginRepositoryImpl implements LoginRepository {
 
       // If required, perform a second login with specific acr_values.
       // This should trigger the system to let the user complete the registration flow.
-      // TODO: this doesnt work properly yet, we flagged it with the client and their backenders
       if (status is LoginLinkAccountRequired || status is LoginRevalidateNameRequired) {
         await loginDataSource.login(addAcrValues: true);
         await remoteDataSource.login();

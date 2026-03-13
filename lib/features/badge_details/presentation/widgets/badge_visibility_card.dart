@@ -114,14 +114,18 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                 inactiveIconSize: 16,
                 borderRadius: 14,
                 onChanged: (bool state) async {
-                  //TODO: Add snackbar error if it fails
-
-                  await BadgeVisibilityDialog.show(
-                    context: context,
-                    ref: ref,
-                    badgeInstance: widget.badge as BadgeInstanceModel,
-                    isPublic: state,
-                  );
+                  try {
+                    await BadgeVisibilityDialog.show(
+                      context: context,
+                      ref: ref,
+                      badgeInstance: widget.badge as BadgeInstanceModel,
+                      isPublic: state,
+                    );
+                  } catch (e) {
+                    if (context.mounted) {
+                      showAppSnackBar(context, l10n.somethingWentWrong);
+                    }
+                  }
                 },
               ),
             ],

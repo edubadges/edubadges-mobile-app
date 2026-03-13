@@ -196,6 +196,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get deleteMyAccount => 'Verwijder mijn account';
 
   @override
+  String get deleteAccountError =>
+      'We konden je account niet verwijderen. Neem contact op met support als dit opnieuw gebeurt.';
+
+  @override
   String get somethingWentWrong => 'Er is iets misgegaan';
 
   @override

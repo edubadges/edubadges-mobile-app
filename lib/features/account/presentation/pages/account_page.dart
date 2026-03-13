@@ -5,6 +5,7 @@ import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
+import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
@@ -403,7 +404,7 @@ class AccountPage extends ConsumerWidget {
   ) async {
     await showDialog<void>(
       context: context,
-      builder: (context) => DeleteAccountDialog(
+      builder: (context2) => DeleteAccountDialog(
         onDelete: () async {
           final either = await ref
               .read(accountRepositoryProvider)
@@ -412,7 +413,11 @@ class AccountPage extends ConsumerWidget {
           await either.fold(
             (failure) {
               logger.e(failure.message);
-              // TODO: add a snackbar are something when we know how we are gonna do error handling
+              showAppSnackBar(
+                context,
+                AppLocalizations.of(context).deleteAccountError,
+                duration: const Duration(seconds: 7),
+              );
             },
             (success) async {
               if (success == true) {

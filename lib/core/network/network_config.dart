@@ -116,8 +116,7 @@ class NetworkConfig {
           return {'Authorization': 'Bearer ${token.accessToken}'};
         },
         shouldRefresh: (response) {
-          // TODO: 403 is temp till demo server is updated to just use 401
-          const authErrorCodes = {401, 403};
+          const authErrorCodes = {401};
           return response != null &&
               authErrorCodes.contains(response.statusCode);
         },

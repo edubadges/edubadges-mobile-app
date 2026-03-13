@@ -452,6 +452,12 @@ abstract class AppLocalizations {
   /// **'Delete my account'**
   String get deleteMyAccount;
 
+  /// Error message shown when account deletion fails
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t remove your account. Please contact support if this happens again.'**
+  String get deleteAccountError;
+
   /// Generic error message displayed when an error occurs
   ///
   /// In en, this message translates to:

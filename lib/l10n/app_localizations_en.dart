@@ -196,6 +196,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteMyAccount => 'Delete my account';
 
   @override
+  String get deleteAccountError =>
+      'We couldn\'t remove your account. Please contact support if this happens again.';
+
+  @override
   String get somethingWentWrong => 'Something went wrong';
 
   @override
