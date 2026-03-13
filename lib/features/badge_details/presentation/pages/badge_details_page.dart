@@ -209,7 +209,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
 
     return ListView(
       children: [
-        // TODO: Add error message
         if (badgeDetailsAsync.value?.badgeClass != null)
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),

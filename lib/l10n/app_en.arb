@@ -237,6 +237,10 @@
     "@deleteMyAccount": {
         "description": "Button text to confirm account deletion"
     },
+    "deleteAccountError": "We couldn't remove your account. Please contact support if this happens again.",
+    "@deleteAccountError": {
+        "description": "Error message shown when account deletion fails"
+    },
     "somethingWentWrong": "Something went wrong",
     "@somethingWentWrong": {
         "description": "Generic error message displayed when an error occurs"
