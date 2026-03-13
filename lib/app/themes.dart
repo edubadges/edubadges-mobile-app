@@ -228,6 +228,7 @@ class AppThemes {
         fontWeight: FontWeight.w700,
         color: AppColors.onSurface,
       ),
+      surfaceTintColor: AppColors.surface,
     );
   }
 
