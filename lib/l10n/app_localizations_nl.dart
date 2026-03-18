@@ -960,4 +960,13 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get edubadgeRequested => 'Edubadge aangevraagd';
+
+  @override
+  String get stackable => 'Stackable';
+
+  @override
+  String get stackableTrue => 'Ja, stapelbaar';
+
+  @override
+  String get stackableFalse => 'Nee, stand alone edubadge';
 }
