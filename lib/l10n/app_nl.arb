@@ -504,6 +504,18 @@
     "@languageEnglish": {
         "description": "Language option for English"
     },
+    "languageFrench": "Frans",
+    "@languageFrench": {
+        "description": "Language option for French"
+    },
+    "languageGerman": "Duits",
+    "@languageGerman": {
+        "description": "Language option for German"
+    },
+    "languageSpanish": "Spaans",
+    "@languageSpanish": {
+        "description": "Language option for Spanish"
+    },
     "assessmentWrittenExam": "Tentamen",
     "@assessmentWrittenExam": {
         "description": "Assessment type option for written or exam-based assessment"

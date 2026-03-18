@@ -10,6 +10,12 @@ String? languageCodeToString(String? langCode, BuildContext context) {
       return l10n.languageDutch;
     case 'en_EN':
       return l10n.languageEnglish;
+    case 'fr_FR':
+      return l10n.languageFrench;
+    case 'de_DE':
+      return l10n.languageGerman;
+    case 'es_ES':
+      return l10n.languageSpanish;
   }
 
   return null;
