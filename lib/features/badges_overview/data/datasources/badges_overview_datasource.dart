@@ -2,11 +2,13 @@ import 'package:edubadges/core/network/api_client.dart';
 import 'package:edubadges/core/network/errors/error_codes.dart';
 import 'package:edubadges/core/network/errors/exceptions.dart';
 import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/features/badges_overview/data/models/direct_award_detail_model.dart';
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 
 abstract class BadgesOverviewDataSource {
   Future<List<BadgeInstanceModel>> getBadgeInstances();
   Future<List<BadgeInstanceModel>> getDirectAwards();
+  Future<DirectAwardDetailModel?> getDirectAwardByEntityId(String entityId);
   Future<List<BadgeInstanceModel>> getEnrollments();
   Future<void> claimBadge(String entityId);
   Future<void> declineBadge(String entityId);
@@ -92,6 +94,27 @@ class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
         originalError: e,
         stackTrace: stackTrace,
       );
+    }
+  }
+
+  @override
+  Future<DirectAwardDetailModel?> getDirectAwardByEntityId(String entityId) async {
+    try {
+      final response = await apiClient.get<Map<String, dynamic>>(
+        '/direct-awards/$entityId',
+      );
+      final data = response.data;
+      if (data == null) {
+        return null;
+      }
+      return DirectAwardDetailModel.fromJson(data);
+    } catch (e, stackTrace) {
+      logger.w(
+        'Failed to fetch direct award by entity id',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      rethrow;
     }
   }
 
