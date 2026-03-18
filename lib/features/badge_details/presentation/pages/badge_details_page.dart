@@ -156,7 +156,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                               as BadgeClassModel,
                       style: BadgeCardStyle.large,
                       onTapDisabled: true,
-                      
                     ),
                   );
                 },
@@ -282,6 +281,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     final supervisedStatus = getAssessmentSupervisedStatus(details?.badgeClass);
     final assessmentType = details?.badgeClass.assessmentType;
     final participation = details?.badgeClass.participation;
+    final stackable = details?.badgeClass.stackable;
     final eQF = details?.badgeClass.getExtensionValue<double?>(
       BadgeExtensionKeys.eQF,
     );
@@ -364,6 +364,14 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
               icon: Assets.iconBadgeFormParticipation,
               title: l10n.formOfParticipation,
               subtitle: participation.getLocalizedName(l10n),
+            ),
+          if (stackable != null)
+            BadgeDetailItemModel(
+              icon: Assets.iconDocumentShield,
+              title: l10n.stackable,
+              subtitle: stackable == true
+                  ? l10n.stackableTrue
+                  : l10n.stackableFalse,
             ),
         ],
       ),

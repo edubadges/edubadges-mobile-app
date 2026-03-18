@@ -20,6 +20,7 @@ class BadgeClassModel extends BadgeClassEntity {
     super.assessmentSupervised,
     super.selfEnrollmentEnabled,
     super.userMayEnroll,
+    super.stackable,
     super.qualityAssuranceName,
     super.badgeclassextensionSet,
     super.issuer,
@@ -40,6 +41,7 @@ class BadgeClassModel extends BadgeClassEntity {
       assessmentSupervised: json['assessment_supervised'] as bool?,
       selfEnrollmentEnabled: (json['self_enrollment_enabled'] as bool?) ?? false,
       userMayEnroll: (json['user_may_enroll'] as bool?) ?? false,
+      stackable: json['stackable'] as bool?,
       qualityAssuranceName: json['quality_assurance_name'] as String?,
       badgeclassextensionSet: json['badgeclassextension_set'] != null
           ? (json['badgeclassextension_set'] as List)

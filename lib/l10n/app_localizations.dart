@@ -1687,6 +1687,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edubadge requested'**
   String get edubadgeRequested;
+
+  /// Stackable field for badge class
+  ///
+  /// In en, this message translates to:
+  /// **'Stackable'**
+  String get stackable;
+
+  /// Stackable field for badge class can be stacked
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, stackable'**
+  String get stackableTrue;
+
+  /// Stackable field for badge class can be not stacked
+  ///
+  /// In en, this message translates to:
+  /// **'No, stand alone edubadge'**
+  String get stackableFalse;
 }
 
 class _AppLocalizationsDelegate

@@ -1112,5 +1112,17 @@
     "edubadgeRequested": "Edubadge requested",
     "@edubadgeRequested": {
         "description": "Status text when the user has requested an edubadge and is waiting for it"
+    },
+    "stackable": "Stackable",
+    "@stackable": {
+        "description": "Stackable field for badge class"
+    },
+    "stackableTrue": "Yes, stackable",
+    "@stackableTrue": {
+        "description": "Stackable field for badge class can be stacked"
+    },
+    "stackableFalse": "No, stand alone edubadge",
+    "@stackableFalse": {
+        "description": "Stackable field for badge class can be not stacked"
     }
 }

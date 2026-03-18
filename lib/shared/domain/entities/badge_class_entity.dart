@@ -19,6 +19,7 @@ class BadgeClassEntity extends Equatable {
   final bool? assessmentSupervised;
   final bool selfEnrollmentEnabled;
   final bool userMayEnroll;
+  final bool? stackable;
   final String? qualityAssuranceName;
   final BadgeClassType badgeClassType;
   final List<BadgeClassExtensionEntity>? badgeclassextensionSet;
@@ -38,6 +39,7 @@ class BadgeClassEntity extends Equatable {
     this.assessmentSupervised,
     this.selfEnrollmentEnabled = false,
     this.userMayEnroll = false,
+    this.stackable,
     this.qualityAssuranceName,
     this.badgeclassextensionSet,
     this.issuer,
@@ -58,6 +60,7 @@ class BadgeClassEntity extends Equatable {
         qualityAssuranceName,
         selfEnrollmentEnabled,
         userMayEnroll,
+        stackable,
         badgeClassType,
         badgeclassextensionSet,
         issuer,
