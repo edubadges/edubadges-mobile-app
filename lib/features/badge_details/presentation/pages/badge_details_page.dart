@@ -156,7 +156,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                               as BadgeClassModel,
                       style: BadgeCardStyle.large,
                       onTapDisabled: true,
-                      
                     ),
                   );
                 },
@@ -288,7 +287,10 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
 
     return [
       if (details?.badgeInstance != null)
-        BadgeVisibilityCard(badge: details!.badgeInstance!),
+        BadgeVisibilityCard(
+          badge: details!.badgeInstance!,
+          showCopyLink: details.badgeInstance?.public ?? false,
+        ),
       if (details?.badgeClass.description != null)
         _buildSectionCard(
           title: l10n.aboutThisEdubadge,
