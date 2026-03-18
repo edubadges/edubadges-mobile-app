@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:edubadges/core/errors/exceptions.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/features/badges_overview/data/datasources/badges_overview_datasource.dart';
+import 'package:edubadges/features/badges_overview/domain/entities/direct_award_detail_entity.dart';
 import 'package:edubadges/features/badges_overview/domain/repositories/badges_overview_repository.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 
@@ -31,6 +32,26 @@ class BadgesOverviewRepositoryImpl implements BadgesOverviewRepository {
       return Left(ServerFailure(e.message, e.statusCode));
     } on NetworkException catch (e) {
       return Left(NetworkFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, DirectAwardDetailEntity>> getDirectAwardByEntityId(
+    String entityId,
+  ) async {
+    try {
+      final model =
+          await badgesOverviewDataSource.getDirectAwardByEntityId(entityId);
+      if (model == null) {
+        return Left(const ServerFailure('Direct award not found', 404));
+      }
+      return Right(model);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.statusCode));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString(), 500));
     }
   }
 

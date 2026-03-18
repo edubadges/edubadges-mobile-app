@@ -7,6 +7,7 @@ import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
+import 'package:edubadges/features/badges_overview/domain/entities/direct_award_detail_entity.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
@@ -31,7 +32,7 @@ class BadgeClaimPage extends ConsumerStatefulWidget {
 }
 
 class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
-  final bool _isClaiming = false;
+  bool _isClaiming = false;
   bool _isDeclining = false;
 
   String _getErrorMessage(Failure failure, AppLocalizations l10n) {
@@ -41,6 +42,56 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
       return failure.message;
     }
     return l10n.somethingWentWrong;
+  }
+
+  Future<void> _handleClaim(
+    BadgeInstanceEntity badge,
+    AsyncValue<DirectAwardDetailEntity> detailAsync,
+  ) async {
+    if (_isClaiming || _isDeclining) return;
+
+    final l10n = AppLocalizations.of(context);
+
+    // On error or terms not accepted, go to privacy page
+    final detail = detailAsync.whenOrNull(data: (d) => d);
+    final needsPrivacyPage =
+        detailAsync.hasError || detail == null || !detail.userHasAcceptedTerms;
+    if (needsPrivacyPage) {
+      if (context.mounted) {
+        context.push(
+          RoutePath.badgePrivacy,
+          extra: {'id': widget.badgeId},
+        );
+      }
+      return;
+    }
+
+    setState(() => _isClaiming = true);
+
+    try {
+      final repository = ref.read(badgesOverviewRepositoryProvider);
+      final result = await repository.claimBadge(badge.entityId);
+
+      result.fold(
+        (failure) {
+          if (mounted) {
+            showAppSnackBar(context, _getErrorMessage(failure, l10n));
+            setState(() => _isClaiming = false);
+          }
+        },
+        (_) {
+          if (mounted) {
+            ref.read(badgesOverviewProvider.notifier).refresh();
+            context.go('${RoutePath.badgeClaimSuccess}?id=${badge.id}');
+          }
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        showAppSnackBar(context, l10n.somethingWentWrong);
+        setState(() => _isClaiming = false);
+      }
+    }
   }
 
   Future<void> _handleDecline(BadgeInstanceEntity badge) async {
@@ -145,6 +196,12 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
               );
             }
 
+            final detailAsync =
+                ref.watch(directAwardDetailProvider(badge.entityId));
+            final isClaimButtonReady = !detailAsync.isLoading && !_isClaiming;
+            final isClaimButtonLoading =
+                detailAsync.isLoading || _isClaiming;
+
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
@@ -176,13 +233,10 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
                         const SizedBox(height: 16),
                         PrimaryButton(
                           text: l10n.claimEdubadge,
-                          isLoading: _isClaiming,
-                          onPressed: _isClaiming || _isDeclining
-                              ? null
-                              : () => context.push(
-                                  RoutePath.badgePrivacy,
-                                  extra: {'id': widget.badgeId},
-                                ),
+                          isLoading: isClaimButtonLoading,
+                          onPressed: isClaimButtonReady && !_isDeclining
+                              ? () => _handleClaim(badge, detailAsync)
+                              : null,
                         ),
                         const SizedBox(height: 8),
                         SizedBox(
