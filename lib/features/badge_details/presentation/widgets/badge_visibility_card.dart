@@ -154,9 +154,8 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                     }
                   },
                 ),
-              if (widget.showCopyLink && widget.badge.linkedinUrl != null)
+              if (widget.showCopyLink && widget.badge.linkedinUrl != null) ...[
                 const SizedBox(height: 8),
-              if (widget.badge.linkedinUrl != null)
                 WideButton(
                   text: linkedinBrand,
                   icon: SvgPicture.asset(
@@ -173,6 +172,7 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                     );
                   },
                 ),
+              ],
             ],
           ),
         ],
