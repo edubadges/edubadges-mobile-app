@@ -230,14 +230,10 @@ class AccountPage extends ConsumerWidget {
                     }
                   }
                 },
-                activeThumbColor: colorScheme.surfaceContainer,
-                activeTrackColor: colorScheme.primary,
               ),
-              loading: () => Switch(
+              loading: () => const Switch(
                 value: true,
                 onChanged: null,
-                activeThumbColor: colorScheme.surfaceContainer,
-                activeTrackColor: colorScheme.primary,
               ),
               error: (_, _) => Switch(
                 value: false,
@@ -255,8 +251,6 @@ class AccountPage extends ConsumerWidget {
                     }
                   }
                 },
-                activeThumbColor: colorScheme.surfaceContainer,
-                activeTrackColor: colorScheme.primary,
               ),
             ),
           ],
