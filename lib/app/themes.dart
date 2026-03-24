@@ -7,7 +7,6 @@ class AppThemes {
   // Private constructor to prevent instantiation
   AppThemes._();
 
-  /// Light theme configuration
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
@@ -39,7 +38,6 @@ class AppThemes {
     );
   }
 
-  /// Light color scheme
   static ColorScheme get _lightColorScheme {
     return const ColorScheme(
       brightness: Brightness.light,
@@ -78,7 +76,6 @@ class AppThemes {
   /// Text theme with custom typography
   static TextTheme get _textTheme {
     return const TextTheme(
-      // DisplayLarge styles
       displayLarge: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 57,
@@ -87,7 +84,6 @@ class AppThemes {
         fontWeight: FontWeight.w400,
       ),
 
-      // DisplayMedium styles
       displayMedium: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 45,
@@ -96,7 +92,6 @@ class AppThemes {
         fontWeight: FontWeight.w400,
       ),
 
-      // DisplaySmall styles
       displaySmall: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 36,
@@ -105,7 +100,6 @@ class AppThemes {
         fontWeight: FontWeight.w400,
       ),
 
-      // HeadlineLarge styles
       headlineLarge: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 32,
@@ -114,7 +108,6 @@ class AppThemes {
         fontWeight: FontWeight.w700,
       ),
 
-      // HeadlineMedium styles
       headlineMedium: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 28,
@@ -123,7 +116,6 @@ class AppThemes {
         fontWeight: FontWeight.w400,
       ),
 
-      // HeadlineSmall styles
       headlineSmall: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 24,
@@ -132,7 +124,6 @@ class AppThemes {
         fontWeight: FontWeight.w700,
       ),
 
-      // TitleLarge styles
       titleLarge: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 20,
@@ -141,7 +132,6 @@ class AppThemes {
         fontWeight: FontWeight.w700,
       ),
 
-      // TitleMedium styles
       titleMedium: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 17,
@@ -150,7 +140,6 @@ class AppThemes {
         fontWeight: FontWeight.w700,
       ),
 
-      // TitleSmall styles
       titleSmall: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 14,
@@ -159,7 +148,6 @@ class AppThemes {
         fontWeight: FontWeight.w700,
       ),
 
-      // BodyLarge styles
       bodyLarge: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 16,
@@ -168,7 +156,6 @@ class AppThemes {
         fontWeight: FontWeight.w400,
       ),
 
-      // BodyMedium styles
       bodyMedium: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 15,
@@ -177,7 +164,6 @@ class AppThemes {
         fontWeight: FontWeight.w400,
       ),
 
-      // BodySmall styles
       bodySmall: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 12,
@@ -186,7 +172,6 @@ class AppThemes {
         fontWeight: FontWeight.w400,
       ),
 
-      // LabelLarge styles
       labelLarge: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 16,
@@ -195,7 +180,6 @@ class AppThemes {
         fontWeight: FontWeight.w600,
       ),
 
-      // LabelMedium styles
       labelMedium: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 14,
@@ -204,7 +188,6 @@ class AppThemes {
         fontWeight: FontWeight.w400,
       ),
 
-      // LabelSmall styles
       labelSmall: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 12,
@@ -215,7 +198,6 @@ class AppThemes {
     );
   }
 
-  /// App bar theme
   static AppBarTheme get _appBarTheme {
     return const AppBarTheme(
       elevation: 0,
@@ -233,7 +215,6 @@ class AppThemes {
     );
   }
 
-  /// Matches prior account notification switches: primary track, surface thumb when on.
   static SwitchThemeData get _switchTheme {
     return SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) {
