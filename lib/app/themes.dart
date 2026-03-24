@@ -15,6 +15,7 @@ class AppThemes {
       colorScheme: _lightColorScheme,
       textTheme: _textTheme,
       appBarTheme: _appBarTheme,
+      switchTheme: _switchTheme,
     );
   }
 
@@ -229,6 +230,24 @@ class AppThemes {
         color: AppColors.onSurface,
       ),
       surfaceTintColor: AppColors.surface,
+    );
+  }
+
+  /// Matches prior account notification switches: primary track, surface thumb when on.
+  static SwitchThemeData get _switchTheme {
+    return SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.surfaceContainer;
+        }
+        return AppColors.onSurfaceVariant;
+      }),
+      trackColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.primary;
+        }
+        return null;
+      }),
     );
   }
 
