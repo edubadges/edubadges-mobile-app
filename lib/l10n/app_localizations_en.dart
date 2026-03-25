@@ -158,6 +158,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get memberSince => 'Member since';
 
   @override
+  String memberSinceDateValue(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat(
+      'EEEE, MMMM d, y \'at\' h:mm a',
+      localeName,
+    );
+    final String dateString = dateDateFormat.format(date);
+
+    return '$dateString';
+  }
+
+  @override
   String get notificationSettings => 'Notification settings';
 
   @override

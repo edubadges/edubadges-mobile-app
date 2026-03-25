@@ -158,6 +158,17 @@ class AppLocalizationsNl extends AppLocalizations {
   String get memberSince => 'Lid sinds';
 
   @override
+  String memberSinceDateValue(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat(
+      'EEEE d MMMM y \'om\' HH:mm',
+      localeName,
+    );
+    final String dateString = dateDateFormat.format(date);
+
+    return '$dateString';
+  }
+
+  @override
   String get notificationSettings => 'Notificatieinstellingen';
 
   @override

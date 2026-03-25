@@ -162,7 +162,7 @@ class AccountPage extends ConsumerWidget {
       (label: l10n.eduid, value: profile.entityId, showBadge: false),
       (
         label: l10n.memberSince,
-        value: 'dinsdag 20 april 2021 om 16:20',
+        value: l10n.memberSinceDateValue(profile.dateJoined),
         showBadge: false,
       ),
     ];
