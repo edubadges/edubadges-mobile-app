@@ -28,6 +28,7 @@ class _EmptyState extends StatelessWidget {
             assetPath: Assets.iconCollections,
             size: 40,
             color: colorScheme.primary,
+            excludeFromSemantics: true,
           ),
         ),
         const SizedBox(height: 16),
@@ -76,7 +77,13 @@ class _EmptyState extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.add, color: colorScheme.onPrimary, size: 24),
+                  ExcludeSemantics(
+                    child: Icon(
+                      Icons.add,
+                      color: colorScheme.onPrimary,
+                      size: 24,
+                    ),
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     l10n.addEdubadge,
@@ -113,6 +120,7 @@ class NewCollectionPage extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.primary),
           onPressed: () => context.pop(),
+          tooltip: AppLocalizations.of(context).semanticsBack,
         ),
         title: Text(
           name,

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class DelayedLoader extends StatefulWidget {
@@ -51,6 +52,7 @@ class _DelayedLoaderState extends State<DelayedLoader> {
     final loader = CircularProgressIndicator(
       strokeWidth: widget.strokeWidth ?? 4.0,
       color: widget.color,
+      semanticsLabel: AppLocalizations.of(context).semanticsLoading,
     );
 
     if (widget.size != null) {

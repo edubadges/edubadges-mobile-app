@@ -1,5 +1,6 @@
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
@@ -35,199 +36,256 @@ class BadgesOverviewPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: SvgPicture.asset(Assets.imageLogo, width: 131, height: 32),
+        title: SvgPicture.asset(
+          Assets.imageLogo,
+          width: 131,
+          height: 32,
+          semanticsLabel: l10n.appName,
+        ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: SvgPicture.asset(
-              Assets.iconFeedback,
-              colorFilter: ColorFilter.mode(
-                colorScheme.primary,
-                BlendMode.srcIn,
+            icon: ExcludeSemantics(
+              child: SvgPicture.asset(
+                Assets.iconFeedback,
+                colorFilter: ColorFilter.mode(
+                  colorScheme.primary,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
             onPressed: () => _showFeedbackBottomSheet(context),
+            tooltip: l10n.giveFeedback,
           ),
         ],
       ),
-      body: MaxWidthWrapper(
-        child: badgesAsync.when(
-          data: (state) {
-            final slivers = <Widget>[];
+      body: FocusTraversalGroup(
+        policy: OrderedTraversalPolicy(),
+        child: MaxWidthWrapper(
+          child: badgesAsync.when(
+            data: (state) {
+              final slivers = <Widget>[];
 
-            if (state.unclaimedCount > 0) {
-              final firstBadge = state.unclaimedBadges.first;
-              final remainingCount = state.unclaimedBadges.length;
+              if (state.unclaimedCount > 0) {
+                final firstBadge = state.unclaimedBadges.first;
+                final remainingCount = state.unclaimedBadges.length;
 
-              slivers.add(
-                SliverToBoxAdapter(
-                  child: InkWell(
-                    onTap: () {
-                      final claimRoute = RoutePath.badgeClaim.replaceAll(
-                        ':id',
-                        firstBadge.id.toString(),
-                      );
-                      context.push(
-                        '$claimRoute?remainingCount=$remainingCount',
-                      );
-                    },
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      margin: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        top: 16,
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: colorScheme.primary,
+                void onClaimBannerTap() {
+                  final claimRoute = RoutePath.badgeClaim.replaceAll(
+                    ':id',
+                    firstBadge.id.toString(),
+                  );
+                  context.push(
+                    '$claimRoute?remainingCount=$remainingCount',
+                  );
+                }
+
+                final claimBannerLabel = l10n.newBadgeReady(state.unclaimedCount);
+
+                slivers.add(
+                  SliverToBoxAdapter(
+                    child: MergeSemantics(
+                      child: InkWell(
+                        onTap: onClaimBannerTap,
                         borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            Assets.iconParty,
-                            colorFilter: ColorFilter.mode(
-                              colorScheme.onPrimary,
-                              BlendMode.srcIn,
-                            ),
-                            width: 24,
-                            height: 24,
+                        child: Container(
+                          margin: const EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                            top: 16,
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              l10n.newBadgeReady(state.unclaimedCount),
-                              style: textTheme.labelMedium?.copyWith(
-                                color: colorScheme.onPrimary,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              ExcludeSemantics(
+                                child: SvgPicture.asset(
+                                  Assets.iconParty,
+                                  colorFilter: ColorFilter.mode(
+                                    colorScheme.onPrimary,
+                                    BlendMode.srcIn,
+                                  ),
+                                  width: 24,
+                                  height: 24,
+                                ),
                               ),
-                            ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  claimBannerLabel,
+                                  style: textTheme.labelMedium?.copyWith(
+                                    color: colorScheme.onPrimary,
+                                  ),
+                                ),
+                              ),
+                              ExcludeSemantics(
+                                child: SvgPicture.asset(
+                                  Assets.iconChevron,
+                                  colorFilter: ColorFilter.mode(
+                                    colorScheme.onPrimary,
+                                    BlendMode.srcIn,
+                                  ),
+                                  width: 12,
+                                  height: 12,
+                                ),
+                              ),
+                            ],
                           ),
-                          SvgPicture.asset(
-                            Assets.iconChevron,
-                            colorFilter: ColorFilter.mode(
-                              colorScheme.onPrimary,
-                              BlendMode.srcIn,
-                            ),
-                            width: 12,
-                            height: 12,
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            }
+                );
+              }
 
-            if (state.claimedBadges.isNotEmpty) {
-              slivers.add(
-                SliverPadding(
-                  padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final badge = state.claimedBadges[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: GestureDetector(
-                          onTap: () {
-                            final routeModel = BadgeDetailsRouteModel(
-                              id: badge.entityId,
-                              from: BadgeDetailsRouteFrom.overview,
-                            );
-                            context.push(routeModel.buildRouteUrl());
-                          },
+              if (state.claimedBadges.isNotEmpty) {
+                slivers.add(
+                  SliverPadding(
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 16,
+                    ),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final badge = state.claimedBadges[index];
+                        final badgeClass = badge.badgeclass as BadgeClassModel;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: FocusTraversalOrder(
+                            order: NumericFocusOrder(index.toDouble()),
+                            child: KeyboardActivatable(
+                              key: ValueKey('claimed_badge_${badge.entityId}'),
+                              wrapWithSemantics: false,
+                              includeOuterTapTarget: false,
+                              onActivate: () {
+                                final routeModel = BadgeDetailsRouteModel(
+                                  id: badge.entityId,
+                                  from: BadgeDetailsRouteFrom.overview,
+                                );
+                                context.push(routeModel.buildRouteUrl());
+                              },
+                              child: BadgeCard(
+                                instance: badge,
+                                badgeClass: badgeClass,
+                                style: BadgeCardStyle.small,
+                                onTapFrom: BadgeDetailsRouteFrom.overview,
+                                onTap: () {
+                                  final routeModel = BadgeDetailsRouteModel(
+                                    id: badge.entityId,
+                                    from: BadgeDetailsRouteFrom.overview,
+                                  );
+                                  context.push(routeModel.buildRouteUrl());
+                                },
+                              ),
+                            ),
+                          ),
+                        );
+                      }, childCount: state.claimedBadges.length),
+                    ),
+                  ),
+                );
+              }
+
+              if (state.requestedBadges.isNotEmpty) {
+                if (state.claimedBadges.isNotEmpty ||
+                    state.unclaimedCount > 0) {
+                  slivers.add(
+                    const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                  );
+                }
+                slivers.add(
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      child: Semantics(
+                        header: true,
+                        child: Text(
+                          l10n.requestedBadges,
+                          style: textTheme.titleMedium,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+                slivers.add(
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final badge = state.requestedBadges[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
                           child: BadgeCard(
                             instance: badge,
                             badgeClass: badge.badgeclass as BadgeClassModel,
                             style: BadgeCardStyle.small,
                             onTapFrom: BadgeDetailsRouteFrom.overview,
                           ),
-                        ),
-                      );
-                    }, childCount: state.claimedBadges.length),
+                        );
+                      }, childCount: state.requestedBadges.length),
+                    ),
                   ),
-                ),
-              );
-            }
-
-            if (state.requestedBadges.isNotEmpty) {
-              if (state.claimedBadges.isNotEmpty || state.unclaimedCount > 0) {
-                slivers.add(
-                  const SliverToBoxAdapter(child: SizedBox(height: 24)),
                 );
               }
-              slivers.add(
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    child: Text(
-                      l10n.requestedBadges,
-                      style: textTheme.titleMedium,
+
+              if (state.claimedBadges.isEmpty &&
+                  state.requestedBadges.isEmpty) {
+                slivers.add(
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: MergeSemantics(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ExcludeSemantics(
+                              child: SvgPicture.asset(
+                                Assets.iconBackpack,
+                                colorFilter: ColorFilter.mode(
+                                  colorScheme.primary,
+                                  BlendMode.srcIn,
+                                ),
+                                width: 48,
+                                height: 48,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              l10n.noEdubadgesYet,
+                              style: textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              );
-              slivers.add(
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final badge = state.requestedBadges[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: BadgeCard(
-                          instance: badge,
-                          badgeClass: badge.badgeclass as BadgeClassModel,
-                          style: BadgeCardStyle.small,
-                          onTapFrom: BadgeDetailsRouteFrom.overview,
-                        ),
-                      );
-                    }, childCount: state.requestedBadges.length),
-                  ),
-                ),
-              );
-            }
+                );
+              }
 
-            if (state.claimedBadges.isEmpty && state.requestedBadges.isEmpty) {
-              slivers.add(
+              return CustomScrollView(slivers: slivers);
+            },
+            loading: () => CustomScrollView(
+              slivers: [
                 SliverFillRemaining(
-                  hasScrollBody: false,
                   child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          Assets.iconBackpack,
-                          colorFilter: ColorFilter.mode(
-                            colorScheme.primary,
-                            BlendMode.srcIn,
-                          ),
-                          width: 48,
-                          height: 48,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(l10n.noEdubadgesYet, style: textTheme.bodyMedium),
-                      ],
+                    child: CircularProgressIndicator(
+                      semanticsLabel: AppLocalizations.of(
+                        context,
+                      ).semanticsLoading,
                     ),
                   ),
                 ),
-              );
-            }
-
-            return CustomScrollView(slivers: slivers);
-          },
-          loading: () => const CustomScrollView(
-            slivers: [
-              SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator()),
-              ),
-            ],
-          ),
-          error: (error, stackTrace) => const CustomScrollView(
-            slivers: [
-              SliverFillRemaining(child: Center(child: ErrorMessageWidget())),
-            ],
+              ],
+            ),
+            error: (error, stackTrace) => const CustomScrollView(
+              slivers: [
+                SliverFillRemaining(child: Center(child: ErrorMessageWidget())),
+              ],
+            ),
           ),
         ),
       ),

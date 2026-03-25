@@ -31,7 +31,7 @@ class _AgreementDetailsPageState extends ConsumerState<AgreementDetailsPage> {
   void initState() {
     super.initState();
     // No short version to show (null or empty)
-    if (widget.agreement.titleShort == null || 
+    if (widget.agreement.titleShort == null ||
         widget.agreement.titleShort!.trim().isEmpty) {
       _isShowingLongVersion = true;
     }
@@ -47,8 +47,8 @@ class _AgreementDetailsPageState extends ConsumerState<AgreementDetailsPage> {
         final message = failure is ServerFailure
             ? failure.message
             : failure is NetworkFailure
-                ? failure.message
-                : l10n.somethingWentWrong;
+            ? failure.message
+            : l10n.somethingWentWrong;
         showAppSnackBar(context, message);
       },
       (_) {
@@ -70,13 +70,13 @@ class _AgreementDetailsPageState extends ConsumerState<AgreementDetailsPage> {
     final currentTitle = _isShowingLongVersion
         ? widget.agreement.titleLong
         : (widget.agreement.titleShort?.trim().isEmpty ?? true
-            ? widget.agreement.titleLong
-            : widget.agreement.titleShort!);
+              ? widget.agreement.titleLong
+              : widget.agreement.titleShort!);
     final currentUrlText = _isShowingLongVersion
         ? widget.agreement.textUrlLong
         : (widget.agreement.textUrlShort?.trim().isEmpty ?? true
-            ? widget.agreement.textUrlLong
-            : widget.agreement.textUrlShort!);
+              ? widget.agreement.textUrlLong
+              : widget.agreement.textUrlShort!);
     final toggleButtonText = _isShowingLongVersion
         ? l10n.viewShortText
         : l10n.viewFullText;
@@ -112,7 +112,11 @@ class _AgreementDetailsPageState extends ConsumerState<AgreementDetailsPage> {
           );
         },
         loading: () {
-          return const Center(child: CircularProgressIndicator());
+          return Center(
+            child: CircularProgressIndicator(
+              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+            ),
+          );
         },
       ),
       actions: [

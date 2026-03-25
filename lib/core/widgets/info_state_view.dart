@@ -30,35 +30,40 @@ class InfoStateView extends StatelessWidget {
           spacing: 16,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              assetPath,
-              width: size,
-              height: size,
-              colorFilter: iconColor != null
-                  ? ColorFilter.mode(iconColor!, BlendMode.srcIn)
-                  : null,
+            ExcludeSemantics(
+              child: SvgPicture.asset(
+                assetPath,
+                width: size,
+                height: size,
+                colorFilter: iconColor != null
+                    ? ColorFilter.mode(iconColor!, BlendMode.srcIn)
+                    : null,
+              ),
             ),
-            Column(
-              children: [
-                if (title != null) ...[
+            Semantics(
+              liveRegion: true,
+              child: Column(
+                children: [
+                  if (title != null) ...[
+                    Text(
+                      title!,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: colorScheme.onSurface,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                  ],
                   Text(
-                    title!,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: colorScheme.onSurface,
+                    description,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 8),
                 ],
-                Text(
-                  description,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+              ),
             ),
           ],
         ),

@@ -7,6 +7,7 @@ import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/focusable_section.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
@@ -41,6 +42,7 @@ class AccountPage extends ConsumerWidget {
     required BuildContext context,
     required String title,
     required List<Widget> children,
+    String? semanticsIdentifier,
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -58,11 +60,15 @@ class AccountPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: colorScheme.onSurface,
-                fontWeight: FontWeight.bold,
+            Semantics(
+              header: true,
+              identifier: semanticsIdentifier,
+              child: Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             ...children,
@@ -88,12 +94,16 @@ class AccountPage extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.check, size: 16, color: colorScheme.primary),
+          ExcludeSemantics(
+            child: Icon(Icons.check, size: 16, color: colorScheme.primary),
+          ),
           const SizedBox(width: 4),
-          Text(
-            text,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: colorScheme.primary,
+          Flexible(
+            child: Text(
+              text,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: colorScheme.primary,
+              ),
             ),
           ),
         ],
@@ -111,26 +121,28 @@ class AccountPage extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: colorScheme.onSurface,
+    return MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: colorScheme.onSurface,
+            ),
           ),
-        ),
-        Text(
-          value,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: colorScheme.onSurfaceVariant,
+          Text(
+            value,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
-        ),
-        if (showBadge && badgeText != null) ...[
-          const SizedBox(height: 4),
-          _buildInstitutionBadge(context, badgeText),
+          if (showBadge && badgeText != null) ...[
+            const SizedBox(height: 4),
+            _buildInstitutionBadge(context, badgeText),
+          ],
         ],
-      ],
+      ),
     );
   }
 
@@ -204,56 +216,66 @@ class AccountPage extends ConsumerWidget {
       children: [
         _buildDivider(colorScheme),
         const SizedBox(height: _spacingSmall),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              l10n.generalNotifications,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: colorScheme.onSurfaceVariant,
+        MergeSemantics(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Text(
+                  l10n.generalNotifications,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
               ),
-            ),
-            notificationAsync.when(
-              data: (enabled) => Switch(
-                value: enabled,
-                onChanged: (value) async {
-                  try {
-                    await ref
-                        .read(notificationEnabledProvider.notifier)
-                        .setEnabled(value);
-                  } on NotificationPermissionDeniedException catch (_) {
-                    if (context.mounted) {
-                      await _showNotificationPermissionDeniedDialog(
-                        context,
-                        ref,
-                      );
+              notificationAsync.when(
+                data: (enabled) => Switch(
+                  value: enabled,
+                  onChanged: (value) async {
+                    try {
+                      await ref
+                          .read(notificationEnabledProvider.notifier)
+                          .setEnabled(value);
+                    } on NotificationPermissionDeniedException catch (_) {
+                      if (context.mounted) {
+                        await _showNotificationPermissionDeniedDialog(
+                          context,
+                          ref,
+                        );
+                      }
                     }
-                  }
-                },
-              ),
-              loading: () => const Switch(
-                value: true,
-                onChanged: null,
-              ),
-              error: (_, _) => Switch(
-                value: false,
-                onChanged: (value) async {
-                  try {
-                    await ref
-                        .read(notificationEnabledProvider.notifier)
-                        .setEnabled(value);
-                  } on NotificationPermissionDeniedException catch (_) {
-                    if (context.mounted) {
-                      await _showNotificationPermissionDeniedDialog(
-                        context,
-                        ref,
-                      );
+                  },
+                  activeThumbColor: colorScheme.surfaceContainer,
+                  activeTrackColor: colorScheme.primary,
+                ),
+                loading: () => Switch(
+                  value: true,
+                  onChanged: null,
+                  activeThumbColor: colorScheme.surfaceContainer,
+                  activeTrackColor: colorScheme.primary,
+                ),
+                error: (_, _) => Switch(
+                  value: false,
+                  onChanged: (value) async {
+                    try {
+                      await ref
+                          .read(notificationEnabledProvider.notifier)
+                          .setEnabled(value);
+                    } on NotificationPermissionDeniedException catch (_) {
+                      if (context.mounted) {
+                        await _showNotificationPermissionDeniedDialog(
+                          context,
+                          ref,
+                        );
+                      }
                     }
-                  }
-                },
+                  },
+                  activeThumbColor: colorScheme.surfaceContainer,
+                  activeTrackColor: colorScheme.primary,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -291,49 +313,56 @@ class AccountPage extends ConsumerWidget {
           )
         : edubadges;
 
-    return InkWell(
-      onTap: () {
-        final agreementModel = AgreementRouteModel.create(
-          institutionName,
-          agreement,
-          langCode,
-        );
-        context.push(agreementModel.buildRouteUrl());
-      },
-      borderRadius: BorderRadius.circular(_badgeBorderRadius),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: _spacingSmall),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    agreement.getAgreementTypeName(l10n),
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: colorScheme.primary,
+    void onOpenAgreement() {
+      final agreementModel = AgreementRouteModel.create(
+        institutionName,
+        agreement,
+        langCode,
+      );
+      context.push(agreementModel.buildRouteUrl());
+    }
+
+    final agreementTitle = agreement.getAgreementTypeName(l10n);
+
+    return MergeSemantics(
+      child: InkWell(
+        onTap: onOpenAgreement,
+        borderRadius: BorderRadius.circular(_badgeBorderRadius),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: _spacingSmall),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      agreementTitle,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: colorScheme.primary,
+                      ),
                     ),
-                  ),
-                  Text(
-                    dateText,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                    Text(
+                      dateText,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(_chevronPadding),
-              child: SvgIcon(
-                assetPath: Assets.iconChevron,
-                size: _chevronSize,
-                color: colorScheme.primary,
+              Padding(
+                padding: const EdgeInsets.all(_chevronPadding),
+                child: SvgIcon(
+                  assetPath: Assets.iconChevron,
+                  size: _chevronSize,
+                  color: colorScheme.primary,
+                  excludeFromSemantics: true,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -386,10 +415,13 @@ class AccountPage extends ConsumerWidget {
                 padding: EdgeInsets.only(
                   top: groupEntry == groupEntries.first ? 0 : _spacingMedium,
                 ),
-                child: Text(
-                  institutionName,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    institutionName,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),
@@ -503,9 +535,7 @@ class AccountPage extends ConsumerWidget {
         isFirstButtonDefaultAction: false,
         onFirstButtonPressed: () {},
         onSecondButtonPressed: () async {
-          await AppSettings.openAppSettings(
-            type: AppSettingsType.notification,
-          );
+          await AppSettings.openAppSettings(type: AppSettingsType.notification);
         },
       ),
     );
@@ -557,6 +587,7 @@ class AccountPage extends ConsumerWidget {
           IconButton(
             icon: Icon(Icons.logout, color: colorScheme.primary, size: 24),
             onPressed: () => _showLogoutConfirmation(context, ref),
+            tooltip: l10n.semanticsLogout,
           ),
         ],
       ),
@@ -576,7 +607,10 @@ class AccountPage extends ConsumerWidget {
               child: Column(
                 spacing: 0,
                 children: [
-                  _buildDataSection(context, profile),
+                  FocusableSection(
+                    autofocus: true,
+                    child: _buildDataSection(context, profile),
+                  ),
                   _buildNotificationSection(context, ref, profile),
                   _buildAgreementsSection(ref, context, profile),
                   _buildDeleteAccountSection(context, ref),
@@ -584,7 +618,11 @@ class AccountPage extends ConsumerWidget {
               ),
             );
           },
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => Center(
+            child: CircularProgressIndicator(
+              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+            ),
+          ),
           error: (error, stack) => Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

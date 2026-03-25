@@ -54,9 +54,14 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            l10n.filters,
-            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          Semantics(
+            header: true,
+            child: Text(
+              l10n.filters,
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
           const SizedBox(height: 8),
           SingleChildScrollView(
@@ -96,7 +101,8 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
             controller: _searchController,
             decoration: InputDecoration(
               hintText: l10n.searchPlaceholder,
-              prefixIcon: const Icon(Icons.search),
+              labelText: l10n.search,
+              prefixIcon: const ExcludeSemantics(child: Icon(Icons.search)),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
                       icon: const Icon(Icons.clear),
@@ -105,6 +111,7 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
                         setState(() {});
                         widget.onSearchSubmitted?.call('');
                       },
+                      tooltip: l10n.semanticsClearSearch,
                     )
                   : null,
               border: const OutlineInputBorder(
@@ -133,36 +140,42 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
     required CatalogInstitutionType? level,
     required ColorScheme colorScheme,
   }) {
+    final textScaler = MediaQuery.textScalerOf(context);
     final isSelected = _selectedLevel == level;
 
-    return InkWell(
-      onTap: () {
-        setState(() {
-          _selectedLevel = level;
-        });
-        widget.onLevelChanged?.call(level);
-      },
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        height: 32,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? colorScheme.primary
-              : colorScheme.primaryContainer,
+    void onChipTap() {
+      setState(() {
+        _selectedLevel = level;
+      });
+      widget.onLevelChanged?.call(level);
+    }
+
+    return Semantics(
+      selected: isSelected,
+      child: MergeSemantics(
+        child: InkWell(
+          onTap: onChipTap,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: colorScheme.outlineVariant,
-          )
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+          child: Container(
+            height: textScaler.scale(34),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
               color: isSelected
-                  ? colorScheme.onPrimary
-                  : colorScheme.onPrimaryContainer,
-              fontWeight: FontWeight.w600,
+                  ? colorScheme.primary
+                  : colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: colorScheme.outlineVariant),
+            ),
+            child: Center(
+              child: Text(
+                label,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: isSelected
+                      ? colorScheme.onPrimary
+                      : colorScheme.onPrimaryContainer,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
         ),
@@ -186,7 +199,11 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
           },
           displayStringForOption: (CatalogInstitution institution) {
             final lang = ref.read(appLanguageProvider).code;
-            return getLocalizedString(institution.nameDutch, institution.nameEnglish, lang);
+            return getLocalizedString(
+              institution.nameDutch,
+              institution.nameEnglish,
+              lang,
+            );
           },
           fieldViewBuilder:
               (
@@ -221,6 +238,7 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
                               });
                               widget.onInstitutionChanged?.call(null);
                             },
+                            tooltip: l10n.semanticsClearFilter,
                           )
                         : null,
                   ),
@@ -273,7 +291,11 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
                             },
                             child: ListTile(
                               title: Text(
-                                getLocalizedString(option.nameDutch, option.nameEnglish, lang),
+                                getLocalizedString(
+                                  option.nameDutch,
+                                  option.nameEnglish,
+                                  lang,
+                                ),
                                 style: Theme.of(context).textTheme.bodyLarge,
                               ),
                             ),
@@ -291,19 +313,20 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
         decoration: InputDecoration(
           labelText: l10n.allInstitutions,
           hintText: l10n.allInstitutions,
-          border: const OutlineInputBorder(
-            borderRadius: searchBorderRadius,
-          ),
+          border: const OutlineInputBorder(borderRadius: searchBorderRadius),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 16,
           ),
-          suffixIcon: const SizedBox(
+          suffixIcon: SizedBox(
             width: 20,
             height: 20,
             child: Padding(
-              padding: EdgeInsets.all(12),
-              child: CircularProgressIndicator(strokeWidth: 2),
+              padding: const EdgeInsets.all(12),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+              ),
             ),
           ),
         ),
@@ -313,9 +336,7 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
         decoration: InputDecoration(
           labelText: l10n.allInstitutions,
           hintText: l10n.allInstitutions,
-          border: const OutlineInputBorder(
-            borderRadius: searchBorderRadius,
-          ),
+          border: const OutlineInputBorder(borderRadius: searchBorderRadius),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 16,

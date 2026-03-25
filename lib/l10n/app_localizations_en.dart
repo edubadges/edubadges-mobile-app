@@ -963,4 +963,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stackableFalse => 'No, stand alone edubadge';
+
+  @override
+  String get semanticsClose => 'Close';
+
+  @override
+  String get semanticsBack => 'Back';
+
+  @override
+  String get semanticsClearSearch => 'Clear search';
+
+  @override
+  String get semanticsClearFilter => 'Clear filter';
+
+  @override
+  String get semanticsBadgeImage => 'Badge image';
+
+  @override
+  String get semanticsInstitutionLogo => 'Institution logo';
+
+  @override
+  String get semanticsImageNotSupported => 'Image not available';
+
+  @override
+  String get semanticsBadgePublic =>
+      'Badge is public. Tap to change visibility.';
+
+  @override
+  String get semanticsBadgePrivate =>
+      'Badge is private. Tap to change visibility.';
+
+  @override
+  String get semanticsLogout => 'Log out';
+
+  @override
+  String get semanticsCopyLink => 'Copy link';
+
+  @override
+  String get semanticsError => 'Error';
+
+  @override
+  String get semanticsLoginIllustration => 'Decorative illustration';
+
+  @override
+  String get semanticsEnabled => 'Enabled';
+
+  @override
+  String get semanticsDisabled => 'Disabled';
+
+  @override
+  String get semanticsLoading => 'Loading...';
 }

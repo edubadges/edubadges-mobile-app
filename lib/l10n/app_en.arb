@@ -1136,5 +1136,69 @@
     "stackableFalse": "No, stand alone edubadge",
     "@stackableFalse": {
         "description": "Stackable field for badge class can be not stacked"
+    },
+    "semanticsClose": "Close",
+    "@semanticsClose": {
+        "description": "Accessibility label for close button"
+    },
+    "semanticsBack": "Back",
+    "@semanticsBack": {
+        "description": "Accessibility label for back button"
+    },
+    "semanticsClearSearch": "Clear search",
+    "@semanticsClearSearch": {
+        "description": "Accessibility label for clear search button"
+    },
+    "semanticsClearFilter": "Clear filter",
+    "@semanticsClearFilter": {
+        "description": "Accessibility label for clear filter button"
+    },
+    "semanticsBadgeImage": "Badge image",
+    "@semanticsBadgeImage": {
+        "description": "Accessibility label for badge image"
+    },
+    "semanticsInstitutionLogo": "Institution logo",
+    "@semanticsInstitutionLogo": {
+        "description": "Accessibility label for institution logo image"
+    },
+    "semanticsImageNotSupported": "Image not available",
+    "@semanticsImageNotSupported": {
+        "description": "Accessibility label when image failed to load"
+    },
+    "semanticsBadgePublic": "Badge is public. Tap to change visibility.",
+    "@semanticsBadgePublic": {
+        "description": "Accessibility label for public badge visibility control"
+    },
+    "semanticsBadgePrivate": "Badge is private. Tap to change visibility.",
+    "@semanticsBadgePrivate": {
+        "description": "Accessibility label for private badge visibility control"
+    },
+    "semanticsLogout": "Log out",
+    "@semanticsLogout": {
+        "description": "Accessibility label for logout button"
+    },
+    "semanticsCopyLink": "Copy link",
+    "@semanticsCopyLink": {
+        "description": "Accessibility label for copy link button"
+    },
+    "semanticsError": "Error",
+    "@semanticsError": {
+        "description": "Accessibility label for error icon"
+    },
+    "semanticsLoginIllustration": "Decorative illustration",
+    "@semanticsLoginIllustration": {
+        "description": "Accessibility label for decorative login carousel image"
+    },
+    "semanticsEnabled": "Enabled",
+    "@semanticsEnabled": {
+        "description": "Accessibility label for enabled state (e.g. toggle or switch)"
+    },
+    "semanticsDisabled": "Disabled",
+    "@semanticsDisabled": {
+        "description": "Accessibility label for disabled state (e.g. toggle or switch)"
+    },
+    "semanticsLoading": "Loading...",
+    "@semanticsLoading": {
+        "description": "Accessibility label for loading indicator"
     }
 }

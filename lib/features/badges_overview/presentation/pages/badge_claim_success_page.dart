@@ -41,34 +41,23 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
-    
+
     const springCurve = _SpringCurve(
       mass: 1.0,
       stiffness: 256.1,
       damping: 24.0,
     );
-    
+
     _scaleAnimation = CurvedAnimation(
       parent: _animationController,
       curve: springCurve,
     );
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.2),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: springCurve,
-      ),
-    );
-    _opacityAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeIn,
-      ),
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
+          CurvedAnimation(parent: _animationController, curve: springCurve),
+        );
+    _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -109,6 +98,7 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
             child: IconButton(
               icon: const Icon(Icons.close, color: AppColors.primary),
               onPressed: () => context.go(RoutePath.main),
+              tooltip: AppLocalizations.of(context).semanticsClose,
             ),
           ),
         ],
@@ -118,7 +108,8 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
           data: (state) {
             // Check claimed badges first, but also check unclaimed badges
             // in case the state hasn't been updated yet from the claim page
-            final claimedBadge = state.claimedBadges.firstWhereOrNull(
+            final claimedBadge =
+                state.claimedBadges.firstWhereOrNull(
                   (b) =>
                       b.entityId == widget.badgeId ||
                       b.id.toString() == widget.badgeId,
@@ -131,7 +122,11 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
                 state.claimedBadges.firstOrNull;
 
             if (claimedBadge == null) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                child: CircularProgressIndicator(
+                  semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+                ),
+              );
             }
 
             final hasMoreBadges = state.unclaimedBadges.isNotEmpty;
@@ -145,43 +140,51 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
                     description: l10n.badgeClaimSuccessSubtitle,
                   ),
 
-              if (_showDetails)
-                SlideTransition(
-                  position: _slideAnimation,
-                  child: ScaleTransition(
-                    scale: _scaleAnimation,
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            BadgeCard(
-                              instance: claimedBadge,
-                              badgeClass: claimedBadge.badgeclass as BadgeClassModel,
-                              style: BadgeCardStyle.large,
-                            ),
-                            BadgeVisibilityCard(
-                              margin: const EdgeInsets.only(bottom: 8, top: 16),
-                              badge: claimedBadge,
-                            ),
-                            const Spacer(),
-                            _buildBottomButton(
-                              context,
-                              hasMoreBadges,
-                              state.unclaimedBadges.length,
-                            ),
-                            const SizedBox(height: 40),
-                          ],
+                if (_showDetails)
+                  SlideTransition(
+                    position: _slideAnimation,
+                    child: ScaleTransition(
+                      scale: _scaleAnimation,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              BadgeCard(
+                                instance: claimedBadge,
+                                badgeClass:
+                                    claimedBadge.badgeclass as BadgeClassModel,
+                                style: BadgeCardStyle.large,
+                              ),
+                              BadgeVisibilityCard(
+                                margin: const EdgeInsets.only(
+                                  bottom: 8,
+                                  top: 16,
+                                ),
+                                badge: claimedBadge,
+                              ),
+                              const Spacer(),
+                              _buildBottomButton(
+                                context,
+                                hasMoreBadges,
+                                state.unclaimedBadges.length,
+                              ),
+                              const SizedBox(height: 40),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
               ],
             );
           },
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => Center(
+            child: CircularProgressIndicator(
+              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+            ),
+          ),
           error: (err, stack) => InfoStateView(
             title: l10n.badgeClaimErrorTitle,
             description: l10n.badgeClaimErrorSubtitle,
@@ -257,21 +260,30 @@ class _SpringCurve extends Curve {
     // Spring physics calculation
     final dampingRatio = damping / (2 * sqrt(mass * stiffness));
     final angularFrequency = sqrt(stiffness / mass);
-    
+
     if (dampingRatio < 1) {
       // Under-damped spring (bouncy)
-      final dampedFrequency = angularFrequency * sqrt(1 - dampingRatio * dampingRatio);
+      final dampedFrequency =
+          angularFrequency * sqrt(1 - dampingRatio * dampingRatio);
       final envelope = exp(-dampingRatio * angularFrequency * t);
       final phase = dampedFrequency * t;
-      return 1 - envelope * (cos(phase) + (dampingRatio * angularFrequency / dampedFrequency) * sin(phase));
+      return 1 -
+          envelope *
+              (cos(phase) +
+                  (dampingRatio * angularFrequency / dampedFrequency) *
+                      sin(phase));
     } else if (dampingRatio == 1) {
       // Critically damped
       final decay = exp(-angularFrequency * t);
       return 1 - decay * (1 + angularFrequency * t);
     } else {
       // Over-damped
-      final r1 = -angularFrequency * (dampingRatio + sqrt(dampingRatio * dampingRatio - 1));
-      final r2 = -angularFrequency * (dampingRatio - sqrt(dampingRatio * dampingRatio - 1));
+      final r1 =
+          -angularFrequency *
+          (dampingRatio + sqrt(dampingRatio * dampingRatio - 1));
+      final r2 =
+          -angularFrequency *
+          (dampingRatio - sqrt(dampingRatio * dampingRatio - 1));
       final c1 = (0 - r2) / (r1 - r2);
       final c2 = 1 - c1;
       return 1 - (c1 * exp(r1 * t) + c2 * exp(r2 * t));

@@ -4,6 +4,7 @@ import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
@@ -28,6 +29,9 @@ class BadgeCard extends ConsumerWidget {
   final BadgeCardStyle style;
   final bool isSelected, onTapDisabled, badgeRequested;
   final BadgeDetailsRouteFrom onTapFrom;
+
+  final VoidCallback? onTap;
+
   const BadgeCard({
     super.key,
     required this.instance,
@@ -37,6 +41,7 @@ class BadgeCard extends ConsumerWidget {
     this.onTapDisabled = false,
     this.badgeRequested = false,
     this.onTapFrom = BadgeDetailsRouteFrom.other,
+    this.onTap,
   });
 
   int? getTimeInvestment() {
@@ -65,7 +70,7 @@ class BadgeCard extends ConsumerWidget {
     final badgeImageUrl = buildImageUrl(badgeClass.image);
 
     if (style == BadgeCardStyle.small) {
-      return Container(
+      final cardContent = Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
@@ -80,43 +85,69 @@ class BadgeCard extends ConsumerWidget {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            Image.network(
-              badgeImageUrl ?? '',
-              height: 64,
-              width: 64,
-              errorBuilder: (context, error, stackTrace) {
-                return const SizedBox(height: 64, width: 100);
-              },
+            ExcludeSemantics(
+              child: Image.network(
+                badgeImageUrl ?? '',
+                height: 64,
+                width: 64,
+                errorBuilder: (context, error, stackTrace) {
+                  return SizedBox(
+                    height: 64,
+                    width: 64,
+                    child: Icon(
+                      Icons.image_not_supported_outlined,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  );
+                },
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    badgeClass.name,
-                    style: textTheme.titleSmall,
-                    maxLines: 2,
-                  ),
-                  Text(
-                    institutionName,
-                    style: textTheme.bodySmall,
-                    maxLines: 1,
-                    softWrap: false,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+              child: MergeSemantics(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      badgeClass.name,
+                      style: textTheme.titleSmall,
+                      maxLines: 2,
+                    ),
+                    Text(
+                      institutionName,
+                      style: textTheme.bodySmall,
+                      maxLines: 1,
+                      softWrap: false,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
         ),
       );
+
+      final effectiveOnTap = onTapDisabled ? null : onTap;
+      if (effectiveOnTap != null) {
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(20),
+            onTap: effectiveOnTap,
+            child: cardContent,
+          ),
+        );
+      }
+
+      return cardContent;
     }
 
     final int? timeInvestment = getTimeInvestment();
 
-    return GestureDetector(
-      onTap: onTapDisabled
+    return KeyboardActivatable(
+      enabled: !onTapDisabled,
+      onActivate: onTapDisabled
           ? null
           : () {
               final routeModel = BadgeDetailsRouteModel(
@@ -147,26 +178,34 @@ class BadgeCard extends ConsumerWidget {
               children: [
                 const SizedBox(height: 32, width: 32),
                 Expanded(
-                  child: Image.network(
-                    badgeImageUrl ?? '',
-                    height: 100,
-                    width: 100,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const SizedBox(height: 100, width: 100);
-                    },
+                  child: ExcludeSemantics(
+                    child: Image.network(
+                      badgeImageUrl ?? '',
+                      height: 100,
+                      width: 100,
+                      semanticLabel: l10n.semanticsBadgeImage,
+                      errorBuilder: (context, error, stackTrace) {
+                        return SizedBox(
+                          height: 100,
+                          width: 100,
+                          child: Icon(
+                            Icons.image_not_supported_outlined,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
                 if (instance != null)
                   SizedBox(
                     height: 32,
                     width: 32,
-                    child: GestureDetector(
-                      child: SvgPicture.asset(
-                        instance!.public
-                            ? Assets.iconUnlocked
-                            : Assets.iconLocked,
-                      ),
-                      onTap: () {
+                    child: KeyboardActivatable(
+                      semanticLabel: instance!.public
+                          ? l10n.semanticsBadgePublic
+                          : l10n.semanticsBadgePrivate,
+                      onActivate: () {
                         BadgeVisibilityDialog.show(
                           context: context,
                           ref: ref,
@@ -174,6 +213,11 @@ class BadgeCard extends ConsumerWidget {
                           isPublic: !instance!.public,
                         );
                       },
+                      child: SvgPicture.asset(
+                        instance!.public
+                            ? Assets.iconUnlocked
+                            : Assets.iconLocked,
+                      ),
                     ),
                   )
                 else
@@ -227,13 +271,15 @@ class BadgeCard extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (institutionImageUrl != null)
-                    Image.network(
-                      institutionImageUrl,
-                      height: 25,
-                      width: 25,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const SizedBox(height: 25, width: 25);
-                      },
+                    ExcludeSemantics(
+                      child: Image.network(
+                        institutionImageUrl,
+                        height: 25,
+                        width: 25,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const SizedBox(height: 25, width: 25);
+                        },
+                      ),
                     ),
                   const SizedBox(width: 8),
                   Flexible(

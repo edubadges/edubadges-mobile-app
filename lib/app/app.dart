@@ -35,7 +35,10 @@ class _AppState extends ConsumerState<App> {
     return MaterialApp.router(
       title: 'Edubadges',
       theme: AppThemes.lightTheme,
+      highContrastTheme: AppThemes.highContrastTheme,
       routerConfig: router,
+      // Use to check if semantics are setup correctly for a page
+      showSemanticsDebugger: false,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

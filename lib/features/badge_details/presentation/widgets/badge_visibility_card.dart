@@ -79,10 +79,13 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      l10n.badgeVisibleAndShareable,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
+                    Semantics(
+                      header: true,
+                      child: Text(
+                        l10n.badgeVisibleAndShareable,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -113,6 +116,9 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                 activeIconSize: 16,
                 inactiveIconSize: 16,
                 borderRadius: 14,
+                semanticLabel: isPublic
+                    ? l10n.semanticsBadgePublic
+                    : l10n.semanticsBadgePrivate,
                 onChanged: (bool state) async {
                   try {
                     await BadgeVisibilityDialog.show(

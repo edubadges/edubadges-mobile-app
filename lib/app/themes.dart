@@ -15,6 +15,21 @@ class AppThemes {
       textTheme: _textTheme,
       appBarTheme: _appBarTheme,
       switchTheme: _switchTheme,
+      // High-contrast focus indicator for keyboard/screen reader (EU accessibility)
+      focusColor: AppColors.primary,
+    );
+  }
+
+  /// High-contrast theme for accessibility (e.g. OS "increase contrast")
+  static ThemeData get highContrastTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      colorScheme: _lightColorScheme,
+      textTheme: _textTheme,
+      appBarTheme: _appBarTheme,
+      switchTheme: _switchTheme,
+      focusColor: AppColors.onSurface,
     );
   }
 
@@ -211,6 +226,7 @@ class AppThemes {
         fontWeight: FontWeight.w700,
         color: AppColors.onSurface,
       ),
+      backgroundColor: AppColors.surface,
       surfaceTintColor: AppColors.surface,
     );
   }

@@ -98,13 +98,15 @@ class MainPage extends ConsumerWidget {
       tooltip: label,
       icon: Padding(
         padding: const EdgeInsets.only(top: 0.0, bottom: 0.0),
-        child: SvgPicture.asset(
-          iconPath,
-          width: 25,
-          height: 25,
-          colorFilter: ColorFilter.mode(
-            isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
-            BlendMode.srcIn,
+        child: ExcludeSemantics(
+          child: SvgPicture.asset(
+            iconPath,
+            width: 25,
+            height: 25,
+            colorFilter: ColorFilter.mode(
+              isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+              BlendMode.srcIn,
+            ),
           ),
         ),
       ),
