@@ -1,8 +1,8 @@
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/features/badges_overview/data/datasources/badges_overview_datasource.dart';
 import 'package:edubadges/features/badges_overview/data/repositories/badges_overview_repository_impl.dart';
-import 'package:edubadges/features/badges_overview/domain/entities/direct_award_detail_entity.dart';
 import 'package:edubadges/features/badges_overview/domain/entities/badges_overview_state.dart';
+import 'package:edubadges/features/badges_overview/domain/entities/direct_award_detail_entity.dart';
 import 'package:edubadges/features/badges_overview/domain/repositories/badges_overview_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
