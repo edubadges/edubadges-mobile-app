@@ -380,6 +380,12 @@ abstract class AppLocalizations {
   /// **'Member since'**
   String get memberSince;
 
+  /// Formatted member-since date and time for the account profile
+  ///
+  /// In en, this message translates to:
+  /// **'{date}'**
+  String memberSinceDateValue(DateTime date);
+
   /// Section header or link text for notification settings
   ///
   /// In en, this message translates to:

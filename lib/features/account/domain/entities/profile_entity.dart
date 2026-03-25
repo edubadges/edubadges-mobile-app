@@ -11,6 +11,7 @@ class ProfileEntity extends Equatable {
   final bool isSuperuser;
   final bool termsAgreed;
   final List<TermsAgreementEntity> termsagreementSet;
+  final DateTime dateJoined;
 
   const ProfileEntity({
     required this.firstName,
@@ -22,6 +23,7 @@ class ProfileEntity extends Equatable {
     required this.isSuperuser,
     required this.termsAgreed,
     required this.termsagreementSet,
+    required this.dateJoined,
   });
 
   String get fullName => '$firstName $lastName';
@@ -37,6 +39,7 @@ class ProfileEntity extends Equatable {
     isSuperuser,
     termsAgreed,
     termsagreementSet,
+    dateJoined,
   ];
 }
 

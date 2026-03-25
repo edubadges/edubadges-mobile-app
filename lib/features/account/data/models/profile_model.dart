@@ -11,6 +11,7 @@ class ProfileModel extends ProfileEntity {
     required super.isSuperuser,
     required super.termsAgreed,
     required super.termsagreementSet,
+    required super.dateJoined,
   });
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +27,7 @@ class ProfileModel extends ProfileEntity {
       termsagreementSet: (json['termsagreement_set'] as List<dynamic>?)
           ?.map((e) => TermsAgreementModel.fromJson(e as Map<String, dynamic>))
           .toList() ?? [],
+      dateJoined: DateTime.parse(json['date_joined'] as String),
     );
   }
 
@@ -42,6 +44,7 @@ class ProfileModel extends ProfileEntity {
       'termsagreement_set': termsagreementSet
           .map((e) => (e as TermsAgreementModel).toJson())
           .toList(),
+      'date_joined': dateJoined.toIso8601String(),
     };
   }
 }
