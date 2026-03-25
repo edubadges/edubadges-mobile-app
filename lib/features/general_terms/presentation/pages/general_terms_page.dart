@@ -1,4 +1,5 @@
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/widgets/focusable_section.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:edubadges/features/general_terms/presentation/providers/general_terms_providers.dart';
@@ -103,22 +104,34 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
             markdownAsync.when(
               data: (markdownContent) {
                 if (markdownContent.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: CircularProgressIndicator(
+                      semanticsLabel: AppLocalizations.of(
+                        context,
+                      ).semanticsLoading,
+                    ),
+                  );
                 }
                 return SingleChildScrollView(
                   controller: _scrollController,
                   padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
-                  child: MarkdownBody(
-                    data: markdownContent,
-                    styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
-                      p: textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurface,
+                  child: FocusableSection(
+                    child: MarkdownBody(
+                      data: markdownContent,
+                      styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
+                        p: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurface,
+                        ),
                       ),
                     ),
                   ),
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => Center(
+                child: CircularProgressIndicator(
+                  semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+                ),
+              ),
               error: (error, _) => const Center(child: ErrorMessageWidget()),
             ),
             Positioned(

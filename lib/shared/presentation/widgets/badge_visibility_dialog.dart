@@ -1,4 +1,5 @@
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
+import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
@@ -91,22 +92,26 @@ class _CustomCheckboxRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return GestureDetector(
-      onTap: () {
-        onChanged?.call(!value);
-      },
-      behavior: HitTestBehavior.opaque,
-      child: Row(
-        children: [
-          Expanded(child: Text(label, style: textTheme.bodyMedium)),
-          const SizedBox(width: 8),
-          Checkbox(
-            value: value,
-            onChanged: onChanged,
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            visualDensity: VisualDensity.compact,
-          ),
-        ],
+    return KeyboardActivatable(
+      enabled: onChanged != null,
+      wrapWithSemantics: false,
+      includeOuterTapTarget: false,
+      onActivate: () => onChanged?.call(!value),
+      child: GestureDetector(
+        onTap: () => onChanged?.call(!value),
+        behavior: HitTestBehavior.opaque,
+        child: Row(
+          children: [
+            Expanded(child: Text(label, style: textTheme.bodyMedium)),
+            const SizedBox(width: 8),
+            Checkbox(
+              value: value,
+              onChanged: onChanged,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
+            ),
+          ],
+        ),
       ),
     );
   }

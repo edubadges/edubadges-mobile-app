@@ -41,7 +41,10 @@ class CollectionsPage extends ConsumerWidget {
         actions: [
           IconButton(
             onPressed: () => _showCreateCollectionBottomSheet(context),
-            icon: const Icon(Icons.add, color: AppColors.primary, size: 24),
+            icon: const ExcludeSemantics(
+              child: Icon(Icons.add, color: AppColors.primary, size: 24),
+            ),
+            tooltip: l10n.newCollection,
           ),
         ],
       ),
@@ -88,58 +91,62 @@ class CollectionsPage extends ConsumerWidget {
                       width: 1,
                     ),
                   ),
-                  child: InkWell(
-                    onTap: () {
-                      final route = RoutePath.collection.replaceAll(
-                        ':id',
-                        collection.id,
-                      );
-                      final uri = Uri.parse(route).replace(
-                        queryParameters: {
-                          'title': collection.name,
-                          if (collection.description != null &&
-                              collection.description!.isNotEmpty)
-                            'description': collection.description,
-                        },
-                      );
-                      context.push(uri.toString());
-                    },
-                    borderRadius: BorderRadius.circular(20),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 80,
-                            height: 80,
-                            child: _buildBadgeGrid(
-                              badges,
-                              badgeCount,
-                              colorScheme,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  collection.name,
-                                  style: theme.textTheme.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                  child: MergeSemantics(
+                    child: InkWell(
+                      onTap: () {
+                        final route = RoutePath.collection.replaceAll(
+                          ':id',
+                          collection.id,
+                        );
+                        final uri = Uri.parse(route).replace(
+                          queryParameters: {
+                            'title': collection.name,
+                            if (collection.description != null &&
+                                collection.description!.isNotEmpty)
+                              'description': collection.description,
+                          },
+                        );
+                        context.push(uri.toString());
+                      },
+                      borderRadius: BorderRadius.circular(20),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          children: [
+                            ExcludeSemantics(
+                              child: SizedBox(
+                                width: 80,
+                                height: 80,
+                                child: _buildBadgeGrid(
+                                  badges,
+                                  badgeCount,
+                                  colorScheme,
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  l10n.countEdubadges(badgeCount),
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    collection.name,
+                                    style: theme.textTheme.titleSmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    l10n.countEdubadges(badgeCount),
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -147,7 +154,11 @@ class CollectionsPage extends ConsumerWidget {
               },
             );
           },
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => Center(
+            child: CircularProgressIndicator(
+              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+            ),
+          ),
           error: (error, stackTrace) => Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -190,6 +201,7 @@ class CollectionsPage extends ConsumerWidget {
       ),
       itemCount: badgesToShow.length + (showMoreBox ? 1 : 0),
       itemBuilder: (context, index) {
+        final l10n = AppLocalizations.of(context);
         if (index == 3 && showMoreBox) {
           return Container(
             decoration: BoxDecoration(
@@ -216,6 +228,7 @@ class CollectionsPage extends ConsumerWidget {
                 ? Image.network(
                     badgeImageUrl,
                     fit: BoxFit.cover,
+                    semanticLabel: l10n.semanticsBadgeImage,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
                         color: colorScheme.surfaceContainerHighest,
@@ -233,6 +246,7 @@ class CollectionsPage extends ConsumerWidget {
                       Icons.image_not_supported,
                       color: colorScheme.onSurfaceVariant,
                       size: 20,
+                      semanticLabel: l10n.semanticsImageNotSupported,
                     ),
                   ),
           );

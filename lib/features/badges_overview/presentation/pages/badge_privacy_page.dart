@@ -149,8 +149,12 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
               state.claimedBadges.firstOrNull;
 
           if (badge == null) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(
+                  semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+                ),
+              ),
             );
           }
 
@@ -159,13 +163,16 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
 
           final profile = profileAsync.whenOrNull(data: (p) => p);
           if (profile == null) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(
+                  semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+                ),
+              ),
             );
           }
 
-          final matchingAgreement =
-              profile.termsagreementSet.firstWhereOrNull(
+          final matchingAgreement = profile.termsagreementSet.firstWhereOrNull(
             (TermsAgreementEntity ta) =>
                 ta.terms.institution?.identifier == badgeInstitutionId,
           );
@@ -205,13 +212,13 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
           final currentTitle = _isShowingLongVersion
               ? agreementModel.titleLong
               : (agreementModel.titleShort?.trim().isEmpty ?? true
-                  ? agreementModel.titleLong
-                  : agreementModel.titleShort!);
+                    ? agreementModel.titleLong
+                    : agreementModel.titleShort!);
           final currentUrlText = _isShowingLongVersion
               ? agreementModel.textUrlLong
               : (agreementModel.textUrlShort?.trim().isEmpty ?? true
-                  ? agreementModel.textUrlLong
-                  : agreementModel.textUrlShort!);
+                    ? agreementModel.textUrlLong
+                    : agreementModel.textUrlShort!);
           final toggleButtonText = _isShowingLongVersion
               ? l10n.viewShortText
               : l10n.viewFullText;
@@ -247,7 +254,13 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
                 );
               },
               loading: () {
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                  child: CircularProgressIndicator(
+                    semanticsLabel: AppLocalizations.of(
+                      context,
+                    ).semanticsLoading,
+                  ),
+                );
               },
             ),
             actions: [
@@ -266,14 +279,17 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
                     ),
                   ),
                   child: _isClaiming
-                      ? const SizedBox(
+                      ? SizedBox(
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
+                            valueColor: const AlwaysStoppedAnimation<Color>(
                               Colors.white,
                             ),
+                            semanticsLabel: AppLocalizations.of(
+                              context,
+                            ).semanticsLoading,
                           ),
                         )
                       : Text(
@@ -299,14 +315,17 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
                     side: const BorderSide(color: AppColors.primary),
                   ),
                   child: _isDeclining
-                      ? const SizedBox(
+                      ? SizedBox(
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
+                            valueColor: const AlwaysStoppedAnimation<Color>(
                               AppColors.primary,
                             ),
+                            semanticsLabel: AppLocalizations.of(
+                              context,
+                            ).semanticsLoading,
                           ),
                         )
                       : Text(
@@ -336,8 +355,13 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
             ],
           );
         },
-        loading: () =>
-            const Scaffold(body: Center(child: CircularProgressIndicator())),
+        loading: () => Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(
+              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+            ),
+          ),
+        ),
         error: (err, stack) =>
             const Scaffold(body: Center(child: ErrorMessageWidget())),
       ),

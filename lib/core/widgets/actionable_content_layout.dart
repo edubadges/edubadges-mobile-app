@@ -1,5 +1,6 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
+import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -39,6 +40,7 @@ class ActionableContentLayout extends StatelessWidget {
             ? IconButton(
                 icon: const Icon(Icons.arrow_back, color: AppColors.primary),
                 onPressed: () => context.pop(),
+                tooltip: AppLocalizations.of(context).semanticsBack,
               )
             : null,
         backgroundColor: colorScheme.surface,

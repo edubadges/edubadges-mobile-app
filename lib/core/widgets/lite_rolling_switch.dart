@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
+import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:flutter/material.dart';
 
 // https://pub.dev/packages/animated_icon_switch
@@ -28,6 +29,7 @@ class AnimatedIconSwitch extends StatefulWidget {
     this.activeIconColor = Colors.white,
     this.withIconAnimation = false,
     this.animationDuration = const Duration(milliseconds: 200),
+    this.semanticLabel,
   });
 
   /*-----------------
@@ -134,6 +136,8 @@ class AnimatedIconSwitch extends StatefulWidget {
   ///
   /// Note: changing the animationDuration requires a cold reload (restart).
   final Duration animationDuration;
+
+  final String? semanticLabel;
 
   @override
   State<AnimatedIconSwitch> createState() => _AnimatedIconSwitchState();
@@ -261,16 +265,30 @@ class _AnimatedIconSwitchState extends State<AnimatedIconSwitch>
       translateAnimationController.forward();
     }
     // Add elevetion property
-    return Material(
-      elevation: widget.elevation,
-      shadowColor: widget.shadowColor,
-      borderRadius: BorderRadius.circular(widget.borderRadius),
-      // color: widget.inactiveColor,
-      color: Colors.transparent,
-      surfaceTintColor: Colors.transparent,
+    final toggleAction = widget.onChanged == null
+        ? null
+        : () => widget.onChanged!(!widget.value);
 
-      // Main widget
-      child: GestureDetector(
+    return KeyboardActivatable(
+      enabled: widget.onChanged != null,
+      wrapWithSemantics: false,
+      includeOuterTapTarget: false,
+      onActivate: toggleAction,
+      child: Semantics(
+        enabled: widget.onChanged != null,
+        toggled: widget.value,
+        label: widget.semanticLabel,
+        onTap: toggleAction,
+        child: Material(
+        elevation: widget.elevation,
+        shadowColor: widget.shadowColor,
+        borderRadius: BorderRadius.circular(widget.borderRadius),
+        // color: widget.inactiveColor,
+        color: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+
+        // Main widget
+        child: GestureDetector(
         onTap: widget.onChanged == null
             ? null
             : () {
@@ -449,6 +467,8 @@ class _AnimatedIconSwitchState extends State<AnimatedIconSwitch>
               ),
             ],
           ),
+        ),
+      ),
         ),
       ),
     );

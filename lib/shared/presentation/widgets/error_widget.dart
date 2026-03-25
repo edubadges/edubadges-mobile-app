@@ -3,7 +3,7 @@ import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 /// ## ErrorMessageWidget
-/// 
+///
 /// Use `InfoStateView` for error messages with custom messages.
 class ErrorMessageWidget extends StatelessWidget {
   const ErrorMessageWidget({super.key});
@@ -11,7 +11,7 @@ class ErrorMessageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final colorScheme =  Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
@@ -19,18 +19,26 @@ class ErrorMessageWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         spacing: 16,
         children: [
-          Icon(Icons.error, size: 40, color: colorScheme.primary),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(l10n.unableToLoad, style: Theme.of(context).textTheme.headlineSmall),
-              Text(
-                l10n.unableToLoadSubtitle,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
+          ExcludeSemantics(
+            child: Icon(Icons.error, size: 40, color: colorScheme.primary),
+          ),
+          Semantics(
+            liveRegion: true,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  l10n.unableToLoad,
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
-              ),
-            ],
+                Text(
+                  l10n.unableToLoadSubtitle,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

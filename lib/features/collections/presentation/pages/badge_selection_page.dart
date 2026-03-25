@@ -2,6 +2,7 @@ import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/error_message.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
@@ -75,6 +76,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.primary),
           onPressed: () => context.pop(),
+          tooltip: l10n.semanticsBack,
         ),
         title: Text(
           l10n.addEdubadges,
@@ -118,21 +120,31 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 8),
-                        child: InkWell(
-                          onTap: () => _toggleBadgeSelection(badge.entityId),
-                          borderRadius: BorderRadius.circular(20),
+                        child: KeyboardActivatable(
+                          wrapWithSemantics: false,
+                          includeOuterTapTarget: false,
+                          onActivate: () =>
+                              _toggleBadgeSelection(badge.entityId),
                           child: BadgeCard(
                             instance: badge,
                             badgeClass: badge.badgeclass as BadgeClassModel,
                             style: BadgeCardStyle.small,
                             isSelected: isSelected,
+                            onTap: () =>
+                                _toggleBadgeSelection(badge.entityId),
                           ),
                         ),
                       );
                     },
                   );
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => Center(
+                  child: CircularProgressIndicator(
+                    semanticsLabel: AppLocalizations.of(
+                      context,
+                    ).semanticsLoading,
+                  ),
+                ),
                 error: (error, stackTrace) => Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

@@ -1723,6 +1723,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No, stand alone edubadge'**
   String get stackableFalse;
+
+  /// Accessibility label for close button
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get semanticsClose;
+
+  /// Accessibility label for back button
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get semanticsBack;
+
+  /// Accessibility label for clear search button
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get semanticsClearSearch;
+
+  /// Accessibility label for clear filter button
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filter'**
+  String get semanticsClearFilter;
+
+  /// Accessibility label for badge image
+  ///
+  /// In en, this message translates to:
+  /// **'Badge image'**
+  String get semanticsBadgeImage;
+
+  /// Accessibility label for institution logo image
+  ///
+  /// In en, this message translates to:
+  /// **'Institution logo'**
+  String get semanticsInstitutionLogo;
+
+  /// Accessibility label when image failed to load
+  ///
+  /// In en, this message translates to:
+  /// **'Image not available'**
+  String get semanticsImageNotSupported;
+
+  /// Accessibility label for public badge visibility control
+  ///
+  /// In en, this message translates to:
+  /// **'Badge is public. Tap to change visibility.'**
+  String get semanticsBadgePublic;
+
+  /// Accessibility label for private badge visibility control
+  ///
+  /// In en, this message translates to:
+  /// **'Badge is private. Tap to change visibility.'**
+  String get semanticsBadgePrivate;
+
+  /// Accessibility label for logout button
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get semanticsLogout;
+
+  /// Accessibility label for copy link button
+  ///
+  /// In en, this message translates to:
+  /// **'Copy link'**
+  String get semanticsCopyLink;
+
+  /// Accessibility label for error icon
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get semanticsError;
+
+  /// Accessibility label for decorative login carousel image
+  ///
+  /// In en, this message translates to:
+  /// **'Decorative illustration'**
+  String get semanticsLoginIllustration;
+
+  /// Accessibility label for enabled state (e.g. toggle or switch)
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled'**
+  String get semanticsEnabled;
+
+  /// Accessibility label for disabled state (e.g. toggle or switch)
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get semanticsDisabled;
+
+  /// Accessibility label for loading indicator
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get semanticsLoading;
 }
 
 class _AppLocalizationsDelegate

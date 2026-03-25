@@ -58,10 +58,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         detailAsync.hasError || detail == null || !detail.userHasAcceptedTerms;
     if (needsPrivacyPage) {
       if (context.mounted) {
-        context.push(
-          RoutePath.badgePrivacy,
-          extra: {'id': widget.badgeId},
-        );
+        context.push(RoutePath.badgePrivacy, extra: {'id': widget.badgeId});
       }
       return;
     }
@@ -162,6 +159,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
           IconButton(
             icon: Icon(Icons.close, color: colorScheme.primary),
             onPressed: () => Navigator.of(context).pop(),
+            tooltip: l10n.semanticsClose,
           ),
         ],
       ),
@@ -196,11 +194,11 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
               );
             }
 
-            final detailAsync =
-                ref.watch(directAwardDetailProvider(badge.entityId));
+            final detailAsync = ref.watch(
+              directAwardDetailProvider(badge.entityId),
+            );
             final isClaimButtonReady = !detailAsync.isLoading && !_isClaiming;
-            final isClaimButtonLoading =
-                detailAsync.isLoading || _isClaiming;
+            final isClaimButtonLoading = detailAsync.isLoading || _isClaiming;
 
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -261,6 +259,9 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
                                       valueColor: AlwaysStoppedAnimation<Color>(
                                         colorScheme.primary,
                                       ),
+                                      semanticsLabel: AppLocalizations.of(
+                                        context,
+                                      ).semanticsLoading,
                                     ),
                                   )
                                 : Text(
@@ -278,7 +279,11 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
               ),
             );
           },
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => Center(
+            child: CircularProgressIndicator(
+              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+            ),
+          ),
           error: (error, stackTrace) => Center(
             child: Text(l10n.somethingWentWrong, style: textTheme.bodyMedium),
           ),
@@ -311,91 +316,106 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final imageSize = screenWidth * 180 / 393;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (badgeImageUrl != null)
-          Image.network(
-            badgeImageUrl,
-            height: imageSize,
-            width: imageSize,
-            errorBuilder: (context, error, stackTrace) {
-              return SizedBox(height: imageSize, width: imageSize);
-            },
+    return MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (badgeImageUrl != null)
+            ExcludeSemantics(
+              child: Image.network(
+                badgeImageUrl,
+                height: imageSize,
+                width: imageSize,
+                semanticLabel: l10n.semanticsBadgeImage,
+                errorBuilder: (context, error, stackTrace) {
+                  return SizedBox(
+                    height: imageSize,
+                    width: imageSize,
+                    child: Icon(
+                      Icons.image_not_supported_outlined,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  );
+                },
+              ),
+            ),
+          const SizedBox(height: 12),
+          Text(
+            badge.badgeclass.name,
+            style: textTheme.titleMedium,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            textAlign: TextAlign.center,
           ),
-        const SizedBox(height: 12),
-        Text(
-          badge.badgeclass.name,
-          style: textTheme.titleMedium,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          softWrap: false,
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          crossAxisAlignment: WrapCrossAlignment.center,
-          alignment: WrapAlignment.center,
-          spacing: 8,
-          children: [
-            if (timeInvestment !=
-                null) // TODO: fix this when Elias changes the badge card
-              _buildChip(
-                icon: Assets.iconTimeInvestment,
-                text: l10n.countHours(timeInvestment),
-                context: context,
-                textTheme: textTheme,
-                colorScheme: colorScheme,
-              ),
-            if (badge.gradeAchieved != null)
-              _buildChip(
-                icon: Assets.iconCollections,
-                text: badge.gradeAchieved!,
-                context: context,
-                textTheme: textTheme,
-                colorScheme: colorScheme,
-              ),
-            if (badge.issuedOn != null)
-              _buildChip(
-                icon: Assets.iconDate,
-                text: DateFormat(
-                  'd MMM yyyy',
-                  l10n.localeName,
-                ).format(badge.issuedOn!),
-                context: context,
-                textTheme: textTheme,
-                colorScheme: colorScheme,
-              ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        if (institution != null)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
+          const SizedBox(height: 12),
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            alignment: WrapAlignment.center,
+            spacing: 8,
             children: [
-              if (institutionImageUrl != null)
-                Image.network(
-                  institutionImageUrl,
-                  height: 25,
-                  width: 25,
-                  errorBuilder: (context, error, stackTrace) {
-                    return const SizedBox(height: 25, width: 25);
-                  },
+              if (timeInvestment !=
+                  null) // TODO: fix this when Elias changes the badge card
+                _buildChip(
+                  icon: Assets.iconTimeInvestment,
+                  text: l10n.countHours(timeInvestment),
+                  context: context,
+                  textTheme: textTheme,
+                  colorScheme: colorScheme,
                 ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  institutionName,
-                  style: textTheme.bodySmall,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  softWrap: false,
+              if (badge.gradeAchieved != null)
+                _buildChip(
+                  icon: Assets.iconCollections,
+                  text: badge.gradeAchieved!,
+                  context: context,
+                  textTheme: textTheme,
+                  colorScheme: colorScheme,
                 ),
-              ),
+              if (badge.issuedOn != null)
+                _buildChip(
+                  icon: Assets.iconDate,
+                  text: DateFormat(
+                    'd MMM yyyy',
+                    l10n.localeName,
+                  ).format(badge.issuedOn!),
+                  context: context,
+                  textTheme: textTheme,
+                  colorScheme: colorScheme,
+                ),
             ],
           ),
-      ],
+          const SizedBox(height: 8),
+          if (institution != null)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (institutionImageUrl != null)
+                  ExcludeSemantics(
+                    child: Image.network(
+                      institutionImageUrl,
+                      height: 25,
+                      width: 25,
+                      semanticLabel: l10n.semanticsInstitutionLogo,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const SizedBox(height: 25, width: 25);
+                      },
+                    ),
+                  ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    institutionName,
+                    style: textTheme.bodySmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
     );
   }
 

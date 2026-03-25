@@ -54,20 +54,25 @@ class NotificationPermissionPage extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 50.0),
                 child: Column(
                   children: [
-                    Text(
-                      l10n.notificationPermissionsTitle,
-                      style: textTheme.headlineLarge?.copyWith(
-                        color: colorScheme.onSurface,
+                    Semantics(
+                      header: true,
+                      child: Text(
+                        l10n.notificationPermissionsTitle,
+                        style: textTheme.headlineLarge?.copyWith(
+                          color: colorScheme.onSurface,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
-                    Text(
-                      l10n.notificationPermissionsSubtitle,
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurface,
+                    Semantics(
+                      child: Text(
+                        l10n.notificationPermissionsSubtitle,
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurface,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
@@ -75,11 +80,13 @@ class NotificationPermissionPage extends ConsumerWidget {
               const SizedBox(height: 32),
               ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 400),
-                child: Image.asset(
-                  Assets.imageNotifications,
-                  width: double.infinity,
-                  fit: BoxFit.contain,
-                  alignment: Alignment.center,
+                child: ExcludeSemantics(
+                  child: Image.asset(
+                    Assets.imageNotifications,
+                    width: double.infinity,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.center,
+                  ),
                 ),
               ),
               const Spacer(flex: 3),
@@ -87,12 +94,14 @@ class NotificationPermissionPage extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Column(
                   children: [
-                    Text(
-                      l10n.notificationPermissionsLabel,
-                      style: textTheme.labelMedium?.copyWith(
-                        color: colorScheme.onSurface,
+                    Semantics(
+                      child: Text(
+                        l10n.notificationPermissionsLabel,
+                        style: textTheme.labelMedium?.copyWith(
+                          color: colorScheme.onSurface,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     PrimaryButton(

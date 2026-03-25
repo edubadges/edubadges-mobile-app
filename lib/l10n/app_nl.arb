@@ -1136,5 +1136,24 @@
     "stackableFalse": "Nee, stand alone edubadge",
     "@stackableFalse": {
         "description": "Stackable field for badge class can be not stacked"
+    },
+    "semanticsClose": "Sluiten",
+    "semanticsBack": "Terug",
+    "semanticsClearSearch": "Zoekopdracht wissen",
+    "semanticsClearFilter": "Filter wissen",
+    "semanticsBadgeImage": "Badge-afbeelding",
+    "semanticsInstitutionLogo": "Logo van de instelling",
+    "semanticsImageNotSupported": "Afbeelding niet beschikbaar",
+    "semanticsBadgePublic": "Badge is openbaar. Tik om zichtbaarheid te wijzigen.",
+    "semanticsBadgePrivate": "Badge is privé. Tik om zichtbaarheid te wijzigen.",
+    "semanticsLogout": "Uitloggen",
+    "semanticsCopyLink": "Link kopiëren",
+    "semanticsError": "Fout",
+    "semanticsLoginIllustration": "Decoratieve illustratie",
+    "semanticsEnabled": "Ingeschakeld",
+    "semanticsDisabled": "Uitgeschakeld",
+    "semanticsLoading": "Laden...",
+    "@semanticsLoading": {
+        "description": "Accessibility label for loading indicator"
     }
 }

@@ -3,6 +3,7 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
@@ -54,23 +55,25 @@ class CollectionPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.collectionVisibleAndShareable,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
+                child: MergeSemantics(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.collectionVisibleAndShareable,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      l10n.publicCollectionRequires,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
+                      const SizedBox(height: 4),
+                      Text(
+                        l10n.publicCollectionRequires,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -78,6 +81,23 @@ class CollectionPage extends ConsumerWidget {
                 valueListenable: publicNotifier,
                 builder: (context, value, child) {
                   final isOn = value && canMakePublic;
+                  final onChanged = canMakePublic
+                      ? (bool state) async {
+                          publicNotifier.value = state;
+                          final success = await ref
+                              .read(collectionsProvider.notifier)
+                              .updateCollection(
+                                entityId: collection.entityId,
+                                name: collection.name,
+                                description: collection.description,
+                                public: state,
+                                badgeInstanceIds: collection.badgeInstanceIds,
+                              );
+                          if (!success) {
+                            publicNotifier.value = !state;
+                          }
+                        }
+                      : null;
                   return AnimatedIconSwitch(
                     value: isOn,
                     width: 44,
@@ -95,23 +115,10 @@ class CollectionPage extends ConsumerWidget {
                     activeIconSize: 16,
                     inactiveIconSize: 16,
                     borderRadius: 14,
-                    onChanged: canMakePublic
-                        ? (bool state) async {
-                            publicNotifier.value = state;
-                            final success = await ref
-                                .read(collectionsProvider.notifier)
-                                .updateCollection(
-                                  entityId: collection.entityId,
-                                  name: collection.name,
-                                  description: collection.description,
-                                  public: state,
-                                  badgeInstanceIds: collection.badgeInstanceIds,
-                                );
-                            if (!success) {
-                              publicNotifier.value = !state;
-                            }
-                          }
-                        : null,
+                    semanticLabel:
+                        '${l10n.collectionVisibleAndShareable}. '
+                        '${isOn ? l10n.semanticsEnabled : l10n.semanticsDisabled}',
+                    onChanged: onChanged,
                   );
                 },
               ),
@@ -131,25 +138,31 @@ class CollectionPage extends ConsumerWidget {
               if (!isPublicValue || !canMakePublic) {
                 return const SizedBox.shrink();
               }
+              void copyLink() {
+                final link =
+                    '${EnvironmentConfig.instance.publicCollectionBaseUrl}/${collection.entityId}';
+                Clipboard.setData(ClipboardData(text: link));
+                showAppSnackBar(context, l10n.linkCopied);
+              }
               return Column(
                 children: [
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        final link =
-                            '${EnvironmentConfig.instance.publicCollectionBaseUrl}/${collection.entityId}';
-                        Clipboard.setData(ClipboardData(text: link));
-                        showAppSnackBar(context, l10n.linkCopied);
-                      },
-                      icon: const Icon(Icons.copy, size: 20),
-                      label: Text(l10n.copyLink),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: colorScheme.primary,
-                        foregroundColor: colorScheme.onPrimary,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                    child: KeyboardActivatable(
+                      wrapWithSemantics: false,
+                      includeOuterTapTarget: false,
+                      onActivate: copyLink,
+                      child: ElevatedButton.icon(
+                        onPressed: copyLink,
+                        icon: const Icon(Icons.copy, size: 20),
+                        label: Text(l10n.copyLink),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colorScheme.primary,
+                          foregroundColor: colorScheme.onPrimary,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                       ),
                     ),
@@ -208,6 +221,7 @@ class CollectionPage extends ConsumerWidget {
                   assetPath: Assets.iconCollections,
                   size: screenWidth / 3,
                   color: colorScheme.primary,
+                  excludeFromSemantics: true,
                 ),
               ),
               const SizedBox(height: 32),
@@ -245,7 +259,13 @@ class CollectionPage extends ConsumerWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.add, color: colorScheme.onPrimary, size: 24),
+                        ExcludeSemantics(
+                          child: Icon(
+                            Icons.add,
+                            color: colorScheme.onPrimary,
+                            size: 24,
+                          ),
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           l10n.addEdubadge,
@@ -309,6 +329,7 @@ class CollectionPage extends ConsumerWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.primary),
           onPressed: () => context.pop(),
+          tooltip: l10n.semanticsBack,
         ),
         title: Text(
           collectionTitle,
@@ -352,6 +373,7 @@ class CollectionPage extends ConsumerWidget {
               size: 24,
               color: AppColors.primary,
             ),
+            tooltip: l10n.editCollection,
           ),
           IconButton(
             onPressed: () {
@@ -410,6 +432,7 @@ class CollectionPage extends ConsumerWidget {
               size: 24,
               color: AppColors.primary,
             ),
+            tooltip: l10n.delete,
           ),
         ],
       ),
@@ -471,7 +494,12 @@ class CollectionPage extends ConsumerWidget {
               return const SizedBox.shrink();
             }
           },
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => Center(
+            child: CircularProgressIndicator(
+              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+            ),
+          ),
+
           error: (error, stackTrace) => Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -61,9 +61,12 @@ class LinkText extends StatelessWidget {
       );
     }
 
-    return RichText(
-      textAlign: textAlign ?? TextAlign.start,
-      text: TextSpan(style: defaultStyle, children: textSpans),
+    return Semantics(
+      container: true,
+      child: RichText(
+        textAlign: textAlign ?? TextAlign.start,
+        text: TextSpan(style: defaultStyle, children: textSpans),
+      ),
     );
   }
 

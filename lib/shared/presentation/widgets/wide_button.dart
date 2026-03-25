@@ -1,5 +1,7 @@
 import 'package:edubadges/core/utils/color.dart';
+import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 
 class WideButton extends StatelessWidget {
   final Widget? icon;
@@ -7,6 +9,7 @@ class WideButton extends StatelessWidget {
   final Color? color;
   final bool secondary;
   final VoidCallback? onTap;
+  final SemanticsSortKey? semanticsSortKey;
   const WideButton({
     super.key,
     required this.text,
@@ -14,6 +17,7 @@ class WideButton extends StatelessWidget {
     this.color,
     this.secondary = false,
     this.onTap,
+    this.semanticsSortKey,
   });
 
   @override
@@ -22,41 +26,51 @@ class WideButton extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final mainColor = color ?? colorScheme.onPrimary;
 
-    return Semantics(
-      button: true,
+    return KeyboardActivatable(
+      wrapWithSemantics: false,
+      includeOuterTapTarget: false,
+      onActivate: onTap,
       enabled: onTap != null,
-      label: text,
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-        child: InkWell(
-          onTap: onTap,
+      child: Semantics(
+        sortKey: semanticsSortKey,
+        button: true,
+        enabled: onTap != null,
+        label: text,
+        onTap: onTap,
+        child: Material(
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(8),
-          child: Ink(
-            decoration: BoxDecoration(
-              color: secondary ? Colors.transparent : mainColor,
-              borderRadius: BorderRadius.circular(8),
-              border: BoxBorder.all(
-                color: secondary ? mainColor : Colors.transparent,
-                width: 2,
-              ),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 13),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 8,
-              children: [
-                if (icon != null) icon!,
-                Text(
-                  text,
-                  style: textTheme.labelLarge?.copyWith(
-                    color: secondary
-                        ? mainColor
-                        : getContrastingTextColor(mainColor),
-                  ),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(8),
+            child: Ink(
+              decoration: BoxDecoration(
+                color: secondary ? Colors.transparent : mainColor,
+                borderRadius: BorderRadius.circular(8),
+                border: BoxBorder.all(
+                  color: secondary ? mainColor : Colors.transparent,
+                  width: 2,
                 ),
-              ],
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 13),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 8,
+                children: [
+                  if (icon != null) ExcludeSemantics(child: icon),
+                  ExcludeSemantics(
+                    child: Text(
+                      text,
+                      style: textTheme.labelLarge?.copyWith(
+                        color: secondary
+                            ? mainColor
+                            : getContrastingTextColor(mainColor),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -169,33 +169,48 @@ class AdaptiveDialog extends StatelessWidget {
       title: Text(title, style: Theme.of(context).textTheme.headlineSmall),
       content: _buildContent(context),
       actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-            onFirstButtonPressed();
-          },
-          child: Text(
-            localizedFirstButtonText,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-            onSecondButtonPressed();
-          },
-          style: TextButton.styleFrom(
-            foregroundColor: isDestructiveAction
-                ? AppColors.error
-                : AppColors.primary,
-          ),
-          child: Text(
-            secondButtonText,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: isDestructiveAction ? AppColors.error : AppColors.primary,
-            ),
+        FocusTraversalGroup(
+          policy: OrderedTraversalPolicy(),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FocusTraversalOrder(
+                order: const NumericFocusOrder(1),
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    onFirstButtonPressed();
+                  },
+                  child: Text(
+                    localizedFirstButtonText,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+              FocusTraversalOrder(
+                order: const NumericFocusOrder(2),
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    onSecondButtonPressed();
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: isDestructiveAction
+                        ? AppColors.error
+                        : AppColors.primary,
+                  ),
+                  child: Text(
+                    secondButtonText,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color:
+                          isDestructiveAction ? AppColors.error : AppColors.primary,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],

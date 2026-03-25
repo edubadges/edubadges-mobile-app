@@ -90,7 +90,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: SvgPicture.asset(Assets.imageLogo),
+        title: Semantics(
+          label: l10n.appName,
+          child: SvgPicture.asset(Assets.imageLogo),
+        ),
         centerTitle: true,
       ),
       body: MaxWidthWrapper(
@@ -100,21 +103,26 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  l10n.loginTitle,
-                  style: textTheme.titleLarge?.copyWith(
-                    color: colorScheme.onSurface,
+                Semantics(
+                  header: true,
+                  child: Text(
+                    l10n.loginTitle,
+                    style: textTheme.titleLarge?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
                   ),
                 ),
 
                 const SizedBox(height: 12),
 
-                Text(
-                  l10n.loginSubtitle,
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurface,
+                Semantics(
+                  child: Text(
+                    l10n.loginSubtitle,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: .center,
                 ),
 
                 const SizedBox(height: 40),
@@ -150,6 +158,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                       fit: BoxFit.contain,
                                       width: 80,
                                       height: 80,
+                                      excludeFromSemantics: true,
                                     ),
                                   ],
                                 ),
@@ -165,7 +174,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           style: textTheme.bodyMedium?.copyWith(
                             color: colorScheme.onSurface,
                           ),
-                          textAlign: .center,
+                          textAlign: TextAlign.center,
                         ),
 
                         const SizedBox(height: 24),
@@ -196,8 +205,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               elevation: 0,
                             ),
                             child: authAsync.isLoading
-                                ? const CircularProgressIndicator(
+                                ? CircularProgressIndicator(
                                     color: Colors.white,
+                                    semanticsLabel: AppLocalizations.of(
+                                      context,
+                                    ).semanticsLoading,
                                   )
                                 : Text(
                                     l10n.loginCardButton,

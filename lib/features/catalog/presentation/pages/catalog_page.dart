@@ -1,3 +1,4 @@
+import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
@@ -52,6 +53,7 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.tabCatalog)),
       body: GestureDetector(
+        excludeFromSemantics: true,
         onTap: () {
           FocusScope.of(context).unfocus();
         },
@@ -93,22 +95,27 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
                     SliverFillRemaining(
                       hasScrollBody: false,
                       child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.search_off,
-                              size: 48,
-                              color: colorScheme.primary,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              state.isSearching
-                                  ? l10n.catalogNoSearchResults
-                                  : l10n.catalogNoBadgesAvailable,
-                              style: textTheme.bodyMedium,
-                            ),
-                          ],
+                        child: MergeSemantics(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ExcludeSemantics(
+                                child: Icon(
+                                  Icons.search_off,
+                                  size: 48,
+                                  color: colorScheme.primary,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                state.isSearching
+                                    ? l10n.catalogNoSearchResults
+                                    : l10n.catalogNoBadgesAvailable,
+                                style: textTheme.bodyMedium,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     )
@@ -120,24 +127,39 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
                           (context, index) {
                             if (index < displayBadges.length) {
                               final badge = displayBadges[index];
+                              void openBadgeDetails() {
+                                final routeModel = BadgeDetailsRouteModel(
+                                  id: badge.entityId,
+                                  from: BadgeDetailsRouteFrom.catalog,
+                                );
+                                context.push(routeModel.buildRouteUrl());
+                              }
+
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 8),
-                                child: CatalogBadgeCard(
-                                  badge: badge,
-                                  onTap: () {
-                                    final routeModel = BadgeDetailsRouteModel(
-                                      id: badge.entityId,
-                                      from: BadgeDetailsRouteFrom.catalog,
-                                    );
-                                    context.push(routeModel.buildRouteUrl());
-                                  },
+                                child: FocusTraversalOrder(
+                                  order: NumericFocusOrder(index.toDouble()),
+                                  child: KeyboardActivatable(
+                                    key: ValueKey('catalog_badge_${badge.entityId}'),
+                                    wrapWithSemantics: false,
+                                    includeOuterTapTarget: false,
+                                    onActivate: openBadgeDetails,
+                                    child: CatalogBadgeCard(
+                                      badge: badge,
+                                      onTap: openBadgeDetails,
+                                    ),
+                                  ),
                                 ),
                               );
                             } else if (state.hasMore) {
-                              return const Padding(
-                                padding: EdgeInsets.all(16),
+                              return Padding(
+                                padding: const EdgeInsets.all(16),
                                 child: Center(
-                                  child: CircularProgressIndicator(),
+                                  child: CircularProgressIndicator(
+                                    semanticsLabel: AppLocalizations.of(
+                                      context,
+                                    ).semanticsLoading,
+                                  ),
                                 ),
                               );
                             }
@@ -153,10 +175,16 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
                 ],
               );
             },
-            loading: () => const CustomScrollView(
+            loading: () => CustomScrollView(
               slivers: [
                 SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      semanticsLabel: AppLocalizations.of(
+                        context,
+                      ).semanticsLoading,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -164,9 +192,7 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
               slivers: [
                 SliverFillRemaining(
                   hasScrollBody: false,
-                  child: Center(
-                    child: ErrorMessageWidget(),
-                  ),
+                  child: Center(child: ErrorMessageWidget()),
                 ),
               ],
             ),

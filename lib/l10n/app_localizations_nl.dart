@@ -969,4 +969,54 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get stackableFalse => 'Nee, stand alone edubadge';
+
+  @override
+  String get semanticsClose => 'Sluiten';
+
+  @override
+  String get semanticsBack => 'Terug';
+
+  @override
+  String get semanticsClearSearch => 'Zoekopdracht wissen';
+
+  @override
+  String get semanticsClearFilter => 'Filter wissen';
+
+  @override
+  String get semanticsBadgeImage => 'Badge-afbeelding';
+
+  @override
+  String get semanticsInstitutionLogo => 'Logo van de instelling';
+
+  @override
+  String get semanticsImageNotSupported => 'Afbeelding niet beschikbaar';
+
+  @override
+  String get semanticsBadgePublic =>
+      'Badge is openbaar. Tik om zichtbaarheid te wijzigen.';
+
+  @override
+  String get semanticsBadgePrivate =>
+      'Badge is privé. Tik om zichtbaarheid te wijzigen.';
+
+  @override
+  String get semanticsLogout => 'Uitloggen';
+
+  @override
+  String get semanticsCopyLink => 'Link kopiëren';
+
+  @override
+  String get semanticsError => 'Fout';
+
+  @override
+  String get semanticsLoginIllustration => 'Decoratieve illustratie';
+
+  @override
+  String get semanticsEnabled => 'Ingeschakeld';
+
+  @override
+  String get semanticsDisabled => 'Uitgeschakeld';
+
+  @override
+  String get semanticsLoading => 'Laden...';
 }

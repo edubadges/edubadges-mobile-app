@@ -1,5 +1,7 @@
 import 'package:edubadges/app/colors.dart';
+import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 
 void showAppSnackBar(
   BuildContext context,
@@ -9,6 +11,11 @@ void showAppSnackBar(
   final theme = Theme.of(context);
   final colorScheme = theme.colorScheme;
 
+  SemanticsService.sendAnnouncement(
+    View.of(context),
+    message,
+    Directionality.of(context),
+  );
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Row(
@@ -32,6 +39,7 @@ void showAppSnackBar(
             onPressed: () {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
             },
+            tooltip: AppLocalizations.of(context).semanticsClose,
           ),
         ],
       ),
