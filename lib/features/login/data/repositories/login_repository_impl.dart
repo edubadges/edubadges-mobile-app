@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:edubadges/core/errors/exceptions.dart';
 import 'package:edubadges/core/errors/failures.dart';
+import 'package:edubadges/core/errors/repository_guard.dart';
 import 'package:edubadges/features/login/data/datasources/login_datasource.dart';
 import 'package:edubadges/features/login/data/datasources/login_remote_datasource.dart';
 import 'package:edubadges/features/login/data/models/login_user_status.dart';
@@ -14,46 +14,41 @@ class LoginRepositoryImpl implements LoginRepository {
 
   @override
   Future<Either<Failure, void>> login() async {
-    try {
-      await loginDataSource.login();
-      final status = await remoteDataSource.login();
+    return repositoryGuard<void>(
+      () async {
+        await loginDataSource.login();
+        final status = await remoteDataSource.login();
 
-      // If required, perform a second login with specific acr_values.
-      // This should trigger the system to let the user complete the registration flow.
-      if (status is LoginLinkAccountRequired || status is LoginRevalidateNameRequired) {
-        await loginDataSource.login(addAcrValues: true);
-        await remoteDataSource.login();
-      }
+        // If required, perform a second login with specific acr_values.
+        // This should trigger the system to let the user complete the registration flow.
+        if (status is LoginLinkAccountRequired ||
+            status is LoginRevalidateNameRequired) {
+          await loginDataSource.login(addAcrValues: true);
+          await remoteDataSource.login();
+        }
 
-      return const Right(null);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    }
+        return;
+      },
+      logMessage: 'Failed to login',
+    );
   }
 
   @override
   Future<Either<Failure, void>> logout() async {
-    try {
-      await loginDataSource.logout();
-      return const Right(null);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    }
+    return repositoryGuard<void>(
+      () async {
+        await loginDataSource.logout();
+        return;
+      },
+      logMessage: 'Failed to logout',
+    );
   }
 
   @override
   Future<Either<Failure, bool>> isLoggedIn() async {
-    try {
-      final isLoggedIn = await loginDataSource.isLoggedIn();
-      return Right(isLoggedIn);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    }
+    return repositoryGuard<bool>(
+      () => loginDataSource.isLoggedIn(),
+      logMessage: 'Failed to check login status',
+    );
   }
 }

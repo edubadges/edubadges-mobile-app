@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:edubadges/core/errors/exceptions.dart';
 import 'package:edubadges/core/errors/failures.dart';
+import 'package:edubadges/core/errors/repository_guard.dart';
+import 'package:edubadges/core/network/errors/exceptions.dart';
 import 'package:edubadges/features/badges_overview/data/datasources/badges_overview_datasource.dart';
 import 'package:edubadges/features/badges_overview/domain/entities/direct_award_detail_entity.dart';
 import 'package:edubadges/features/badges_overview/domain/repositories/badges_overview_repository.dart';
@@ -13,85 +14,67 @@ class BadgesOverviewRepositoryImpl implements BadgesOverviewRepository {
 
   @override
   Future<Either<Failure, List<BadgeInstanceEntity>>> getBadgeInstances() async {
-    try {
-      final models = await badgesOverviewDataSource.getBadgeInstances();
-      return Right(models);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    }
+    return repositoryGuard<List<BadgeInstanceEntity>>(
+      () => badgesOverviewDataSource.getBadgeInstances(),
+      logMessage: 'Failed to fetch badge instances',
+    );
   }
 
   @override
   Future<Either<Failure, List<BadgeInstanceEntity>>> getDirectAwards() async {
-    try {
-      final models = await badgesOverviewDataSource.getDirectAwards();
-      return Right(models);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    }
+    return repositoryGuard<List<BadgeInstanceEntity>>(
+      () => badgesOverviewDataSource.getDirectAwards(),
+      logMessage: 'Failed to fetch direct awards',
+    );
   }
 
   @override
   Future<Either<Failure, DirectAwardDetailEntity>> getDirectAwardByEntityId(
     String entityId,
   ) async {
-    try {
-      final model =
-          await badgesOverviewDataSource.getDirectAwardByEntityId(entityId);
-      if (model == null) {
-        return Left(const ServerFailure('Direct award not found', 404));
-      }
-      return Right(model);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } catch (e) {
-      return Left(ServerFailure(e.toString(), 500));
-    }
+    return repositoryGuard<DirectAwardDetailEntity>(
+      () async {
+        final model =
+            await badgesOverviewDataSource.getDirectAwardByEntityId(entityId);
+        if (model == null) {
+          throw const ServerException(
+            message: 'Direct award not found',
+            statusCode: 404,
+          );
+        }
+        return model;
+      },
+      logMessage: 'Failed to fetch direct award by entity id',
+    );
   }
 
   @override
   Future<Either<Failure, List<BadgeInstanceEntity>>> getEnrollments() async {
-    try {
-      final models = await badgesOverviewDataSource.getEnrollments();
-      return Right(models);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    }
+    return repositoryGuard<List<BadgeInstanceEntity>>(
+      () => badgesOverviewDataSource.getEnrollments(),
+      logMessage: 'Failed to fetch enrollments',
+    );
   }
 
   @override
   Future<Either<Failure, void>> claimBadge(String entityId) async {
-    try {
-      await badgesOverviewDataSource.claimBadge(entityId);
-      return const Right(null);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } catch (e) {
-      return Left(ServerFailure(e.toString(), 500));
-    }
+    return repositoryGuard<void>(
+      () async {
+        await badgesOverviewDataSource.claimBadge(entityId);
+        return;
+      },
+      logMessage: 'Failed to claim badge',
+    );
   }
 
   @override
   Future<Either<Failure, void>> declineBadge(String entityId) async {
-    try {
-      await badgesOverviewDataSource.declineBadge(entityId);
-      return const Right(null);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    } catch (e) {
-      return Left(ServerFailure(e.toString(), 500));
-    }
+    return repositoryGuard<void>(
+      () async {
+        await badgesOverviewDataSource.declineBadge(entityId);
+        return;
+      },
+      logMessage: 'Failed to decline badge',
+    );
   }
 }

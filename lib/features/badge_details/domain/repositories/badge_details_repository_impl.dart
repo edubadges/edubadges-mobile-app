@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:edubadges/core/errors/failures.dart';
-import 'package:edubadges/core/network/errors/exceptions.dart';
+import 'package:edubadges/core/errors/repository_guard.dart';
 import 'package:edubadges/features/badge_details/data/datasources/badge_details_datasource.dart';
 import 'package:edubadges/features/badge_details/domain/repositories/badge_details_repository.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
@@ -15,40 +15,31 @@ class BadgeDetailsRepositoryImpl implements BadgeDetailsRepository {
   Future<Either<Failure, BadgeClassModel>> getBadgeDetails(
     String entityId,
   ) async {
-    try {
-      final badge = await dataSource.getBadgeDetails(entityId);
-      return Right(badge);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    }
+    return repositoryGuard<BadgeClassModel>(
+      () => dataSource.getBadgeDetails(entityId),
+      logMessage: 'Failed to fetch badge details',
+    );
   }
 
   @override
   Future<Either<Failure, BadgeInstanceModel>> getBadgeInstance(
     String entityId,
   ) async {
-    try {
-      final badge = await dataSource.getBadgeInstance(entityId);
-      return Right(badge);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    }
+    return repositoryGuard<BadgeInstanceModel>(
+      () => dataSource.getBadgeInstance(entityId),
+      logMessage: 'Failed to fetch badge instance',
+    );
   }
 
   @override
   Future<Either<Failure, void>> enroll(String badgeclassSlug) async {
-    try {
-      await dataSource.enroll(badgeclassSlug);
-      return const Right(null);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    }
+    return await repositoryGuard<void>(
+      () async {
+        await dataSource.enroll(badgeclassSlug);
+        return;
+      },
+      logMessage: 'Failed to enroll in badge',
+    );
   }
 
   @override
@@ -58,18 +49,17 @@ class BadgeDetailsRepositoryImpl implements BadgeDetailsRepository {
     required bool includeEvidence,
     required bool includeGradeAchieved,
   }) async {
-    try {
-      await dataSource.updateBadgeVisibility(
-        entityId,
-        isPublic: isPublic,
-        includeEvidence: includeEvidence,
-        includeGradeAchieved: includeGradeAchieved,
-      );
-      return const Right(null);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    }
+    return repositoryGuard<void>(
+      () async {
+        await dataSource.updateBadgeVisibility(
+          entityId,
+          isPublic: isPublic,
+          includeEvidence: includeEvidence,
+          includeGradeAchieved: includeGradeAchieved,
+        );
+        return;
+      },
+      logMessage: 'Failed to update badge visibility',
+    );
   }
 }

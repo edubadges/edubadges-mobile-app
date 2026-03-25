@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
@@ -58,7 +60,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         detailAsync.hasError || detail == null || !detail.userHasAcceptedTerms;
     if (needsPrivacyPage) {
       if (context.mounted) {
-        context.push(RoutePath.badgePrivacy, extra: {'id': widget.badgeId});
+        unawaited(context.push(RoutePath.badgePrivacy, extra: {'id': widget.badgeId}));
       }
       return;
     }

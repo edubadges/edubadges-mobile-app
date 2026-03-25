@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:edubadges/core/errors/exceptions.dart';
 import 'package:edubadges/core/errors/failures.dart';
+import 'package:edubadges/core/errors/repository_guard.dart';
 import 'package:edubadges/features/account/data/datasources/account_datasource.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/features/account/domain/repositories/account_repository.dart';
@@ -12,37 +12,31 @@ class AccountRepositoryImpl implements AccountRepository {
 
   @override
   Future<Either<Failure, ProfileEntity>> getProfile() async {
-    try {
-      final profile = await accountDataSource.getProfile();
-      return Right(profile);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    }
+    return repositoryGuard<ProfileEntity>(
+      () => accountDataSource.getProfile(),
+      logMessage: 'Failed to fetch profile',
+    );
   }
 
   @override
   Future<Either<Failure, bool>> deleteProfile() async {
-    try {
-      await accountDataSource.deleteProfile();
-      return const Right(true);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    }
+    return repositoryGuard<bool>(
+      () async {
+        await accountDataSource.deleteProfile();
+        return true;
+      },
+      logMessage: 'Failed to delete profile',
+    );
   }
 
   @override
   Future<Either<Failure, void>> rejectTerms(String entityId) async {
-    try {
-      await accountDataSource.rejectTerms(entityId);
-      return const Right(null);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(e.message, e.statusCode));
-    } on NetworkException catch (e) {
-      return Left(NetworkFailure(e.message));
-    }
+    return await repositoryGuard<void>(
+      () async {
+        await accountDataSource.rejectTerms(entityId);
+        return;
+      },
+      logMessage: 'Failed to reject terms',
+    );
   }
 }
