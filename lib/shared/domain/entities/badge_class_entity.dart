@@ -13,8 +13,8 @@ class BadgeClassEntity extends Equatable {
   final String image;
   final String? description;
   final bool? formal;
-  final ParticipationType? participation;
-  final AssessmentType? assessmentType;
+  final List<ParticipationType>? participation;
+  final List<AssessmentType>? assessmentType;
   final bool? assessmentIdVerified;
   final bool? assessmentSupervised;
   final bool selfEnrollmentEnabled;

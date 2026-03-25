@@ -12,7 +12,7 @@ enum ParticipationType {
 
   static ParticipationType? fromString(String? value) {
     if (value == null) return null;
-    
+
     try {
       return ParticipationType.values.firstWhere(
         (type) => type.value == value,
@@ -20,6 +20,18 @@ enum ParticipationType {
     } catch (_) {
       return null;
     }
+  }
+
+  static List<ParticipationType>? fromCommaSeparatedString(String? value) {
+    if (value == null || value.trim().isEmpty) return null;
+    final list = value
+        .split(',')
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .map(fromString)
+        .whereType<ParticipationType>()
+        .toList();
+    return list.isEmpty ? null : list;
   }
 }
 
