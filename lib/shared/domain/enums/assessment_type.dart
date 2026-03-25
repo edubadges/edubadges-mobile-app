@@ -16,7 +16,7 @@ enum AssessmentType {
 
   static AssessmentType? fromString(String? value) {
     if (value == null) return null;
-    
+
     try {
       return AssessmentType.values.firstWhere(
         (type) => type.value == value,
@@ -24,6 +24,18 @@ enum AssessmentType {
     } catch (_) {
       return null;
     }
+  }
+
+  static List<AssessmentType>? fromCommaSeparatedString(String? value) {
+    if (value == null || value.trim().isEmpty) return null;
+    final list = value
+        .split(',')
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .map(fromString)
+        .whereType<AssessmentType>()
+        .toList();
+    return list.isEmpty ? null : list;
   }
 }
 

@@ -35,8 +35,12 @@ class BadgeClassModel extends BadgeClassEntity {
       image: json['image'] as String,
       description: json['description'] as String?,
       formal: json['formal'] as bool?,
-      participation: ParticipationType.fromString(json['participation'] as String?),
-      assessmentType: AssessmentType.fromString(json['assessment_type'] as String?),
+      participation: ParticipationType.fromCommaSeparatedString(
+        json['participation'] as String?,
+      ),
+      assessmentType: AssessmentType.fromCommaSeparatedString(
+        json['assessment_type'] as String?,
+      ),
       assessmentIdVerified: json['assessment_id_verified'] as bool?,
       assessmentSupervised: json['assessment_supervised'] as bool?,
       selfEnrollmentEnabled: (json['self_enrollment_enabled'] as bool?) ?? false,
@@ -63,8 +67,10 @@ class BadgeClassModel extends BadgeClassEntity {
       'image': image,
       if (description != null) 'description': description,
       if (formal != null) 'formal': formal,
-      if (participation != null) 'participation': participation!.value,
-      if (assessmentType != null) 'assessment_type': assessmentType!.value,
+      if (participation != null && participation!.isNotEmpty)
+        'participation': participation!.map((e) => e.value).join(','),
+      if (assessmentType != null && assessmentType!.isNotEmpty)
+        'assessment_type': assessmentType!.map((e) => e.value).join(','),
       if (assessmentIdVerified != null) 'assessment_id_verified': assessmentIdVerified,
       if (assessmentSupervised != null) 'assessment_supervised': assessmentSupervised,
       'self_enrollment_enabled': selfEnrollmentEnabled,

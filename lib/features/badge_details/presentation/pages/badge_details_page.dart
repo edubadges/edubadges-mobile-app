@@ -405,11 +405,13 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                 title: l10n.indicativeLevel,
                 subtitle: 'EQF $eQF',
               ),
-            if (participation != null)
+            if (participation != null && participation.isNotEmpty)
               BadgeDetailItemModel(
                 icon: Assets.iconBadgeFormParticipation,
                 title: l10n.formOfParticipation,
-                subtitle: participation.getLocalizedName(l10n),
+                subtitle: participation
+                    .map((p) => p.getLocalizedName(l10n))
+                    .join(', '),
               ),
             if (stackable != null)
               BadgeDetailItemModel(
@@ -427,11 +429,13 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           child: _buildSectionCard(
             title: l10n.badgeTheAssessment,
             items: [
-              if (assessmentType != null)
+              if (assessmentType != null && assessmentType.isNotEmpty)
                 BadgeDetailItemModel(
                   icon: Assets.iconBadgeIndicatief,
                   title: l10n.assessmentType,
-                  subtitle: assessmentType.getLocalizedName(l10n),
+                  subtitle: assessmentType
+                      .map((a) => a.getLocalizedName(l10n))
+                      .join(', '),
                 ),
               if (supervisedStatus != null)
                 BadgeDetailItemModel(
