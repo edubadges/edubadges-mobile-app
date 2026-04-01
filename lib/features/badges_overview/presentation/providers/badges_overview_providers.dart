@@ -72,9 +72,12 @@ class BadgesOverviewNotifier extends AsyncNotifier<BadgesOverviewState> {
     );
   }
 
-  /// Refresh the badge instances list
-  Future<void> refresh() async {
-    state = const AsyncLoading();
+  /// Refresh the badge instances list.
+  /// Set [silent] to keep current data visible while refreshing.
+  Future<void> refresh({bool silent = true}) async {
+    if (!silent) {
+      state = const AsyncLoading();
+    }
     try {
       final repository = ref.read(badgesOverviewRepositoryProvider);
 
@@ -111,7 +114,9 @@ class BadgesOverviewNotifier extends AsyncNotifier<BadgesOverviewState> {
         ),
       );
     } catch (error, stackTrace) {
-      state = AsyncError(error, stackTrace);
+      if (!silent || !state.hasValue) {
+        state = AsyncError(error, stackTrace);
+      }
     }
   }
 }

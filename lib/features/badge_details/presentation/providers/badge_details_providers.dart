@@ -112,7 +112,7 @@ final enrollBadgeProvider =
         final result = await repository.enroll(badgeclassSlug);
 
         return result.fold((failure) => false, (_) {
-          ref.invalidate(badgesOverviewProvider);
+          ref.read(badgesOverviewProvider.notifier).refresh();
           ref.invalidate(badgeDetailsModelProvider);
           ref.invalidate(badgeDetailsProvider(badgeclassSlug));
           return true;
@@ -144,9 +144,9 @@ final updateBadgeVisibilityProvider =
         );
 
         return result.fold((failure) => false, (_) {
-          ref.invalidate(collectionsProvider);
+          ref.read(collectionsProvider.notifier).refresh();
           ref.invalidate(badgeDetailsProvider(entityId));
-          ref.invalidate(badgesOverviewProvider);
+          ref.read(badgesOverviewProvider.notifier).refresh();
           return true;
         });
       };

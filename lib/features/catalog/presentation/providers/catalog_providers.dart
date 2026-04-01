@@ -101,13 +101,17 @@ class CatalogNotifier extends AsyncNotifier<CatalogState> {
     }
   }
 
-  Future<void> refresh() async {
-    state = const AsyncLoading();
+  Future<void> refresh({bool silent = true}) async {
+    if (!silent) {
+      state = const AsyncLoading();
+    }
     try {
       final newState = await _loadCatalogBadges(page: 1);
       state = AsyncData(newState);
     } catch (error, stackTrace) {
-      state = AsyncError(error, stackTrace);
+      if (!silent || !state.hasValue) {
+        state = AsyncError(error, stackTrace);
+      }
     }
   }
 

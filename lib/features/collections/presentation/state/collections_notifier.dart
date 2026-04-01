@@ -37,8 +37,10 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
     }).toList();
   }
 
-  Future<void> refresh() async {
-    state = const AsyncLoading();
+  Future<void> refresh({bool silent = true}) async {
+    if (!silent) {
+      state = const AsyncLoading();
+    }
     try {
       final badgesState = await ref.read(badgesOverviewProvider.future);
       final badgeInstances = [
@@ -70,7 +72,9 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
 
       state = AsyncData(collectionsWithBadges);
     } catch (error, stackTrace) {
-      state = AsyncError(error, stackTrace);
+      if (!silent || !state.hasValue) {
+        state = AsyncError(error, stackTrace);
+      }
     }
   }
 
