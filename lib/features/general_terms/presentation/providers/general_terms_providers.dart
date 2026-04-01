@@ -10,7 +10,7 @@ final generalTermsDataSourceProvider = Provider<GeneralTermsDataSource>((ref) {
 });
 
 // Provider that accepts a URL and fetches the markdown content from it.
-final markdownContentProvider = FutureProvider.family<String, String>((ref, url) async {
+final markdownContentProvider = FutureProvider.autoDispose.family<String, String>((ref, url) async {
   final dio = Dio();
   final response = await dio.get<String>(url);
 

@@ -9,7 +9,7 @@ final externalContentDioProvider = Provider<Dio>((ref) {
   return dio;
 });
 
-final markdownFetcherProvider = FutureProvider.family<String, String>(
+final markdownFetcherProvider = FutureProvider.autoDispose.family<String, String>(
   (ref, url) async {
     // Use a clean Dio instance without API interceptors for external content (fixes some content loading issues)
     final dio = ref.read(externalContentDioProvider);

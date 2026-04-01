@@ -38,14 +38,19 @@ class ProfileNotifier extends AsyncNotifier<ProfileEntity?> {
     return result.fold((failure) => throw failure, (profile) => profile);
   }
 
-  Future<void> refresh() async {
-    state = const AsyncLoading();
+  Future<void> refresh({bool silent = true}) async {
+    if (!silent) {
+      state = const AsyncLoading();
+    }
     final accountRepository = ref.read(accountRepositoryProvider);
     final result = await accountRepository.getProfile();
-    state = result.fold(
-      (failure) => AsyncError(failure, StackTrace.current),
-      (profile) => AsyncData(profile),
-    );
+    result.fold((failure) {
+      if (!silent || !state.hasValue) {
+        state = AsyncError(failure, StackTrace.current);
+      }
+    }, (profile) {
+      state = AsyncData(profile);
+    });
   }
 }
 
@@ -78,6 +83,22 @@ class NotificationEnabledNotifier extends AsyncNotifier<bool> {
       state = AsyncData(enabled);
     } else {
       throw NotificationPermissionDeniedException();
+    }
+  }
+
+  Future<void> refresh({bool silent = true}) async {
+    if (!silent) {
+      state = const AsyncLoading();
+    }
+    try {
+      final active = await ref
+          .read(deviceRegistrationServiceProvider)
+          .getNotificationActive();
+      state = AsyncData(active ?? false);
+    } catch (error, stackTrace) {
+      if (!silent || !state.hasValue) {
+        state = AsyncError(error, stackTrace);
+      }
     }
   }
 }

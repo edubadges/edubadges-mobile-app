@@ -19,21 +19,21 @@ final collectionsRepositoryProvider = Provider<CollectionsRepository>((ref) {
   return CollectionsRepositoryImpl(dataSource);
 });
 
-final deleteCollectionUseCaseProvider = Provider<DeleteCollectionUseCase>((
+final deleteCollectionUseCaseProvider = Provider.autoDispose<DeleteCollectionUseCase>((
   ref,
 ) {
   final repository = ref.read(collectionsRepositoryProvider);
   return DeleteCollectionUseCase(repository: repository);
 });
 
-final updateCollectionUseCaseProvider = Provider<UpdateCollectionUseCase>((
+final updateCollectionUseCaseProvider = Provider.autoDispose<UpdateCollectionUseCase>((
   ref,
 ) {
   final repository = ref.read(collectionsRepositoryProvider);
   return UpdateCollectionUseCase(repository: repository);
 });
 
-final createCollectionUseCaseProvider = Provider<CreateCollectionUseCase>((
+final createCollectionUseCaseProvider = Provider.autoDispose<CreateCollectionUseCase>((
   ref,
 ) {
   final repository = ref.read(collectionsRepositoryProvider);

@@ -15,7 +15,7 @@ final catalogInstitutionRepositoryProvider = Provider<CatalogInstitutionReposito
   return CatalogInstitutionRepositoryImpl(datasource);
 });
 
-final catalogInstitutionsProvider = FutureProvider<List<CatalogInstitution>>((ref) async {
+final catalogInstitutionsProvider = FutureProvider.autoDispose<List<CatalogInstitution>>((ref) async {
   final repository = ref.read(catalogInstitutionRepositoryProvider);
   final result = await repository.getCatalogInstitutions();
   return result.fold(
