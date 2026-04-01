@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/core/utils/string.dart';
@@ -352,11 +353,20 @@ class BadgeCard extends ConsumerWidget {
         text: l10n.badgeRequestButton,
         icon: null,
         onTap: () async {
-          final enrolled = await ref.read(enrollBadgeProvider)(
-            badgeClass.entityId,
-          );
-          if (!enrolled && context.mounted) {
-            showAppSnackBar(context, l10n.somethingWentWrong);
+          try {
+            final enrolled = await ref.read(enrollBadgeProvider)(
+              badgeClass.entityId,
+            );
+            if (!enrolled && context.mounted) {
+              showAppSnackBar(context, l10n.somethingWentWrong);
+            }
+          } catch (error) {
+            if (!context.mounted) return;
+            final errorMessage = switch (error) {
+              Failure(:final message) => message,
+              _ => error.toString(),
+            };
+            showAppSnackBar(context, errorMessage);
           }
         },
         color: colorScheme.primary,
