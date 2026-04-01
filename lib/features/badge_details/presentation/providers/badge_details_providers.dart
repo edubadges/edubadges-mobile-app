@@ -84,7 +84,7 @@ final badgeDetailsModelProvider = FutureProvider.autoDispose
       return null;
     });
 
-final badgeByIdProvider = Provider.family<BadgeInstanceEntity?, String>((
+final badgeByIdProvider = Provider.autoDispose.family<BadgeInstanceEntity?, String>((
   ref,
   badgeId,
 ) {
