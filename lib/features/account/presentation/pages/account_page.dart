@@ -2,6 +2,7 @@ import 'package:app_settings/app_settings.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/branding.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/core/utils/string.dart';
@@ -231,20 +232,8 @@ class AccountPage extends ConsumerWidget {
               notificationAsync.when(
                 data: (enabled) => Switch(
                   value: enabled,
-                  onChanged: (value) async {
-                    try {
-                      await ref
-                          .read(notificationEnabledProvider.notifier)
-                          .setEnabled(value);
-                    } on NotificationPermissionDeniedException catch (_) {
-                      if (context.mounted) {
-                        await _showNotificationPermissionDeniedDialog(
-                          context,
-                          ref,
-                        );
-                      }
-                    }
-                  },
+                  onChanged: (value) =>
+                      _handleNotificationToggle(context, ref, value),
                   activeThumbColor: colorScheme.surfaceContainer,
                   activeTrackColor: colorScheme.primary,
                 ),
@@ -256,20 +245,8 @@ class AccountPage extends ConsumerWidget {
                 ),
                 error: (_, _) => Switch(
                   value: false,
-                  onChanged: (value) async {
-                    try {
-                      await ref
-                          .read(notificationEnabledProvider.notifier)
-                          .setEnabled(value);
-                    } on NotificationPermissionDeniedException catch (_) {
-                      if (context.mounted) {
-                        await _showNotificationPermissionDeniedDialog(
-                          context,
-                          ref,
-                        );
-                      }
-                    }
-                  },
+                  onChanged: (value) =>
+                      _handleNotificationToggle(context, ref, value),
                   activeThumbColor: colorScheme.surfaceContainer,
                   activeTrackColor: colorScheme.primary,
                 ),
@@ -279,6 +256,27 @@ class AccountPage extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _handleNotificationToggle(
+    BuildContext context,
+    WidgetRef ref,
+    bool value,
+  ) async {
+    try {
+      await ref.read(notificationEnabledProvider.notifier).setEnabled(value);
+    } on NotificationPermissionDeniedException catch (_) {
+      if (context.mounted) {
+        await _showNotificationPermissionDeniedDialog(context, ref);
+      }
+    } catch (error) {
+      if (!context.mounted) return;
+      final message = switch (error) {
+        Failure(:final message) => message,
+        _ => error.toString(),
+      };
+      showAppSnackBar(context, message);
+    }
   }
 
   String _formatAgreementDateText(
