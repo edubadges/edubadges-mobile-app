@@ -55,16 +55,12 @@ class _EmptyState extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                final uri = Uri.parse(RoutePath.newCollectionBadgeSelection)
-                    .replace(
-                      queryParameters: {
-                        'name': collectionName,
-                        if (collectionDescription != null &&
-                            collectionDescription!.isNotEmpty)
-                          'description': collectionDescription,
-                      },
-                    );
-                context.push(uri.toString());
+                context.push(
+                  RoutePath.newCollectionBadgeSelectionUri(
+                    name: collectionName,
+                    description: collectionDescription,
+                  ).toString(),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: colorScheme.primary,

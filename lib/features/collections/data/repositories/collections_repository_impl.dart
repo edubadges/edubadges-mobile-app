@@ -89,6 +89,43 @@ class CollectionsRepositoryImpl implements CollectionsRepository {
   }
 
   @override
+  Future<Either<Failure, void>> patchCollection({
+    required String entityId,
+    String? name,
+    String? description,
+    bool? public,
+    List<String>? badgeInstanceIds,
+  }) async {
+    try {
+      final data = <String, dynamic>{};
+      if (name != null) data['name'] = name;
+      if (description != null) data['description'] = description;
+      if (public != null) data['public'] = public;
+      if (badgeInstanceIds != null) {
+        data['badge_instances'] = badgeInstanceIds;
+      }
+      if (data.isEmpty) {
+        return const Left(
+          ValidationFailure(
+            'No fields to update',
+            code: 'patch_empty',
+          ),
+        );
+      }
+      await collectionsDataSource.patchCollection(entityId, data);
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, e.statusCode));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on ValidationException catch (e) {
+      return Left(ValidationFailure(e.message, code: e.code, apiErrorCode: e.apiErrorCode));
+    } on AppException catch (e) {
+      return Left(NetworkFailure(e.message));
+    }
+  }
+
+  @override
   Future<Either<Failure, CollectionsEntity>> createCollection({
     required String name,
     String? description,

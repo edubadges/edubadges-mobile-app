@@ -18,6 +18,15 @@ abstract class CollectionsRepository {
     required List<String> badgeInstanceIds,
   });
 
+  /// Partial update: only non-null arguments are sent in the PATCH body.
+  Future<Either<Failure, void>> patchCollection({
+    required String entityId,
+    String? name,
+    String? description,
+    bool? public,
+    List<String>? badgeInstanceIds,
+  });
+
   Future<Either<Failure, CollectionsEntity>> createCollection({
     required String name,
     String? description,

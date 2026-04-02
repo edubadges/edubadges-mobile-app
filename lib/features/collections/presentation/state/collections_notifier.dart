@@ -139,6 +139,36 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
     );
   }
 
+  /// Partial update via PATCH. Only non-null fields are sent; on success the
+  /// list is silently refreshed to match the server.
+  Future<Either<Failure, void>> patchCollection({
+    required String entityId,
+    String? name,
+    String? description,
+    bool? public,
+    List<String>? badgeInstanceIds,
+  }) async {
+    final useCase = ref.read(updateCollectionUseCaseProvider);
+    final result = await useCase.patch(
+      entityId: entityId,
+      name: name,
+      description: description,
+      public: public,
+      badgeInstanceIds: badgeInstanceIds,
+    );
+
+    return result.fold(
+      (failure) {
+        state = AsyncError(failure, StackTrace.current);
+        return Left(failure);
+      },
+      (_) {
+        refresh();
+        return const Right(null);
+      },
+    );
+  }
+
   Future<Either<Failure, void>> createCollection({
     required String name,
     String? description,

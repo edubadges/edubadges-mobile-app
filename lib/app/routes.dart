@@ -49,10 +49,12 @@ final appRouter = Provider<GoRouter>((ref) {
         // Check if terms need to be agreed to.
         if (loginStatus is LoginTermsAgreementRequired) {
           final termsAgreement = loginStatus.termsAgreementSet.firstWhere(
-                (element) => element.terms.termsType == 'terms_of_service',
+            (element) => element.terms.termsType == 'terms_of_service',
           );
 
-          final termsUrl = termsAgreement.terms.termsUrls.urlForLanguage(language.code);
+          final termsUrl = termsAgreement.terms.termsUrls.urlForLanguage(
+            language.code,
+          );
           context.go(RoutePath.generalTerms, extra: termsUrl);
         }
 
@@ -178,10 +180,15 @@ final appRouter = Provider<GoRouter>((ref) {
         path: RoutePath.newCollectionBadgeSelection,
         name: 'new-collection-badge-selection',
         builder: (context, state) {
+          final id = state.uri.queryParameters['id'];
           final name = state.uri.queryParameters['name'] ?? '';
           final description = state.uri.queryParameters['description'];
 
-          return BadgeSelectionPage(name: name, description: description);
+          return BadgeSelectionPage(
+            id: id,
+            name: name,
+            description: description,
+          );
         },
       ),
 

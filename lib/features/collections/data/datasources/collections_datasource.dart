@@ -8,6 +8,7 @@ abstract class CollectionsDataSource {
   Future<List<CollectionsModel>> getCollections();
   Future<void> deleteCollection(String entityId);
   Future<void> updateCollection(String entityId, Map<String, dynamic> data);
+  Future<void> patchCollection(String entityId, Map<String, dynamic> data);
   Future<CollectionsModel> createCollection(CreateCollectionRequest request);
 }
 
@@ -49,6 +50,14 @@ class CollectionsDataSourceImpl implements CollectionsDataSource {
     Map<String, dynamic> data,
   ) async {
     await apiClient.put<void>('/badge-collections/$entityId', data: data);
+  }
+
+  @override
+  Future<void> patchCollection(
+    String entityId,
+    Map<String, dynamic> data,
+  ) async {
+    await apiClient.patch<void>('/badge-collections/$entityId', data: data);
   }
 
   @override
