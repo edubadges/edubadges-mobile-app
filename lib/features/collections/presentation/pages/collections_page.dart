@@ -96,7 +96,7 @@ class CollectionsPage extends ConsumerWidget {
                       onTap: () {
                         final route = RoutePath.collection.replaceAll(
                           ':id',
-                          collection.id,
+                          collection.entityId,
                         );
                         final uri = Uri.parse(route).replace(
                           queryParameters: {

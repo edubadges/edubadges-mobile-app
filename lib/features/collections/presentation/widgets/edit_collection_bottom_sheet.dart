@@ -38,19 +38,17 @@ class _EditCollectionBottomSheetState
     final name = _nameController.text.trim();
     final description = _descriptionController.text.trim();
 
-    final success = await ref
+    final result = await ref
         .read(collectionsProvider.notifier)
-        .updateCollection(
+        .patchCollection(
           entityId: widget.collection.entityId,
           name: name,
-          description: description.isNotEmpty ? description : null,
-          public: widget.collection.public,
-          badgeInstanceIds: widget.collection.badgeInstanceIds,
+          description: description,
         );
 
-    if (success && mounted) {
-      Navigator.of(context).pop();
-    }
+    result.fold((_) {}, (_) {
+      if (mounted) Navigator.of(context).pop();
+    });
   }
 
   void _handleCancel() {

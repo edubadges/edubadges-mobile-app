@@ -41,4 +41,50 @@ class UpdateCollectionUseCase {
       badgeInstanceIds: badgeInstanceIds,
     );
   }
+
+  Future<Either<Failure, void>> patch({
+    required String entityId,
+    String? name,
+    String? description,
+    bool? public,
+    List<String>? badgeInstanceIds,
+  }) async {
+    if (entityId.isEmpty) {
+      return left(
+        const ValidationFailure(
+          'Collection ID cannot be empty',
+          code: 'invalid_collection_id',
+        ),
+      );
+    }
+
+    if (name == null &&
+        description == null &&
+        public == null &&
+        badgeInstanceIds == null) {
+      return left(
+        const ValidationFailure(
+          'No fields to update',
+          code: 'patch_empty',
+        ),
+      );
+    }
+
+    if (name != null && name.trim().isEmpty) {
+      return left(
+        const ValidationFailure(
+          'Collection name cannot be empty',
+          code: 'name_required',
+        ),
+      );
+    }
+
+    return await _repository.patchCollection(
+      entityId: entityId,
+      name: name?.trim(),
+      description: description,
+      public: public,
+      badgeInstanceIds: badgeInstanceIds,
+    );
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
+import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
@@ -16,6 +17,7 @@ import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
+import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -84,18 +86,16 @@ class CollectionPage extends ConsumerWidget {
                   final onChanged = canMakePublic
                       ? (bool state) async {
                           publicNotifier.value = state;
-                          final success = await ref
+                          final updateResult = await ref
                               .read(collectionsProvider.notifier)
-                              .updateCollection(
+                              .patchCollection(
                                 entityId: collection.entityId,
-                                name: collection.name,
-                                description: collection.description,
                                 public: state,
-                                badgeInstanceIds: collection.badgeInstanceIds,
                               );
-                          if (!success) {
-                            publicNotifier.value = !state;
-                          }
+                          updateResult.fold(
+                            (_) => publicNotifier.value = !state,
+                            (_) {},
+                          );
                         }
                       : null;
                   return AnimatedIconSwitch(
@@ -144,6 +144,7 @@ class CollectionPage extends ConsumerWidget {
                 Clipboard.setData(ClipboardData(text: link));
                 showAppSnackBar(context, l10n.linkCopied);
               }
+
               return Column(
                 children: [
                   SizedBox(
@@ -247,7 +248,15 @@ class CollectionPage extends ConsumerWidget {
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.push(
+                        RoutePath.newCollectionBadgeSelectionUri(
+                          id: collection.id,
+                          name: collection.title,
+                          description: collection.description,
+                        ).toString(),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: colorScheme.primary,
                       foregroundColor: colorScheme.onPrimary,
@@ -310,7 +319,7 @@ class CollectionPage extends ConsumerWidget {
         if (collections.isEmpty) return collection.title;
         try {
           final foundCollection = collections.firstWhere(
-            (c) => c.id == collection.id,
+            (c) => c.entityId == collection.id,
           );
           return foundCollection.name;
         } catch (e) {
@@ -343,12 +352,12 @@ class CollectionPage extends ConsumerWidget {
           IconButton(
             onPressed: () {
               collectionsAsync.when(
-                data: (collections) {
+                data: (collections) async {
                   try {
                     final foundCollection = collections.firstWhere(
-                      (c) => c.id == collection.id,
+                      (c) => c.entityId == collection.id,
                     );
-                    showModalBottomSheet<void>(
+                    await showModalBottomSheet<void>(
                       context: context,
                       isDismissible: true,
                       enableDrag: true,
@@ -407,7 +416,7 @@ class CollectionPage extends ConsumerWidget {
                     }
 
                     final foundCollection = collections.firstWhere(
-                      (c) => c.id == collection.id,
+                      (c) => c.entityId == collection.id,
                       orElse: () {
                         if (context.mounted && context.canPop()) {
                           context.pop();
@@ -441,7 +450,7 @@ class CollectionPage extends ConsumerWidget {
           data: (collections) {
             try {
               final foundCollection = collections.firstWhere(
-                (c) => c.id == collection.id,
+                (c) => c.entityId == collection.id,
               );
 
               final badges = foundCollection.badgeInstances ?? [];
@@ -488,10 +497,7 @@ class CollectionPage extends ConsumerWidget {
                 ],
               );
             } catch (e) {
-              if (context.mounted && context.canPop()) {
-                context.pop();
-              }
-              return const SizedBox.shrink();
+              return const ErrorMessageWidget();
             }
           },
           loading: () => Center(

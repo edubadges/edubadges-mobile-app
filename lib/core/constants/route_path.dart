@@ -24,4 +24,19 @@ class RoutePath {
 
   /// List of routes that should redirect logged-in users to their home page.
   static const List<String> redirectRoutesForLoggedInUsers = [login];
+
+  /// Query: optional [id] (existing collection), [name], optional [description].
+  static Uri newCollectionBadgeSelectionUri({
+    String? id,
+    required String name,
+    String? description,
+  }) {
+    return Uri.parse(newCollectionBadgeSelection).replace(
+      queryParameters: {
+        if (id != null && id.isNotEmpty) 'id': id,
+        'name': name,
+        if (description != null && description.isNotEmpty) 'description': description,
+      },
+    );
+  }
 }
