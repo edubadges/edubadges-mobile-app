@@ -13,6 +13,7 @@ import 'package:edubadges/shared/presentation/providers/markdown_fetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class AgreementDetailsPage extends ConsumerStatefulWidget {
   final AgreementRouteModel agreement;
@@ -54,7 +55,7 @@ class _AgreementDetailsPageState extends ConsumerState<AgreementDetailsPage> {
       (_) {
         ref.read(profileProvider.notifier).refresh();
         if (context.mounted) {
-          Navigator.of(context).pop();
+          context.pop();
           showAppSnackBar(context, l10n.withdrawAgreementSuccess);
         }
       },
