@@ -656,6 +656,11 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
+  String agreedOnUnknownVersion(String version) {
+    return 'Akkoord, versie $version';
+  }
+
+  @override
   String notYetAgreedVersion(String version) {
     return 'Nog niet akkoord, versie $version';
   }

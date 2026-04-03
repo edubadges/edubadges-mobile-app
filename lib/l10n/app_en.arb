@@ -768,6 +768,14 @@
             }
         }
     },
+    "agreedOnUnknownVersion": "Agreed, version {version}",
+    "@agreedOnUnknownVersion": {
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
+    },
     "notYetAgreedVersion": "Not yet agreed, version {version}",
     "@notYetAgreedVersion": {
         "placeholders": {
