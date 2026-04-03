@@ -138,7 +138,7 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
           ),
           Column(
             children: [
-              if (widget.showCopyLink)
+              if (widget.showCopyLink && isPublic)
                 WideButton(
                   text: l10n.copyLink,
                   icon: Icon(
@@ -160,7 +160,9 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                     }
                   },
                 ),
-              if (widget.showCopyLink && widget.badge.linkedinUrl != null) ...[
+              if (widget.showCopyLink &&
+                  widget.badge.linkedinUrl != null &&
+                  isPublic) ...[
                 const SizedBox(height: 8),
                 WideButton(
                   text: linkedinBrand,
