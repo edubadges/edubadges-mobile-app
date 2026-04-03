@@ -1166,6 +1166,12 @@ abstract class AppLocalizations {
   /// **'Agreed on {date}, version {version}'**
   String agreedOnDateVersion(DateTime date, String version);
 
+  /// No description provided for @agreedOnUnknownVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Agreed, version {version}'**
+  String agreedOnUnknownVersion(String version);
+
   /// No description provided for @notYetAgreedVersion.
   ///
   /// In en, this message translates to:

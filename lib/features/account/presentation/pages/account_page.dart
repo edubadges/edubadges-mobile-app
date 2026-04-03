@@ -286,8 +286,10 @@ class AccountPage extends ConsumerWidget {
     String version,
   ) {
     final l10n = AppLocalizations.of(context);
-    return type && date != null
-        ? l10n.agreedOnDateVersion(date, version)
+    return type
+        ? date != null
+              ? l10n.agreedOnDateVersion(date, version)
+              : l10n.agreedOnUnknownVersion(version)
         : l10n.notYetAgreedVersion(version);
   }
 
