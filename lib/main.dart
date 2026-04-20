@@ -13,7 +13,6 @@ import 'package:edubadges/firebase/firebase_options_production.dart'
     as firebase_prod;
 import 'package:edubadges/firebase/firebase_options_tst.dart' as firebase_tst;
 import 'package:edubadges/flavors.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -21,6 +20,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_piwikpro/flutter_piwikpro.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -63,6 +63,8 @@ void main() async {
     enableAnalytics: dotenv.env[EnvKeys.enableAnalytics] == 'true',
     enableCrashlytics: dotenv.env[EnvKeys.enableCrashlytics] == 'true',
     publicCollectionBaseUrl: dotenv.env[EnvKeys.publicCollectionBaseUrl] ?? '',
+    piwikProBaseUrl: dotenv.env[EnvKeys.piwikProBaseUrl] ?? '',
+    piwikProSiteId: dotenv.env[EnvKeys.piwikProSiteId] ?? '',
   );
 
   // Initialize Firebase
@@ -70,9 +72,12 @@ void main() async {
 
   // Initialize Analytics
   final analyticsEnabled = EnvironmentConfig.instance.enableAnalytics;
-  await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(
-    analyticsEnabled,
-  );
+  if (analyticsEnabled) {
+    await FlutterPiwikPro.sharedInstance.configureTracker(
+      baseURL: EnvironmentConfig.instance.piwikProBaseUrl,
+      siteId: EnvironmentConfig.instance.piwikProSiteId,
+    );
+  }
 
   // Initialize Crashlytics (iOS/Android only)
   if (!kIsWeb) {

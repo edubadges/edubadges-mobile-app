@@ -8,6 +8,8 @@ class EnvironmentConfig {
     required bool enableAnalytics,
     required bool enableCrashlytics,
     required String publicCollectionBaseUrl,
+    required String piwikProBaseUrl,
+    required String piwikProSiteId,
   }) {
     if (_instance.isInitialized) {
       throw StateError('EnvironmentConfig has already been initialized.');
@@ -19,6 +21,8 @@ class EnvironmentConfig {
       enableAnalytics: enableAnalytics,
       enableCrashlytics: enableCrashlytics,
       publicCollectionBaseUrl: publicCollectionBaseUrl,
+      piwikProBaseUrl: piwikProBaseUrl,
+      piwikProSiteId: piwikProSiteId,
     );
     return _instance;
   }
@@ -33,6 +37,8 @@ class EnvironmentConfig {
   late final bool _enableAnalytics;
   late final bool _enableCrashlytics;
   late final String _publicCollectionBaseUrl;
+  late final String _piwikProBaseUrl;
+  late final String _piwikProSiteId;
   bool isInitialized = false;
 
   void init({
@@ -42,6 +48,8 @@ class EnvironmentConfig {
     required bool enableAnalytics,
     required bool enableCrashlytics,
     required String publicCollectionBaseUrl,
+    required String piwikProBaseUrl,
+    required String piwikProSiteId,
   }) {
     if (isInitialized) {
       throw StateError('EnvironmentConfig has already been initialized.');
@@ -52,6 +60,8 @@ class EnvironmentConfig {
     _enableAnalytics = enableAnalytics;
     _enableCrashlytics = enableCrashlytics;
     _publicCollectionBaseUrl = publicCollectionBaseUrl;
+    _piwikProBaseUrl = piwikProBaseUrl;
+    _piwikProSiteId = piwikProSiteId;
     isInitialized = true;
   }
 
@@ -61,4 +71,6 @@ class EnvironmentConfig {
   bool get enableAnalytics => _enableAnalytics;
   bool get enableCrashlytics => _enableCrashlytics;
   String get publicCollectionBaseUrl => _publicCollectionBaseUrl;
+  String get piwikProBaseUrl => _piwikProBaseUrl;
+  String get piwikProSiteId => _piwikProSiteId;
 }
