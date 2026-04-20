@@ -1,4 +1,5 @@
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
+import 'package:edubadges/shared/data/models/badge_evidence_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 
 class BadgeInstanceModel extends BadgeInstanceEntity {
@@ -18,6 +19,7 @@ class BadgeInstanceModel extends BadgeInstanceEntity {
     super.narrative,
     super.includeGradeAchieved,
     super.includeEvidence,
+    super.evidences,
   });
 
   factory BadgeInstanceModel.fromJson(Map<String, dynamic> json) {
@@ -47,8 +49,14 @@ class BadgeInstanceModel extends BadgeInstanceEntity {
       linkedinUrl: json['linkedin_url'] as String?,
       gradeAchieved: json['grade_achieved'] as String?,
       narrative: json['narrative'] as String?,
-      includeGradeAchieved: json['include_grade_achieved'] as bool? ?? false,
-      includeEvidence: json['include_evidence'] as bool? ?? false,
+      includeGradeAchieved:
+          _parseBool(json['include_grade_achieved']) ?? false,
+      includeEvidence: _parseBool(json['include_evidence']) ?? false,
+      evidences: json['evidences'] != null
+          ? (json['evidences'] as List)
+              .map((item) => BadgeEvidenceModel.fromJson(item as Map<String, dynamic>))
+              .toList()
+          : null,
     );
   }
 
@@ -68,6 +76,21 @@ class BadgeInstanceModel extends BadgeInstanceEntity {
       if (gradeAchieved != null) 'grade_achieved': gradeAchieved,
       'include_grade_achieved': includeGradeAchieved,
       'include_evidence': includeEvidence,
+      if (evidences != null)
+        'evidences': evidences!
+            .map((item) => (item as BadgeEvidenceModel).toJson())
+            .toList(),
     };
+  }
+
+  static bool? _parseBool(dynamic value) {
+    if (value == null) return null;
+    if (value is bool) return value;
+    if (value is String) {
+      final normalized = value.toLowerCase();
+      if (normalized == 'true') return true;
+      if (normalized == 'false') return false;
+    }
+    return null;
   }
 }

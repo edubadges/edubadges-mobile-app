@@ -1,4 +1,5 @@
 import 'package:edubadges/shared/domain/entities/badge_class_entity.dart';
+import 'package:edubadges/shared/domain/entities/badge_evidence_entity.dart';
 import 'package:equatable/equatable.dart';
 
 enum BadgeAcceptance {
@@ -33,6 +34,7 @@ class BadgeInstanceEntity extends Equatable {
   final String? narrative;
   final bool includeGradeAchieved;
   final bool includeEvidence;
+  final List<BadgeEvidenceEntity>? evidences;
 
   const BadgeInstanceEntity({
     required this.id,
@@ -50,6 +52,7 @@ class BadgeInstanceEntity extends Equatable {
     this.narrative,
     this.includeGradeAchieved = false,
     this.includeEvidence = false,
+    this.evidences,
   });
 
   @override
@@ -69,5 +72,6 @@ class BadgeInstanceEntity extends Equatable {
     narrative,
     includeGradeAchieved,
     includeEvidence,
+    evidences,
   ];
 }

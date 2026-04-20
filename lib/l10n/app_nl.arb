@@ -1174,5 +1174,8 @@
     "semanticsLoading": "Laden...",
     "@semanticsLoading": {
         "description": "Accessibility label for loading indicator"
-    }
+    },
+    "qualityAssurance": "Kwaliteitswaarborging",
+    "readMore": "Lees meer",
+    "readLess": "Minder lezen"
 }

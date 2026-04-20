@@ -299,6 +299,8 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     final eQF = details?.badgeClass.getExtensionValue<double?>(
       BadgeExtensionKeys.eQF,
     );
+    final criteriaText = details?.badgeClass.criteriaText;
+    
 
     return [
       if (details?.badgeInstance != null)
@@ -326,6 +328,31 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             item: MarkdownBody(
               data: filterBadMarkdown(learningOutcome),
               styleSheet: AppThemes.markdownStyleSheet(context),
+            ),
+          ),
+        ),
+      if (criteriaText != null)
+        FocusableSection(
+          child: _buildSectionCard(
+            title: 'Criteria',
+            item: MarkdownBody(
+              data: filterBadMarkdown(criteriaText),
+              styleSheet: AppThemes.markdownStyleSheet(context),
+            ),
+          ),
+        ),
+      if (details != null &&
+          (_composeQualityAssurance(details.badgeClass) != null))
+        FocusableSection(
+          child: _buildSectionCard(
+            title: l10n.qualityAssurance,
+            item: _ExpandableContent(
+              child: MarkdownBody(
+                data: filterBadMarkdown(
+                  _composeQualityAssurance(details.badgeClass)!,
+                ),
+                styleSheet: AppThemes.markdownStyleSheet(context),
+              ),
             ),
           ),
         ),
@@ -429,6 +456,30 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     ];
   }
 
+  String? _composeQualityAssurance(BadgeClassEntity bc) {
+    final name = bc.qualityAssuranceName;
+    final url = bc.qualityAssuranceUrl;
+    final desc = bc.qualityAssuranceDescription;
+
+    final String? header;
+    if (name != null && name.isNotEmpty) {
+      if (url != null && url.isNotEmpty) {
+        header = '$name [(link)]($url)';
+      } else {
+        header = name;
+      }
+    } else {
+      header = null;
+    }
+
+    final parts = <String>[
+      if (header != null) header,
+      if (desc != null && desc.isNotEmpty) desc,
+    ];
+    if (parts.isEmpty) return null;
+    return parts.join('\n\n');
+  }
+
   Widget _buildSectionCard({
     required String title,
     List<BadgeDetailItemModel>? items,
@@ -523,6 +574,95 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             ),
           ),
         ),
+      ],
+    );
+  }
+}
+
+class _ExpandableContent extends StatefulWidget {
+  final Widget child;
+
+  const _ExpandableContent({required this.child});
+
+  @override
+  State<_ExpandableContent> createState() => _ExpandableContentState();
+}
+
+class _ExpandableContentState extends State<_ExpandableContent>
+    with AutomaticKeepAliveClientMixin {
+  static const double _collapsedMaxHeight = 110;
+
+  final GlobalKey _measureKey = GlobalKey();
+  bool _isExpanded = false;
+  double? _measuredHeight;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  void _afterLayout(Duration _) {
+    if (!mounted) return;
+    final renderObject = _measureKey.currentContext?.findRenderObject();
+    if (renderObject is! RenderBox || !renderObject.hasSize) return;
+    final height = renderObject.size.height;
+    if (_measuredHeight != height) {
+      setState(() => _measuredHeight = height);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
+
+    final l10n = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final measured = _measuredHeight;
+    final overflows = measured != null && measured > _collapsedMaxHeight;
+    final shouldClamp = overflows && !_isExpanded;
+
+    final measurableChild = KeyedSubtree(
+      key: _measureKey,
+      child: widget.child,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (shouldClamp)
+          ClipRect(
+            child: SizedBox(
+              width: double.infinity,
+              height: _collapsedMaxHeight,
+              child: OverflowBox(
+                alignment: Alignment.topLeft,
+                minHeight: 0,
+                maxHeight: double.infinity,
+                child: measurableChild,
+              ),
+            ),
+          )
+        else
+          measurableChild,
+        if (overflows) ...[
+          const SizedBox(height: 8),
+          Center(
+            child: TextButton.icon(
+              onPressed: () =>
+                  setState(() => _isExpanded = !_isExpanded),
+              icon: Icon(
+                _isExpanded
+                    ? Icons.keyboard_arrow_up
+                    : Icons.keyboard_arrow_down,
+                color: colorScheme.primary,
+              ),
+              label: Text(
+                _isExpanded ? l10n.readLess : l10n.readMore,
+                style: TextStyle(color: colorScheme.primary),
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }

@@ -1035,4 +1035,13 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get semanticsLoading => 'Laden...';
+
+  @override
+  String get qualityAssurance => 'Kwaliteitswaarborging';
+
+  @override
+  String get readMore => 'Lees meer';
+
+  @override
+  String get readLess => 'Minder lezen';
 }

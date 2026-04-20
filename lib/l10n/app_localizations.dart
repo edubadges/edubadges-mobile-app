@@ -1831,6 +1831,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading...'**
   String get semanticsLoading;
+
+  /// Section header for the quality assurance information related to the badge
+  ///
+  /// In en, this message translates to:
+  /// **'Quality assurance'**
+  String get qualityAssurance;
+
+  /// Generic button label to expand clamped content
+  ///
+  /// In en, this message translates to:
+  /// **'Read more'**
+  String get readMore;
+
+  /// Generic button label to collapse expanded content
+  ///
+  /// In en, this message translates to:
+  /// **'Read less'**
+  String get readLess;
 }
 
 class _AppLocalizationsDelegate

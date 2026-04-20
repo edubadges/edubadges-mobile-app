@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:edubadges/shared/domain/entities/badge_alignment_entity.dart';
 import 'package:edubadges/shared/domain/entities/badge_class_extension_entity.dart';
 import 'package:edubadges/shared/domain/entities/issuer_entity.dart';
 import 'package:edubadges/shared/domain/enums/assessment_type.dart';
@@ -21,8 +22,14 @@ class BadgeClassEntity extends Equatable {
   final bool userMayEnroll;
   final bool? stackable;
   final String? qualityAssuranceName;
+  final String? qualityAssuranceUrl;
+  final String? qualityAssuranceDescription;
+  final String? criteriaText;
+  final bool eqfNlqfLevelVerified;
+  
   final BadgeClassType badgeClassType;
   final List<BadgeClassExtensionEntity>? badgeclassextensionSet;
+  final List<BadgeAlignmentEntity>? alignments;
   final IssuerEntity? issuer;
 
   const BadgeClassEntity({
@@ -41,7 +48,12 @@ class BadgeClassEntity extends Equatable {
     this.userMayEnroll = false,
     this.stackable,
     this.qualityAssuranceName,
+    this.qualityAssuranceUrl,
+    this.qualityAssuranceDescription,
+    this.criteriaText,
+    this.eqfNlqfLevelVerified = false,
     this.badgeclassextensionSet,
+    this.alignments,
     this.issuer,
   });
 
@@ -58,11 +70,16 @@ class BadgeClassEntity extends Equatable {
         assessmentIdVerified,
         assessmentSupervised,
         qualityAssuranceName,
+        qualityAssuranceUrl,
+        qualityAssuranceDescription,
         selfEnrollmentEnabled,
         userMayEnroll,
         stackable,
+        criteriaText,
+        eqfNlqfLevelVerified,
         badgeClassType,
         badgeclassextensionSet,
+        alignments,
         issuer,
       ];
 }

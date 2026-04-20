@@ -1219,5 +1219,17 @@
     "semanticsLoading": "Loading...",
     "@semanticsLoading": {
         "description": "Accessibility label for loading indicator"
+    },
+    "qualityAssurance": "Quality assurance",
+    "@qualityAssurance": {
+        "description": "Section header for the quality assurance information related to the badge"
+    },
+    "readMore": "Read more",
+    "@readMore": {
+        "description": "Generic button label to expand clamped content"
+    },
+    "readLess": "Read less",
+    "@readLess": {
+        "description": "Generic button label to collapse expanded content"
     }
 }

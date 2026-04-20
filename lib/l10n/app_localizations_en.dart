@@ -1029,4 +1029,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get semanticsLoading => 'Loading...';
+
+  @override
+  String get qualityAssurance => 'Quality assurance';
+
+  @override
+  String get readMore => 'Read more';
+
+  @override
+  String get readLess => 'Read less';
 }
