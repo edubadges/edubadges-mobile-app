@@ -144,8 +144,6 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
                 data: (badgesState) {
                   final badges = [
                     ...badgesState.claimedBadges,
-                    ...badgesState.unclaimedBadges,
-                    ...badgesState.requestedBadges,
                   ];
 
                   if (badges.isEmpty) {
