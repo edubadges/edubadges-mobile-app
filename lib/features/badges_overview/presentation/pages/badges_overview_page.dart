@@ -75,12 +75,12 @@ class BadgesOverviewPage extends ConsumerWidget {
                     ':id',
                     firstBadge.id.toString(),
                   );
-                  context.push(
-                    '$claimRoute?remainingCount=$remainingCount',
-                  );
+                  context.push('$claimRoute?remainingCount=$remainingCount');
                 }
 
-                final claimBannerLabel = l10n.newBadgeReady(state.unclaimedCount);
+                final claimBannerLabel = l10n.newBadgeReady(
+                  state.unclaimedCount,
+                );
 
                 slivers.add(
                   SliverToBoxAdapter(
@@ -219,11 +219,30 @@ class BadgesOverviewPage extends ConsumerWidget {
                         final badge = state.requestedBadges[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8),
-                          child: BadgeCard(
-                            instance: badge,
-                            badgeClass: badge.badgeclass as BadgeClassModel,
-                            style: BadgeCardStyle.small,
-                            onTapFrom: BadgeDetailsRouteFrom.overview,
+                          child: KeyboardActivatable(
+                            key: ValueKey('requested_badge_${badge.entityId}'),
+                            wrapWithSemantics: false,
+                            includeOuterTapTarget: false,
+                            onActivate: () {
+                              final routeModel = BadgeDetailsRouteModel(
+                                id: badge.entityId,
+                                from: BadgeDetailsRouteFrom.catalog,
+                              );
+                              context.push(routeModel.buildRouteUrl());
+                            },
+                            child: BadgeCard(
+                              instance: badge,
+                              badgeClass: badge.badgeclass as BadgeClassModel,
+                              style: BadgeCardStyle.small,
+                              onTapFrom: BadgeDetailsRouteFrom.catalog,
+                              onTap: () {
+                                final routeModel = BadgeDetailsRouteModel(
+                                  id: badge.badgeclass.entityId,
+                                  from: BadgeDetailsRouteFrom.catalog,
+                                );
+                                context.push(routeModel.buildRouteUrl());
+                              },
+                            ),
                           ),
                         );
                       }, childCount: state.requestedBadges.length),
