@@ -597,24 +597,34 @@ class AccountPage extends ConsumerWidget {
             if (profile == null) {
               return Center(child: Text(l10n.noProfileData));
             }
-            return SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(
-                _cardPadding,
-                0,
-                _cardPadding,
-                _cardPadding,
-              ),
-              child: Column(
-                spacing: 0,
-                children: [
-                  FocusableSection(
-                    autofocus: true,
-                    child: _buildDataSection(context, profile),
-                  ),
-                  _buildNotificationSection(context, ref, profile),
-                  _buildAgreementsSection(ref, context, profile),
-                  _buildDeleteAccountSection(context, ref),
-                ],
+            return RefreshIndicator(
+              backgroundColor: colorScheme.surfaceContainer,
+              onRefresh: () async {
+                await Future.wait([
+                  ref.read(profileProvider.notifier).refresh(),
+                  ref.read(notificationEnabledProvider.notifier).refresh(),
+                ]);
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(
+                  _cardPadding,
+                  0,
+                  _cardPadding,
+                  _cardPadding,
+                ),
+                child: Column(
+                  spacing: 0,
+                  children: [
+                    FocusableSection(
+                      autofocus: true,
+                      child: _buildDataSection(context, profile),
+                    ),
+                    _buildNotificationSection(context, ref, profile),
+                    _buildAgreementsSection(ref, context, profile),
+                    _buildDeleteAccountSection(context, ref),
+                  ],
+                ),
               ),
             );
           },

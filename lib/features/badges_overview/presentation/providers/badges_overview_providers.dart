@@ -113,6 +113,8 @@ class BadgesOverviewNotifier extends AsyncNotifier<BadgesOverviewState> {
           requestedBadges: requestedBadges,
         ),
       );
+      // Ensure family-based detail caches are refreshed after overview updates.
+      ref.invalidate(directAwardDetailProvider);
     } catch (error, stackTrace) {
       if (!silent || !state.hasValue) {
         state = AsyncError(error, stackTrace);

@@ -285,7 +285,16 @@ class BadgesOverviewPage extends ConsumerWidget {
                 );
               }
 
-              return CustomScrollView(slivers: slivers);
+              return RefreshIndicator(
+                backgroundColor: colorScheme.surfaceContainer,
+                onRefresh: () async {
+                  await ref.read(badgesOverviewProvider.notifier).refresh();
+                },
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: slivers,
+                ),
+              );
             },
             loading: () => CustomScrollView(
               slivers: [
