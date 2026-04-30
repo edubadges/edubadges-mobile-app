@@ -426,6 +426,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get learningOutcomes => 'Leeruitkomsten';
 
   @override
+  String get badgeCriteria => 'Criteria';
+
+  @override
   String get badgeEvidenceMetadataTitle =>
       'Metadata over het bewijs gerelateerd aan deze edubadge';
 

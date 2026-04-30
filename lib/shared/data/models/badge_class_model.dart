@@ -7,7 +7,7 @@ import 'package:edubadges/shared/domain/enums/badge_class_type.dart';
 import 'package:edubadges/shared/domain/enums/participation_type.dart';
 
 class BadgeClassModel extends BadgeClassEntity {
-  const BadgeClassModel({
+  BadgeClassModel({
     required super.id,
     required super.name,
     required super.entityId,
@@ -28,9 +28,11 @@ class BadgeClassModel extends BadgeClassEntity {
     super.criteriaText,
     super.eqfNlqfLevelVerified,
     super.badgeclassextensionSet,
-    super.alignments,
+    List<BadgeAlignmentModel>? alignments,
     super.issuer,
-  });
+  }) : super(
+          alignments: alignments?.map((m) => m.toEntity()).toList(),
+        );
 
   factory BadgeClassModel.fromJson(Map<String, dynamic> json) {
     return BadgeClassModel(
@@ -106,7 +108,7 @@ class BadgeClassModel extends BadgeClassEntity {
             .toList(),
       if (alignments != null)
         'alignments': alignments!
-            .map((item) => (item as BadgeAlignmentModel).toJson())
+            .map((e) => BadgeAlignmentModel.fromEntity(e).toJson())
             .toList(),
       if (issuer != null) 'issuer': (issuer as IssuerModel).toJson(),
     };

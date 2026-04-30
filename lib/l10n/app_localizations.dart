@@ -800,6 +800,12 @@ abstract class AppLocalizations {
   /// **'Learning outcomes'**
   String get learningOutcomes;
 
+  /// Section title for the badge award criteria on the edubadge details page
+  ///
+  /// In en, this message translates to:
+  /// **'Criteria'**
+  String get badgeCriteria;
+
   /// Section title for metadata fields tied to badge evidence
   ///
   /// In en, this message translates to:

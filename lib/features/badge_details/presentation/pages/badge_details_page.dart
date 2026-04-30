@@ -348,7 +348,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
       if (criteriaText != null)
         FocusableSection(
           child: _buildSectionCard(
-            title: 'Criteria',
+            title: l10n.badgeCriteria,
             item: MarkdownBody(
               data: filterBadMarkdown(criteriaText),
               styleSheet: AppThemes.markdownStyleSheet(context),

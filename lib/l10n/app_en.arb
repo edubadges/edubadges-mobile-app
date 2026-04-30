@@ -499,6 +499,10 @@
     "@learningOutcomes": {
         "description": "Label for the learning outcomes section describing what was learned"
     },
+    "badgeCriteria": "Criteria",
+    "@badgeCriteria": {
+        "description": "Section title for the badge award criteria on the edubadge details page"
+    },
     "badgeEvidenceMetadataTitle": "Metadata about the evidence related to this edubadge",
     "@badgeEvidenceMetadataTitle": {
         "description": "Section title for metadata fields tied to badge evidence"
