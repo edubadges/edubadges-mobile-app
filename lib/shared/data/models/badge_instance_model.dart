@@ -16,7 +16,6 @@ class BadgeInstanceModel extends BadgeInstanceEntity {
     required super.badgeclass,
     super.linkedinUrl,
     super.gradeAchieved,
-    super.narrative,
     super.includeGradeAchieved,
     super.includeEvidence,
     super.evidences,
@@ -48,7 +47,6 @@ class BadgeInstanceModel extends BadgeInstanceEntity {
       ),
       linkedinUrl: json['linkedin_url'] as String?,
       gradeAchieved: json['grade_achieved'] as String?,
-      narrative: json['narrative'] as String?,
       includeGradeAchieved:
           _parseBool(json['include_grade_achieved']) ?? false,
       includeEvidence: _parseBool(json['include_evidence']) ?? false,

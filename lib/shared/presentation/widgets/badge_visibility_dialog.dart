@@ -33,7 +33,7 @@ class BadgeVisibilityDialog {
                     return Column(
                       spacing: 8,
                       children: [
-                        if (badgeInstance.narrative != null)
+                        if (badgeInstance.evidences?.isNotEmpty == true)
                           _CustomCheckboxRow(
                             value: includeEvidence,
                             onChanged: (value) {
