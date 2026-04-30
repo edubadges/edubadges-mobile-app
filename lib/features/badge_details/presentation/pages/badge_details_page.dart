@@ -17,6 +17,7 @@ import 'package:edubadges/features/badge_details/presentation/widgets/badge_visi
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_class_entity.dart';
+import 'package:edubadges/shared/domain/entities/badge_evidence_entity.dart';
 import 'package:edubadges/shared/domain/enums/assessment_type.dart';
 import 'package:edubadges/shared/domain/enums/badge_class_type.dart';
 import 'package:edubadges/shared/domain/enums/participation_type.dart';
@@ -285,6 +286,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     required String badgeId,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     final l10n = AppLocalizations.of(context);
 
     final learningOutcome = details?.badgeClass.getExtensionValue<String?>(
@@ -393,6 +395,18 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                   ),
                 ),
               ],
+            ),
+          ),
+        ),
+      if (details?.badgeInstance?.evidences?.isNotEmpty == true)
+        FocusableSection(
+          child: _buildSectionCard(
+            title: l10n.badgeEvidenceMetadataTitle,
+            item: _buildEvidenceMetadata(
+              evidences: details!.badgeInstance!.evidences!,
+              textTheme: textTheme,
+              colorScheme: colorScheme,
+              l10n: l10n,
             ),
           ),
         ),
@@ -515,6 +529,116 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     return parts.join('\n\n');
   }
 
+  Widget _buildEvidenceMetadata({
+    required List<BadgeEvidenceEntity> evidences,
+    required TextTheme textTheme,
+    required ColorScheme colorScheme,
+    required AppLocalizations l10n,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(evidences.length * 2 - 1, (int index) {
+        if (index.isOdd) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(vertical: 12),
+            child: Divider(height: 1),
+          );
+        }
+
+        return _buildEvidenceItem(
+          entity: evidences[index ~/ 2],
+          textTheme: textTheme,
+          colorScheme: colorScheme,
+          l10n: l10n,
+        );
+      }),
+    );
+  }
+
+  Widget _buildEvidenceItem({
+    required BadgeEvidenceEntity entity,
+    required TextTheme textTheme,
+    required ColorScheme colorScheme,
+    required AppLocalizations l10n,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      spacing: 8,
+      children: [
+        if (entity.narrative != null)
+          _buildEvidenceTextField(
+            label: l10n.badgeEvidencePersonalMessage,
+            value: entity.narrative!,
+            textTheme: textTheme,
+          ),
+        if (entity.evidenceUrl != null)
+          _buildEvidenceLinkField(
+            label: l10n.badgeEvidenceUrl,
+            url: entity.evidenceUrl!,
+            textTheme: textTheme,
+            colorScheme: colorScheme,
+          ),
+        if (entity.name != null)
+          _buildEvidenceTextField(
+            label: l10n.badgeEvidenceName,
+            value: entity.name!,
+            textTheme: textTheme,
+          ),
+        if (entity.description != null)
+          _buildEvidenceTextField(
+            label: l10n.badgeEvidenceDescription,
+            value: entity.description!,
+            textTheme: textTheme,
+          ),
+      ],
+    );
+  }
+
+  Widget _buildEvidenceTextField({
+    required String label,
+    required String value,
+    required TextTheme textTheme,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(label, style: textTheme.titleSmall),
+        Text(value, style: textTheme.bodyMedium),
+      ],
+    );
+  }
+
+  Widget _buildEvidenceLinkField({
+    required String label,
+    required String url,
+    required TextTheme textTheme,
+    required ColorScheme colorScheme,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(label, style: textTheme.titleSmall),
+        InkWell(
+          onTap: () {
+            launchUrlString(url, mode: LaunchMode.externalApplication);
+          },
+          child: Text(
+            url,
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.primary,
+              decoration: TextDecoration.underline,
+              decorationColor: colorScheme.primary,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildSectionCard({
     required String title,
     List<BadgeDetailItemModel>? items,
@@ -552,7 +676,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                     style: textTheme.titleMedium?.copyWith(
                       color: colorScheme.onSurface,
                     ),
-                    maxLines: 1,
+                    maxLines: 5,
                     softWrap: false,
                     overflow: TextOverflow.ellipsis,
                   ),

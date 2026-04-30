@@ -800,6 +800,36 @@ abstract class AppLocalizations {
   /// **'Learning outcomes'**
   String get learningOutcomes;
 
+  /// Section title for metadata fields tied to badge evidence
+  ///
+  /// In en, this message translates to:
+  /// **'Metadata about the evidence related to this edubadge'**
+  String get badgeEvidenceMetadataTitle;
+
+  /// Label for the narrative or personal message in badge evidence
+  ///
+  /// In en, this message translates to:
+  /// **'Personal message'**
+  String get badgeEvidencePersonalMessage;
+
+  /// Label for the URL field in badge evidence
+  ///
+  /// In en, this message translates to:
+  /// **'URL'**
+  String get badgeEvidenceUrl;
+
+  /// Label for the name field in badge evidence
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get badgeEvidenceName;
+
+  /// Label for the description field in badge evidence
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get badgeEvidenceDescription;
+
   /// Label for the study load or time commitment required
   ///
   /// In en, this message translates to:

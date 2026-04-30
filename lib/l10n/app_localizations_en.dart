@@ -425,6 +425,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get learningOutcomes => 'Learning outcomes';
 
   @override
+  String get badgeEvidenceMetadataTitle =>
+      'Metadata about the evidence related to this edubadge';
+
+  @override
+  String get badgeEvidencePersonalMessage => 'Personal message';
+
+  @override
+  String get badgeEvidenceUrl => 'URL';
+
+  @override
+  String get badgeEvidenceName => 'Name';
+
+  @override
+  String get badgeEvidenceDescription => 'Description';
+
+  @override
   String get studyLoad => 'Study load';
 
   @override

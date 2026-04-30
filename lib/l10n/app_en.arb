@@ -499,6 +499,26 @@
     "@learningOutcomes": {
         "description": "Label for the learning outcomes section describing what was learned"
     },
+    "badgeEvidenceMetadataTitle": "Metadata about the evidence related to this edubadge",
+    "@badgeEvidenceMetadataTitle": {
+        "description": "Section title for metadata fields tied to badge evidence"
+    },
+    "badgeEvidencePersonalMessage": "Personal message",
+    "@badgeEvidencePersonalMessage": {
+        "description": "Label for the narrative or personal message in badge evidence"
+    },
+    "badgeEvidenceUrl": "URL",
+    "@badgeEvidenceUrl": {
+        "description": "Label for the URL field in badge evidence"
+    },
+    "badgeEvidenceName": "Name",
+    "@badgeEvidenceName": {
+        "description": "Label for the name field in badge evidence"
+    },
+    "badgeEvidenceDescription": "Description",
+    "@badgeEvidenceDescription": {
+        "description": "Label for the description field in badge evidence"
+    },
     "studyLoad": "Study load",
     "@studyLoad": {
         "description": "Label for the study load or time commitment required"
