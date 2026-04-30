@@ -4,7 +4,7 @@ import 'package:edubadges/features/account/data/models/agreement_route_model.dar
 import 'package:edubadges/features/account/presentation/pages/account_page.dart';
 import 'package:edubadges/features/account/presentation/pages/agreement_details_page.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
-import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/badge_details/presentation/pages/badge_details_page.dart';
 import 'package:edubadges/features/badges_overview/presentation/pages/badge_claim_page.dart';
 import 'package:edubadges/features/badges_overview/presentation/pages/badge_claim_success_page.dart';
@@ -126,18 +126,59 @@ final appRouter = Provider<GoRouter>((ref) {
         },
       ),
 
-      // Deep link from public share → internal catalog page
+      // Deep link from public share → badge class details (must be before `/public/:id`)
       GoRoute(
         path: '/public/catalog/:id',
         redirect: (context, state) {
           final id = state.pathParameters['id'];
           if (id == null || id.isEmpty) {
-            return RoutePath.catalog; // fallback
+            return RoutePath.catalog;
           }
+          return '/public/${Uri.encodeComponent(id)}';
+        },
+      ),
 
-          return RoutePath.badgePath(
-            id: id,
-            from: BadgeDetailsRouteFrom.catalog,
+      GoRoute(
+        path: RoutePath.badgeDetailsClaimed,
+        name: 'badge-details-claimed',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          final showClaimedGallery =
+              state.uri.queryParameters['gallery'] != 'false';
+          return BadgeDetailsPage(
+            badge: BadgeDetailsRouteModel(
+              id: id,
+              scope: BadgeDetailsScope.claimed,
+              showClaimedGallery: showClaimedGallery,
+            ),
+          );
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.badgeEnrollment,
+        name: 'badge-details-enrollment',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return BadgeDetailsPage(
+            badge: BadgeDetailsRouteModel(
+              id: id,
+              scope: BadgeDetailsScope.enrollment,
+            ),
+          );
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.badgePublic,
+        name: 'badge-details-public',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return BadgeDetailsPage(
+            badge: BadgeDetailsRouteModel(
+              id: id,
+              scope: BadgeDetailsScope.public,
+            ),
           );
         },
       ),
@@ -187,21 +228,6 @@ final appRouter = Provider<GoRouter>((ref) {
             name: name,
             description: description,
           );
-        },
-      ),
-
-      GoRoute(
-        path: RoutePath.badge,
-        name: 'badgedetails',
-        builder: (context, state) {
-          final badge = BadgeDetailsRouteModel(
-            id: state.pathParameters['id'] ?? '',
-            from: BadgeDetailsRouteFromExtension.fromString(
-              state.uri.queryParameters['from'],
-            ),
-          );
-
-          return BadgeDetailsPage(badge: badge);
         },
       ),
 

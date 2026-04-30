@@ -10,8 +10,8 @@ import 'package:edubadges/features/badge_details/data/models/badge_detail_item_m
 import 'package:edubadges/features/badge_details/data/models/badge_details_model.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/constants/badge_extensions.dart';
-import 'package:edubadges/features/badge_details/domain/entities/badge_details_params.dart';
-import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
+import 'package:edubadges/features/badge_details/domain/entities/badge_details_query.dart';
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/features/badge_details/presentation/widgets/badge_visibility_card.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -48,7 +48,8 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   bool _hasInitializedPage = false;
 
   bool get _shouldShowCarousel =>
-      widget.badge.from == BadgeDetailsRouteFrom.overview;
+      widget.badge.scope == BadgeDetailsScope.claimed &&
+      widget.badge.showClaimedGallery;
 
   @override
   void initState() {
@@ -218,15 +219,9 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   Widget _buildSingleBadgeView() {
     final badgeDetailsAsync = ref.watch(
       badgeDetailsModelProvider(
-        BadgeDetailsParams(
-          badgeInstanceEntityId:
-              widget.badge.from == BadgeDetailsRouteFrom.overview ||
-                  widget.badge.from == BadgeDetailsRouteFrom.collection
-              ? widget.badge.id
-              : null,
-          badgeClassEntityId: widget.badge.from == BadgeDetailsRouteFrom.catalog
-              ? widget.badge.id
-              : null,
+        BadgeDetailsQuery(
+          scope: widget.badge.scope,
+          entityId: widget.badge.id,
         ),
       ),
     );
@@ -260,7 +255,14 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   ) {
     final AsyncValue<BadgeDetailsModel?> badgeDetailsValue =
         badgeDetailsAsync ??
-        ref.watch(badgeDetailsModelProvider(_createBadgeParams(badgeId)));
+        ref.watch(
+          badgeDetailsModelProvider(
+            BadgeDetailsQuery(
+              scope: BadgeDetailsScope.claimed,
+              entityId: badgeId,
+            ),
+          ),
+        );
 
     return badgeDetailsValue.when(
       data: (details) => [..._buildBadgeDetails(details)],
@@ -273,27 +275,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
       ],
       error: (error, _) => [const Center(child: ErrorMessageWidget())],
     );
-  }
-
-  BadgeDetailsParams _createBadgeParams(String badgeId) {
-    return switch (widget.badge.from) {
-      BadgeDetailsRouteFrom.overview => BadgeDetailsParams(
-        badgeInstanceEntityId: badgeId,
-        badgeClassEntityId: null,
-      ),
-      BadgeDetailsRouteFrom.collection => BadgeDetailsParams(
-        badgeInstanceEntityId: badgeId,
-        badgeClassEntityId: null,
-      ),
-      BadgeDetailsRouteFrom.catalog => BadgeDetailsParams(
-        badgeInstanceEntityId: null,
-        badgeClassEntityId: badgeId,
-      ),
-      BadgeDetailsRouteFrom.other => const BadgeDetailsParams(
-        badgeInstanceEntityId: null,
-        badgeClassEntityId: null,
-      ),
-    };
   }
 
   List<Widget> _buildBadgeDetails(BadgeDetailsModel? details) {
