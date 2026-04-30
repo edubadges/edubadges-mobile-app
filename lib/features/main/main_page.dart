@@ -1,25 +1,76 @@
+import 'dart:async';
+
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
+import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-class MainPage extends ConsumerWidget {
+class MainPage extends ConsumerStatefulWidget {
   final StatefulNavigationShell navigationShell;
 
   const MainPage({super.key, required this.navigationShell});
 
-  void _onTap(BuildContext context, int index) {
-    navigationShell.goBranch(
-      index,
-      initialLocation: index == navigationShell.currentIndex,
-    );
+  @override
+  ConsumerState<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends ConsumerState<MainPage>
+    with WidgetsBindingObserver {
+  bool _isRefreshingOnReturn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(_refreshReturnCaches(widget.navigationShell.currentIndex));
+    }
+  }
+
+  void _onTap(int index) {
+    final previousIndex = widget.navigationShell.currentIndex;
+    widget.navigationShell.goBranch(
+      index,
+      initialLocation: index == previousIndex,
+    );
+
+    final returningToOverview = previousIndex != 0 && index == 0;
+    if (returningToOverview) {
+      unawaited(_refreshReturnCaches(index));
+    }
+  }
+
+  Future<void> _refreshReturnCaches(int targetIndex) async {
+    if (_isRefreshingOnReturn) return;
+    if (targetIndex != 0) return;
+
+    final badgesAsync = ref.read(badgesOverviewProvider);
+    if (!badgesAsync.hasValue) return;
+
+    _isRefreshingOnReturn = true;
+    try {
+      await ref.read(badgesOverviewProvider.notifier).refresh();
+    } finally {
+      _isRefreshingOnReturn = false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     ref.watch(profileProvider);
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
@@ -29,11 +80,11 @@ class MainPage extends ConsumerWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: navigationShell,
+        child: widget.navigationShell,
       ),
       bottomNavigationBar: NavigationBar(
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: (index) => _onTap(context, index),
+        selectedIndex: widget.navigationShell.currentIndex,
+        onDestinationSelected: _onTap,
         backgroundColor: colorScheme.surfaceContainer,
         elevation: 8,
         indicatorColor: pillColor,
@@ -53,28 +104,28 @@ class MainPage extends ConsumerWidget {
         destinations: [
           _buildItem(
             index: 0,
-            currentIndex: navigationShell.currentIndex,
+            currentIndex: widget.navigationShell.currentIndex,
             iconPath: Assets.iconBackpack,
             label: l10n.tabBadges,
             colorScheme: colorScheme,
           ),
           _buildItem(
             index: 1,
-            currentIndex: navigationShell.currentIndex,
+            currentIndex: widget.navigationShell.currentIndex,
             iconPath: Assets.iconCollections,
             label: l10n.tabCollections,
             colorScheme: colorScheme,
           ),
           _buildItem(
             index: 2,
-            currentIndex: navigationShell.currentIndex,
+            currentIndex: widget.navigationShell.currentIndex,
             iconPath: Assets.iconCatalog,
             label: l10n.tabCatalog,
             colorScheme: colorScheme,
           ),
           _buildItem(
             index: 3,
-            currentIndex: navigationShell.currentIndex,
+            currentIndex: widget.navigationShell.currentIndex,
             iconPath: Assets.iconAccount,
             label: l10n.tabAccount,
             colorScheme: colorScheme,
