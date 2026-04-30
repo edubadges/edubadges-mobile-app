@@ -426,6 +426,25 @@ class AppLocalizationsNl extends AppLocalizations {
   String get learningOutcomes => 'Leeruitkomsten';
 
   @override
+  String get badgeCriteria => 'Criteria';
+
+  @override
+  String get badgeEvidenceMetadataTitle =>
+      'Metadata over het bewijs gerelateerd aan deze edubadge';
+
+  @override
+  String get badgeEvidencePersonalMessage => 'Persoonlijke boodschap';
+
+  @override
+  String get badgeEvidenceUrl => 'URL';
+
+  @override
+  String get badgeEvidenceName => 'Naam';
+
+  @override
+  String get badgeEvidenceDescription => 'Beschrijving';
+
+  @override
   String get studyLoad => 'Studielast';
 
   @override
@@ -1035,4 +1054,13 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get semanticsLoading => 'Laden...';
+
+  @override
+  String get qualityAssurance => 'Kwaliteitswaarborging';
+
+  @override
+  String get readMore => 'Lees meer';
+
+  @override
+  String get readLess => 'Minder lezen';
 }

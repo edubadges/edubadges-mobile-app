@@ -499,6 +499,30 @@
     "@learningOutcomes": {
         "description": "Label for the learning outcomes section describing what was learned"
     },
+    "badgeCriteria": "Criteria",
+    "@badgeCriteria": {
+        "description": "Section title for the badge award criteria on the edubadge details page"
+    },
+    "badgeEvidenceMetadataTitle": "Metadata over het bewijs gerelateerd aan deze edubadge",
+    "@badgeEvidenceMetadataTitle": {
+        "description": "Section title for metadata fields tied to badge evidence"
+    },
+    "badgeEvidencePersonalMessage": "Persoonlijke boodschap",
+    "@badgeEvidencePersonalMessage": {
+        "description": "Label for the narrative or personal message in badge evidence"
+    },
+    "badgeEvidenceUrl": "URL",
+    "@badgeEvidenceUrl": {
+        "description": "Label for the URL field in badge evidence"
+    },
+    "badgeEvidenceName": "Naam",
+    "@badgeEvidenceName": {
+        "description": "Label for the name field in badge evidence"
+    },
+    "badgeEvidenceDescription": "Beschrijving",
+    "@badgeEvidenceDescription": {
+        "description": "Label for the description field in badge evidence"
+    },
     "studyLoad": "Studielast",
     "@studyLoad": {
         "description": "Label for the study load or time commitment required"
@@ -1174,5 +1198,8 @@
     "semanticsLoading": "Laden...",
     "@semanticsLoading": {
         "description": "Accessibility label for loading indicator"
-    }
+    },
+    "qualityAssurance": "Kwaliteitswaarborging",
+    "readMore": "Lees meer",
+    "readLess": "Minder lezen"
 }
