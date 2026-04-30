@@ -464,7 +464,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                         mode: LaunchMode.externalApplication,
                       );
                     },
-                    icon: const Icon(Icons.launch),
+                    icon: Icon(Icons.launch, color: colorScheme.onSurface),
                   )
                 : null,
             item: Column(
