@@ -6,6 +6,7 @@ import 'package:edubadges/features/account/presentation/pages/agreement_details_
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/badge_details/presentation/pages/badge_details_page.dart';
+import 'package:edubadges/features/badge_details/presentation/pages/quality_assurance_page.dart';
 import 'package:edubadges/features/badges_overview/presentation/pages/badge_claim_page.dart';
 import 'package:edubadges/features/badges_overview/presentation/pages/badge_claim_success_page.dart';
 import 'package:edubadges/features/badges_overview/presentation/pages/badge_privacy_page.dart';
@@ -228,6 +229,28 @@ final appRouter = Provider<GoRouter>((ref) {
             name: name,
             description: description,
           );
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.badgeQualityAssurance,
+        name: 'badge-quality-assurance',
+        builder: (context, state) {
+          final badgeId = state.pathParameters['id'] ?? '';
+          final scopeParam = state.pathParameters['scope'];
+          BadgeDetailsScope? scope;
+          for (final value in BadgeDetailsScope.values) {
+            if (value.name == scopeParam) {
+              scope = value;
+              break;
+            }
+          }
+
+          if (scope == null) {
+            return const CatalogPage();
+          }
+
+          return QualityAssurancePage(badgeId: badgeId, scope: scope);
         },
       ),
 

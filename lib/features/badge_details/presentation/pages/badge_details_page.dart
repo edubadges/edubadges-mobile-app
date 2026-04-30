@@ -22,6 +22,7 @@ import 'package:edubadges/shared/domain/enums/badge_class_type.dart';
 import 'package:edubadges/shared/domain/enums/participation_type.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
 import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
+import 'package:edubadges/shared/presentation/widgets/wide_button.dart';
 import 'package:flexi_page_view/flexi_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -29,6 +30,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class BadgeDetailsPage extends ConsumerStatefulWidget {
   final BadgeDetailsRouteModel badge;
@@ -42,6 +44,7 @@ class BadgeDetailsPage extends ConsumerStatefulWidget {
 class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   static const int _sectionCardSpacing = 16;
   static const double _badgeCardHeight = 260;
+  static const int _qualityAssurancePreviewMaxLines = 5;
 
   late PageController _pageController;
   int _currentIndex = 0;
@@ -265,7 +268,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         );
 
     return badgeDetailsValue.when(
-      data: (details) => [..._buildBadgeDetails(details)],
+      data: (details) => [..._buildBadgeDetails(details, badgeId: badgeId)],
       loading: () => [
         Center(
           child: CircularProgressIndicator(
@@ -277,7 +280,11 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     );
   }
 
-  List<Widget> _buildBadgeDetails(BadgeDetailsModel? details) {
+  List<Widget> _buildBadgeDetails(
+    BadgeDetailsModel? details, {
+    required String badgeId,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
 
     final learningOutcome = details?.badgeClass.getExtensionValue<String?>(
@@ -300,7 +307,10 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
       BadgeExtensionKeys.eQF,
     );
     final criteriaText = details?.badgeClass.criteriaText;
-    
+    final badgeClass = details?.badgeClass;
+    final qualityAssuranceText = details != null
+        ? _composeQualityAssurance(details.badgeClass)
+        : null;
 
     return [
       if (details?.badgeInstance != null)
@@ -341,18 +351,48 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             ),
           ),
         ),
-      if (details != null &&
-          (_composeQualityAssurance(details.badgeClass) != null))
+      if (badgeClass != null && qualityAssuranceText != null)
         FocusableSection(
           child: _buildSectionCard(
             title: l10n.qualityAssurance,
-            item: _ExpandableContent(
-              child: MarkdownBody(
-                data: filterBadMarkdown(
-                  _composeQualityAssurance(details.badgeClass)!,
+            action: badgeClass.qualityAssuranceUrl != null
+                ? IconButton(
+                    onPressed: () {
+                      launchUrlString(
+                        badgeClass.qualityAssuranceUrl!,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
+                    icon: const Icon(Icons.launch),
+                  )
+                : null,
+            item: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _ClampedMarkdownPreview(
+                  maxLines: _qualityAssurancePreviewMaxLines,
+                  child: MarkdownBody(
+                    data: filterBadMarkdown(qualityAssuranceText),
+                    styleSheet: AppThemes.markdownStyleSheet(context),
+                  ),
                 ),
-                styleSheet: AppThemes.markdownStyleSheet(context),
-              ),
+                const SizedBox(height: 20),
+                Center(
+                  child: WideButton(
+                    onTap: () {
+                      final path = RoutePath.badgeQualityAssurancePath(
+                        scope: widget.badge.scope,
+                        id: badgeId,
+                      );
+                      context.push(path);
+                    },
+                    icon: null,
+                    text: l10n.readMore,
+                    secondary: true,
+                    color: colorScheme.primary,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -458,16 +498,11 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
 
   String? _composeQualityAssurance(BadgeClassEntity bc) {
     final name = bc.qualityAssuranceName;
-    final url = bc.qualityAssuranceUrl;
     final desc = bc.qualityAssuranceDescription;
 
     final String? header;
     if (name != null && name.isNotEmpty) {
-      if (url != null && url.isNotEmpty) {
-        header = '$name [(link)]($url)';
-      } else {
-        header = name;
-      }
+      header = name;
     } else {
       header = null;
     }
@@ -484,6 +519,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     required String title,
     List<BadgeDetailItemModel>? items,
     Widget? item,
+    Widget? action,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
@@ -499,36 +535,55 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         horizontal: 20,
         vertical: _sectionCardSpacing / 2,
       ),
-      padding: const EdgeInsets.all(16),
+      padding: action != null
+          ? const EdgeInsets.only(left: 16, bottom: 16, top: 6, right: 6)
+          : const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Semantics(
             header: true,
-            child: Text(
-              title,
-              style: textTheme.titleMedium?.copyWith(
-                color: colorScheme.onSurface,
-              ),
-              maxLines: 1,
-              softWrap: false,
-              overflow: TextOverflow.ellipsis,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: textTheme.titleMedium?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                    maxLines: 1,
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (action != null) action,
+              ],
             ),
           ),
           const SizedBox(height: 8),
-          if (item != null) item,
-          if (items != null && items.isNotEmpty)
-            ...List.generate(items.length * 2 - 1, (int index) {
-              if (index.isOdd) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  child: Divider(height: 1),
-                );
-              } else {
-                return _buildSectionItem(item: items[index ~/ 2]);
-              }
-            }),
+          Padding(
+            padding: action != null
+                ? const EdgeInsets.only(right: 16)
+                : EdgeInsets.zero,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (item != null) item,
+                if (items != null && items.isNotEmpty)
+                  ...List.generate(items.length * 2 - 1, (int index) {
+                    if (index.isOdd) {
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        child: Divider(height: 1),
+                      );
+                    } else {
+                      return _buildSectionItem(item: items[index ~/ 2]);
+                    }
+                  }),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -579,91 +634,29 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   }
 }
 
-class _ExpandableContent extends StatefulWidget {
+class _ClampedMarkdownPreview extends StatelessWidget {
   final Widget child;
+  final int maxLines;
 
-  const _ExpandableContent({required this.child});
-
-  @override
-  State<_ExpandableContent> createState() => _ExpandableContentState();
-}
-
-class _ExpandableContentState extends State<_ExpandableContent>
-    with AutomaticKeepAliveClientMixin {
-  static const double _collapsedMaxHeight = 110;
-
-  final GlobalKey _measureKey = GlobalKey();
-  bool _isExpanded = false;
-  double? _measuredHeight;
-
-  @override
-  bool get wantKeepAlive => true;
-
-  void _afterLayout(Duration _) {
-    if (!mounted) return;
-    final renderObject = _measureKey.currentContext?.findRenderObject();
-    if (renderObject is! RenderBox || !renderObject.hasSize) return;
-    final height = renderObject.size.height;
-    if (_measuredHeight != height) {
-      setState(() => _measuredHeight = height);
-    }
-  }
+  const _ClampedMarkdownPreview({required this.child, required this.maxLines});
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
+    final bodyStyle = Theme.of(context).textTheme.bodyMedium;
+    final lineHeight = (bodyStyle?.fontSize ?? 14) * (bodyStyle?.height ?? 1.4);
+    final maxHeight = lineHeight * maxLines;
 
-    final l10n = AppLocalizations.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
-    final measured = _measuredHeight;
-    final overflows = measured != null && measured > _collapsedMaxHeight;
-    final shouldClamp = overflows && !_isExpanded;
-
-    final measurableChild = KeyedSubtree(
-      key: _measureKey,
-      child: widget.child,
-    );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (shouldClamp)
-          ClipRect(
-            child: SizedBox(
-              width: double.infinity,
-              height: _collapsedMaxHeight,
-              child: OverflowBox(
-                alignment: Alignment.topLeft,
-                minHeight: 0,
-                maxHeight: double.infinity,
-                child: measurableChild,
-              ),
-            ),
-          )
-        else
-          measurableChild,
-        if (overflows) ...[
-          const SizedBox(height: 8),
-          Center(
-            child: TextButton.icon(
-              onPressed: () =>
-                  setState(() => _isExpanded = !_isExpanded),
-              icon: Icon(
-                _isExpanded
-                    ? Icons.keyboard_arrow_up
-                    : Icons.keyboard_arrow_down,
-                color: colorScheme.primary,
-              ),
-              label: Text(
-                _isExpanded ? l10n.readLess : l10n.readMore,
-                style: TextStyle(color: colorScheme.primary),
-              ),
-            ),
-          ),
-        ],
-      ],
+    return ClipRect(
+      child: SizedBox(
+        width: double.infinity,
+        height: maxHeight,
+        child: OverflowBox(
+          alignment: Alignment.topLeft,
+          minHeight: 0,
+          maxHeight: double.infinity,
+          child: child,
+        ),
+      ),
     );
   }
 }

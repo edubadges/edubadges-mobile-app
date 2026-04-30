@@ -9,7 +9,6 @@ class RoutePath {
   static const String collection = '/collection/:id';
   static const String newCollection = '/new-collection';
   static const String newCollectionBadgeSelection = '/new-collection/badges';
-
   /// Claimed badge (instance id). Carousel on by default; use `?gallery=false` for single-badge layout.
   static const String badgeDetailsClaimed = '/details/:id';
 
@@ -18,6 +17,9 @@ class RoutePath {
 
   /// Catalog / shared class (badge class id).
   static const String badgePublic = '/public/:id';
+
+  /// Quality assurance details page for a specific badge scope and id.
+  static const String badgeQualityAssurance = '/quality-assurance/:scope/:id';
   static const String catalog = '/catalog';
   static const String account = '/account';
   static const String notificationPermission = '/notification-permission';
@@ -58,6 +60,13 @@ class RoutePath {
       case BadgeDetailsScope.public:
         return '/public/$encoded';
     }
+  }
+
+  static String badgeQualityAssurancePath({
+    required BadgeDetailsScope scope,
+    required String id,
+  }) {
+    return '/quality-assurance/${scope.name}/${Uri.encodeComponent(id)}';
   }
 
   static String collectionPath({
