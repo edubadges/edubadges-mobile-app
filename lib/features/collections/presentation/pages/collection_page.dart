@@ -8,7 +8,6 @@ import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
-import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
@@ -490,7 +489,6 @@ class CollectionPage extends ConsumerWidget {
                         instance: badge,
                         badgeClass: badge.badgeclass as BadgeClassModel,
                         style: BadgeCardStyle.large,
-                        onTapFrom: BadgeDetailsRouteFrom.collection,
                       ),
                     ),
                   ),

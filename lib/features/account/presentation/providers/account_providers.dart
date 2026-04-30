@@ -103,22 +103,3 @@ class NotificationEnabledNotifier extends AsyncNotifier<bool> {
   }
 }
 
-final notificationEnabledProvider =
-    AsyncNotifierProvider<NotificationEnabledNotifier, bool>(
-  NotificationEnabledNotifier.new,
-);
-
-class NotificationEnabledNotifier extends AsyncNotifier<bool> {
-  @override
-  Future<bool> build() async {
-    final active = await ref.read(deviceRegistrationServiceProvider).getNotificationActive();
-    if (active != null) return active;
-    return false;
-  }
-
-  /// Updates the toggle and sends the new [active] value to the backend.
-  Future<void> setEnabled(bool enabled) async {
-    await ref.read(deviceRegistrationServiceProvider).registerDevice(active: enabled);
-    state = AsyncData(enabled);
-  }
-}
