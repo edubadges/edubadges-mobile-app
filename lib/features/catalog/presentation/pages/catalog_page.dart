@@ -1,6 +1,6 @@
+import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
-import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/features/catalog/presentation/providers/catalog_providers.dart';
 import 'package:edubadges/features/catalog/presentation/widgets/catalog_badge_card.dart';
@@ -134,11 +134,12 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
                             if (index < displayBadges.length) {
                               final badge = displayBadges[index];
                               void openBadgeDetails() {
-                                final routeModel = BadgeDetailsRouteModel(
-                                  id: badge.entityId,
-                                  from: BadgeDetailsRouteFrom.catalog,
+                                context.push(
+                                  RoutePath.badgePath(
+                                    id: badge.entityId,
+                                    from: BadgeDetailsRouteFrom.catalog,
+                                  ),
                                 );
-                                context.push(routeModel.buildRouteUrl());
                               }
 
                               return Padding(

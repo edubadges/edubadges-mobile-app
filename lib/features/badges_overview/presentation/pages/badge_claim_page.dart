@@ -60,7 +60,9 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         detailAsync.hasError || detail == null || !detail.userHasAcceptedTerms;
     if (needsPrivacyPage) {
       if (context.mounted) {
-        unawaited(context.push(RoutePath.badgePrivacy, extra: {'id': widget.badgeId}));
+        unawaited(
+          context.push(RoutePath.badgePrivacyPath(id: widget.badgeId)),
+        );
       }
       return;
     }
@@ -81,7 +83,9 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         (_) {
           if (mounted) {
             ref.read(badgesOverviewProvider.notifier).refresh();
-            context.go('${RoutePath.badgeClaimSuccess}?id=${badge.id}');
+            context.go(
+              RoutePath.badgeClaimSuccessPath(id: badge.id.toString()),
+            );
           }
         },
       );

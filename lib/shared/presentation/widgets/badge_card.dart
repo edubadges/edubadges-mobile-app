@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/image.dart';
@@ -7,7 +8,6 @@ import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
-import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -151,11 +151,12 @@ class BadgeCard extends ConsumerWidget {
       onActivate: onTapDisabled
           ? null
           : () {
-              final routeModel = BadgeDetailsRouteModel(
-                id: instance?.entityId ?? badgeClass.entityId,
-                from: onTapFrom,
+              context.push(
+                RoutePath.badgePath(
+                  id: instance?.entityId ?? badgeClass.entityId,
+                  from: onTapFrom,
+                ),
               );
-              context.push(routeModel.buildRouteUrl());
             },
       child: Container(
         decoration: BoxDecoration(

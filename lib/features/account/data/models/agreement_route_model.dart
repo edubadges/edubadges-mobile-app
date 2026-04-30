@@ -1,4 +1,3 @@
-import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 
 class AgreementRouteModel {
@@ -66,23 +65,6 @@ class AgreementRouteModel {
       if (titleShort != null) 'titleShort': titleShort,
       if (textUrlShort != null) 'textUrlShort': textUrlShort,
     };
-  }
-
-  String buildRouteUrl() {
-    final basePath = RoutePath.agreementDetails.replaceAll(
-      ':id',
-      Uri.encodeComponent(agreementId),
-    );
-    final queryParameters = {
-      'titleLong': titleLong,
-      'textUrlLong': textUrlLong,
-      if (titleShort != null) 'titleShort': titleShort!,
-      if (textUrlShort != null) 'textUrlShort': textUrlShort!,
-    };
-    final uri = Uri.parse(basePath).replace(
-      queryParameters: queryParameters,
-    );
-    return uri.toString();
   }
 }
 

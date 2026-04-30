@@ -34,10 +34,10 @@ class _CreateCollectionBottomSheetState
       Navigator.of(context).pop();
 
       context.push(
-        RoutePath.newCollectionBadgeSelectionUri(
+        RoutePath.newCollectionBadgeSelectionPath(
           name: name,
           description: description,
-        ).toString(),
+        ),
       );
     }
   }

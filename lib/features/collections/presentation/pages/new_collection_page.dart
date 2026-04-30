@@ -56,10 +56,10 @@ class _EmptyState extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {
                 context.push(
-                  RoutePath.newCollectionBadgeSelectionUri(
+                  RoutePath.newCollectionBadgeSelectionPath(
                     name: collectionName,
                     description: collectionDescription,
-                  ).toString(),
+                  ),
                 );
               },
               style: ElevatedButton.styleFrom(

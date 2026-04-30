@@ -1,5 +1,3 @@
-import 'package:edubadges/core/constants/route_path.dart';
-
 class CollectionRouteModel {
   final String id;
   final String title;
@@ -25,17 +23,5 @@ class CollectionRouteModel {
       'title': title,
       if (description != null) 'description': description,
     };
-  }
-
-  String buildRouteUrl() {
-    final basePath = RoutePath.collection.replaceAll(':id', id);
-    final uri = Uri.parse(basePath).replace(
-      queryParameters: {
-        'title': title,
-        if (description != null && description!.isNotEmpty)
-          'description': description,
-      },
-    );
-    return uri.toString();
   }
 }

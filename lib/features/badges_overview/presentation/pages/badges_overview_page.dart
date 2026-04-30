@@ -2,7 +2,6 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
-import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/widgets/feedback_bottom_sheet.dart';
@@ -71,11 +70,12 @@ class BadgesOverviewPage extends ConsumerWidget {
                 final remainingCount = state.unclaimedBadges.length;
 
                 void onClaimBannerTap() {
-                  final claimRoute = RoutePath.badgeClaim.replaceAll(
-                    ':id',
-                    firstBadge.id.toString(),
+                  context.push(
+                    RoutePath.badgeClaimPath(
+                      id: firstBadge.id.toString(),
+                      remainingCount: remainingCount,
+                    ),
                   );
-                  context.push('$claimRoute?remainingCount=$remainingCount');
                 }
 
                 final claimBannerLabel = l10n.newBadgeReady(
@@ -162,11 +162,12 @@ class BadgesOverviewPage extends ConsumerWidget {
                               wrapWithSemantics: false,
                               includeOuterTapTarget: false,
                               onActivate: () {
-                                final routeModel = BadgeDetailsRouteModel(
-                                  id: badge.entityId,
-                                  from: BadgeDetailsRouteFrom.overview,
+                                context.push(
+                                  RoutePath.badgePath(
+                                    id: badge.entityId,
+                                    from: BadgeDetailsRouteFrom.overview,
+                                  ),
                                 );
-                                context.push(routeModel.buildRouteUrl());
                               },
                               child: BadgeCard(
                                 instance: badge,
@@ -174,11 +175,12 @@ class BadgesOverviewPage extends ConsumerWidget {
                                 style: BadgeCardStyle.small,
                                 onTapFrom: BadgeDetailsRouteFrom.overview,
                                 onTap: () {
-                                  final routeModel = BadgeDetailsRouteModel(
-                                    id: badge.entityId,
-                                    from: BadgeDetailsRouteFrom.overview,
+                                  context.push(
+                                    RoutePath.badgePath(
+                                      id: badge.entityId,
+                                      from: BadgeDetailsRouteFrom.overview,
+                                    ),
                                   );
-                                  context.push(routeModel.buildRouteUrl());
                                 },
                               ),
                             ),
@@ -224,11 +226,12 @@ class BadgesOverviewPage extends ConsumerWidget {
                             wrapWithSemantics: false,
                             includeOuterTapTarget: false,
                             onActivate: () {
-                              final routeModel = BadgeDetailsRouteModel(
-                                id: badge.entityId,
-                                from: BadgeDetailsRouteFrom.catalog,
+                              context.push(
+                                RoutePath.badgePath(
+                                  id: badge.entityId,
+                                  from: BadgeDetailsRouteFrom.catalog,
+                                ),
                               );
-                              context.push(routeModel.buildRouteUrl());
                             },
                             child: BadgeCard(
                               instance: badge,
@@ -236,11 +239,12 @@ class BadgesOverviewPage extends ConsumerWidget {
                               style: BadgeCardStyle.small,
                               onTapFrom: BadgeDetailsRouteFrom.catalog,
                               onTap: () {
-                                final routeModel = BadgeDetailsRouteModel(
-                                  id: badge.badgeclass.entityId,
-                                  from: BadgeDetailsRouteFrom.catalog,
+                                context.push(
+                                  RoutePath.badgePath(
+                                    id: badge.badgeclass.entityId,
+                                    from: BadgeDetailsRouteFrom.catalog,
+                                  ),
                                 );
-                                context.push(routeModel.buildRouteUrl());
                               },
                             ),
                           ),

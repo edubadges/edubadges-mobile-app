@@ -135,12 +135,10 @@ final appRouter = Provider<GoRouter>((ref) {
             return RoutePath.catalog; // fallback
           }
 
-          final routeModel = BadgeDetailsRouteModel(
+          return RoutePath.badgePath(
             id: id,
             from: BadgeDetailsRouteFrom.catalog,
           );
-
-          return routeModel.buildRouteUrl();
         },
       ),
 
