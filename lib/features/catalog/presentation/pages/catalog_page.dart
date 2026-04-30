@@ -62,9 +62,15 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
             data: (state) {
               final displayBadges = state.displayBadges;
 
-              return CustomScrollView(
-                controller: _scrollController,
-                slivers: [
+              return RefreshIndicator(
+                backgroundColor: colorScheme.surfaceContainer,
+                onRefresh: () async {
+                  await ref.read(catalogProvider.notifier).refresh();
+                },
+                child: CustomScrollView(
+                  controller: _scrollController,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.only(
@@ -171,8 +177,9 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
                       ),
                     ),
 
-                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                ],
+                    const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                  ],
+                ),
               );
             },
             loading: () => CustomScrollView(

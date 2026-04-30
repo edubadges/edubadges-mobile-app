@@ -51,107 +51,124 @@ class CollectionsPage extends ConsumerWidget {
       body: MaxWidthWrapper(
         child: collectionsAsync.when(
           data: (collections) {
-            if (collections.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgIcon(
-                      assetPath: Assets.iconCollections,
-                      size: 40,
-                      color: colorScheme.primary,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      l10n.noCollectionsYet,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
+            return RefreshIndicator(
+              backgroundColor: colorScheme.surfaceContainer,
+              onRefresh: () async {
+                await ref.read(collectionsProvider.notifier).refresh();
+              },
+              child: collections.isEmpty
+                  ? CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgIcon(
+                                  assetPath: Assets.iconCollections,
+                                  size: 40,
+                                  color: colorScheme.primary,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  l10n.noCollectionsYet,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(16),
+                      itemCount: collections.length,
+                      itemBuilder: (context, index) {
+                        final collection = collections[index];
+                        final badges = collection.badgeInstances ?? [];
+                        final badgeCount = badges.length;
 
-            return ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: collections.length,
-              itemBuilder: (context, index) {
-                final collection = collections[index];
-                final badges = collection.badgeInstances ?? [];
-                final badgeCount = badges.length;
-
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainer,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: colorScheme.outlineVariant,
-                      width: 1,
-                    ),
-                  ),
-                  child: MergeSemantics(
-                    child: InkWell(
-                      onTap: () {
-                        final route = RoutePath.collection.replaceAll(
-                          ':id',
-                          collection.entityId,
-                        );
-                        final uri = Uri.parse(route).replace(
-                          queryParameters: {
-                            'title': collection.name,
-                            if (collection.description != null &&
-                                collection.description!.isNotEmpty)
-                              'description': collection.description,
-                          },
-                        );
-                        context.push(uri.toString());
-                      },
-                      borderRadius: BorderRadius.circular(20),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Row(
-                          children: [
-                            ExcludeSemantics(
-                              child: SizedBox(
-                                width: 80,
-                                height: 80,
-                                child: _buildBadgeGrid(
-                                  badges,
-                                  badgeCount,
-                                  colorScheme,
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainer,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: colorScheme.outlineVariant,
+                              width: 1,
+                            ),
+                          ),
+                          child: MergeSemantics(
+                            child: InkWell(
+                              onTap: () {
+                                final route = RoutePath.collection.replaceAll(
+                                  ':id',
+                                  collection.entityId,
+                                );
+                                final uri = Uri.parse(route).replace(
+                                  queryParameters: {
+                                    'title': collection.name,
+                                    if (collection.description != null &&
+                                        collection.description!.isNotEmpty)
+                                      'description': collection.description,
+                                  },
+                                );
+                                context.push(uri.toString());
+                              },
+                              borderRadius: BorderRadius.circular(20),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Row(
+                                  children: [
+                                    ExcludeSemantics(
+                                      child: SizedBox(
+                                        width: 80,
+                                        height: 80,
+                                        child: _buildBadgeGrid(
+                                          badges,
+                                          badgeCount,
+                                          colorScheme,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            collection.name,
+                                            style: theme.textTheme.titleSmall
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            l10n.countEdubadges(badgeCount),
+                                            style: theme.textTheme.bodySmall
+                                                ?.copyWith(
+                                                  color: colorScheme
+                                                      .onSurfaceVariant,
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    collection.name,
-                                    style: theme.textTheme.titleSmall?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    l10n.countEdubadges(badgeCount),
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: colorScheme.onSurfaceVariant,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
-                  ),
-                );
-              },
             );
           },
           loading: () => Center(

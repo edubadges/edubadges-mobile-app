@@ -106,8 +106,43 @@ class CatalogNotifier extends AsyncNotifier<CatalogState> {
       state = const AsyncLoading();
     }
     try {
-      final newState = await _loadCatalogBadges(page: 1);
-      state = AsyncData(newState);
+      final currentState = state.value;
+      if (currentState == null) {
+        final newState = await _loadCatalogBadges(page: 1);
+        state = AsyncData(newState);
+        return;
+      }
+
+      if (currentState.isSearching) {
+        final repository = ref.read(catalogRepositoryProvider);
+        final result = await repository.getCatalogBadges(
+          search: currentState.searchTerm,
+          institutionType: currentState.selectedInstitutionType,
+          institutionId: currentState.selectedInstitutionId,
+          page: 1,
+        );
+
+        result.fold(
+          (failure) => throw failure,
+          (response) {
+            state = AsyncData(
+              currentState.copyWith(
+                badges: response.results,
+                hasMore: response.hasMore,
+                currentPage: 1,
+                totalCount: response.count,
+              ),
+            );
+          },
+        );
+      } else {
+        final newState = await _loadCatalogBadges(
+          page: 1,
+          institutionType: currentState.selectedInstitutionType,
+          institutionId: currentState.selectedInstitutionId,
+        );
+        state = AsyncData(newState);
+      }
     } catch (error, stackTrace) {
       if (!silent || !state.hasValue) {
         state = AsyncError(error, stackTrace);
