@@ -116,7 +116,8 @@ class NetworkConfig {
           return {'Authorization': 'Bearer ${token.accessToken}'};
         },
         shouldRefresh: (response) {
-          const authErrorCodes = {401};
+          // Server returns 403 for 'Invalid authentication credentials' instead of 401
+          const authErrorCodes = {401, 403};
           return response != null &&
               authErrorCodes.contains(response.statusCode);
         },
