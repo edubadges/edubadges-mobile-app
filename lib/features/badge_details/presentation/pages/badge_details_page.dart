@@ -308,6 +308,8 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     final eQF = details?.badgeClass.getExtensionValue<double?>(
       BadgeExtensionKeys.eQF,
     );
+    final isEqfNlqfLevelVerified =
+        details?.badgeClass.eqfNlqfLevelVerified == true;
     final criteriaText = details?.badgeClass.criteriaText;
     final badgeClass = details?.badgeClass;
     final qualityAssuranceText = details != null
@@ -404,7 +406,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                 title: l10n.language,
                 subtitle: language,
               ),
-            if (eQF != null)
+            if (eQF != null && isEqfNlqfLevelVerified)
               BadgeDetailItemModel(
                 icon: Assets.iconIndicatif,
                 title: l10n.indicativeLevel,
