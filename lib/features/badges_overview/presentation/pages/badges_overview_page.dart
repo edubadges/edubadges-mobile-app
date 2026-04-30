@@ -2,7 +2,7 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
-import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/widgets/feedback_bottom_sheet.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -163,9 +163,9 @@ class BadgesOverviewPage extends ConsumerWidget {
                               includeOuterTapTarget: false,
                               onActivate: () {
                                 context.push(
-                                  RoutePath.badgePath(
+                                  RoutePath.badgeDetailsLocation(
+                                    scope: BadgeDetailsScope.claimed,
                                     id: badge.entityId,
-                                    from: BadgeDetailsRouteFrom.overview,
                                   ),
                                 );
                               },
@@ -173,12 +173,12 @@ class BadgesOverviewPage extends ConsumerWidget {
                                 instance: badge,
                                 badgeClass: badgeClass,
                                 style: BadgeCardStyle.small,
-                                onTapFrom: BadgeDetailsRouteFrom.overview,
+                                showClaimedGalleryOnOpen: true,
                                 onTap: () {
                                   context.push(
-                                    RoutePath.badgePath(
+                                    RoutePath.badgeDetailsLocation(
+                                      scope: BadgeDetailsScope.claimed,
                                       id: badge.entityId,
-                                      from: BadgeDetailsRouteFrom.overview,
                                     ),
                                   );
                                 },
@@ -227,9 +227,9 @@ class BadgesOverviewPage extends ConsumerWidget {
                             includeOuterTapTarget: false,
                             onActivate: () {
                               context.push(
-                                RoutePath.badgePath(
-                                  id: badge.entityId,
-                                  from: BadgeDetailsRouteFrom.catalog,
+                                RoutePath.badgeDetailsLocation(
+                                  scope: BadgeDetailsScope.enrollment,
+                                  id: badge.badgeclass.entityId,
                                 ),
                               );
                             },
@@ -237,12 +237,14 @@ class BadgesOverviewPage extends ConsumerWidget {
                               instance: badge,
                               badgeClass: badge.badgeclass as BadgeClassModel,
                               style: BadgeCardStyle.small,
-                              onTapFrom: BadgeDetailsRouteFrom.catalog,
+                              badgeNavigationScope: BadgeDetailsScope.enrollment,
+                              badgeNavigationEntityId:
+                                  badge.badgeclass.entityId,
                               onTap: () {
                                 context.push(
-                                  RoutePath.badgePath(
+                                  RoutePath.badgeDetailsLocation(
+                                    scope: BadgeDetailsScope.enrollment,
                                     id: badge.badgeclass.entityId,
-                                    from: BadgeDetailsRouteFrom.catalog,
                                   ),
                                 );
                               },

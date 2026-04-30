@@ -2,7 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/features/badge_details/data/datasources/badge_details_datasource.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_model.dart';
-import 'package:edubadges/features/badge_details/domain/entities/badge_details_params.dart';
+import 'package:edubadges/features/badge_details/domain/entities/badge_details_query.dart';
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/badge_details/domain/repositories/badge_details_repository.dart';
 import 'package:edubadges/features/badge_details/domain/repositories/badge_details_repository_impl.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
@@ -31,57 +32,50 @@ final badgeDetailsProvider = FutureProvider.autoDispose
     });
 
 final badgeDetailsModelProvider = FutureProvider.autoDispose
-    .family<BadgeDetailsModel?, BadgeDetailsParams>((ref, params) async {
+    .family<BadgeDetailsModel?, BadgeDetailsQuery>((ref, query) async {
       final repository = ref.read(badgeDetailsRepositoryProvider);
 
-      // Watch so this provider recomputes when overview/requested list updates
       final badgesListAsync = ref.watch(badgesListProvider);
-      final bool badgeRequested =
-          badgesListAsync.value?.requestedBadges.firstWhereOrNull(
+      final overview = badgesListAsync.value;
+
+      final bool badgeRequested = overview?.requestedBadges.firstWhereOrNull(
             (element) =>
-                element.badgeclass.entityId == params.badgeClassEntityId ||
-                element.entityId == params.badgeInstanceEntityId,
+                element.badgeclass.entityId == query.entityId ||
+                element.entityId == query.entityId,
           ) !=
           null;
 
-      if (params.badgeInstanceEntityId != null) {
-        final result = await repository.getBadgeInstance(
-          params.badgeInstanceEntityId!,
-        );
-        return result.fold(
-          (failure) => throw failure,
-          (badgeInstance) => BadgeDetailsModel(
-            badgeInstance: badgeInstance,
-            badgeClass: badgeInstance.badgeclass as BadgeClassModel,
-            requested: badgeRequested,
-          ),
-        );
+      switch (query.scope) {
+        case BadgeDetailsScope.claimed:
+          final result = await repository.getBadgeInstance(query.entityId);
+          return result.fold(
+            (failure) => throw failure,
+            (badgeInstance) => BadgeDetailsModel(
+              badgeInstance: badgeInstance,
+              badgeClass: badgeInstance.badgeclass as BadgeClassModel,
+              requested: badgeRequested,
+            ),
+          );
+
+        case BadgeDetailsScope.enrollment:
+        case BadgeDetailsScope.public:
+          final result = await repository.getBadgeDetails(query.entityId);
+
+          final BadgeInstanceEntity? badgeInstance = overview?.claimedBadges
+              .firstWhereOrNull(
+                (element) =>
+                    element.badgeclass.entityId == query.entityId,
+              );
+
+          return result.fold(
+            (failure) => throw failure,
+            (badgeClass) => BadgeDetailsModel(
+              badgeInstance: badgeInstance as BadgeInstanceModel?,
+              badgeClass: badgeClass,
+              requested: badgeRequested,
+            ),
+          );
       }
-
-      if (params.badgeClassEntityId != null) {
-        final result = await repository.getBadgeDetails(
-          params.badgeClassEntityId!,
-        );
-
-        final BadgeInstanceEntity? badgeInstance = badgesListAsync
-            .value
-            ?.claimedBadges
-            .firstWhereOrNull(
-              (element) =>
-                  element.badgeclass.entityId == params.badgeClassEntityId,
-            );
-
-        return result.fold(
-          (failure) => throw failure,
-          (badgeClass) => BadgeDetailsModel(
-            badgeInstance: badgeInstance as BadgeInstanceModel?,
-            badgeClass: badgeClass,
-            requested: badgeRequested,
-          ),
-        );
-      }
-
-      return null;
     });
 
 final badgeByIdProvider = Provider.autoDispose.family<BadgeInstanceEntity?, String>((

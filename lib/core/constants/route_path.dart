@@ -1,4 +1,4 @@
-import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 
 class RoutePath {
   static const String main = '/';
@@ -9,7 +9,15 @@ class RoutePath {
   static const String collection = '/collection/:id';
   static const String newCollection = '/new-collection';
   static const String newCollectionBadgeSelection = '/new-collection/badges';
-  static const String badge = '/badge/:id';
+
+  /// Claimed badge (instance id). Carousel on by default; use `?gallery=false` for single-badge layout.
+  static const String badgeDetailsClaimed = '/details/:id';
+
+  /// Requested / enrollment (badge class id).
+  static const String badgeEnrollment = '/enrollment/:id';
+
+  /// Catalog / shared class (badge class id).
+  static const String badgePublic = '/public/:id';
   static const String catalog = '/catalog';
   static const String account = '/account';
   static const String notificationPermission = '/notification-permission';
@@ -27,14 +35,29 @@ class RoutePath {
   /// List of routes that should redirect logged-in users to their home page.
   static const List<String> redirectRoutesForLoggedInUsers = [login];
 
-  static String badgePath({
+  /// Builds a location for [BadgeDetailsPage] matching website routes.
+  ///
+  /// For [BadgeDetailsScope.claimed], [gallery] defaults to true (carousel). Pass false for `?gallery=false`.
+  static String badgeDetailsLocation({
+    required BadgeDetailsScope scope,
     required String id,
-    BadgeDetailsRouteFrom from = BadgeDetailsRouteFrom.other,
+    bool gallery = true,
   }) {
-    return Uri(
-      path: '/badge/${Uri.encodeComponent(id)}',
-      queryParameters: {'from': from.toValue()},
-    ).toString();
+    final encoded = Uri.encodeComponent(id);
+    switch (scope) {
+      case BadgeDetailsScope.claimed:
+        if (!gallery) {
+          return Uri(
+            path: '/details/$encoded',
+            queryParameters: {'gallery': 'false'},
+          ).toString();
+        }
+        return '/details/$encoded';
+      case BadgeDetailsScope.enrollment:
+        return '/enrollment/$encoded';
+      case BadgeDetailsScope.public:
+        return '/public/$encoded';
+    }
   }
 
   static String collectionPath({

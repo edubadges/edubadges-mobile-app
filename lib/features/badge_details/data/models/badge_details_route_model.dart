@@ -1,22 +1,29 @@
-import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 
 class BadgeDetailsRouteModel {
   final String id;
-  final BadgeDetailsRouteFrom from;
+  final BadgeDetailsScope scope;
+  final bool showClaimedGallery;
 
   const BadgeDetailsRouteModel({
     required this.id,
-    this.from = BadgeDetailsRouteFrom.other,
+    required this.scope,
+    this.showClaimedGallery = false,
   });
 
   factory BadgeDetailsRouteModel.fromJson(Map<String, dynamic> json) {
     return BadgeDetailsRouteModel(
       id: json['id'] as String,
-      from: json['from'] as BadgeDetailsRouteFrom,
+      scope: BadgeDetailsScope.values.byName(json['scope'] as String),
+      showClaimedGallery: json['showClaimedGallery'] as bool? ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'from': from};
+    return {
+      'id': id,
+      'scope': scope.name,
+      'showClaimedGallery': showClaimedGallery,
+    };
   }
 }

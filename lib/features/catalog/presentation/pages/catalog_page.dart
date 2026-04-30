@@ -1,7 +1,7 @@
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
-import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/catalog/presentation/providers/catalog_providers.dart';
 import 'package:edubadges/features/catalog/presentation/widgets/catalog_badge_card.dart';
 import 'package:edubadges/features/catalog/presentation/widgets/catalog_filters.dart';
@@ -135,9 +135,9 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
                               final badge = displayBadges[index];
                               void openBadgeDetails() {
                                 context.push(
-                                  RoutePath.badgePath(
+                                  RoutePath.badgeDetailsLocation(
+                                    scope: BadgeDetailsScope.public,
                                     id: badge.entityId,
-                                    from: BadgeDetailsRouteFrom.catalog,
                                   ),
                                 );
                               }

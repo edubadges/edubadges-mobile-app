@@ -8,7 +8,7 @@ import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
-import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
@@ -29,7 +29,14 @@ class BadgeCard extends ConsumerWidget {
   final BadgeClassModel badgeClass;
   final BadgeCardStyle style;
   final bool isSelected, onTapDisabled, badgeRequested;
-  final BadgeDetailsRouteFrom onTapFrom;
+
+  /// When set, navigation uses this scope and [badgeNavigationEntityId] instead
+  /// of inferring claimed vs public from [instance].
+  final BadgeDetailsScope? badgeNavigationScope;
+  final String? badgeNavigationEntityId;
+
+  /// Only applies when opening as [BadgeDetailsScope.claimed] (backpack carousel).
+  final bool showClaimedGalleryOnOpen;
 
   final VoidCallback? onTap;
 
@@ -41,7 +48,9 @@ class BadgeCard extends ConsumerWidget {
     this.isSelected = false,
     this.onTapDisabled = false,
     this.badgeRequested = false,
-    this.onTapFrom = BadgeDetailsRouteFrom.other,
+    this.badgeNavigationScope,
+    this.badgeNavigationEntityId,
+    this.showClaimedGalleryOnOpen = false,
     this.onTap,
   });
 
@@ -53,6 +62,22 @@ class BadgeCard extends ConsumerWidget {
       return match!.value as int;
     }
     return match != null ? int.tryParse(match.value.toString()) : null;
+  }
+
+  void _openDetails(BuildContext context) {
+    final scope = badgeNavigationScope ??
+        (instance != null ? BadgeDetailsScope.claimed : BadgeDetailsScope.public);
+    final id = badgeNavigationEntityId ??
+        (instance?.entityId ?? badgeClass.entityId);
+    final gallery = scope != BadgeDetailsScope.claimed ||
+        showClaimedGalleryOnOpen;
+    context.push(
+      RoutePath.badgeDetailsLocation(
+        scope: scope,
+        id: id,
+        gallery: gallery,
+      ),
+    );
   }
 
   @override
@@ -148,16 +173,7 @@ class BadgeCard extends ConsumerWidget {
 
     return KeyboardActivatable(
       enabled: !onTapDisabled,
-      onActivate: onTapDisabled
-          ? null
-          : () {
-              context.push(
-                RoutePath.badgePath(
-                  id: instance?.entityId ?? badgeClass.entityId,
-                  from: onTapFrom,
-                ),
-              );
-            },
+      onActivate: onTapDisabled ? null : () => _openDetails(context),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
