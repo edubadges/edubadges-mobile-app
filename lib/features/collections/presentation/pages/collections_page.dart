@@ -106,19 +106,13 @@ class CollectionsPage extends ConsumerWidget {
                           child: MergeSemantics(
                             child: InkWell(
                               onTap: () {
-                                final route = RoutePath.collection.replaceAll(
-                                  ':id',
-                                  collection.entityId,
+                                context.push(
+                                  RoutePath.collectionPath(
+                                    id: collection.entityId,
+                                    title: collection.name,
+                                    description: collection.description,
+                                  ),
                                 );
-                                final uri = Uri.parse(route).replace(
-                                  queryParameters: {
-                                    'title': collection.name,
-                                    if (collection.description != null &&
-                                        collection.description!.isNotEmpty)
-                                      'description': collection.description,
-                                  },
-                                );
-                                context.push(uri.toString());
                               },
                               borderRadius: BorderRadius.circular(20),
                               child: Padding(

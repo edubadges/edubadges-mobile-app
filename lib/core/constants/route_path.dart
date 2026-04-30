@@ -1,3 +1,5 @@
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_route_from.dart';
+
 class RoutePath {
   static const String main = '/';
   static const String login = '/login';
@@ -25,18 +27,97 @@ class RoutePath {
   /// List of routes that should redirect logged-in users to their home page.
   static const List<String> redirectRoutesForLoggedInUsers = [login];
 
+  static String badgePath({
+    required String id,
+    BadgeDetailsRouteFrom from = BadgeDetailsRouteFrom.other,
+  }) {
+    return Uri(
+      path: '/badge/${Uri.encodeComponent(id)}',
+      queryParameters: {'from': from.toValue()},
+    ).toString();
+  }
+
+  static String collectionPath({
+    required String id,
+    required String title,
+    String? description,
+  }) {
+    return Uri(
+      path: '/collection/${Uri.encodeComponent(id)}',
+      queryParameters: {
+        'title': title,
+        if (description != null && description.isNotEmpty) 'description': description,
+      },
+    ).toString();
+  }
+
+  static String agreementDetailsPath({
+    required String agreementId,
+    required String titleLong,
+    required String textUrlLong,
+    String? titleShort,
+    String? textUrlShort,
+  }) {
+    return Uri(
+      path: '/agreement/${Uri.encodeComponent(agreementId)}',
+      queryParameters: {
+        'titleLong': titleLong,
+        'textUrlLong': textUrlLong,
+        if (titleShort != null) 'titleShort': titleShort,
+        if (textUrlShort != null) 'textUrlShort': textUrlShort,
+      },
+    ).toString();
+  }
+
+  static String badgeClaimPath({
+    required String id,
+    required int remainingCount,
+  }) {
+    return Uri(
+      path: '/badge-claim/${Uri.encodeComponent(id)}',
+      queryParameters: {'remainingCount': remainingCount.toString()},
+    ).toString();
+  }
+
+  static String badgePrivacyPath({required String id}) {
+    return Uri(
+      path: '/badge-privacy/${Uri.encodeComponent(id)}',
+    ).toString();
+  }
+
+  static String badgeClaimSuccessPath({required String id}) {
+    return Uri(
+      path: badgeClaimSuccess,
+      queryParameters: {'id': id},
+    ).toString();
+  }
+
+  static String newCollectionPath({
+    required String name,
+    String? description,
+  }) {
+    return Uri(
+      path: newCollection,
+      queryParameters: {
+        'name': name,
+        if (description != null && description.isNotEmpty) 'description': description,
+      },
+    ).toString();
+  }
+
   /// Query: optional [id] (existing collection), [name], optional [description].
-  static Uri newCollectionBadgeSelectionUri({
+  static String newCollectionBadgeSelectionPath({
     String? id,
     required String name,
     String? description,
   }) {
-    return Uri.parse(newCollectionBadgeSelection).replace(
+    return Uri(
+      path: newCollectionBadgeSelection,
       queryParameters: {
         if (id != null && id.isNotEmpty) 'id': id,
         'name': name,
         if (description != null && description.isNotEmpty) 'description': description,
       },
-    );
+    ).toString();
   }
 }

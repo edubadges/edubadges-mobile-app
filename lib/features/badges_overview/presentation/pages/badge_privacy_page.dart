@@ -108,7 +108,9 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
         (_) {
           if (mounted) {
             ref.read(badgesOverviewProvider.notifier).refresh();
-            context.go('${RoutePath.badgeClaimSuccess}?id=${badge.id}');
+            context.go(
+              RoutePath.badgeClaimSuccessPath(id: badge.id.toString()),
+            );
           }
         },
       );

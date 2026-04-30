@@ -250,11 +250,11 @@ class CollectionPage extends ConsumerWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       context.push(
-                        RoutePath.newCollectionBadgeSelectionUri(
+                        RoutePath.newCollectionBadgeSelectionPath(
                           id: collection.id,
                           name: collection.title,
                           description: collection.description,
-                        ).toString(),
+                        ),
                       );
                     },
                     style: ElevatedButton.styleFrom(

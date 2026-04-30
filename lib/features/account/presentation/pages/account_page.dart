@@ -319,7 +319,15 @@ class AccountPage extends ConsumerWidget {
         agreement,
         langCode,
       );
-      context.push(agreementModel.buildRouteUrl());
+      context.push(
+        RoutePath.agreementDetailsPath(
+          agreementId: agreementModel.agreementId,
+          titleLong: agreementModel.titleLong,
+          textUrlLong: agreementModel.textUrlLong,
+          titleShort: agreementModel.titleShort,
+          textUrlShort: agreementModel.textUrlShort,
+        ),
+      );
     }
 
     final agreementTitle = agreement.getAgreementTypeName(l10n);

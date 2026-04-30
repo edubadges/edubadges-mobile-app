@@ -215,7 +215,10 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
               .toString();
           if (nextBadgeId != null) {
             context.pushReplacement(
-              '${RoutePath.badgeClaim.replaceAll(':id', nextBadgeId)}?remainingCount=$count',
+              RoutePath.badgeClaimPath(
+                id: nextBadgeId,
+                remainingCount: count,
+              ),
             );
           }
         },
