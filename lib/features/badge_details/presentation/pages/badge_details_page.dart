@@ -353,63 +353,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             ),
           ),
         ),
-      if (badgeClass != null && qualityAssuranceText != null)
-        FocusableSection(
-          child: _buildSectionCard(
-            title: l10n.qualityAssurance,
-            action: badgeClass.qualityAssuranceUrl != null
-                ? IconButton(
-                    onPressed: () {
-                      launchUrlString(
-                        badgeClass.qualityAssuranceUrl!,
-                        mode: LaunchMode.externalApplication,
-                      );
-                    },
-                    icon: const Icon(Icons.launch),
-                  )
-                : null,
-            item: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _ClampedMarkdownPreview(
-                  maxLines: _qualityAssurancePreviewMaxLines,
-                  child: MarkdownBody(
-                    data: filterBadMarkdown(qualityAssuranceText),
-                    styleSheet: AppThemes.markdownStyleSheet(context),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Center(
-                  child: WideButton(
-                    onTap: () {
-                      final path = RoutePath.badgeQualityAssurancePath(
-                        scope: widget.badge.scope,
-                        id: badgeId,
-                      );
-                      context.push(path);
-                    },
-                    icon: null,
-                    text: l10n.readMore,
-                    secondary: true,
-                    color: colorScheme.primary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      if (details?.badgeInstance?.evidences?.isNotEmpty == true)
-        FocusableSection(
-          child: _buildSectionCard(
-            title: l10n.badgeEvidenceMetadataTitle,
-            item: _buildEvidenceMetadata(
-              evidences: details!.badgeInstance!.evidences!,
-              textTheme: textTheme,
-              colorScheme: colorScheme,
-              l10n: l10n,
-            ),
-          ),
-        ),
       if (details?.badgeInstance != null)
         FocusableSection(
           child: _buildSectionCard(
@@ -507,6 +450,64 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             ],
           ),
         ),
+      if (badgeClass != null && qualityAssuranceText != null)
+        FocusableSection(
+          child: _buildSectionCard(
+            title: l10n.qualityAssurance,
+            action: badgeClass.qualityAssuranceUrl != null
+                ? IconButton(
+                    onPressed: () {
+                      launchUrlString(
+                        badgeClass.qualityAssuranceUrl!,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
+                    icon: const Icon(Icons.launch),
+                  )
+                : null,
+            item: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _ClampedMarkdownPreview(
+                  maxLines: _qualityAssurancePreviewMaxLines,
+                  child: MarkdownBody(
+                    data: filterBadMarkdown(qualityAssuranceText),
+                    styleSheet: AppThemes.markdownStyleSheet(context),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: WideButton(
+                    onTap: () {
+                      final path = RoutePath.badgeQualityAssurancePath(
+                        scope: widget.badge.scope,
+                        id: badgeId,
+                      );
+                      context.push(path);
+                    },
+                    icon: null,
+                    text: l10n.readMore,
+                    secondary: true,
+                    color: colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      if (details?.badgeInstance?.evidences?.isNotEmpty == true)
+        FocusableSection(
+          child: _buildSectionCard(
+            title: l10n.badgeEvidenceMetadataTitle,
+            item: _buildEvidenceMetadata(
+              evidences: details!.badgeInstance!.evidences!,
+              textTheme: textTheme,
+              colorScheme: colorScheme,
+              l10n: l10n,
+            ),
+          ),
+        ),
+      const SizedBox(height: 70),
     ];
   }
 
