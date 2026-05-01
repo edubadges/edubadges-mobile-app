@@ -102,4 +102,3 @@ class NotificationEnabledNotifier extends AsyncNotifier<bool> {
     }
   }
 }
-
