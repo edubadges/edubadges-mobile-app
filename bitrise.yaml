@@ -7,6 +7,9 @@ workflows:
     - activate-ssh-key@4:
         run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
     - git-clone@8: {}
+    - set-java-version@1:
+        inputs:
+        - set_java_version: '21'
     - restore-dart-cache@2: {}
     - restore-gradle-cache@2: {}
     - change-android-versioncode-and-versionname@1:
@@ -93,6 +96,9 @@ workflows:
     - activate-ssh-key@4:
         run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
     - git-clone@8.4: {}
+    - set-java-version@1:
+        inputs:
+        - set_java_version: '21'
     - restore-dart-cache@2: {}
     - restore-gradle-cache@2: {}
     - change-android-versioncode-and-versionname@1:
@@ -169,6 +175,9 @@ workflows:
     - activate-ssh-key@4:
         run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
     - git-clone@8.4: {}
+    - set-java-version@1:
+        inputs:
+        - set_java_version: '21'
     - restore-dart-cache@2: {}
     - restore-gradle-cache@2: {}
     - change-android-versioncode-and-versionname@1:
