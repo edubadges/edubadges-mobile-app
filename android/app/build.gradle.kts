@@ -9,6 +9,10 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+kotlin {
+    jvmToolchain(21)
+}
+
 android {
     namespace = "nl.surf.edubadges"
     compileSdk = flutter.compileSdkVersion

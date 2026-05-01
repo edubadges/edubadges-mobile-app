@@ -18,6 +18,8 @@ pluginManagement {
 }
 
 plugins {
+    // Auto-provision JDK 21 when the host only has an older JDK (required by flutter_piwikpro bytecode).
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
     id("dev.flutter.flutter-plugin-loader") version "1.0.0"
     id("com.android.application") version "8.11.1" apply false
     // START: FlutterFire Configuration
