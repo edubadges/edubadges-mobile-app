@@ -164,7 +164,13 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.close, color: colorScheme.primary),
-            onPressed: () => context.pop(),
+            onPressed: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go(RoutePath.main);
+              }
+            },
             tooltip: l10n.semanticsClose,
           ),
         ],
