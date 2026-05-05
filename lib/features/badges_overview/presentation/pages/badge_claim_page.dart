@@ -60,9 +60,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         detailAsync.hasError || detail == null || !detail.userHasAcceptedTerms;
     if (needsPrivacyPage) {
       if (context.mounted) {
-        unawaited(
-          context.push(RoutePath.badgePrivacyPath(id: widget.badgeId)),
-        );
+        unawaited(context.push(RoutePath.badgePrivacyPath(id: widget.badgeId)));
       }
       return;
     }
@@ -366,8 +364,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
             alignment: WrapAlignment.center,
             spacing: 8,
             children: [
-              if (timeInvestment !=
-                  null) // TODO: fix this when Elias changes the badge card
+              if (timeInvestment != null)
                 _buildChip(
                   icon: Assets.iconTimeInvestment,
                   text: l10n.countHours(timeInvestment),
