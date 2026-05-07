@@ -254,12 +254,30 @@ class AppThemes {
     final colorScheme = theme.colorScheme;
 
     return MarkdownStyleSheet(
-      h1: textTheme.displayLarge?.copyWith(color: colorScheme.onSurface),
-      h2: textTheme.displayMedium?.copyWith(color: colorScheme.onSurface),
-      h3: textTheme.displaySmall?.copyWith(color: colorScheme.onSurface),
-      h4: textTheme.headlineMedium?.copyWith(color: colorScheme.onSurface),
-      h5: textTheme.headlineSmall?.copyWith(color: colorScheme.onSurface),
-      h6: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
+      h1: textTheme.headlineLarge?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 24,
+      ),
+      h2: textTheme.headlineMedium?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 21,
+      ),
+      h3: textTheme.headlineSmall?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 18,
+      ),
+      h4: textTheme.titleLarge?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 15,
+      ),
+      h5: textTheme.titleMedium?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 12.75,
+      ),
+      h6: textTheme.titleSmall?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 10.5,
+      ),
       p: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
       code: textTheme.bodyMedium?.copyWith(
         fontFamily: 'monospace',
