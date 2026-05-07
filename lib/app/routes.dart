@@ -283,8 +283,8 @@ final appRouter = Provider<GoRouter>((ref) {
         path: RoutePath.badgeClaimSuccess,
         name: 'badge-claim-success',
         builder: (context, state) {
-          final badgeId = state.uri.queryParameters['id'] ?? '';
-          return BadgeClaimSuccessPage(badgeId: badgeId);
+          final badgeClassId = state.uri.queryParameters['id'] ?? '';
+          return BadgeClaimSuccessPage(badgeClassId: badgeClassId);
         },
       ),
 
