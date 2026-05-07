@@ -264,8 +264,7 @@ class BadgeCard extends ConsumerWidget {
                     context: context,
                   ),
                 if (instance is BadgeInstanceModel &&
-                    (instance as BadgeInstanceModel).gradeAchieved != null &&
-                    (instance as BadgeInstanceModel).includeGradeAchieved)
+                    (instance as BadgeInstanceModel).gradeAchieved != null)
                   buildChip(
                     icon: Assets.iconCollections,
                     text: (instance as BadgeInstanceModel).gradeAchieved!,
