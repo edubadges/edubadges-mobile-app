@@ -1,6 +1,10 @@
 import 'package:edubadges/features/catalog/domain/entities/catalog_badge.dart';
 import 'package:edubadges/shared/domain/enums/badge_class_type.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'catalog_badge_model.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class CatalogBadgeModel extends CatalogBadge {
   const CatalogBadgeModel({
     required super.createdAt,
@@ -10,6 +14,7 @@ class CatalogBadgeModel extends CatalogBadge {
     required super.entityId,
     required super.isPrivate,
     required super.isMicroCredentials,
+    @JsonKey(fromJson: _badgeClassTypeFromJson, toJson: _badgeClassTypeToJson)
     required super.badgeClassType,
     super.issuerNameEnglish,
     super.issuerNameDutch,
@@ -33,69 +38,18 @@ class CatalogBadgeModel extends CatalogBadge {
     required super.directAwardedAssertionsCount,
   });
 
-  factory CatalogBadgeModel.fromJson(Map<String, dynamic> json) {
-    return CatalogBadgeModel(
-      createdAt: DateTime.parse(json['created_at'] as String),
-      name: json['name'] as String,
-      image: json['image'] as String?,
-      archived: json['archived'] as bool,
-      entityId: json['entity_id'] as String,
-      isPrivate: json['is_private'] as bool,
-      isMicroCredentials: json['is_micro_credentials'] as bool,
-      badgeClassType: BadgeClassType.fromString(json['badge_class_type'] as String?) ?? BadgeClassType.regular,
-      issuerNameEnglish: json['issuer_name_english'] as String?,
-      issuerNameDutch: json['issuer_name_dutch'] as String?,
-      issuerEntityId: json['issuer_entity_id'] as String,
-      issuerImageDutch: json['issuer_image_dutch'] as String?,
-      issuerImageEnglish: json['issuer_image_english'] as String?,
-      facultyNameEnglish: json['faculty_name_english'] as String?,
-      facultyNameDutch: json['faculty_name_dutch'] as String?,
-      facultyEntityId: json['faculty_entity_id'] as String,
-      facultyImageDutch: json['faculty_image_dutch'] as String?,
-      facultyImageEnglish: json['faculty_image_english'] as String?,
-      facultyOnBehalfOf: json['faculty_on_behalf_of'] as bool,
-      facultyType: json['faculty_type'] as String?,
-      institutionNameEnglish: json['institution_name_english'] as String?,
-      institutionNameDutch: json['institution_name_dutch'] as String?,
-      institutionEntityId: json['institution_entity_id'] as String,
-      institutionImageDutch: json['institution_image_dutch'] as String?,
-      institutionImageEnglish: json['institution_image_english'] as String?,
-      institutionType: json['institution_type'] as String?,
-      selfRequestedAssertionsCount: json['self_requested_assertions_count'] as int,
-      directAwardedAssertionsCount: json['direct_awarded_assertions_count'] as int,
-    );
-  }
+  factory CatalogBadgeModel.fromJson(Map<String, dynamic> json) =>
+      _$CatalogBadgeModelFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'created_at': createdAt.toIso8601String(),
-      'name': name,
-      if (image != null) 'image': image,
-      'archived': archived,
-      'entity_id': entityId,
-      'is_private': isPrivate,
-      'is_micro_credentials': isMicroCredentials,
-      'badge_class_type': badgeClassType.value,
-      if (issuerNameEnglish != null) 'issuer_name_english': issuerNameEnglish,
-      if (issuerNameDutch != null) 'issuer_name_dutch': issuerNameDutch,
-      'issuer_entity_id': issuerEntityId,
-      if (issuerImageDutch != null) 'issuer_image_dutch': issuerImageDutch,
-      if (issuerImageEnglish != null) 'issuer_image_english': issuerImageEnglish,
-      if (facultyNameEnglish != null) 'faculty_name_english': facultyNameEnglish,
-      if (facultyNameDutch != null) 'faculty_name_dutch': facultyNameDutch,
-      'faculty_entity_id': facultyEntityId,
-      if (facultyImageDutch != null) 'faculty_image_dutch': facultyImageDutch,
-      if (facultyImageEnglish != null) 'faculty_image_english': facultyImageEnglish,
-      'faculty_on_behalf_of': facultyOnBehalfOf,
-      'faculty_type': facultyType,
-      if (institutionNameEnglish != null) 'institution_name_english': institutionNameEnglish,
-      if (institutionNameDutch != null) 'institution_name_dutch': institutionNameDutch,
-      'institution_entity_id': institutionEntityId,
-      if (institutionImageDutch != null) 'institution_image_dutch': institutionImageDutch,
-      if (institutionImageEnglish != null) 'institution_image_english': institutionImageEnglish,
-      'institution_type': institutionType,
-      'self_requested_assertions_count': selfRequestedAssertionsCount,
-      'direct_awarded_assertions_count': directAwardedAssertionsCount,
-    };
-  }
+  Map<String, dynamic> toJson() => _$CatalogBadgeModelToJson(this);
+
+  @override
+  @JsonKey(fromJson: _badgeClassTypeFromJson, toJson: _badgeClassTypeToJson)
+  BadgeClassType get badgeClassType => super.badgeClassType;
+
+  static BadgeClassType _badgeClassTypeFromJson(String? value) =>
+      BadgeClassType.fromString(value) ?? BadgeClassType.regular;
+
+  static String _badgeClassTypeToJson(BadgeClassType badgeClassType) =>
+      badgeClassType.value;
 }
