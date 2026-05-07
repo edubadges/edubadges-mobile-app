@@ -4,6 +4,7 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/presentation/providers/app_badge_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -37,7 +38,11 @@ class _MainPageState extends ConsumerState<MainPage>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      unawaited(_refreshReturnCaches(widget.navigationShell.currentIndex));
+      unawaited(
+        _refreshAndSyncBadgeCount(
+          targetIndex: widget.navigationShell.currentIndex,
+        ),
+      );
     }
   }
 
@@ -50,20 +55,33 @@ class _MainPageState extends ConsumerState<MainPage>
 
     final returningToOverview = previousIndex != 0 && index == 0;
     if (returningToOverview) {
-      unawaited(_refreshReturnCaches(index));
+      unawaited(
+        _refreshAndSyncBadgeCount(
+          targetIndex: index,
+          onlyWhenOverviewTab: true,
+        ),
+      );
     }
   }
 
-  Future<void> _refreshReturnCaches(int targetIndex) async {
+  Future<void> _refreshAndSyncBadgeCount({
+    required int targetIndex,
+    bool onlyWhenOverviewTab = false,
+  }) async {
     if (_isRefreshingOnReturn) return;
-    if (targetIndex != 0) return;
-
-    final badgesAsync = ref.read(badgesOverviewProvider);
-    if (!badgesAsync.hasValue) return;
+    if (onlyWhenOverviewTab && targetIndex != 0) return;
 
     _isRefreshingOnReturn = true;
     try {
-      await ref.read(badgesOverviewProvider.notifier).refresh();
+      final badgesAsync = ref.read(badgesOverviewProvider);
+      if (badgesAsync.hasValue) {
+        await ref.read(badgesOverviewProvider.notifier).refresh();
+      }
+
+      final badgesState = await ref.read(badgesOverviewProvider.future);
+      await ref
+          .read(appBadgeServiceProvider)
+          .syncUnclaimedCount(badgesState.unclaimedCount);
     } finally {
       _isRefreshingOnReturn = false;
     }
@@ -79,9 +97,7 @@ class _MainPageState extends ConsumerState<MainPage>
     final pillColor = colorScheme.primary.withValues(alpha: .15);
 
     return Scaffold(
-      body: SafeArea(
-        child: widget.navigationShell,
-      ),
+      body: SafeArea(child: widget.navigationShell),
       bottomNavigationBar: NavigationBar(
         selectedIndex: widget.navigationShell.currentIndex,
         onDestinationSelected: _onTap,
