@@ -1,5 +1,9 @@
 import 'package:edubadges/features/catalog/domain/entities/catalog_institution.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'catalog_institution_model.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class CatalogInstitutionModel extends CatalogInstitution {
   const CatalogInstitutionModel({
     required super.entityId,
@@ -7,19 +11,8 @@ class CatalogInstitutionModel extends CatalogInstitution {
     super.nameEnglish,
   });
 
-  factory CatalogInstitutionModel.fromJson(Map<String, dynamic> json) {
-    return CatalogInstitutionModel(
-      entityId: json['entity_id'] as String,
-      nameDutch: json['name_dutch'] as String?,
-      nameEnglish: json['name_english'] as String?,
-    );
-  }
+  factory CatalogInstitutionModel.fromJson(Map<String, dynamic> json) =>
+      _$CatalogInstitutionModelFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'entity_id': entityId,
-      'name_dutch': nameDutch,
-      'name_english': nameEnglish,
-    };
-  }
+  Map<String, dynamic> toJson() => _$CatalogInstitutionModelToJson(this);
 }

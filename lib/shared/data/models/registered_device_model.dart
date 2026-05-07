@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'registered_device_model.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class RegisteredDeviceModel {
   final int id;
   final String name;
@@ -17,15 +22,8 @@ class RegisteredDeviceModel {
     required this.type,
   });
 
-  factory RegisteredDeviceModel.fromJson(Map<String, dynamic> json) {
-    return RegisteredDeviceModel(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      registrationId: json['registration_id'] as String,
-      deviceId: json['device_id'] as String,
-      active: json['active'] as bool,
-      dateCreated: json['date_created'] as String,
-      type: json['type'] as String,
-    );
-  }
+  factory RegisteredDeviceModel.fromJson(Map<String, dynamic> json) =>
+      _$RegisteredDeviceModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RegisteredDeviceModelToJson(this);
 }

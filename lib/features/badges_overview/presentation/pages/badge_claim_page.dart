@@ -60,9 +60,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         detailAsync.hasError || detail == null || !detail.userHasAcceptedTerms;
     if (needsPrivacyPage) {
       if (context.mounted) {
-        unawaited(
-          context.push(RoutePath.badgePrivacyPath(id: widget.badgeId)),
-        );
+        unawaited(context.push(RoutePath.badgePrivacyPath(id: widget.badgeId)));
       }
       return;
     }
@@ -84,7 +82,9 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
           if (mounted) {
             ref.read(badgesOverviewProvider.notifier).refresh();
             context.go(
-              RoutePath.badgeClaimSuccessPath(id: badge.id.toString()),
+              RoutePath.badgeClaimSuccessPath(
+                id: badge.badgeclass.entityId,
+              ),
             );
           }
         },
@@ -164,7 +164,13 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.close, color: colorScheme.primary),
-            onPressed: () => context.pop(),
+            onPressed: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go(RoutePath.main);
+              }
+            },
             tooltip: l10n.semanticsClose,
           ),
         ],
@@ -226,14 +232,15 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          l10n.badgesRemainingToClaim(widget.remainingCount),
-                          style: textTheme.labelMedium?.copyWith(
-                            color: colorScheme.onSurface,
-                            fontWeight: FontWeight.w600,
+                        if (widget.remainingCount > 1)
+                          Text(
+                            l10n.badgesRemainingToClaim(widget.remainingCount),
+                            style: textTheme.labelMedium?.copyWith(
+                              color: colorScheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
                         const SizedBox(height: 16),
                         PrimaryButton(
                           text: l10n.claimEdubadge,
@@ -360,8 +367,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
             alignment: WrapAlignment.center,
             spacing: 8,
             children: [
-              if (timeInvestment !=
-                  null) // TODO: fix this when Elias changes the badge card
+              if (timeInvestment != null)
                 _buildChip(
                   icon: Assets.iconTimeInvestment,
                   text: l10n.countHours(timeInvestment),
