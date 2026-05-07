@@ -1,5 +1,9 @@
 import 'package:edubadges/shared/domain/entities/badge_evidence_entity.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'badge_evidence_model.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class BadgeEvidenceModel extends BadgeEvidenceEntity {
   const BadgeEvidenceModel({
     super.evidenceUrl,
@@ -8,21 +12,8 @@ class BadgeEvidenceModel extends BadgeEvidenceEntity {
     super.description,
   });
 
-  factory BadgeEvidenceModel.fromJson(Map<String, dynamic> json) {
-    return BadgeEvidenceModel(
-      evidenceUrl: json['evidence_url'] as String?,
-      narrative: json['narrative'] as String?,
-      name: json['name'] as String?,
-      description: json['description'] as String?,
-    );
-  }
+  factory BadgeEvidenceModel.fromJson(Map<String, dynamic> json) =>
+      _$BadgeEvidenceModelFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      if (evidenceUrl != null) 'evidence_url': evidenceUrl,
-      if (narrative != null) 'narrative': narrative,
-      if (name != null) 'name': name,
-      if (description != null) 'description': description,
-    };
-  }
+  Map<String, dynamic> toJson() => _$BadgeEvidenceModelToJson(this);
 }

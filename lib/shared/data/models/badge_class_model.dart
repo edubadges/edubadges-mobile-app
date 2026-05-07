@@ -1,127 +1,154 @@
 import 'package:edubadges/shared/data/models/badge_alignment_model.dart';
 import 'package:edubadges/shared/data/models/badge_class_extension_model.dart';
 import 'package:edubadges/shared/data/models/issuer_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_alignment_entity.dart';
 import 'package:edubadges/shared/domain/entities/badge_class_entity.dart';
+import 'package:edubadges/shared/domain/entities/badge_class_extension_entity.dart';
+import 'package:edubadges/shared/domain/entities/issuer_entity.dart';
 import 'package:edubadges/shared/domain/enums/assessment_type.dart';
 import 'package:edubadges/shared/domain/enums/badge_class_type.dart';
 import 'package:edubadges/shared/domain/enums/participation_type.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'badge_class_model.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class BadgeClassModel extends BadgeClassEntity {
-  BadgeClassModel({
+  const BadgeClassModel({
     required super.id,
     required super.name,
     required super.entityId,
+    @JsonKey(fromJson: _badgeClassTypeFromJson, toJson: _badgeClassTypeToJson)
     required super.badgeClassType,
     required super.image,
     super.description,
     super.formal,
+    @JsonKey(fromJson: _participationFromJson, toJson: _participationToJson)
     super.participation,
+    @JsonKey(fromJson: _assessmentTypeFromJson, toJson: _assessmentTypeToJson)
     super.assessmentType,
     super.assessmentIdVerified,
     super.assessmentSupervised,
-    super.selfEnrollmentEnabled,
-    super.userMayEnroll,
+    @JsonKey(defaultValue: false) super.selfEnrollmentEnabled,
+    @JsonKey(defaultValue: false) super.userMayEnroll,
     super.stackable,
     super.qualityAssuranceName,
     super.qualityAssuranceUrl,
     super.qualityAssuranceDescription,
     super.criteriaText,
+    @JsonKey(fromJson: _parseBoolOrFalse, defaultValue: false)
     super.eqfNlqfLevelVerified,
+    @JsonKey(
+      name: 'badgeclassextension_set',
+      fromJson: _extensionsFromJson,
+      toJson: _extensionsToJson,
+    )
     super.badgeclassextensionSet,
-    List<BadgeAlignmentModel>? alignments,
-    super.issuer,
-  }) : super(
-          alignments: alignments?.map((m) => m.toEntity()).toList(),
-        );
+    @JsonKey(fromJson: _alignmentsFromJson, toJson: _alignmentsToJson)
+    super.alignments,
+    @JsonKey(fromJson: _issuerFromJson, toJson: _issuerToJson) super.issuer,
+  });
 
-  factory BadgeClassModel.fromJson(Map<String, dynamic> json) {
-    return BadgeClassModel(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      entityId: json['entity_id'] as String,
-      badgeClassType: BadgeClassType.fromString(json['badge_class_type'] as String?) ?? BadgeClassType.regular,
-      image: json['image'] as String,
-      description: json['description'] as String?,
-      formal: json['formal'] as bool?,
-      participation: ParticipationType.fromCommaSeparatedString(
-        json['participation'] as String?,
-      ),
-      assessmentType: AssessmentType.fromCommaSeparatedString(
-        json['assessment_type'] as String?,
-      ),
-      assessmentIdVerified: json['assessment_id_verified'] as bool?,
-      assessmentSupervised: json['assessment_supervised'] as bool?,
-      selfEnrollmentEnabled: (json['self_enrollment_enabled'] as bool?) ?? false,
-      userMayEnroll: (json['user_may_enroll'] as bool?) ?? false,
-      stackable: json['stackable'] as bool?,
-      qualityAssuranceName: json['quality_assurance_name'] as String?,
-      qualityAssuranceUrl: json['quality_assurance_url'] as String?,
-      qualityAssuranceDescription:
-          json['quality_assurance_description'] as String?,
-      criteriaText: json['criteria_text'] as String?,
-      eqfNlqfLevelVerified: _parseBool(json['eqf_nlqf_level_verified']) ?? false,
-      badgeclassextensionSet: json['badgeclassextension_set'] != null
-          ? (json['badgeclassextension_set'] as List)
-              .map((item) => BadgeClassExtensionModel.fromJson(item as Map<String, dynamic>))
-              .toList()
-          : null,
-      alignments: json['alignments'] != null
-          ? (json['alignments'] as List)
-              .map(
-                (item) =>
-                    BadgeAlignmentModel.fromJson(item as Map<String, dynamic>),
-              )
-              .toList()
-          : null,
-      issuer: json['issuer'] != null
-          ? IssuerModel.fromJson(json['issuer'] as Map<String, dynamic>)
-          : null,
-    );
-  }
+  factory BadgeClassModel.fromJson(Map<String, dynamic> json) =>
+      _$BadgeClassModelFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'entity_id': entityId,
-      'badge_class_type': badgeClassType.value,
-      'image': image,
-      if (description != null) 'description': description,
-      if (formal != null) 'formal': formal,
-      if (participation != null && participation!.isNotEmpty)
-        'participation': participation!.map((e) => e.value).join(','),
-      if (assessmentType != null && assessmentType!.isNotEmpty)
-        'assessment_type': assessmentType!.map((e) => e.value).join(','),
-      if (assessmentIdVerified != null) 'assessment_id_verified': assessmentIdVerified,
-      if (assessmentSupervised != null) 'assessment_supervised': assessmentSupervised,
-      'self_enrollment_enabled': selfEnrollmentEnabled,
-      'user_may_enroll': userMayEnroll,
-      if (qualityAssuranceName != null) 'quality_assurance_name': qualityAssuranceName,
-      if (qualityAssuranceUrl != null) 'quality_assurance_url': qualityAssuranceUrl,
-      if (qualityAssuranceDescription != null)
-        'quality_assurance_description': qualityAssuranceDescription,
-      if (criteriaText != null) 'criteria_text': criteriaText,
-      'eqf_nlqf_level_verified': eqfNlqfLevelVerified,
-      if (badgeclassextensionSet != null)
-        'badgeclassextension_set': badgeclassextensionSet!
-            .map((item) => (item as BadgeClassExtensionModel).toJson())
-            .toList(),
-      if (alignments != null)
-        'alignments': alignments!
-            .map((e) => BadgeAlignmentModel.fromEntity(e).toJson())
-            .toList(),
-      if (issuer != null) 'issuer': (issuer as IssuerModel).toJson(),
-    };
-  }
+  Map<String, dynamic> toJson() => _$BadgeClassModelToJson(this);
 
-  static bool? _parseBool(dynamic value) {
-    if (value == null) return null;
+  @override
+  @JsonKey(fromJson: _badgeClassTypeFromJson, toJson: _badgeClassTypeToJson)
+  BadgeClassType get badgeClassType => super.badgeClassType;
+
+  @override
+  @JsonKey(fromJson: _participationFromJson, toJson: _participationToJson)
+  List<ParticipationType>? get participation => super.participation;
+
+  @override
+  @JsonKey(fromJson: _assessmentTypeFromJson, toJson: _assessmentTypeToJson)
+  List<AssessmentType>? get assessmentType => super.assessmentType;
+
+  @override
+  @JsonKey(fromJson: _parseBoolOrFalse, defaultValue: false)
+  bool get eqfNlqfLevelVerified => super.eqfNlqfLevelVerified;
+
+  @override
+  @JsonKey(
+    name: 'badgeclassextension_set',
+    fromJson: _extensionsFromJson,
+    toJson: _extensionsToJson,
+  )
+  List<BadgeClassExtensionEntity>? get badgeclassextensionSet =>
+      super.badgeclassextensionSet;
+
+  @override
+  @JsonKey(fromJson: _alignmentsFromJson, toJson: _alignmentsToJson)
+  List<BadgeAlignmentEntity>? get alignments => super.alignments;
+
+  @override
+  @JsonKey(fromJson: _issuerFromJson, toJson: _issuerToJson)
+  IssuerEntity? get issuer => super.issuer;
+
+  static BadgeClassType _badgeClassTypeFromJson(String? value) =>
+      BadgeClassType.fromString(value) ?? BadgeClassType.regular;
+
+  static String _badgeClassTypeToJson(BadgeClassType value) => value.value;
+
+  static List<ParticipationType>? _participationFromJson(String? value) =>
+      ParticipationType.fromCommaSeparatedString(value);
+
+  static String? _participationToJson(List<ParticipationType>? value) =>
+      (value == null || value.isEmpty)
+      ? null
+      : value.map((e) => e.value).join(',');
+
+  static List<AssessmentType>? _assessmentTypeFromJson(String? value) =>
+      AssessmentType.fromCommaSeparatedString(value);
+
+  static String? _assessmentTypeToJson(List<AssessmentType>? value) =>
+      (value == null || value.isEmpty)
+      ? null
+      : value.map((e) => e.value).join(',');
+
+  static List<BadgeClassExtensionEntity>? _extensionsFromJson(
+    List<dynamic>? value,
+  ) => value
+      ?.map(
+        (item) =>
+            BadgeClassExtensionModel.fromJson(item as Map<String, dynamic>),
+      )
+      .toList();
+
+  static List<Map<String, dynamic>>? _extensionsToJson(
+    List<BadgeClassExtensionEntity>? value,
+  ) => value
+      ?.map((item) => (item as BadgeClassExtensionModel).toJson())
+      .toList();
+
+  static List<BadgeAlignmentEntity>? _alignmentsFromJson(
+    List<dynamic>? value,
+  ) => value
+      ?.map(
+        (item) => BadgeAlignmentModel.fromJson(
+          item as Map<String, dynamic>,
+        ).toEntity(),
+      )
+      .toList();
+
+  static List<Map<String, dynamic>>? _alignmentsToJson(
+    List<BadgeAlignmentEntity>? value,
+  ) => value?.map((e) => BadgeAlignmentModel.fromEntity(e).toJson()).toList();
+
+  static IssuerEntity? _issuerFromJson(Map<String, dynamic>? value) =>
+      value == null ? null : IssuerModel.fromJson(value);
+
+  static Map<String, dynamic>? _issuerToJson(IssuerEntity? value) =>
+      value == null ? null : (value as IssuerModel).toJson();
+
+  static bool _parseBoolOrFalse(dynamic value) {
     if (value is bool) return value;
     if (value is String) {
       final normalized = value.toLowerCase();
       if (normalized == 'true') return true;
-      if (normalized == 'false') return false;
     }
-    return null;
+    return false;
   }
 }

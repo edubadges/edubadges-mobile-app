@@ -1,183 +1,162 @@
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'profile_model.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class ProfileModel extends ProfileEntity {
   const ProfileModel({
-    required super.firstName,
-    required super.lastName,
-    required super.email,
-    required super.entityId,
-    required super.marketingOptIn,
+    @JsonKey(defaultValue: '') required super.firstName,
+    @JsonKey(defaultValue: '') required super.lastName,
+    @JsonKey(defaultValue: '') required super.email,
+    @JsonKey(defaultValue: '') required super.entityId,
+    @JsonKey(defaultValue: false) required super.marketingOptIn,
     super.institution,
-    required super.isSuperuser,
-    required super.termsAgreed,
+    @JsonKey(defaultValue: false) required super.isSuperuser,
+    @JsonKey(defaultValue: false) required super.termsAgreed,
     required super.termsagreementSet,
-    required super.dateJoined,
+    @JsonKey(fromJson: _dateTimeFromJson) required super.dateJoined,
   });
 
-  factory ProfileModel.fromJson(Map<String, dynamic> json) {
-    return ProfileModel(
-      firstName: json['first_name'] as String? ?? '',
-      lastName: json['last_name'] as String? ?? '',
-      email: json['email'] as String? ?? '',
-      entityId: json['entity_id'] as String? ?? '',
-      marketingOptIn: json['marketing_opt_in'] as bool? ?? false,
-      institution: json['institution'] as String?,
-      isSuperuser: json['is_superuser'] as bool? ?? false,
-      termsAgreed: json['terms_agreed'] as bool? ?? false,
-      termsagreementSet: (json['termsagreement_set'] as List<dynamic>?)
-          ?.map((e) => TermsAgreementModel.fromJson(e as Map<String, dynamic>))
-          .toList() ?? [],
-      dateJoined: DateTime.parse(json['date_joined'] as String),
-    );
+  factory ProfileModel.fromJson(Map<String, dynamic> json) =>
+      _$ProfileModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProfileModelToJson(this);
+
+  @override
+  @JsonKey(
+    name: 'termsagreement_set',
+    fromJson: _termsAgreementSetFromJson,
+    toJson: _termsAgreementSetToJson,
+  )
+  List<TermsAgreementEntity> get termsagreementSet => super.termsagreementSet;
+
+  static DateTime _dateTimeFromJson(dynamic value) {
+    if (value is DateTime) return value;
+    return DateTime.parse(value as String);
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'first_name': firstName,
-      'last_name': lastName,
-      'email': email,
-      'entity_id': entityId,
-      'marketing_opt_in': marketingOptIn,
-      'institution': institution,
-      'is_superuser': isSuperuser,
-      'terms_agreed': termsAgreed,
-      'termsagreement_set': termsagreementSet
-          .map((e) => (e as TermsAgreementModel).toJson())
-          .toList(),
-      'date_joined': dateJoined.toIso8601String(),
-    };
-  }
+  static List<TermsAgreementEntity> _termsAgreementSetFromJson(
+    List<dynamic>? value,
+  ) =>
+      value
+          ?.map((e) => TermsAgreementModel.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      <TermsAgreementEntity>[];
+
+  static List<Map<String, dynamic>> _termsAgreementSetToJson(
+    List<TermsAgreementEntity> value,
+  ) => value.map((e) => (e as TermsAgreementModel).toJson()).toList();
 }
 
+@JsonSerializable(fieldRename: FieldRename.snake)
 class TermsAgreementModel extends TermsAgreementEntity {
   const TermsAgreementModel({
-    required super.entityId,
-    required super.agreed,
-    required super.agreedVersion,
-    super.agreedAt,
+    @JsonKey(defaultValue: '') required super.entityId,
+    @JsonKey(defaultValue: false) required super.agreed,
+    @JsonKey(defaultValue: 0) required super.agreedVersion,
+    @JsonKey(fromJson: _nullableDateTimeFromJson) super.agreedAt,
     required super.terms,
   });
 
-  factory TermsAgreementModel.fromJson(Map<String, dynamic> json) {
-    return TermsAgreementModel(
-      entityId: json['entity_id'] as String? ?? '',
-      agreed: json['agreed'] as bool? ?? false,
-      agreedVersion: json['agreed_version'] as int? ?? 0,
-      agreedAt: json['agreed_at'] != null 
-          ? DateTime.parse(json['agreed_at'] as String)
-          : null,
-      terms: TermsModel.fromJson(json['terms'] as Map<String, dynamic>),
-    );
+  factory TermsAgreementModel.fromJson(Map<String, dynamic> json) =>
+      _$TermsAgreementModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TermsAgreementModelToJson(this);
+
+  @override
+  @JsonKey(fromJson: _termsFromJson, toJson: _termsToJson)
+  TermsEntity get terms => super.terms;
+
+  static DateTime? _nullableDateTimeFromJson(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    return DateTime.parse(value as String);
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'entity_id': entityId,
-      'agreed': agreed,
-      'agreed_version': agreedVersion,
-      'agreed_at': agreedAt?.toIso8601String(),
-      'terms': (terms as TermsModel).toJson(),
-    };
-  }
+  static TermsEntity _termsFromJson(Map<String, dynamic> value) =>
+      TermsModel.fromJson(value);
+
+  static Map<String, dynamic> _termsToJson(TermsEntity value) =>
+      (value as TermsModel).toJson();
 }
 
+@JsonSerializable(fieldRename: FieldRename.snake)
 class TermsModel extends TermsEntity {
   const TermsModel({
-    required super.entityId,
-    required super.termsType,
+    @JsonKey(defaultValue: '') required super.entityId,
+    @JsonKey(defaultValue: '') required super.termsType,
+    @JsonKey(fromJson: _institutionFromJson, toJson: _institutionToJson)
     super.institution,
     required super.termsUrls,
   });
 
-  factory TermsModel.fromJson(Map<String, dynamic> json) {
-    return TermsModel(
-      entityId: json['entity_id'] as String? ?? '',
-      termsType: json['terms_type'] as String? ?? '',
-      institution: json['institution'] != null
-          ? InstitutionModel.fromJson(json['institution'] as Map<String, dynamic>)
-          : null,
-      termsUrls: (json['terms_urls'] as List<dynamic>?)
-          ?.map((e) => TermsUrlModel.fromJson(e as Map<String, dynamic>))
-          .toList() ?? [],
-    );
-  }
+  factory TermsModel.fromJson(Map<String, dynamic> json) =>
+      _$TermsModelFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'entity_id': entityId,
-      'terms_type': termsType,
-      'institution': institution != null
-          ? (institution as InstitutionModel).toJson()
-          : null,
-      'terms_urls': termsUrls
-          .map((e) => (e as TermsUrlModel).toJson())
-          .toList(),
-    };
-  }
+  Map<String, dynamic> toJson() => _$TermsModelToJson(this);
+
+  @override
+  @JsonKey(fromJson: _institutionFromJson, toJson: _institutionToJson)
+  InstitutionEntity? get institution => super.institution;
+
+  @override
+  @JsonKey(
+    name: 'terms_urls',
+    fromJson: _termsUrlsFromJson,
+    toJson: _termsUrlsToJson,
+  )
+  List<TermsUrlEntity> get termsUrls => super.termsUrls;
+
+  static InstitutionEntity? _institutionFromJson(Map<String, dynamic>? json) =>
+      json == null ? null : InstitutionModel.fromJson(json);
+
+  static Map<String, dynamic>? _institutionToJson(
+    InstitutionEntity? institution,
+  ) => institution == null ? null : (institution as InstitutionModel).toJson();
+
+  static List<TermsUrlEntity> _termsUrlsFromJson(List<dynamic>? value) =>
+      value
+          ?.map((e) => TermsUrlModel.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      <TermsUrlEntity>[];
+
+  static List<Map<String, dynamic>> _termsUrlsToJson(
+    List<TermsUrlEntity> value,
+  ) => value.map((e) => (e as TermsUrlModel).toJson()).toList();
 }
 
+@JsonSerializable(fieldRename: FieldRename.snake)
 class InstitutionModel extends InstitutionEntity {
   const InstitutionModel({
-    required super.nameDutch,
-    required super.nameEnglish,
-    required super.imageDutch,
-    required super.imageEnglish,
-    required super.identifier,
-    required super.alternativeIdentifier,
+    @JsonKey(defaultValue: '') required super.nameDutch,
+    @JsonKey(defaultValue: '') required super.nameEnglish,
+    @JsonKey(defaultValue: '') required super.imageDutch,
+    @JsonKey(defaultValue: '') required super.imageEnglish,
+    @JsonKey(defaultValue: '') required super.identifier,
+    @JsonKey(defaultValue: '') required super.alternativeIdentifier,
+    @JsonKey(name: 'grondslag_formeel', defaultValue: '')
     required super.legalBasisFormal,
+    @JsonKey(name: 'grondslag_informeel', defaultValue: '')
     required super.legalBasisInformal,
   });
 
-  factory InstitutionModel.fromJson(Map<String, dynamic> json) {
-    return InstitutionModel(
-      nameDutch: json['name_dutch'] as String? ?? '',
-      nameEnglish: json['name_english'] as String? ?? '',
-      imageDutch: json['image_dutch'] as String? ?? '',
-      imageEnglish: json['image_english'] as String? ?? '',
-      identifier: json['identifier'] as String? ?? '',
-      alternativeIdentifier: json['alternative_identifier'] as String? ?? '',
-      legalBasisFormal: json['grondslag_formeel'] as String? ?? '',
-      legalBasisInformal: json['grondslag_informeel'] as String? ?? '',
-    );
-  }
+  factory InstitutionModel.fromJson(Map<String, dynamic> json) =>
+      _$InstitutionModelFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'name_dutch': nameDutch,
-      'name_english': nameEnglish,
-      'image_dutch': imageDutch,
-      'image_english': imageEnglish,
-      'identifier': identifier,
-      'alternative_identifier': alternativeIdentifier,
-      'grondslag_formeel': legalBasisFormal,
-      'grondslag_informeel': legalBasisInformal,
-    };
-  }
+  Map<String, dynamic> toJson() => _$InstitutionModelToJson(this);
 }
 
+@JsonSerializable()
 class TermsUrlModel extends TermsUrlEntity {
   const TermsUrlModel({
-    required super.url,
-    required super.language,
-    required super.excerpt,
+    @JsonKey(defaultValue: '') required super.url,
+    @JsonKey(defaultValue: '') required super.language,
+    @JsonKey(defaultValue: false) required super.excerpt,
   });
 
-  factory TermsUrlModel.fromJson(Map<String, dynamic> json) {
-    return TermsUrlModel(
-      url: json['url'] as String? ?? '',
-      language: json['language'] as String? ?? '',
-      excerpt: json['excerpt'] as bool? ?? false,
-    );
-  }
+  factory TermsUrlModel.fromJson(Map<String, dynamic> json) =>
+      _$TermsUrlModelFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'url': url,
-      'language': language,
-      'excerpt': excerpt,
-    };
-  }
+  Map<String, dynamic> toJson() => _$TermsUrlModelToJson(this);
 }
-
-
-
