@@ -6,6 +6,12 @@
 
 #import "GeneratedPluginRegistrant.h"
 
+#if __has_include(<app_badge_plus/AppBadgePlusPlugin.h>)
+#import <app_badge_plus/AppBadgePlusPlugin.h>
+#else
+@import app_badge_plus;
+#endif
+
 #if __has_include(<app_settings/AppSettingsPlugin.h>)
 #import <app_settings/AppSettingsPlugin.h>
 #else
@@ -105,6 +111,7 @@
 @implementation GeneratedPluginRegistrant
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
+  [AppBadgePlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"AppBadgePlusPlugin"]];
   [AppSettingsPlugin registerWithRegistrar:[registry registrarForPlugin:@"AppSettingsPlugin"]];
   [ConnectivityPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"ConnectivityPlusPlugin"]];
   [FPPDeviceInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPDeviceInfoPlusPlugin"]];
