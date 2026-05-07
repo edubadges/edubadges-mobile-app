@@ -230,14 +230,15 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          l10n.badgesRemainingToClaim(widget.remainingCount),
-                          style: textTheme.labelMedium?.copyWith(
-                            color: colorScheme.onSurface,
-                            fontWeight: FontWeight.w600,
+                        if (widget.remainingCount > 1)
+                          Text(
+                            l10n.badgesRemainingToClaim(widget.remainingCount),
+                            style: textTheme.labelMedium?.copyWith(
+                              color: colorScheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
                         const SizedBox(height: 16),
                         PrimaryButton(
                           text: l10n.claimEdubadge,
