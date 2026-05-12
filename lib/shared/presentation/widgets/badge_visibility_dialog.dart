@@ -1,5 +1,4 @@
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
-import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
@@ -26,37 +25,36 @@ class BadgeVisibilityDialog {
             ? l10n.badgePublicShareWarning
             : l10n.badgeMakePrivateWarning,
         body: isPublic
-            ? Material(
-                color: Colors.transparent,
-                child: StatefulBuilder(
-                  builder: (context, setState) {
-                    return Column(
-                      spacing: 8,
-                      children: [
-                        if (badgeInstance.evidences?.isNotEmpty == true)
-                          _CustomCheckboxRow(
-                            value: includeEvidence,
-                            onChanged: (value) {
-                              setState(() {
-                                includeEvidence = value ?? true;
-                              });
-                            },
-                            label: l10n.makeBadgePublicIncludeEvidence,
-                          ),
-                        if (badgeInstance.gradeAchieved != null)
-                          _CustomCheckboxRow(
-                            value: includeGradeAchieved,
-                            onChanged: (value) {
-                              setState(() {
-                                includeGradeAchieved = value ?? true;
-                              });
-                            },
-                            label: l10n.makeBadgePublicIncludeGradeAchieved,
-                          ),
-                      ],
-                    );
-                  },
-                ),
+            ? StatefulBuilder(
+                builder: (context, setState) {
+                  return Column(
+                    spacing: 8,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (badgeInstance.evidences?.isNotEmpty == true)
+                        _CustomCheckboxRow(
+                          value: includeEvidence,
+                          onChanged: (value) {
+                            setState(() {
+                              includeEvidence = value ?? true;
+                            });
+                          },
+                          label: l10n.makeBadgePublicIncludeEvidence,
+                        ),
+                      if (badgeInstance.gradeAchieved != null)
+                        _CustomCheckboxRow(
+                          value: includeGradeAchieved,
+                          onChanged: (value) {
+                            setState(() {
+                              includeGradeAchieved = value ?? true;
+                            });
+                          },
+                          label: l10n.makeBadgePublicIncludeGradeAchieved,
+                        ),
+                    ],
+                  );
+                },
               )
             : null,
         firstButtonText: l10n.cancel,
@@ -92,18 +90,17 @@ class _CustomCheckboxRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return KeyboardActivatable(
-      enabled: onChanged != null,
-      wrapWithSemantics: false,
-      includeOuterTapTarget: false,
-      onActivate: () => onChanged?.call(!value),
-      child: GestureDetector(
-        onTap: () => onChanged?.call(!value),
-        behavior: HitTestBehavior.opaque,
+    return InkWell(
+      onTap: () => onChanged?.call(!value),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(child: Text(label, style: textTheme.bodyMedium)),
-            const SizedBox(width: 8),
+            Flexible(
+              fit: FlexFit.loose,
+              child: Text(label, style: textTheme.bodyMedium),
+            ),
             Checkbox(
               value: value,
               onChanged: onChanged,
