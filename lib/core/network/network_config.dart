@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:edubadges/core/network/auth_error_constants.dart';
 import 'package:edubadges/core/network/interceptors/header_interceptor.dart';
 import 'package:edubadges/core/network/interceptors/logging_interceptor.dart';
 import 'package:edubadges/core/network/interceptors/retry_interceptor.dart';
@@ -123,9 +124,17 @@ class NetworkConfig {
           if (GeneralTermsConstants.isNotAcceptedResponse(response)) {
             return false;
           }
-          // Server returns 403 for 'Invalid authentication credentials' instead of 401
-          const authErrorCodes = {401, 403};
-          return authErrorCodes.contains(response.statusCode);
+          // Server returns 403 for 'Invalid authentication credentials' instead of 401 somtimes
+          final statusCode = response.statusCode;
+          if (statusCode == 401) {
+            return true;
+          }
+          if (statusCode == 403) {
+            return AuthErrorConstants.isInvalidAuthenticationCredentialsResponse(
+              response,
+            );
+          }
+          return false;
         },
         refreshToken: (token, client) async {
           try {
