@@ -76,6 +76,20 @@ class UnauthorizedException extends AppException {
   String toString() => 'UnauthorizedException(message: $message, code: $code)';
 }
 
+/// Exception thrown when general terms must be accepted (403 with known detail).
+class GeneralTermsNotAcceptedException extends AppException {
+  const GeneralTermsNotAcceptedException({
+    super.message = 'General terms not accepted.',
+    super.code,
+    super.originalError,
+    super.stackTrace,
+  });
+
+  @override
+  String toString() =>
+      'GeneralTermsNotAcceptedException(message: $message, code: $code)';
+}
+
 /// Exception thrown when access is forbidden (403)
 class ForbiddenException extends AppException {
   const ForbiddenException({

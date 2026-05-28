@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:edubadges/app/app.dart';
-import 'package:edubadges/app/routes.dart';
 import 'package:edubadges/core/constants/env_keys.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/app_container.dart';
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
@@ -29,8 +29,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 String? appFlavor;
-
-ProviderContainer? _appContainer;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -108,14 +106,14 @@ void main() async {
 
   // Initialize Networking
   final container = ProviderContainer();
-  _appContainer = container;
+  appProviderContainer = container;
   final apiClient = container.read(apiClientProvider);
   await apiClient.init();
   unawaited(_syncBadgeCountOnStartup(container));
 
   // Navigate to main when a notification is tapped (background).
   FirebaseMessaging.onMessageOpenedApp.listen((_) {
-    _appContainer?.read(appRouter).go(RoutePath.main);
+    appGoRouter?.go(RoutePath.main);
   });
 
   runApp(UncontrolledProviderScope(container: container, child: const App()));

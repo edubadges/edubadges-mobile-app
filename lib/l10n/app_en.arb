@@ -29,9 +29,9 @@
     "@generalAgreementButtonReadMore": {
         "description": "Button text to expand and read more of the agreement text"
     },
-    "generalAgreementButtonRead": "Read",
-    "@generalAgreementButtonRead": {
-        "description": "Button text to read the full agreement"
+    "generalAgreementButtonAgree": "I agree",
+    "@generalAgreementButtonAgree": {
+        "description": "Button text to accept the general terms after reading them"
     },
     "tabAccount": "Account",
     "@tabAccount": {

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:edubadges/core/network/interceptors/header_interceptor.dart';
 import 'package:edubadges/core/network/interceptors/logging_interceptor.dart';
 import 'package:edubadges/core/network/interceptors/retry_interceptor.dart';
+import 'package:edubadges/features/general_terms/domain/general_terms_constants.dart';
 import 'package:fresh_dio/fresh_dio.dart';
 import 'package:logger/logger.dart';
 
@@ -116,10 +117,15 @@ class NetworkConfig {
           return {'Authorization': 'Bearer ${token.accessToken}'};
         },
         shouldRefresh: (response) {
+          if (response == null) {
+            return false;
+          }
+          if (GeneralTermsConstants.isNotAcceptedResponse(response)) {
+            return false;
+          }
           // Server returns 403 for 'Invalid authentication credentials' instead of 401
           const authErrorCodes = {401, 403};
-          return response != null &&
-              authErrorCodes.contains(response.statusCode);
+          return authErrorCodes.contains(response.statusCode);
         },
         refreshToken: (token, client) async {
           try {
