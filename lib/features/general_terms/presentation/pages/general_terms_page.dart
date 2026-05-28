@@ -66,7 +66,7 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
 
   Future<void> _acceptTerms() async {
     final dataSource = ref.watch(generalTermsDataSourceProvider);
-    await dataSource.acceptTermsUrl();
+    await dataSource.acceptTerms();
 
     final notificationStatus = ref.watch(notificationPermissionStatusProvider);
 
@@ -88,7 +88,7 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
     final markdownAsync = ref.watch(markdownContentProvider(widget.url));
 
     final buttonText = _isNearBottom
-        ? l10n.generalAgreementButtonRead
+        ? l10n.generalAgreementButtonAgree
         : l10n.generalAgreementButtonReadMore;
     final buttonOnPressed = _isNearBottom ? _acceptTerms : _scrollToBottom;
 

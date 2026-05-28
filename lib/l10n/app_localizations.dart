@@ -140,11 +140,11 @@ abstract class AppLocalizations {
   /// **'Read more'**
   String get generalAgreementButtonReadMore;
 
-  /// Button text to read the full agreement
+  /// Button text to accept the general terms after reading them
   ///
   /// In en, this message translates to:
-  /// **'Read'**
-  String get generalAgreementButtonRead;
+  /// **'I agree'**
+  String get generalAgreementButtonAgree;
 
   /// Navigation tab label for the account section
   ///

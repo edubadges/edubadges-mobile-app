@@ -9,6 +9,7 @@ analyzer:
     - "**/*.config.dart"
     - "**/*.gr.dart"
     - "tool/**"
+    - "build/**"
   
   language:
     strict-casts: true

@@ -17,8 +17,10 @@ import 'package:edubadges/features/collections/presentation/pages/badge_selectio
 import 'package:edubadges/features/collections/presentation/pages/collection_page.dart';
 import 'package:edubadges/features/collections/presentation/pages/collections_page.dart';
 import 'package:edubadges/features/collections/presentation/pages/new_collection_page.dart';
+import 'package:edubadges/core/app_container.dart';
+import 'package:edubadges/features/general_terms/domain/general_terms_url_resolver.dart';
+import 'package:edubadges/features/general_terms/presentation/providers/general_terms_providers.dart';
 import 'package:edubadges/features/general_terms/presentation/pages/general_terms_page.dart';
-import 'package:edubadges/features/login/data/models/login_terms.dart';
 import 'package:edubadges/features/login/data/models/login_user_status.dart';
 import 'package:edubadges/features/login/presentation/pages/login_page.dart';
 import 'package:edubadges/features/login/presentation/providers/login_providers.dart';
@@ -34,7 +36,7 @@ final appRouter = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
   final notificationStatus = ref.watch(notificationPermissionStatusProvider);
 
-  return GoRouter(
+  final router = GoRouter(
     initialLocation: RoutePath.login,
     redirect: (context, state) {
       final bool loggedIn = authState.asData?.value ?? false;
@@ -49,14 +51,13 @@ final appRouter = Provider<GoRouter>((ref) {
 
         // Check if terms need to be agreed to.
         if (loginStatus is LoginTermsAgreementRequired) {
-          final termsAgreement = loginStatus.termsAgreementSet.firstWhere(
-            (element) => element.terms.termsType == 'terms_of_service',
-          );
-
-          final termsUrl = termsAgreement.terms.termsUrls.urlForLanguage(
+          final termsUrl = resolveGeneralTermsUrlFromLoginStatus(
+            loginStatus,
             language.code,
           );
+          cacheGeneralTermsMarkdownUrl(ref, termsUrl);
           context.go(RoutePath.generalTerms, extra: termsUrl);
+          return null;
         }
 
         // Check if notification permissions need to be asked.
@@ -341,4 +342,11 @@ final appRouter = Provider<GoRouter>((ref) {
       ),
     ],
   );
+  ref.onDispose(() {
+    if (appGoRouter == router) {
+      appGoRouter = null;
+    }
+  });
+  appGoRouter = router;
+  return router;
 });

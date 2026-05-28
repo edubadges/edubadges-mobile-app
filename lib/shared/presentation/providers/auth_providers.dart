@@ -3,6 +3,7 @@ import 'package:edubadges/features/badge_details/presentation/providers/badge_de
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/catalog/presentation/providers/catalog_providers.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
+import 'package:edubadges/features/general_terms/presentation/providers/general_terms_providers.dart';
 import 'package:edubadges/features/login/presentation/providers/login_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,6 +22,7 @@ class AuthNotifier extends AsyncNotifier<bool> {
   /// Invalidates all user-dependent and network providers so no stale or
   /// sensitive state persists across logout or when a new user logs in.
   void _clearUserDependentState() {
+    clearGeneralTermsMarkdownUrlCache(ref);
     ref.invalidate(profileProvider, asReload: true);
     ref.invalidate(badgesOverviewProvider, asReload: true);
     ref.invalidate(collectionsProvider, asReload: true);
