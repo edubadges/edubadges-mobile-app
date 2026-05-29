@@ -30,11 +30,11 @@ import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
 import 'package:edubadges/shared/presentation/providers/permission_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:permission_handler/permission_handler.dart';
-
 final appRouter = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
-  final notificationStatus = ref.watch(notificationPermissionStatusProvider);
+  final shouldShowNotificationPrompt = ref.watch(
+    shouldShowNotificationPermissionPromptProvider,
+  );
 
   final router = GoRouter(
     initialLocation: RoutePath.login,
@@ -61,8 +61,7 @@ final appRouter = Provider<GoRouter>((ref) {
         }
 
         // Check if notification permissions need to be asked.
-        // This packages means user has not decided yet with .denied
-        if (notificationStatus.asData?.value == PermissionStatus.denied) {
+        if (shouldShowNotificationPrompt.asData?.value == true) {
           return RoutePath.notificationPermission;
         }
 
