@@ -16,8 +16,9 @@ flutter precache --ios
 # Install Flutter dependencies.
 flutter pub get
 
-# Configure for release mode.
-flutter build ios --config-only --release
+# Configure iOS build files for the scheme Xcode Cloud will archive (dev/tst/acc/prod).
+FLAVOR="${CI_XCODE_SCHEME:-dev}"
+flutter build ios --config-only --release --flavor "$FLAVOR"
 
 # Activate flutter fire cli
 dart pub global activate flutterfire_cli
