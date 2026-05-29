@@ -5,6 +5,8 @@ import 'package:edubadges/features/catalog/presentation/providers/catalog_provid
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/features/general_terms/presentation/providers/general_terms_providers.dart';
 import 'package:edubadges/features/login/presentation/providers/login_providers.dart';
+import 'package:edubadges/shared/data/datasources/notification_permission_local_datasource.dart';
+import 'package:edubadges/shared/presentation/providers/permission_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final authProvider = AsyncNotifierProvider<AuthNotifier, bool>(
@@ -21,7 +23,12 @@ class AuthNotifier extends AsyncNotifier<bool> {
 
   /// Invalidates all user-dependent and network providers so no stale or
   /// sensitive state persists across logout or when a new user logs in.
-  void _clearUserDependentState() {
+  Future<void> _clearUserDependentState() async {
+    await ref
+        .read(notificationPermissionLocalDataSourceProvider)
+        .clearDeclinedPrompt();
+    ref.invalidate(notificationPermissionPromptDeclinedProvider);
+    ref.invalidate(shouldShowNotificationPermissionPromptProvider);
     clearGeneralTermsMarkdownUrlCache(ref);
     ref.invalidate(profileProvider, asReload: true);
     ref.invalidate(badgesOverviewProvider, asReload: true);
@@ -38,7 +45,7 @@ class AuthNotifier extends AsyncNotifier<bool> {
     final loginRepository = ref.read(loginRepositoryProvider);
 
     try {
-      _clearUserDependentState();
+      await _clearUserDependentState();
       await loginRepository.login();
       state = const AsyncData(true);
     } catch (error, stackTrace) {
@@ -50,7 +57,7 @@ class AuthNotifier extends AsyncNotifier<bool> {
   Future<void> logout() async {
     final loginRepository = ref.read(loginRepositoryProvider);
     await loginRepository.logout();
-    _clearUserDependentState();
+    await _clearUserDependentState();
     state = const AsyncData(false);
   }
 }

@@ -6,7 +6,9 @@ import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/outlined_button.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/data/datasources/notification_permission_local_datasource.dart';
 import 'package:edubadges/shared/presentation/providers/device_registration_providers.dart';
+import 'package:edubadges/shared/presentation/providers/permission_providers.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,8 +35,15 @@ class NotificationPermissionPage extends ConsumerWidget {
     }
   }
 
-  void _skipPermission(BuildContext context) {
-    context.go(RoutePath.main);
+  Future<void> _skipPermission(BuildContext context, WidgetRef ref) async {
+    await ref
+        .read(notificationPermissionLocalDataSourceProvider)
+        .setDeclinedPrompt();
+    ref.invalidate(notificationPermissionPromptDeclinedProvider);
+    ref.invalidate(shouldShowNotificationPermissionPromptProvider);
+    if (context.mounted) {
+      context.go(RoutePath.main);
+    }
   }
 
   @override
@@ -115,7 +124,7 @@ class NotificationPermissionPage extends ConsumerWidget {
                       const SizedBox(height: 16),
                       CustomOutlinedButton(
                         text: l10n.notificationPermissionsButtonDeny,
-                        onPressed: () => _skipPermission(context),
+                        onPressed: () => _skipPermission(context, ref),
                       ),
                     ],
                   ),
