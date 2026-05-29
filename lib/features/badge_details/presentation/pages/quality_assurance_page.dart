@@ -37,6 +37,11 @@ class QualityAssurancePage extends ConsumerWidget {
     return parts.join('\n\n');
   }
 
+  static Future<void> _launchExternalUrl(String url) => launchUrlString(
+        url,
+        mode: LaunchMode.externalApplication,
+      );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
@@ -70,12 +75,7 @@ class QualityAssurancePage extends ConsumerWidget {
         actions: [
           if (qualityAssuranceUrl != null && qualityAssuranceUrl.isNotEmpty)
             IconButton(
-              onPressed: () async {
-                await launchUrlString(
-                  qualityAssuranceUrl,
-                  mode: LaunchMode.externalApplication,
-                );
-              },
+              onPressed: () => _launchExternalUrl(qualityAssuranceUrl),
               icon: Icon(Icons.launch, color: colorScheme.onSurface),
             ),
         ],
@@ -104,6 +104,10 @@ class QualityAssurancePage extends ConsumerWidget {
                   child: MarkdownBody(
                     data: filterBadMarkdown(content),
                     styleSheet: AppThemes.markdownStyleSheet(context),
+                    onTapLink: (text, href, title) {
+                      if (href == null) return;
+                      _launchExternalUrl(href);
+                    },
                   ),
                 ),
               ),

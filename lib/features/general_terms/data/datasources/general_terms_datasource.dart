@@ -2,7 +2,7 @@ import 'package:edubadges/core/network/api_client.dart';
 import 'package:edubadges/core/utils/logger.dart';
 
 abstract class GeneralTermsDataSource {
-  Future<String> acceptTermsUrl();
+  Future<void> acceptTerms();
 }
 
 class GeneralTermsDataSourceImpl implements GeneralTermsDataSource {
@@ -11,18 +11,14 @@ class GeneralTermsDataSourceImpl implements GeneralTermsDataSource {
   GeneralTermsDataSourceImpl(this.apiClient);
 
   @override
-  Future<String> acceptTermsUrl() async {
+  Future<void> acceptTerms() async {
     try {
-      final response = await apiClient.get<Map<String, dynamic>>('/accept-general-terms');
-
-      if (response.statusCode == 200 && response.data != null) {
-        final url = response.data.toString();
-        return url;
-      } else {
-        throw Exception('Failed to get terms URL');
+      final response = await apiClient.get<void>('/accept-general-terms');
+      if (response.statusCode != 200) {
+        throw Exception('Failed to accept general terms');
       }
     } catch (e, s) {
-      logger.e('Error getting terms URL', error: e, stackTrace: s);
+      logger.e('Error accepting general terms', error: e, stackTrace: s);
       rethrow;
     }
   }

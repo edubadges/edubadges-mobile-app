@@ -1,0 +1,97 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Edubadges Dev (debug)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--flavor", "dev", "--dart-define=APP_FLAVOR=dev"]
+    },
+    {
+      "name": "Edubadges Dev (profile)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "profile",
+      "args": ["--flavor", "dev", "--dart-define=APP_FLAVOR=dev"]
+    },
+    {
+      "name": "Edubadges Dev (release)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "release",
+      "args": ["--flavor", "dev", "--dart-define=APP_FLAVOR=dev"]
+    },
+    {
+      "name": "Edubadges Tst (debug)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--flavor", "tst", "--dart-define=APP_FLAVOR=tst"]
+    },
+    {
+      "name": "Edubadges Tst (profile)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "profile",
+      "args": ["--flavor", "tst", "--dart-define=APP_FLAVOR=tst"]
+    },
+    {
+      "name": "Edubadges Tst (release)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "release",
+      "args": ["--flavor", "tst", "--dart-define=APP_FLAVOR=tst"]
+    },
+    {
+      "name": "Edubadges Acc (debug)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--flavor", "acc", "--dart-define=APP_FLAVOR=acc"]
+    },
+    {
+      "name": "Edubadges Acc (profile)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "profile",
+      "args": ["--flavor", "acc", "--dart-define=APP_FLAVOR=acc"]
+    },
+    {
+      "name": "Edubadges Acc (release)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "release",
+      "args": ["--flavor", "acc", "--dart-define=APP_FLAVOR=acc"]
+    },
+    {
+      "name": "Edubadges Prod (debug)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--flavor", "prod", "--dart-define=APP_FLAVOR=prod"]
+    },
+    {
+      "name": "Edubadges Prod (profile)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "profile",
+      "args": ["--flavor", "prod", "--dart-define=APP_FLAVOR=prod"]
+    },
+    {
+      "name": "Edubadges Prod (release)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "release",
+      "args": ["--flavor", "prod", "--dart-define=APP_FLAVOR=prod"]
+    }
+  ]
+}

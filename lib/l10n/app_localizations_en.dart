@@ -32,7 +32,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalAgreementButtonReadMore => 'Read more';
 
   @override
-  String get generalAgreementButtonRead => 'Read';
+  String get generalAgreementButtonAgree => 'I agree';
 
   @override
   String get tabAccount => 'Account';

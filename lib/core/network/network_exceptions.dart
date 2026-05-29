@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:edubadges/core/network/errors/error_codes.dart';
 import 'package:edubadges/core/network/errors/exceptions.dart';
+import 'package:edubadges/features/general_terms/domain/general_terms_constants.dart';
 
 /// Utility class to convert Dio exceptions to custom exceptions
 class NetworkExceptionHandler {
@@ -163,6 +164,14 @@ class NetworkExceptionHandler {
         );
 
       case 403:
+        if (GeneralTermsConstants.isNotAcceptedResponse(response)) {
+          return GeneralTermsNotAcceptedException(
+            message: GeneralTermsConstants.notAcceptedDetail,
+            code: code ?? ErrorCodes.forbidden,
+            originalError: error,
+            stackTrace: stackTrace,
+          );
+        }
         return ForbiddenException(
           message: message,
           code: code ?? ErrorCodes.forbidden,
