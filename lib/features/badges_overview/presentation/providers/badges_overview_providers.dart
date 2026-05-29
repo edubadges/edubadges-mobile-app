@@ -36,8 +36,13 @@ final directAwardDetailProvider = FutureProvider.autoDispose
 });
 
 class BadgesOverviewNotifier extends AsyncNotifier<BadgesOverviewState> {
+  Future<void> _ensureTokenFresh() async {
+    await ref.read(oidcAuthDataSourceProvider).refreshTokenIfExpired();
+  }
+
   @override
   Future<BadgesOverviewState> build() async {
+    await _ensureTokenFresh();
     final repository = ref.read(badgesOverviewRepositoryProvider);
 
     final results = await Future.wait([
@@ -79,6 +84,7 @@ class BadgesOverviewNotifier extends AsyncNotifier<BadgesOverviewState> {
       state = const AsyncLoading();
     }
     try {
+      await _ensureTokenFresh();
       final repository = ref.read(badgesOverviewRepositoryProvider);
 
       final results = await Future.wait([

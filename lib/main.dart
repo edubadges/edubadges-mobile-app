@@ -121,6 +121,7 @@ void main() async {
 
 Future<void> _syncBadgeCountOnStartup(ProviderContainer container) async {
   try {
+    await container.read(oidcAuthDataSourceProvider).refreshTokenIfExpired();
     await container.read(badgesOverviewProvider.notifier).refresh();
     final badgesState = await container.read(badgesOverviewProvider.future);
     await container
