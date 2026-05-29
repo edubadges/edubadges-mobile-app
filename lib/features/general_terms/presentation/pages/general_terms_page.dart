@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class GeneralTermsPage extends ConsumerStatefulWidget {
   final String url;
@@ -66,12 +65,14 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
 
   Future<void> _acceptTerms() async {
     final dataSource = ref.watch(generalTermsDataSourceProvider);
-    await dataSource.acceptTermsUrl();
+    await dataSource.acceptTerms();
 
-    final notificationStatus = ref.watch(notificationPermissionStatusProvider);
+    final shouldShowNotificationPrompt = await ref.read(
+      shouldShowNotificationPermissionPromptProvider.future,
+    );
 
     if (mounted) {
-      if (notificationStatus.value == PermissionStatus.denied) {
+      if (shouldShowNotificationPrompt) {
         context.go(RoutePath.notificationPermission);
       } else {
         context.go(RoutePath.main);
@@ -88,7 +89,7 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
     final markdownAsync = ref.watch(markdownContentProvider(widget.url));
 
     final buttonText = _isNearBottom
-        ? l10n.generalAgreementButtonRead
+        ? l10n.generalAgreementButtonAgree
         : l10n.generalAgreementButtonReadMore;
     final buttonOnPressed = _isNearBottom ? _acceptTerms : _scrollToBottom;
 

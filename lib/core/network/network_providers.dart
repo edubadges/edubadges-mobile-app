@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/network/api_client.dart';
+import 'package:edubadges/core/network/interceptors/general_terms_interceptor.dart';
 import 'package:edubadges/core/network/network_config.dart';
 import 'package:edubadges/core/network/network_info.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/features/general_terms/presentation/navigation/general_terms_navigation.dart';
 import 'package:edubadges/shared/data/datasources/oidc_auth_datasource.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -48,6 +50,12 @@ final dioProvider = Provider<Dio>((ref) {
   ));
 
   oidcAuth.setFresh(config.fresh);
+
+  dio.interceptors.add(
+    GeneralTermsInterceptor(
+      onTermsRequired: () => navigateToGeneralTermsIfNeeded(dio),
+    ),
+  );
 
   return dio;
 });

@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:math' as math;
+import 'dart:ui' show SemanticsRole;
 
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -162,58 +164,138 @@ class AdaptiveDialog extends StatelessWidget {
   }
 
   Widget _buildMaterialDialog(BuildContext context) {
+    final theme = Theme.of(context);
+    final dialogTheme = DialogTheme.of(context);
     final localizedFirstButtonText =
         firstButtonText ?? AppLocalizations.of(context).cancel;
+    final contentWidget = _buildContent(context);
+    final size = MediaQuery.sizeOf(context);
+    final titleTextStyle =
+        dialogTheme.titleTextStyle ?? theme.textTheme.headlineSmall!;
+    final bodyTextStyle =
+        dialogTheme.contentTextStyle ?? theme.textTheme.bodyMedium!;
+    const spacing = 8.0;
+    final actionsPadding = dialogTheme.actionsPadding ??
+        const EdgeInsets.only(left: 24, right: 24, bottom: 24);
 
-    return AlertDialog(
-      title: Text(title, style: Theme.of(context).textTheme.headlineSmall),
-      content: _buildContent(context),
-      actions: [
-        FocusTraversalGroup(
-          policy: OrderedTraversalPolicy(),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              FocusTraversalOrder(
-                order: const NumericFocusOrder(1),
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    onFirstButtonPressed();
-                  },
-                  child: Text(
-                    localizedFirstButtonText,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+    final titleSection = Padding(
+      padding: EdgeInsets.fromLTRB(24, 24, 24, contentWidget != null ? 0 : 20),
+      child: DefaultTextStyle(
+        style: titleTextStyle,
+        child: Semantics(
+          container: true,
+          child: Text(title),
+        ),
+      ),
+    );
+
+    final actionsSection = Padding(
+      padding: theme.useMaterial3
+          ? actionsPadding
+          : actionsPadding.add(const EdgeInsets.all(spacing)),
+      child: FocusTraversalGroup(
+        policy: OrderedTraversalPolicy(),
+        child: OverflowBar(
+          alignment: MainAxisAlignment.end,
+          spacing: spacing,
+          overflowAlignment: OverflowBarAlignment.end,
+          children: [
+            FocusTraversalOrder(
+              order: const NumericFocusOrder(1),
+              child: TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  onFirstButtonPressed();
+                },
+                child: Text(
+                  localizedFirstButtonText,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: theme.colorScheme.primary,
                   ),
                 ),
               ),
-              FocusTraversalOrder(
-                order: const NumericFocusOrder(2),
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    onSecondButtonPressed();
-                  },
-                  style: TextButton.styleFrom(
-                    foregroundColor: isDestructiveAction
+            ),
+            FocusTraversalOrder(
+              order: const NumericFocusOrder(2),
+              child: TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  onSecondButtonPressed();
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: isDestructiveAction
+                      ? AppColors.error
+                      : AppColors.primary,
+                ),
+                child: Text(
+                  secondButtonText,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: isDestructiveAction
                         ? AppColors.error
                         : AppColors.primary,
                   ),
-                  child: Text(
-                    secondButtonText,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color:
-                          isDestructiveAction ? AppColors.error : AppColors.primary,
-                    ),
-                  ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+      ),
+    );
+
+    const horizontalMargin = 24.0;
+    final maxPanelWidth = math.max(0.0, size.width - 2 * horizontalMargin);
+    final dialogConstraints = BoxConstraints(
+      minWidth: math.min(280, maxPanelWidth),
+      maxWidth: math.min(560, maxPanelWidth),
+      maxHeight: size.height * 0.9,
+    );
+
+    if (contentWidget == null) {
+      return Dialog(
+        semanticsRole: SemanticsRole.alertDialog,
+        clipBehavior: Clip.antiAlias,
+        constraints: dialogConstraints,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            titleSection,
+            actionsSection,
+          ],
+        ),
+      );
+    }
+
+    return Dialog(
+      semanticsRole: SemanticsRole.alertDialog,
+      clipBehavior: Clip.antiAlias,
+      constraints: dialogConstraints,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          titleSection,
+          Flexible(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                24,
+                theme.useMaterial3 ? 16 : 20,
+                24,
+                24,
+              ),
+              child: DefaultTextStyle(
+                style: bodyTextStyle,
+                child: Semantics(
+                  container: true,
+                  explicitChildNodes: true,
+                  child: contentWidget,
+                ),
+              ),
+            ),
+          ),
+          actionsSection,
+        ],
+      ),
     );
   }
 }

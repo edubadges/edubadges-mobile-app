@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'collection_route_model.g.dart';
+
+@JsonSerializable()
 class CollectionRouteModel {
   final String id;
   final String title;
@@ -9,19 +14,8 @@ class CollectionRouteModel {
     this.description,
   });
 
-  factory CollectionRouteModel.fromJson(Map<String, dynamic> json) {
-    return CollectionRouteModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String?,
-    );
-  }
+  factory CollectionRouteModel.fromJson(Map<String, dynamic> json) =>
+      _$CollectionRouteModelFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      if (description != null) 'description': description,
-    };
-  }
+  Map<String, dynamic> toJson() => _$CollectionRouteModelToJson(this);
 }
