@@ -82,9 +82,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
           if (mounted) {
             ref.read(badgesOverviewProvider.notifier).refresh();
             context.go(
-              RoutePath.badgeClaimSuccessPath(
-                id: badge.badgeclass.entityId,
-              ),
+              RoutePath.badgeClaimSuccessPath(id: badge.badgeclass.entityId),
             );
           }
         },
@@ -335,21 +333,24 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         children: [
           if (badgeImageUrl != null)
             ExcludeSemantics(
-              child: Image.network(
-                badgeImageUrl,
-                height: imageSize,
-                width: imageSize,
-                semanticLabel: l10n.semanticsBadgeImage,
-                errorBuilder: (context, error, stackTrace) {
-                  return SizedBox(
-                    height: imageSize,
-                    width: imageSize,
-                    child: Icon(
-                      Icons.image_not_supported_outlined,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  );
-                },
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 200, maxHeight: 200),
+                child: Image.network(
+                  badgeImageUrl,
+                  height: imageSize,
+                  width: imageSize,
+                  semanticLabel: l10n.semanticsBadgeImage,
+                  errorBuilder: (context, error, stackTrace) {
+                    return SizedBox(
+                      height: imageSize,
+                      width: imageSize,
+                      child: Icon(
+                        Icons.image_not_supported_outlined,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           const SizedBox(height: 12),
