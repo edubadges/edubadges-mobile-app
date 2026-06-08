@@ -184,9 +184,11 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
               ),
             ),
           ),
-          error: (error, _) => const SizedBox(
+          error: (error, stackTrace) => SizedBox(
             height: _badgeCardHeight,
-            child: Center(child: ErrorMessageWidget()),
+            child: Center(
+              child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
+            ),
           ),
         ),
 
@@ -214,7 +216,11 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
               ),
             ),
           ],
-          error: (error, _) => [const Center(child: ErrorMessageWidget())],
+          error: (error, stackTrace) => [
+            Center(
+              child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
+            ),
+          ],
         ),
       ],
     );
@@ -277,7 +283,11 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           ),
         ),
       ],
-      error: (error, _) => [const Center(child: ErrorMessageWidget())],
+      error: (error, stackTrace) => [
+        Center(
+          child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
+        ),
+      ],
     );
   }
 

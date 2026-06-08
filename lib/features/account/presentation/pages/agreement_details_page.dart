@@ -109,6 +109,8 @@ class _AgreementDetailsPageState extends ConsumerState<AgreementDetailsPage> {
               description: l10n.failedToLoadTermsFrom(
                 widget.agreement.titleLong,
               ),
+              error: error,
+              stackTrace: stackTrace,
             ),
           );
         },
