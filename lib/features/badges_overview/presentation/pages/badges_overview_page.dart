@@ -18,8 +18,7 @@ class BadgesOverviewPage extends ConsumerStatefulWidget {
   const BadgesOverviewPage({super.key});
 
   @override
-  ConsumerState<BadgesOverviewPage> createState() =>
-      _BadgesOverviewPageState();
+  ConsumerState<BadgesOverviewPage> createState() => _BadgesOverviewPageState();
 }
 
 class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
@@ -99,55 +98,57 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
 
                 slivers.add(
                   SliverToBoxAdapter(
-                    child: MergeSemantics(
-                      child: InkWell(
-                        onTap: onClaimBannerTap,
-                        borderRadius: BorderRadius.circular(12),
-                        child: Container(
-                          margin: const EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                            top: 16,
-                          ),
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: colorScheme.primary,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              ExcludeSemantics(
-                                child: SvgPicture.asset(
-                                  Assets.iconParty,
-                                  colorFilter: ColorFilter.mode(
-                                    colorScheme.onPrimary,
-                                    BlendMode.srcIn,
-                                  ),
-                                  width: 24,
-                                  height: 24,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  claimBannerLabel,
-                                  style: textTheme.labelMedium?.copyWith(
-                                    color: colorScheme.onPrimary,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 16,
+                      ),
+                      child: MergeSemantics(
+                        child: InkWell(
+                          onTap: onClaimBannerTap,
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: colorScheme.primary,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                ExcludeSemantics(
+                                  child: SvgPicture.asset(
+                                    Assets.iconParty,
+                                    colorFilter: ColorFilter.mode(
+                                      colorScheme.onPrimary,
+                                      BlendMode.srcIn,
+                                    ),
+                                    width: 24,
+                                    height: 24,
                                   ),
                                 ),
-                              ),
-                              ExcludeSemantics(
-                                child: SvgPicture.asset(
-                                  Assets.iconChevron,
-                                  colorFilter: ColorFilter.mode(
-                                    colorScheme.onPrimary,
-                                    BlendMode.srcIn,
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    claimBannerLabel,
+                                    style: textTheme.labelMedium?.copyWith(
+                                      color: colorScheme.onPrimary,
+                                    ),
                                   ),
-                                  width: 12,
-                                  height: 12,
                                 ),
-                              ),
-                            ],
+                                ExcludeSemantics(
+                                  child: SvgPicture.asset(
+                                    Assets.iconChevron,
+                                    colorFilter: ColorFilter.mode(
+                                      colorScheme.onPrimary,
+                                      BlendMode.srcIn,
+                                    ),
+                                    width: 12,
+                                    height: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -252,7 +253,8 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
                               instance: badge,
                               badgeClass: badge.badgeclass as BadgeClassModel,
                               style: BadgeCardStyle.small,
-                              badgeNavigationScope: BadgeDetailsScope.enrollment,
+                              badgeNavigationScope:
+                                  BadgeDetailsScope.enrollment,
                               badgeNavigationEntityId:
                                   badge.badgeclass.entityId,
                               onTap: () {
