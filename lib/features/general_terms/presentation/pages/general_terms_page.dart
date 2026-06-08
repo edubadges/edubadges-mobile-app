@@ -134,7 +134,9 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
                   semanticsLabel: AppLocalizations.of(context).semanticsLoading,
                 ),
               ),
-              error: (error, _) => const Center(child: ErrorMessageWidget()),
+              error: (error, stackTrace) => Center(
+                child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
+              ),
             ),
             Positioned(
               left: 0,

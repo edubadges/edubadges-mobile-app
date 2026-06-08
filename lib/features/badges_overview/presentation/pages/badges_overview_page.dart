@@ -336,8 +336,15 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
             ),
             error: (error, stackTrace) => CustomScrollView(
               controller: _scrollController,
-              slivers: const [
-                SliverFillRemaining(child: Center(child: ErrorMessageWidget())),
+              slivers: [
+                SliverFillRemaining(
+                  child: Center(
+                    child: ErrorMessageWidget(
+                      error: error,
+                      stackTrace: stackTrace,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/widgets/debug_error_log_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -8,6 +9,9 @@ class InfoStateView extends StatelessWidget {
   final String? title;
   final String description;
   final Color? iconColor;
+  final Object? error;
+  final StackTrace? stackTrace;
+  final String? debugContext;
 
   const InfoStateView({
     super.key,
@@ -15,6 +19,9 @@ class InfoStateView extends StatelessWidget {
     this.title,
     required this.description,
     this.iconColor = AppColors.primary,
+    this.error,
+    this.stackTrace,
+    this.debugContext,
   });
 
   @override
@@ -64,6 +71,11 @@ class InfoStateView extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+            DebugErrorLogButton(
+              error: error,
+              stackTrace: stackTrace,
+              debugContext: debugContext,
             ),
           ],
         ),

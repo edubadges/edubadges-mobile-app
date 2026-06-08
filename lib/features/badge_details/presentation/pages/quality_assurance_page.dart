@@ -132,7 +132,9 @@ class _QualityAssurancePageState extends ConsumerState<QualityAssurancePage> {
               semanticsLabel: l10n.semanticsLoading,
             ),
           ),
-          error: (error, stack) => const Center(child: ErrorMessageWidget()),
+          error: (error, stackTrace) => Center(
+            child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
+          ),
         ),
       ),
     );

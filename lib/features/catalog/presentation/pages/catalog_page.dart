@@ -200,10 +200,15 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
             ),
             error: (error, stackTrace) => CustomScrollView(
               controller: _scrollController,
-              slivers: const [
+              slivers: [
                 SliverFillRemaining(
                   hasScrollBody: false,
-                  child: Center(child: ErrorMessageWidget()),
+                  child: Center(
+                    child: ErrorMessageWidget(
+                      error: error,
+                      stackTrace: stackTrace,
+                    ),
+                  ),
                 ),
               ],
             ),
