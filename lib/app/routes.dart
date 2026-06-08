@@ -28,6 +28,7 @@ import 'package:edubadges/features/main/main_page.dart';
 import 'package:edubadges/features/notification_permission/presentation/pages/notification_permission_page.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
 import 'package:edubadges/shared/presentation/providers/permission_providers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 final appRouter = Provider<GoRouter>((ref) {
@@ -41,8 +42,11 @@ final appRouter = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final bool loggedIn = authState.asData?.value ?? false;
       final bool isGoingToLogin = state.uri.path == RoutePath.login;
+      final bool isPublicRoute = RoutePath.isPublicPath(state.uri.path);
 
-      if (!loggedIn && !isGoingToLogin) return RoutePath.login;
+      if (!loggedIn && !isGoingToLogin && !isPublicRoute) {
+        return RoutePath.login;
+      }
 
       // After login, decide where to go based on a priority system.
       if (loggedIn && isGoingToLogin) {
@@ -61,7 +65,8 @@ final appRouter = Provider<GoRouter>((ref) {
         }
 
         // Check if notification permissions need to be asked.
-        if (shouldShowNotificationPrompt.asData?.value == true) {
+        if (!kIsWeb &&
+            shouldShowNotificationPrompt.asData?.value == true) {
           return RoutePath.notificationPermission;
         }
 
@@ -136,6 +141,42 @@ final appRouter = Provider<GoRouter>((ref) {
             return RoutePath.catalog;
           }
           return '/public/${Uri.encodeComponent(id)}';
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.badgeQualityAssuranceClaimed,
+        name: 'badge-quality-assurance-claimed',
+        builder: (context, state) {
+          final badgeId = state.pathParameters['id'] ?? '';
+          return QualityAssurancePage(
+            badgeId: badgeId,
+            scope: BadgeDetailsScope.claimed,
+          );
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.badgeQualityAssuranceEnrollment,
+        name: 'badge-quality-assurance-enrollment',
+        builder: (context, state) {
+          final badgeId = state.pathParameters['id'] ?? '';
+          return QualityAssurancePage(
+            badgeId: badgeId,
+            scope: BadgeDetailsScope.enrollment,
+          );
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.badgeQualityAssurancePublic,
+        name: 'badge-quality-assurance-public',
+        builder: (context, state) {
+          final badgeId = state.pathParameters['id'] ?? '';
+          return QualityAssurancePage(
+            badgeId: badgeId,
+            scope: BadgeDetailsScope.public,
+          );
         },
       ),
 
@@ -229,28 +270,6 @@ final appRouter = Provider<GoRouter>((ref) {
             name: name,
             description: description,
           );
-        },
-      ),
-
-      GoRoute(
-        path: RoutePath.badgeQualityAssurance,
-        name: 'badge-quality-assurance',
-        builder: (context, state) {
-          final badgeId = state.pathParameters['id'] ?? '';
-          final scopeParam = state.pathParameters['scope'];
-          BadgeDetailsScope? scope;
-          for (final value in BadgeDetailsScope.values) {
-            if (value.name == scopeParam) {
-              scope = value;
-              break;
-            }
-          }
-
-          if (scope == null) {
-            return const CatalogPage();
-          }
-
-          return QualityAssurancePage(badgeId: badgeId, scope: scope);
         },
       ),
 

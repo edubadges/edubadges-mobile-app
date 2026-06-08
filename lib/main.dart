@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:edubadges/app/app.dart';
+import 'package:edubadges/core/auth/dev_auth_bootstrap.dart';
 import 'package:edubadges/core/constants/env_keys.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/app_container.dart';
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/core/utils/url_strategy.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/firebase/firebase_options_acceptance.dart'
     as firebase_acc;
@@ -26,6 +28,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_piwikpro/flutter_piwikpro.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 String? appFlavor;
@@ -33,10 +36,17 @@ String? appFlavor;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  configureAppUrlStrategy();
+
+  if (kIsWeb) {
+    GoRouter.optionURLReflectsImperativeAPIs = true;
+  }
+
   await initializeDateFormatting();
 
-  // Configure system UI for edge-to-edge display
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  if (!kIsWeb) {
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  }
 
   if (appFlavor == null) {
     const flutterAppFlavor = String.fromEnvironment('FLUTTER_APP_FLAVOR');
@@ -69,19 +79,20 @@ void main() async {
     piwikProSiteId: dotenv.env[EnvKeys.piwikProSiteId] ?? '',
   );
 
-  // Initialize Firebase
-  await Firebase.initializeApp(options: _getFirebaseOptions());
+  if (!kIsWeb) {
+    await Firebase.initializeApp(options: _getFirebaseOptions());
+  } else {
+    logger.i('Skipping Firebase initialization on web until configured');
+  }
 
-  // Initialize Analytics
   final analyticsEnabled = EnvironmentConfig.instance.enableAnalytics;
-  if (analyticsEnabled) {
+  if (!kIsWeb && analyticsEnabled) {
     await FlutterPiwikPro.sharedInstance.configureTracker(
       baseURL: EnvironmentConfig.instance.piwikProBaseUrl,
       siteId: EnvironmentConfig.instance.piwikProSiteId,
     );
   }
 
-  // Initialize Crashlytics (iOS/Android only)
   if (!kIsWeb) {
     final crashlyticsEnabled = EnvironmentConfig.instance.enableCrashlytics;
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
@@ -104,17 +115,20 @@ void main() async {
   Analytics Enabled: ${dotenv.env[EnvKeys.enableAnalytics] == 'true'}
   Crashlytics Enabled: ${dotenv.env[EnvKeys.enableCrashlytics] == 'true'}''');
 
-  // Initialize Networking
   final container = ProviderContainer();
   appProviderContainer = container;
   final apiClient = container.read(apiClientProvider);
   await apiClient.init();
-  unawaited(_syncBadgeCountOnStartup(container));
+  await applyDevAccessTokenIfDefined(container);
+  if (!kIsWeb) {
+    unawaited(_syncBadgeCountOnStartup(container));
+  }
 
-  // Navigate to main when a notification is tapped (background).
-  FirebaseMessaging.onMessageOpenedApp.listen((_) {
-    appGoRouter?.go(RoutePath.main);
-  });
+  if (!kIsWeb) {
+    FirebaseMessaging.onMessageOpenedApp.listen((_) {
+      appGoRouter?.go(RoutePath.main);
+    });
+  }
 
   runApp(UncontrolledProviderScope(container: container, child: const App()));
 }

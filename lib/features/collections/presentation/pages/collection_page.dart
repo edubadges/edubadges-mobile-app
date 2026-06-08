@@ -22,10 +22,25 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class CollectionPage extends ConsumerWidget {
+class CollectionPage extends ConsumerStatefulWidget {
   final CollectionRouteModel collection;
 
   const CollectionPage({super.key, required this.collection});
+
+  @override
+  ConsumerState<CollectionPage> createState() => _CollectionPageState();
+}
+
+class _CollectionPageState extends ConsumerState<CollectionPage> {
+  final ScrollController _scrollController = ScrollController();
+
+  CollectionRouteModel get collection => widget.collection;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   Widget _buildVisibilitySection(
     BuildContext context,
@@ -294,7 +309,7 @@ class CollectionPage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -445,6 +460,7 @@ class CollectionPage extends ConsumerWidget {
         ],
       ),
       body: MaxWidthWrapper(
+        scrollController: _scrollController,
         child: collectionsAsync.when(
           data: (collections) {
             try {
@@ -469,6 +485,7 @@ class CollectionPage extends ConsumerWidget {
               }
 
               return ListView(
+                controller: _scrollController,
                 padding: const EdgeInsets.all(16),
                 children: [
                   _buildCollectionDescription(

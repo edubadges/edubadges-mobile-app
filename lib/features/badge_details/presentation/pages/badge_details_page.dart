@@ -47,6 +47,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   static const double _badgeCardHeight = 260;
   static const int _qualityAssurancePreviewMaxLines = 5;
 
+  final ScrollController _scrollController = ScrollController();
   late PageController _pageController;
   int _currentIndex = 0;
   bool _hasInitializedPage = false;
@@ -83,6 +84,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     if (_shouldShowCarousel && _hasInitializedPage) {
       _pageController.dispose();
     }
@@ -129,6 +131,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         ),
       ),
       body: MaxWidthWrapper(
+        scrollController: _scrollController,
         child: _shouldShowCarousel
             ? _buildCarouselView()
             : _buildSingleBadgeView(),
@@ -141,6 +144,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     final l10n = AppLocalizations.of(context);
 
     return ListView(
+      controller: _scrollController,
       children: [
         badgesAsync.when(
           data: (badges) {
@@ -231,6 +235,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     );
 
     return ListView(
+      controller: _scrollController,
       children: [
         if (badgeDetailsAsync.value?.badgeClass != null)
           FocusableSection(

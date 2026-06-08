@@ -15,7 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-class QualityAssurancePage extends ConsumerWidget {
+class QualityAssurancePage extends ConsumerStatefulWidget {
   final String badgeId;
   final BadgeDetailsScope scope;
 
@@ -24,6 +24,20 @@ class QualityAssurancePage extends ConsumerWidget {
     required this.badgeId,
     required this.scope,
   });
+
+  @override
+  ConsumerState<QualityAssurancePage> createState() =>
+      _QualityAssurancePageState();
+}
+
+class _QualityAssurancePageState extends ConsumerState<QualityAssurancePage> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   String? _composeQualityAssurance(BadgeClassEntity bc) {
     final name = bc.qualityAssuranceName;
@@ -43,12 +57,12 @@ class QualityAssurancePage extends ConsumerWidget {
       );
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final badgeDetailsAsync = ref.watch(
       badgeDetailsModelProvider(
-        BadgeDetailsQuery(scope: scope, entityId: badgeId),
+        BadgeDetailsQuery(scope: widget.scope, entityId: widget.badgeId),
       ),
     );
     final qualityAssuranceUrl =
@@ -82,6 +96,7 @@ class QualityAssurancePage extends ConsumerWidget {
       ),
       backgroundColor: colorScheme.surfaceContainer,
       body: MaxWidthWrapper(
+        scrollController: _scrollController,
         child: badgeDetailsAsync.when(
           data: (details) {
             final badgeClass = details?.badgeClass;
@@ -94,21 +109,20 @@ class QualityAssurancePage extends ConsumerWidget {
               return const Center(child: ErrorMessageWidget());
             }
 
-            return Scrollbar(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 16,
-                ),
-                child: FocusableSection(
-                  child: MarkdownBody(
-                    data: filterBadMarkdown(content),
-                    styleSheet: AppThemes.markdownStyleSheet(context),
-                    onTapLink: (text, href, title) {
-                      if (href == null) return;
-                      _launchExternalUrl(href);
-                    },
-                  ),
+            return SingleChildScrollView(
+              controller: _scrollController,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 16,
+              ),
+              child: FocusableSection(
+                child: MarkdownBody(
+                  data: filterBadMarkdown(content),
+                  styleSheet: AppThemes.markdownStyleSheet(context),
+                  onTapLink: (text, href, title) {
+                    if (href == null) return;
+                    _launchExternalUrl(href);
+                  },
                 ),
               ),
             );

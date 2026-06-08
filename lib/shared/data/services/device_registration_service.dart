@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/shared/data/datasources/device_registration_datasource.dart';
 import 'package:edubadges/shared/data/models/register_device_request.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -15,6 +14,9 @@ class DeviceRegistrationService {
   /// Fetches the current device registration from the backend and returns the [active] flag.
   /// Returns null if the device is not registered or the request fails.
   Future<bool?> getNotificationActive() async {
+    if (PlatformInfo.isWeb) {
+      return null;
+    }
     final String? fcmToken = await FirebaseMessaging.instance.getToken();
     if (fcmToken == null || fcmToken.isEmpty) return null;
     try {
@@ -29,18 +31,21 @@ class DeviceRegistrationService {
   /// Fetches FCM token and device info, then POSTs to the backend.
   /// [active] is sent in the request body so the backend can enable or disable push for this device.
   Future<void> registerDevice({bool active = true}) async {
+    if (PlatformInfo.isWeb) {
+      return;
+    }
     final String? fcmToken =
         await FirebaseMessaging.instance.getToken();
     if (fcmToken == null || fcmToken.isEmpty) {
       return;
     }
 
-    final String type = Platform.isIOS ? 'ios' : 'android';
+    final String type = PlatformInfo.isIOS ? 'ios' : 'android';
     String name;
     String? deviceId;
 
     try {
-      if (Platform.isIOS) {
+      if (PlatformInfo.isIOS) {
         final info = await _deviceInfo.iosInfo;
         deviceId = info.identifierForVendor;
         name = info.name.isNotEmpty ? info.name : info.modelName;

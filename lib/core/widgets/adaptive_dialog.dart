@@ -1,8 +1,8 @@
-import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui' show SemanticsRole;
 
 import 'package:edubadges/app/colors.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -84,7 +84,7 @@ class AdaptiveDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Platform.isIOS
+    return PlatformInfo.useCupertinoDialog
         ? _buildCupertinoDialog(context)
         : _buildMaterialDialog(context);
   }

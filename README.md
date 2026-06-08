@@ -4,6 +4,7 @@
 This application is built to run on the following platforms:
 *   🍎 iOS
 *   🤖 Android
+*   🌐 Web
 
 ## ⚙️ Installation
 1.  **Clone the repository:**
@@ -35,6 +36,26 @@ This application is built to run on the following platforms:
     # Replace 'dev' with 'tst', 'prod', or 'acc' as needed
     flutter run --flavor <flavor_name>
     ```
+
+4.  **Run on web:**
+    Flavors use `--dart-define` instead of `--flavor` on web:
+    ```bash
+    flutter run -d chrome --dart-define=APP_FLAVOR=dev
+    ```
+
+    **Local dev without OIDC login** (debug + non-prod only): pass an access token from another session (e.g. mobile or Postman):
+    ```bash
+    flutter run -d chrome \
+      --dart-define=APP_FLAVOR=dev \
+      --dart-define=DEV_ACCESS_TOKEN=your_access_token_here
+    ```
+    The token is stored with a 24-hour expiration. `Bearer ` prefix is stripped automatically. Not available in release builds or the `prod` flavor.
+
+5.  **Build for web:**
+    ```bash
+    flutter build web --dart-define=APP_FLAVOR=tst
+    ```
+    Deploy the `build/web` output to static hosting with SPA path fallback (see `firebase.json`).
 
 ## 🛠️ Tech Stack
 *   **Framework:** Flutter & Dart

@@ -17,12 +17,20 @@ import 'package:edubadges/features/account/presentation/providers/account_provid
 import 'package:edubadges/features/account/presentation/widgets/delete_account_dialog.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class AccountPage extends ConsumerWidget {
+class AccountPage extends ConsumerStatefulWidget {
   const AccountPage({super.key});
+
+  @override
+  ConsumerState<AccountPage> createState() => _AccountPageState();
+}
+
+class _AccountPageState extends ConsumerState<AccountPage> {
+  final ScrollController _scrollController = ScrollController();
 
   static const double _spacingSmall = 8.0;
   static const double _spacingMedium = 16.0;
@@ -31,6 +39,12 @@ class AccountPage extends ConsumerWidget {
   static const double _badgeBorderRadius = 8.0;
   static const double _chevronSize = 12.0;
   static const double _chevronPadding = 8.0;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   Widget _buildDivider(ColorScheme colorScheme) {
     return Padding(
@@ -575,7 +589,7 @@ class AccountPage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -600,6 +614,7 @@ class AccountPage extends ConsumerWidget {
         ],
       ),
       body: MaxWidthWrapper(
+        scrollController: _scrollController,
         child: profileAsync.when(
           data: (profile) {
             if (profile == null) {
@@ -608,12 +623,18 @@ class AccountPage extends ConsumerWidget {
             return RefreshIndicator(
               backgroundColor: colorScheme.surfaceContainer,
               onRefresh: () async {
-                await Future.wait([
+                final refreshTasks = <Future<void>>[
                   ref.read(profileProvider.notifier).refresh(),
-                  ref.read(notificationEnabledProvider.notifier).refresh(),
-                ]);
+                ];
+                if (!kIsWeb) {
+                  refreshTasks.add(
+                    ref.read(notificationEnabledProvider.notifier).refresh(),
+                  );
+                }
+                await Future.wait(refreshTasks);
               },
               child: SingleChildScrollView(
+                controller: _scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(
                   _cardPadding,
@@ -628,7 +649,8 @@ class AccountPage extends ConsumerWidget {
                       autofocus: true,
                       child: _buildDataSection(context, profile),
                     ),
-                    _buildNotificationSection(context, ref, profile),
+                    if (!kIsWeb)
+                      _buildNotificationSection(context, ref, profile),
                     _buildAgreementsSection(ref, context, profile),
                     _buildDeleteAccountSection(context, ref),
                   ],

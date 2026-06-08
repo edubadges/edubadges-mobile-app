@@ -58,6 +58,7 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
           FocusScope.of(context).unfocus();
         },
         child: MaxWidthWrapper(
+          scrollController: _scrollController,
           child: catalogAsync.when(
             data: (state) {
               final displayBadges = state.displayBadges;
@@ -184,6 +185,7 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
               );
             },
             loading: () => CustomScrollView(
+              controller: _scrollController,
               slivers: [
                 SliverFillRemaining(
                   child: Center(
@@ -196,8 +198,9 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
                 ),
               ],
             ),
-            error: (error, stackTrace) => const CustomScrollView(
-              slivers: [
+            error: (error, stackTrace) => CustomScrollView(
+              controller: _scrollController,
+              slivers: const [
                 SliverFillRemaining(
                   hasScrollBody: false,
                   child: Center(child: ErrorMessageWidget()),

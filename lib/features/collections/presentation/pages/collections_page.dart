@@ -12,8 +12,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class CollectionsPage extends ConsumerWidget {
+class CollectionsPage extends ConsumerStatefulWidget {
   const CollectionsPage({super.key});
+
+  @override
+  ConsumerState<CollectionsPage> createState() => _CollectionsPageState();
+}
+
+class _CollectionsPageState extends ConsumerState<CollectionsPage> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   void _showCreateCollectionBottomSheet(BuildContext context) {
     showModalBottomSheet<void>(
@@ -27,7 +40,7 @@ class CollectionsPage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -49,6 +62,7 @@ class CollectionsPage extends ConsumerWidget {
         ],
       ),
       body: MaxWidthWrapper(
+        scrollController: _scrollController,
         child: collectionsAsync.when(
           data: (collections) {
             return RefreshIndicator(
@@ -58,6 +72,7 @@ class CollectionsPage extends ConsumerWidget {
               },
               child: collections.isEmpty
                   ? CustomScrollView(
+                      controller: _scrollController,
                       physics: const AlwaysScrollableScrollPhysics(),
                       slivers: [
                         SliverFillRemaining(
@@ -85,6 +100,7 @@ class CollectionsPage extends ConsumerWidget {
                       ],
                     )
                   : ListView.builder(
+                      controller: _scrollController,
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: const EdgeInsets.all(16),
                       itemCount: collections.length,

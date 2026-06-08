@@ -14,8 +14,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-class BadgesOverviewPage extends ConsumerWidget {
+class BadgesOverviewPage extends ConsumerStatefulWidget {
   const BadgesOverviewPage({super.key});
+
+  @override
+  ConsumerState<BadgesOverviewPage> createState() =>
+      _BadgesOverviewPageState();
+}
+
+class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   void _showFeedbackBottomSheet(BuildContext context) {
     showModalBottomSheet<void>(
@@ -27,7 +41,7 @@ class BadgesOverviewPage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final badgesAsync = ref.watch(badgesOverviewProvider);
     final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
@@ -61,6 +75,7 @@ class BadgesOverviewPage extends ConsumerWidget {
       body: FocusTraversalGroup(
         policy: OrderedTraversalPolicy(),
         child: MaxWidthWrapper(
+          scrollController: _scrollController,
           child: badgesAsync.when(
             data: (state) {
               final slivers = <Widget>[];
@@ -297,12 +312,14 @@ class BadgesOverviewPage extends ConsumerWidget {
                   await ref.read(badgesOverviewProvider.notifier).refresh();
                 },
                 child: CustomScrollView(
+                  controller: _scrollController,
                   physics: const AlwaysScrollableScrollPhysics(),
                   slivers: slivers,
                 ),
               );
             },
             loading: () => CustomScrollView(
+              controller: _scrollController,
               slivers: [
                 SliverFillRemaining(
                   child: Center(
@@ -315,8 +332,9 @@ class BadgesOverviewPage extends ConsumerWidget {
                 ),
               ],
             ),
-            error: (error, stackTrace) => const CustomScrollView(
-              slivers: [
+            error: (error, stackTrace) => CustomScrollView(
+              controller: _scrollController,
+              slivers: const [
                 SliverFillRemaining(child: Center(child: ErrorMessageWidget())),
               ],
             ),
