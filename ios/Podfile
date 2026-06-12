@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '18.0'
+platform :ios, '15.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -50,10 +50,23 @@ post_install do |installer|
     flutter_additional_ios_build_settings(target)
 
     target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
         '$(inherited)',
         'PERMISSION_NOTIFICATIONS=1',
       ]
     end
+  end
+
+  # Flutter generates FlutterGeneratedPluginSwiftPackage with iOS 13.0 by default.
+  # Firebase SPM plugins require iOS 15.0+, so align the generated package manifest.
+  package_swift = File.expand_path(
+    'Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift',
+    __dir__,
+  )
+  if File.exist?(package_swift)
+    contents = File.read(package_swift)
+    updated_contents = contents.gsub('.iOS("13.0")', '.iOS("15.0")')
+    File.write(package_swift, updated_contents) if contents != updated_contents
   end
 end
