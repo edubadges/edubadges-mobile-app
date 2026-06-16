@@ -98,7 +98,9 @@ class _MainPageState extends ConsumerState<MainPage>
     }
   }
 
-  List<_NavigationDestinationData> _navigationDestinations(AppLocalizations l10n) {
+  List<_NavigationDestinationData> _navigationDestinations(
+    AppLocalizations l10n,
+  ) {
     return <_NavigationDestinationData>[
       _NavigationDestinationData(
         iconPath: Assets.iconBackpack,
@@ -158,11 +160,11 @@ class _MainPageState extends ConsumerState<MainPage>
     );
   }
 
-  NavigationRailDestination _buildNavigationRailDestination({
+  NavigationDrawerDestination _buildNavigationDrawerDestination({
     required _NavigationDestinationData destination,
     required ColorScheme colorScheme,
   }) {
-    return NavigationRailDestination(
+    return NavigationDrawerDestination(
       icon: _buildNavIcon(
         iconPath: destination.iconPath,
         isSelected: false,
@@ -227,23 +229,22 @@ class _MainPageState extends ConsumerState<MainPage>
     return Scaffold(
       body: Row(
         children: <Widget>[
-          NavigationRail(
+          NavigationDrawer(
             selectedIndex: currentIndex,
             onDestinationSelected: _onTap,
             backgroundColor: colorScheme.surfaceContainer,
             indicatorColor: pillColor,
-            labelType: NavigationRailLabelType.all,
-            destinations: destinations
+            elevation: 0,
+            children: destinations
                 .map(
                   (_NavigationDestinationData destination) =>
-                      _buildNavigationRailDestination(
-                    destination: destination,
-                    colorScheme: colorScheme,
-                  ),
+                      _buildNavigationDrawerDestination(
+                        destination: destination,
+                        colorScheme: colorScheme,
+                      ),
                 )
                 .toList(),
           ),
-          const VerticalDivider(width: 1, thickness: 1),
           Expanded(child: SafeArea(child: widget.navigationShell)),
         ],
       ),
@@ -261,9 +262,9 @@ class _MainPageState extends ConsumerState<MainPage>
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        final bool useNavigationRail =
-            constraints.maxWidth >= LayoutConstants.navigationRailMinWidth;
-        if (useNavigationRail) {
+        final bool useNavigationDrawer =
+            constraints.maxWidth >= LayoutConstants.navigationDrawerMinWidth;
+        if (useNavigationDrawer) {
           return _buildExpandedScaffold(
             colorScheme: colorScheme,
             pillColor: pillColor,

@@ -1,5 +1,5 @@
 class LayoutConstants {
   LayoutConstants._();
 
-  static const double navigationRailMinWidth = 840.0;
+  static const double navigationDrawerMinWidth = 840.0;
 }
