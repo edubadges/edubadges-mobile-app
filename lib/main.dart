@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:edubadges/app/app.dart';
+import 'package:edubadges/core/analytics/piwik_pro_analytics.dart';
+import 'package:edubadges/core/app_container.dart';
 import 'package:edubadges/core/auth/dev_auth_bootstrap.dart';
 import 'package:edubadges/core/constants/env_keys.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/constants/route_path.dart';
-import 'package:edubadges/core/app_container.dart';
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/core/utils/url_strategy.dart';
@@ -26,7 +27,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_piwikpro/flutter_piwikpro.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -85,13 +85,12 @@ void main() async {
     logger.i('Skipping Firebase initialization on web until configured');
   }
 
-  final analyticsEnabled = EnvironmentConfig.instance.enableAnalytics;
-  if (!kIsWeb && analyticsEnabled) {
-    await FlutterPiwikPro.sharedInstance.configureTracker(
-      baseURL: EnvironmentConfig.instance.piwikProBaseUrl,
-      siteId: EnvironmentConfig.instance.piwikProSiteId,
-    );
-  }
+  final bool analyticsEnabled = EnvironmentConfig.instance.enableAnalytics;
+  await PiwikProAnalytics.instance.initialize(
+    baseUrl: EnvironmentConfig.instance.piwikProBaseUrl,
+    siteId: EnvironmentConfig.instance.piwikProSiteId,
+    enabled: analyticsEnabled,
+  );
 
   if (!kIsWeb) {
     final crashlyticsEnabled = EnvironmentConfig.instance.enableCrashlytics;
