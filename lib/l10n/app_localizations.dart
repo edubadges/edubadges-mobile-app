@@ -152,6 +152,12 @@ abstract class AppLocalizations {
   /// **'Account'**
   String get tabAccount;
 
+  /// Page subtitle for the account screen on desktop
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your data and settings'**
+  String get accountSubtitle;
+
   /// Navigation tab label for the edubadges section
   ///
   /// In en, this message translates to:

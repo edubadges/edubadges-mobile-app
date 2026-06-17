@@ -38,6 +38,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tabAccount => 'Account';
 
   @override
+  String get accountSubtitle => 'Manage your data and settings';
+
+  @override
   String get tabBadges => 'Edubadges';
 
   @override

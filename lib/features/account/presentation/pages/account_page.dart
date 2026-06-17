@@ -1,6 +1,7 @@
 import 'package:app_settings/app_settings.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/branding.dart';
+import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/utils/app_language.dart';
@@ -9,7 +10,8 @@ import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
-import 'package:edubadges/core/widgets/max_width_wrapper.dart';
+import 'package:edubadges/core/widgets/page_header.dart';
+import 'package:edubadges/core/widgets/sidebar_list_layout.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
@@ -588,6 +590,96 @@ class _AccountPageState extends ConsumerState<AccountPage> {
     );
   }
 
+  Widget _buildLogoutButton({
+    required BuildContext context,
+    required WidgetRef ref,
+    required AppLocalizations l10n,
+    required ColorScheme colorScheme,
+  }) {
+    return IconButton(
+      icon: Icon(Icons.logout, color: colorScheme.primary, size: 24),
+      onPressed: () => _showLogoutConfirmation(context, ref),
+      tooltip: l10n.semanticsLogout,
+    );
+  }
+
+  Widget _buildSidebarContent({
+    required BuildContext context,
+    required WidgetRef ref,
+    required ProfileEntity profile,
+  }) {
+    return Column(
+      children: [
+        FocusableSection(
+          autofocus: true,
+          child: _buildDataSection(context, profile),
+        ),
+        if (!kIsWeb) _buildNotificationSection(context, ref, profile),
+      ],
+    );
+  }
+
+  List<Widget> _buildMainContentSlivers({
+    required BuildContext context,
+    required WidgetRef ref,
+    required ProfileEntity profile,
+    required bool useSidebarLayout,
+  }) {
+    final horizontalPadding = useSidebarLayout
+        ? 0.0
+        : LayoutConstants.sidebarListLayoutPadding;
+
+    return [
+      SliverPadding(
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+        sliver: SliverToBoxAdapter(
+          child: Column(
+            children: [
+              _buildAgreementsSection(ref, context, profile),
+              _buildDeleteAccountSection(context, ref),
+            ],
+          ),
+        ),
+      ),
+    ];
+  }
+
+  Future<void> _refreshAccountData(WidgetRef ref) async {
+    final refreshTasks = <Future<void>>[
+      ref.read(profileProvider.notifier).refresh(),
+    ];
+    if (!kIsWeb) {
+      refreshTasks.add(
+        ref.read(notificationEnabledProvider.notifier).refresh(),
+      );
+    }
+    await Future.wait(refreshTasks);
+  }
+
+  Widget _buildAccountContent({
+    required BuildContext context,
+    required WidgetRef ref,
+    required ProfileEntity profile,
+    required bool useSidebarLayout,
+  }) {
+    return SidebarListLayout(
+      sidebar: _buildSidebarContent(
+        context: context,
+        ref: ref,
+        profile: profile,
+      ),
+      scrollController: _scrollController,
+      onRefresh: () => _refreshAccountData(ref),
+      useSidebarLayout: useSidebarLayout,
+      slivers: _buildMainContentSlivers(
+        context: context,
+        ref: ref,
+        profile: profile,
+        useSidebarLayout: useSidebarLayout,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -595,94 +687,95 @@ class _AccountPageState extends ConsumerState<AccountPage> {
     final colorScheme = theme.colorScheme;
     final profileAsync = ref.watch(profileProvider);
 
-    return Scaffold(
-      backgroundColor: colorScheme.surface,
-      appBar: AppBar(
-        title: Text(
-          l10n.tabAccount,
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        backgroundColor: colorScheme.surface,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout, color: colorScheme.primary, size: 24),
-            onPressed: () => _showLogoutConfirmation(context, ref),
-            tooltip: l10n.semanticsLogout,
-          ),
-        ],
-      ),
-      body: MaxWidthWrapper(
-        scrollController: _scrollController,
-        child: profileAsync.when(
-          data: (profile) {
-            if (profile == null) {
-              return Center(child: Text(l10n.noProfileData));
-            }
-            return RefreshIndicator(
-              backgroundColor: colorScheme.surfaceContainer,
-              onRefresh: () async {
-                final refreshTasks = <Future<void>>[
-                  ref.read(profileProvider.notifier).refresh(),
-                ];
-                if (!kIsWeb) {
-                  refreshTasks.add(
-                    ref.read(notificationEnabledProvider.notifier).refresh(),
-                  );
-                }
-                await Future.wait(refreshTasks);
-              },
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(
-                  _cardPadding,
-                  0,
-                  _cardPadding,
-                  _cardPadding,
-                ),
-                child: Column(
-                  spacing: 0,
-                  children: [
-                    FocusableSection(
-                      autofocus: true,
-                      child: _buildDataSection(context, profile),
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final bool useSidebarLayout =
+            constraints.maxWidth >= LayoutConstants.sidebarListLayoutMinWidth;
+
+        return Scaffold(
+          backgroundColor: colorScheme.surface,
+          appBar: useSidebarLayout
+              ? null
+              : AppBar(
+                  title: Text(
+                    l10n.tabAccount,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
                     ),
-                    if (!kIsWeb)
-                      _buildNotificationSection(context, ref, profile),
-                    _buildAgreementsSection(ref, context, profile),
-                    _buildDeleteAccountSection(context, ref),
+                  ),
+                  backgroundColor: colorScheme.surface,
+                  actions: [
+                    _buildLogoutButton(
+                      context: context,
+                      ref: ref,
+                      l10n: l10n,
+                      colorScheme: colorScheme,
+                    ),
                   ],
                 ),
+          body: profileAsync.when(
+            data: (profile) {
+              if (profile == null) {
+                return Center(child: Text(l10n.noProfileData));
+              }
+
+              final content = _buildAccountContent(
+                context: context,
+                ref: ref,
+                profile: profile,
+                useSidebarLayout: useSidebarLayout,
+              );
+
+              if (useSidebarLayout) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    PageHeader(
+                      title: l10n.tabAccount,
+                      subtitle: l10n.accountSubtitle,
+                      actions: [
+                        _buildLogoutButton(
+                          context: context,
+                          ref: ref,
+                          l10n: l10n,
+                          colorScheme: colorScheme,
+                        ),
+                      ],
+                    ),
+                    Expanded(child: content),
+                  ],
+                );
+              }
+
+              return content;
+            },
+            loading: () => Center(
+              child: CircularProgressIndicator(
+                semanticsLabel: l10n.semanticsLoading,
               ),
-            );
-          },
-          loading: () => Center(
-            child: CircularProgressIndicator(
-              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
             ),
-          ),
-          error: (error, stack) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  l10n.somethingWentWrong,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: colorScheme.error,
+            error: (error, stack) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    l10n.somethingWentWrong,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: colorScheme.error,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => ref.read(profileProvider.notifier).refresh(),
-                  child: Text(l10n.retry),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () =>
+                        ref.read(profileProvider.notifier).refresh(),
+                    child: Text(l10n.retry),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

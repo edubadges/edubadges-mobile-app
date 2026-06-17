@@ -37,6 +37,10 @@
     "@tabAccount": {
         "description": "Navigation tab label for the account section"
     },
+    "accountSubtitle": "Beheer je gegevens en instellingen",
+    "@accountSubtitle": {
+        "description": "Page subtitle for the account screen on desktop"
+    },
     "tabBadges": "Edubadges",
     "@tabBadges": {
         "description": "Navigation tab label for the edubadges section"
