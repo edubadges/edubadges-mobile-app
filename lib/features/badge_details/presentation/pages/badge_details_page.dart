@@ -318,7 +318,11 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.all(LayoutConstants.sidebarListLayoutPadding),
+      padding: const EdgeInsets.only(
+        left: LayoutConstants.sidebarListLayoutPadding,
+        top: LayoutConstants.sidebarListLayoutPadding,
+        right: LayoutConstants.sidebarListLayoutPadding,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -519,6 +523,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
       );
 
       return SafeArea(
+        bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
