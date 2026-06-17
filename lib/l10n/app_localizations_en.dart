@@ -51,6 +51,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tabCatalog => 'Catalog';
 
   @override
+  String get catalogSubtitle => 'Discover available edubadges per institution';
+
+  @override
+  String get catalogSearchPlaceholder => 'Search by name or institution...';
+
+  @override
   String get tabCollections => 'Collections';
 
   @override

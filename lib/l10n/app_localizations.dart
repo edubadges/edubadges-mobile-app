@@ -176,6 +176,18 @@ abstract class AppLocalizations {
   /// **'Catalog'**
   String get tabCatalog;
 
+  /// Page subtitle for the catalog screen on desktop
+  ///
+  /// In en, this message translates to:
+  /// **'Discover available edubadges per institution'**
+  String get catalogSubtitle;
+
+  /// Placeholder text for the catalog search input field
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name or institution...'**
+  String get catalogSearchPlaceholder;
+
   /// Navigation tab label for the collections section
   ///
   /// In en, this message translates to:

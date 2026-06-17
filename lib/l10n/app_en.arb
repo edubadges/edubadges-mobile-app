@@ -53,6 +53,14 @@
     "@tabCatalog": {
         "description": "Navigation tab label for the catalog section"
     },
+    "catalogSubtitle": "Discover available edubadges per institution",
+    "@catalogSubtitle": {
+        "description": "Page subtitle for the catalog screen on desktop"
+    },
+    "catalogSearchPlaceholder": "Search by name or institution...",
+    "@catalogSearchPlaceholder": {
+        "description": "Placeholder text for the catalog search input field"
+    },
     "tabCollections": "Collections",
     "@tabCollections": {
         "description": "Navigation tab label for the collections section"
