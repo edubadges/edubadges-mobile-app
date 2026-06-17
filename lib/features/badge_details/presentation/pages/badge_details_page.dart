@@ -1,11 +1,11 @@
 import 'package:edubadges/app/constants.dart';
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
-import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_detail_item_model.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_model.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
@@ -18,6 +18,7 @@ import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_class_entity.dart';
 import 'package:edubadges/shared/domain/entities/badge_evidence_entity.dart';
+import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/domain/enums/assessment_type.dart';
 import 'package:edubadges/shared/domain/enums/badge_class_type.dart';
 import 'package:edubadges/shared/domain/enums/participation_type.dart';
@@ -111,163 +112,524 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     };
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go(RoutePath.catalog);
-            }
-          },
-          icon: Icon(
-            Icons.arrow_back,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          tooltip: AppLocalizations.of(context).semanticsBack,
+  void _handleBack() {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go(RoutePath.catalog);
+    }
+  }
+
+  Future<void> _refreshBadgeDetails(String badgeId) async {
+    ref.invalidate(
+      badgeDetailsModelProvider(
+        BadgeDetailsQuery(
+          scope: _shouldShowCarousel
+              ? BadgeDetailsScope.claimed
+              : widget.badge.scope,
+          entityId: badgeId,
         ),
-      ),
-      body: MaxWidthWrapper(
-        scrollController: _scrollController,
-        child: _shouldShowCarousel
-            ? _buildCarouselView()
-            : _buildSingleBadgeView(),
       ),
     );
   }
 
-  Widget _buildCarouselView() {
+  EdgeInsets _sectionMargin(bool useSidebarLayout) {
+    if (useSidebarLayout) {
+      return const EdgeInsets.only(bottom: 16);
+    }
+    return const EdgeInsets.symmetric(horizontal: 20, vertical: 8);
+  }
+
+  PreferredSizeWidget _buildBackAppBar() {
+    final colorScheme = Theme.of(context).colorScheme;
+    return AppBar(
+      leading: IconButton(
+        onPressed: _handleBack,
+        icon: Icon(Icons.arrow_back, color: colorScheme.primary),
+        tooltip: AppLocalizations.of(context).semanticsBack,
+      ),
+    );
+  }
+
+  Widget _buildDesktopBackHeader({String? title}) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
+      child: Row(
+        children: [
+          TextButton.icon(
+            onPressed: _handleBack,
+            icon: Icon(Icons.arrow_back, color: colorScheme.primary, size: 20),
+            label: Text(
+              l10n.semanticsBack,
+              style: textTheme.labelLarge?.copyWith(color: colorScheme.primary),
+            ),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              title ?? '',
+              style: textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.w500,
+                color: colorScheme.onSurfaceVariant,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCombinedDesktopSidebar({
+    required BadgeDetailsModel? details,
+    BadgeInstanceEntity? carouselBadge,
+    BadgeClassModel? carouselBadgeClass,
+    Widget? badgePreview,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final badgeClass = details?.badgeClass ?? carouselBadgeClass;
+    if (badgeClass == null) {
+      return const SizedBox.shrink();
+    }
+
+    final badgeInstance = details?.badgeInstance ?? carouselBadge;
+    final visibilitySection = badgeInstance != null
+        ? BadgeVisibilityCard(
+            badge: badgeInstance,
+            showCopyLink: badgeInstance.public,
+            embedded: true,
+          )
+        : null;
+
+    return FocusableSection(
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: colorScheme.outlineVariant),
+          color: colorScheme.surfaceContainer,
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (badgePreview != null)
+              badgePreview
+            else
+              BadgeCard(
+                instance: badgeInstance,
+                badgeClass: badgeClass,
+                style: BadgeCardStyle.large,
+                onTapDisabled: true,
+                badgeRequested: details?.requested ?? false,
+                embedded: true,
+              ),
+            if (visibilitySection != null) ...[
+              const SizedBox(height: 16),
+              Divider(color: colorScheme.outlineVariant, height: 1),
+              const SizedBox(height: 16),
+              visibilitySection,
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget? _buildVisibilitySection(
+    BadgeDetailsModel? details, {
+    required bool useSidebarLayout,
+  }) {
+    if (details?.badgeInstance == null) {
+      return null;
+    }
+    return Semantics(
+      container: true,
+      child: BadgeVisibilityCard(
+        badge: details!.badgeInstance!,
+        showCopyLink: details.badgeInstance?.public ?? false,
+        margin: useSidebarLayout
+            ? const EdgeInsets.only(top: 16)
+            : const EdgeInsets.only(left: 20, right: 20, bottom: 8, top: 16),
+      ),
+    );
+  }
+
+  Widget _buildBadgeSummaryCard({
+    required BadgeDetailsModel? details,
+    required bool useSidebarLayout,
+  }) {
+    if (details?.badgeClass == null) {
+      return const SizedBox.shrink();
+    }
+    return FocusableSection(
+      child: Container(
+        margin: useSidebarLayout
+            ? EdgeInsets.zero
+            : const EdgeInsets.symmetric(horizontal: 20),
+        child: Center(
+          child: BadgeCard(
+            instance: details?.badgeInstance,
+            badgeClass: details!.badgeClass,
+            style: BadgeCardStyle.large,
+            onTapDisabled: true,
+            badgeRequested: details.requested,
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildMainContentSlivers({
+    required List<Widget> children,
+    required bool useSidebarLayout,
+  }) {
+    return [
+      SliverToBoxAdapter(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: children,
+        ),
+      ),
+    ];
+  }
+
+  Widget _buildDetailsLayout({
+    required bool useSidebarLayout,
+    required String badgeId,
+    required Widget sidebar,
+    required List<Widget> mainContent,
+  }) {
+    if (!useSidebarLayout) {
+      return ListView(
+        controller: _scrollController,
+        children: [sidebar, ...mainContent],
+      );
+    }
+
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(LayoutConstants.sidebarListLayoutPadding),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: LayoutConstants.badgeDetailsSidebarFlex,
+            child: SingleChildScrollView(child: sidebar),
+          ),
+          const SizedBox(width: LayoutConstants.sidebarListLayoutColumnGap),
+          Expanded(
+            flex: LayoutConstants.badgeDetailsMainFlex,
+            child: RefreshIndicator(
+              backgroundColor: colorScheme.surfaceContainer,
+              onRefresh: () => _refreshBadgeDetails(badgeId),
+              child: CustomScrollView(
+                controller: _scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  ..._buildMainContentSlivers(
+                    children: mainContent,
+                    useSidebarLayout: useSidebarLayout,
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final bool useSidebarLayout =
+            constraints.maxWidth >= LayoutConstants.sidebarListLayoutMinWidth;
+
+        final Widget body = _shouldShowCarousel
+            ? _buildCarouselView(useSidebarLayout: useSidebarLayout)
+            : _buildSingleBadgeView(useSidebarLayout: useSidebarLayout);
+
+        return Scaffold(
+          appBar: useSidebarLayout ? null : _buildBackAppBar(),
+          body: body,
+        );
+      },
+    );
+  }
+
+  Widget _buildCarouselView({required bool useSidebarLayout}) {
     final badgesAsync = ref.watch(badgesListProvider);
     final l10n = AppLocalizations.of(context);
 
-    return ListView(
-      controller: _scrollController,
-      children: [
-        badgesAsync.when(
-          data: (badges) {
-            if (!_hasInitializedPage || badges.claimedBadges.isEmpty) {
-              return const SizedBox(
-                height: _badgeCardHeight,
-                child: Center(child: SizedBox()),
-              );
-            }
-
-            return FlexiPageView.builder(
-              controller: _pageController,
-              itemCount: badges.claimedBadges.length,
-              onPageChanged: _onPageChanged,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 5,
-                    vertical: 1,
-                  ),
-                  child: ExcludeSemantics(
-                    excluding: _currentIndex != index,
-                    child: BadgeCard(
-                      instance: badges.claimedBadges[index],
-                      badgeClass:
-                          badges.claimedBadges[index].badgeclass
-                              as BadgeClassModel,
-                      style: BadgeCardStyle.large,
-                      onTapDisabled: true,
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-          loading: () => SizedBox(
+    final Widget carouselWidget = badgesAsync.when(
+      data: (badges) {
+        if (!_hasInitializedPage || badges.claimedBadges.isEmpty) {
+          return const SizedBox(
             height: _badgeCardHeight,
-            child: Center(
-              child: CircularProgressIndicator(
-                semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-              ),
-            ),
-          ),
-          error: (error, stackTrace) => SizedBox(
-            height: _badgeCardHeight,
-            child: Center(
-              child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
-            ),
-          ),
-        ),
+            child: Center(child: SizedBox()),
+          );
+        }
 
-        ...badgesAsync.when(
-          data: (badges) {
-            if (badges.claimedBadges.isEmpty ||
-                _currentIndex >= badges.claimedBadges.length) {
-              return [
-                Center(
-                  child: InfoStateView(
-                    assetPath: Assets.iconBackpack,
-                    description: l10n.noEdubadgesYet,
+        if (useSidebarLayout) {
+          return BadgeCard(
+            instance: badges.claimedBadges[_currentIndex],
+            badgeClass:
+                badges.claimedBadges[_currentIndex].badgeclass
+                    as BadgeClassModel,
+            style: BadgeCardStyle.large,
+            onTapDisabled: true,
+            embedded: useSidebarLayout,
+          );
+        }
+
+        return SizedBox(
+          height: _badgeCardHeight,
+          child: FlexiPageView.builder(
+            controller: _pageController,
+            itemCount: badges.claimedBadges.length,
+            onPageChanged: _onPageChanged,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                child: ExcludeSemantics(
+                  excluding: _currentIndex != index,
+                  child: BadgeCard(
+                    instance: badges.claimedBadges[index],
+                    badgeClass:
+                        badges.claimedBadges[index].badgeclass
+                            as BadgeClassModel,
+                    style: BadgeCardStyle.large,
+                    onTapDisabled: true,
+                    embedded: useSidebarLayout,
                   ),
                 ),
-              ];
-            }
-
-            final currentBadgeId = badges.claimedBadges[_currentIndex].entityId;
-            return _buildBadgeDetailsContent(currentBadgeId, null);
-          },
-          loading: () => [
-            Center(
-              child: CircularProgressIndicator(
-                semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-              ),
-            ),
-          ],
-          error: (error, stackTrace) => [
-            Center(
-              child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
-            ),
-          ],
+              );
+            },
+          ),
+        );
+      },
+      loading: () => SizedBox(
+        height: _badgeCardHeight,
+        child: Center(
+          child: CircularProgressIndicator(
+            semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+          ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildSingleBadgeView() {
-    final badgeDetailsAsync = ref.watch(
-      badgeDetailsModelProvider(
-        BadgeDetailsQuery(
-          scope: widget.badge.scope,
-          entityId: widget.badge.id,
+      ),
+      error: (error, stackTrace) => SizedBox(
+        height: _badgeCardHeight,
+        child: Center(
+          child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
         ),
       ),
     );
 
-    return ListView(
-      controller: _scrollController,
-      children: [
-        if (badgeDetailsAsync.value?.badgeClass != null)
-          FocusableSection(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              child: Center(
-                child: BadgeCard(
-                  instance: badgeDetailsAsync.value?.badgeInstance,
-                  badgeClass: badgeDetailsAsync.value!.badgeClass,
-                  style: BadgeCardStyle.large,
-                  onTapDisabled: true,
-                  badgeRequested: badgeDetailsAsync.value!.requested,
-                ),
+    final List<Widget> detailsWidgets = badgesAsync.when(
+      data: (badges) {
+        if (badges.claimedBadges.isEmpty ||
+            _currentIndex >= badges.claimedBadges.length) {
+          return [
+            Center(
+              child: InfoStateView(
+                assetPath: Assets.iconBackpack,
+                description: l10n.noEdubadgesYet,
               ),
             ),
-          ),
+          ];
+        }
 
-        ..._buildBadgeDetailsContent(widget.badge.id, badgeDetailsAsync),
+        final currentBadgeId = badges.claimedBadges[_currentIndex].entityId;
+        return _buildBadgeDetailsContent(
+          currentBadgeId,
+          null,
+          useSidebarLayout: useSidebarLayout,
+        );
+      },
+      loading: () => [
+        Center(
+          child: CircularProgressIndicator(
+            semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+          ),
+        ),
       ],
+      error: (error, stackTrace) => [
+        Center(
+          child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
+        ),
+      ],
+    );
+
+    if (useSidebarLayout) {
+      final String? badgeTitle = badgesAsync.maybeWhen(
+        data: (badges) {
+          if (badges.claimedBadges.isEmpty ||
+              _currentIndex >= badges.claimedBadges.length) {
+            return null;
+          }
+          return (badges.claimedBadges[_currentIndex].badgeclass
+                  as BadgeClassModel)
+              .name;
+        },
+        orElse: () => null,
+      );
+      final String currentBadgeId = badgesAsync.maybeWhen(
+        data: (badges) {
+          if (badges.claimedBadges.isEmpty ||
+              _currentIndex >= badges.claimedBadges.length) {
+            return widget.badge.id;
+          }
+          return badges.claimedBadges[_currentIndex].entityId;
+        },
+        orElse: () => widget.badge.id,
+      );
+      final BadgeInstanceEntity? currentBadge = badgesAsync.maybeWhen(
+        data: (badges) {
+          if (badges.claimedBadges.isEmpty ||
+              _currentIndex >= badges.claimedBadges.length) {
+            return null;
+          }
+          return badges.claimedBadges[_currentIndex];
+        },
+        orElse: () => null,
+      );
+      final AsyncValue<BadgeDetailsModel?> currentDetailsAsync = ref.watch(
+        badgeDetailsModelProvider(
+          BadgeDetailsQuery(
+            scope: BadgeDetailsScope.claimed,
+            entityId: currentBadgeId,
+          ),
+        ),
+      );
+      final List<Widget> desktopMainContent = _buildBadgeDetailsContent(
+        currentBadgeId,
+        currentDetailsAsync,
+        useSidebarLayout: true,
+      );
+
+      return SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildDesktopBackHeader(title: badgeTitle),
+            Expanded(
+              child: _buildDetailsLayout(
+                useSidebarLayout: true,
+                badgeId: currentBadgeId,
+                sidebar: _buildCombinedDesktopSidebar(
+                  details: currentDetailsAsync.value,
+                  carouselBadge: currentBadge,
+                  carouselBadgeClass:
+                      currentBadge?.badgeclass as BadgeClassModel?,
+                  badgePreview: carouselWidget,
+                ),
+                mainContent: desktopMainContent,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final Widget? mobileVisibilityWidget = badgesAsync.maybeWhen(
+      data: (badges) {
+        if (badges.claimedBadges.isEmpty ||
+            _currentIndex >= badges.claimedBadges.length) {
+          return null;
+        }
+        final currentBadge = badges.claimedBadges[_currentIndex];
+        return BadgeVisibilityCard(
+          badge: currentBadge,
+          showCopyLink: currentBadge.public,
+        );
+      },
+      orElse: () => null,
+    );
+
+    return ListView(
+      controller: _scrollController,
+      children: [carouselWidget, ?mobileVisibilityWidget, ...detailsWidgets],
+    );
+  }
+
+  Widget _buildSingleBadgeView({required bool useSidebarLayout}) {
+    final badgeDetailsAsync = ref.watch(
+      badgeDetailsModelProvider(
+        BadgeDetailsQuery(scope: widget.badge.scope, entityId: widget.badge.id),
+      ),
+    );
+
+    final List<Widget> mainContent = _buildBadgeDetailsContent(
+      widget.badge.id,
+      badgeDetailsAsync,
+      useSidebarLayout: useSidebarLayout,
+    );
+
+    final Widget sidebar = useSidebarLayout
+        ? _buildCombinedDesktopSidebar(details: badgeDetailsAsync.value)
+        : Column(
+            children: [
+              _buildBadgeSummaryCard(
+                details: badgeDetailsAsync.value,
+                useSidebarLayout: false,
+              ),
+              if (_buildVisibilitySection(
+                    badgeDetailsAsync.value,
+                    useSidebarLayout: false,
+                  ) !=
+                  null)
+                _buildVisibilitySection(
+                  badgeDetailsAsync.value,
+                  useSidebarLayout: false,
+                )!,
+            ],
+          );
+
+    if (useSidebarLayout) {
+      return SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildDesktopBackHeader(
+              title: badgeDetailsAsync.value?.badgeClass.name,
+            ),
+            Expanded(
+              child: _buildDetailsLayout(
+                useSidebarLayout: true,
+                badgeId: widget.badge.id,
+                sidebar: sidebar,
+                mainContent: mainContent,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return _buildDetailsLayout(
+      useSidebarLayout: false,
+      badgeId: widget.badge.id,
+      sidebar: sidebar,
+      mainContent: mainContent,
     );
   }
 
   List<Widget> _buildBadgeDetailsContent(
     String badgeId,
-    AsyncValue<BadgeDetailsModel?>? badgeDetailsAsync,
-  ) {
+    AsyncValue<BadgeDetailsModel?>? badgeDetailsAsync, {
+    required bool useSidebarLayout,
+  }) {
     final AsyncValue<BadgeDetailsModel?> badgeDetailsValue =
         badgeDetailsAsync ??
         ref.watch(
@@ -280,7 +642,13 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         );
 
     return badgeDetailsValue.when(
-      data: (details) => [..._buildBadgeDetails(details, badgeId: badgeId)],
+      data: (details) => [
+        ..._buildBadgeDetails(
+          details,
+          badgeId: badgeId,
+          useSidebarLayout: useSidebarLayout,
+        ),
+      ],
       loading: () => [
         Center(
           child: CircularProgressIndicator(
@@ -299,6 +667,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   List<Widget> _buildBadgeDetails(
     BadgeDetailsModel? details, {
     required String badgeId,
+    required bool useSidebarLayout,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
@@ -332,18 +701,11 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         : null;
 
     return [
-      if (details?.badgeInstance != null)
-        Semantics(
-          container: true,
-          child: BadgeVisibilityCard(
-            badge: details!.badgeInstance!,
-            showCopyLink: details.badgeInstance?.public ?? false,
-          ),
-        ),
       if (details?.badgeClass.description != null)
         FocusableSection(
           child: _buildSectionCard(
             title: l10n.aboutThisEdubadge,
+            margin: _sectionMargin(useSidebarLayout),
             item: MarkdownBody(
               data: filterBadMarkdown(details!.badgeClass.description!),
               styleSheet: AppThemes.markdownStyleSheet(context),
@@ -354,6 +716,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         FocusableSection(
           child: _buildSectionCard(
             title: l10n.learningOutcomes,
+            margin: _sectionMargin(useSidebarLayout),
             item: MarkdownBody(
               data: filterBadMarkdown(learningOutcome),
               styleSheet: AppThemes.markdownStyleSheet(context),
@@ -364,9 +727,69 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         FocusableSection(
           child: _buildSectionCard(
             title: l10n.badgeCriteria,
+            margin: _sectionMargin(useSidebarLayout),
             item: MarkdownBody(
               data: filterBadMarkdown(criteriaText),
               styleSheet: AppThemes.markdownStyleSheet(context),
+            ),
+          ),
+        ),
+      if (badgeClass != null && qualityAssuranceText != null)
+        FocusableSection(
+          child: _buildSectionCard(
+            title: l10n.qualityAssurance,
+            margin: _sectionMargin(useSidebarLayout),
+            action: badgeClass.qualityAssuranceUrl != null
+                ? IconButton(
+                    onPressed: () {
+                      launchUrlString(
+                        badgeClass.qualityAssuranceUrl!,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
+                    icon: Icon(Icons.launch, color: colorScheme.onSurface),
+                  )
+                : null,
+            item: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _ClampedMarkdownPreview(
+                  maxLines: _qualityAssurancePreviewMaxLines,
+                  child: MarkdownBody(
+                    data: filterBadMarkdown(qualityAssuranceText),
+                    styleSheet: AppThemes.markdownStyleSheet(context),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: WideButton(
+                    onTap: () {
+                      final path = RoutePath.badgeQualityAssurancePath(
+                        scope: widget.badge.scope,
+                        id: badgeId,
+                      );
+                      context.push(path);
+                    },
+                    icon: null,
+                    text: l10n.readMore,
+                    secondary: true,
+                    color: colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      if (details?.badgeInstance?.evidences?.isNotEmpty == true)
+        FocusableSection(
+          child: _buildSectionCard(
+            title: l10n.badgeEvidenceMetadataTitle,
+            margin: _sectionMargin(useSidebarLayout),
+            item: _buildEvidenceMetadata(
+              evidences: details!.badgeInstance!.evidences!,
+              textTheme: textTheme,
+              colorScheme: colorScheme,
+              l10n: l10n,
             ),
           ),
         ),
@@ -374,6 +797,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         FocusableSection(
           child: _buildSectionCard(
             title: l10n.theEdubadge,
+            margin: _sectionMargin(useSidebarLayout),
             items: [
               if (details!.badgeInstance!.issuedOn != null)
                 BadgeDetailItemModel(
@@ -400,6 +824,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
       FocusableSection(
         child: _buildSectionCard(
           title: l10n.badgeTheProgram,
+          margin: _sectionMargin(useSidebarLayout),
           items: [
             if (details != null)
               BadgeDetailItemModel(
@@ -450,6 +875,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         FocusableSection(
           child: _buildSectionCard(
             title: l10n.badgeTheAssessment,
+            margin: _sectionMargin(useSidebarLayout),
             items: [
               if (assessmentType != null && assessmentType.isNotEmpty)
                 BadgeDetailItemModel(
@@ -467,64 +893,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             ],
           ),
         ),
-      if (badgeClass != null && qualityAssuranceText != null)
-        FocusableSection(
-          child: _buildSectionCard(
-            title: l10n.qualityAssurance,
-            action: badgeClass.qualityAssuranceUrl != null
-                ? IconButton(
-                    onPressed: () {
-                      launchUrlString(
-                        badgeClass.qualityAssuranceUrl!,
-                        mode: LaunchMode.externalApplication,
-                      );
-                    },
-                    icon: Icon(Icons.launch, color: colorScheme.onSurface),
-                  )
-                : null,
-            item: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _ClampedMarkdownPreview(
-                  maxLines: _qualityAssurancePreviewMaxLines,
-                  child: MarkdownBody(
-                    data: filterBadMarkdown(qualityAssuranceText),
-                    styleSheet: AppThemes.markdownStyleSheet(context),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Center(
-                  child: WideButton(
-                    onTap: () {
-                      final path = RoutePath.badgeQualityAssurancePath(
-                        scope: widget.badge.scope,
-                        id: badgeId,
-                      );
-                      context.push(path);
-                    },
-                    icon: null,
-                    text: l10n.readMore,
-                    secondary: true,
-                    color: colorScheme.primary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      if (details?.badgeInstance?.evidences?.isNotEmpty == true)
-        FocusableSection(
-          child: _buildSectionCard(
-            title: l10n.badgeEvidenceMetadataTitle,
-            item: _buildEvidenceMetadata(
-              evidences: details!.badgeInstance!.evidences!,
-              textTheme: textTheme,
-              colorScheme: colorScheme,
-              l10n: l10n,
-            ),
-          ),
-        ),
-      const SizedBox(height: 70),
+      SizedBox(height: useSidebarLayout ? 16 : 70),
     ];
   }
 
@@ -539,10 +908,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
       header = null;
     }
 
-    final parts = <String>[
-      if (header != null) header,
-      if (desc != null && desc.isNotEmpty) desc,
-    ];
+    final parts = <String>[?header, if (desc != null && desc.isNotEmpty) desc];
     if (parts.isEmpty) return null;
     return parts.join('\n\n');
   }
@@ -662,21 +1028,24 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     List<BadgeDetailItemModel>? items,
     Widget? item,
     Widget? action,
+    EdgeInsetsGeometry? margin,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      width: double.maxFinite,
+      width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: colorScheme.outlineVariant),
         color: colorScheme.surfaceContainer,
       ),
-      margin: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: _sectionCardSpacing / 2,
-      ),
+      margin:
+          margin ??
+          const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: _sectionCardSpacing / 2,
+          ),
       padding: action != null
           ? const EdgeInsets.only(left: 16, bottom: 16, top: 6, right: 6)
           : const EdgeInsets.all(16),
@@ -694,12 +1063,11 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                     style: textTheme.titleMedium?.copyWith(
                       color: colorScheme.onSurface,
                     ),
-                    maxLines: 5,
-                    softWrap: false,
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (action != null) action,
+                ?action,
               ],
             ),
           ),
@@ -710,8 +1078,9 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                 : EdgeInsets.zero,
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (item != null) item,
+                ?item,
                 if (items != null && items.isNotEmpty)
                   ...List.generate(items.length * 2 - 1, (int index) {
                     if (index.isOdd) {

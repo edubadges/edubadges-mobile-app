@@ -39,6 +39,7 @@ class BadgeCard extends ConsumerWidget {
   final bool showClaimedGalleryOnOpen;
 
   final VoidCallback? onTap;
+  final bool embedded;
 
   const BadgeCard({
     super.key,
@@ -52,6 +53,7 @@ class BadgeCard extends ConsumerWidget {
     this.badgeNavigationEntityId,
     this.showClaimedGalleryOnOpen = false,
     this.onTap,
+    this.embedded = false,
   });
 
   int? getTimeInvestment() {
@@ -65,18 +67,17 @@ class BadgeCard extends ConsumerWidget {
   }
 
   void _openDetails(BuildContext context) {
-    final scope = badgeNavigationScope ??
-        (instance != null ? BadgeDetailsScope.claimed : BadgeDetailsScope.public);
-    final id = badgeNavigationEntityId ??
-        (instance?.entityId ?? badgeClass.entityId);
-    final gallery = scope != BadgeDetailsScope.claimed ||
-        showClaimedGalleryOnOpen;
+    final scope =
+        badgeNavigationScope ??
+        (instance != null
+            ? BadgeDetailsScope.claimed
+            : BadgeDetailsScope.public);
+    final id =
+        badgeNavigationEntityId ?? (instance?.entityId ?? badgeClass.entityId);
+    final gallery =
+        scope != BadgeDetailsScope.claimed || showClaimedGalleryOnOpen;
     context.push(
-      RoutePath.badgeDetailsLocation(
-        scope: scope,
-        id: id,
-        gallery: gallery,
-      ),
+      RoutePath.badgeDetailsLocation(scope: scope, id: id, gallery: gallery),
     );
   }
 
@@ -108,7 +109,7 @@ class BadgeCard extends ConsumerWidget {
               ? colorScheme.surface
               : colorScheme.surfaceContainer,
         ),
-        padding: const EdgeInsets.all(16),
+        padding:  const EdgeInsets.all(16),
         child: Row(
           children: [
             ExcludeSemantics(
@@ -171,6 +172,138 @@ class BadgeCard extends ConsumerWidget {
 
     final int? timeInvestment = getTimeInvestment();
 
+    final Widget largeContent = Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 32, width: 32),
+            Expanded(
+              child: ExcludeSemantics(
+                child: Image.network(
+                  badgeImageUrl ?? '',
+                  height: 100,
+                  width: 100,
+                  semanticLabel: l10n.semanticsBadgeImage,
+                  errorBuilder: (context, error, stackTrace) {
+                    return SizedBox(
+                      height: 100,
+                      width: 100,
+                      child: Icon(
+                        Icons.image_not_supported_outlined,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            if (instance != null && !embedded)
+              SizedBox(
+                height: 32,
+                width: 32,
+                child: KeyboardActivatable(
+                  semanticLabel: instance!.public
+                      ? l10n.semanticsBadgePublic
+                      : l10n.semanticsBadgePrivate,
+                  onActivate: () {
+                    BadgeVisibilityDialog.show(
+                      context: context,
+                      ref: ref,
+                      badgeInstance: instance as BadgeInstanceModel,
+                      isPublic: !instance!.public,
+                    );
+                  },
+                  child: SvgPicture.asset(
+                    instance!.public ? Assets.iconUnlocked : Assets.iconLocked,
+                  ),
+                ),
+              )
+            else
+              const SizedBox(height: 32, width: 32),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Text(
+          badgeClass.name,
+          style: textTheme.titleMedium,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          softWrap: false,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          alignment: WrapAlignment.center,
+          spacing: 8,
+          children: [
+            if (timeInvestment != null)
+              buildChip(
+                icon: Assets.iconTimeInvestment,
+                text: l10n.countHours(timeInvestment),
+                context: context,
+              ),
+            if (instance is BadgeInstanceModel &&
+                (instance as BadgeInstanceModel).gradeAchieved != null)
+              buildChip(
+                icon: Assets.iconCollections,
+                text: (instance as BadgeInstanceModel).gradeAchieved!,
+                context: context,
+              ),
+            if (instance?.issuedOn != null)
+              buildChip(
+                icon: Assets.iconDate,
+                text: DateFormat(
+                  'd MMM, yyyy',
+                  l10n.localeName,
+                ).format(instance!.issuedOn!),
+                context: context,
+              ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        if (institution != null)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (institutionImageUrl != null)
+                ExcludeSemantics(
+                  child: Image.network(
+                    institutionImageUrl,
+                    height: 25,
+                    width: 25,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const SizedBox(height: 25, width: 25);
+                    },
+                  ),
+                ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  institutionName,
+                  style: textTheme.bodySmall,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
+                ),
+              ),
+            ],
+          ),
+        if (instance == null &&
+            badgeClass.userMayEnroll &&
+            badgeClass.selfEnrollmentEnabled)
+          _buildEnrollmentSection(context, ref, l10n, textTheme, colorScheme),
+      ],
+    );
+
+    if (embedded) {
+      return largeContent;
+    }
+
     return KeyboardActivatable(
       enabled: !onTapDisabled,
       onActivate: onTapDisabled ? null : () => _openDetails(context),
@@ -187,141 +320,7 @@ class BadgeCard extends ConsumerWidget {
               : colorScheme.surfaceContainer,
         ),
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 32, width: 32),
-                Expanded(
-                  child: ExcludeSemantics(
-                    child: Image.network(
-                      badgeImageUrl ?? '',
-                      height: 100,
-                      width: 100,
-                      semanticLabel: l10n.semanticsBadgeImage,
-                      errorBuilder: (context, error, stackTrace) {
-                        return SizedBox(
-                          height: 100,
-                          width: 100,
-                          child: Icon(
-                            Icons.image_not_supported_outlined,
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                if (instance != null)
-                  SizedBox(
-                    height: 32,
-                    width: 32,
-                    child: KeyboardActivatable(
-                      semanticLabel: instance!.public
-                          ? l10n.semanticsBadgePublic
-                          : l10n.semanticsBadgePrivate,
-                      onActivate: () {
-                        BadgeVisibilityDialog.show(
-                          context: context,
-                          ref: ref,
-                          badgeInstance: instance as BadgeInstanceModel,
-                          isPublic: !instance!.public,
-                        );
-                      },
-                      child: SvgPicture.asset(
-                        instance!.public
-                            ? Assets.iconUnlocked
-                            : Assets.iconLocked,
-                      ),
-                    ),
-                  )
-                else
-                  const SizedBox(height: 32, width: 32),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              badgeClass.name,
-              style: textTheme.titleMedium,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              softWrap: false,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              alignment: WrapAlignment.center,
-              spacing: 8,
-              children: [
-                if (timeInvestment != null)
-                  buildChip(
-                    icon: Assets.iconTimeInvestment,
-                    text: l10n.countHours(timeInvestment),
-                    context: context,
-                  ),
-                if (instance is BadgeInstanceModel &&
-                    (instance as BadgeInstanceModel).gradeAchieved != null)
-                  buildChip(
-                    icon: Assets.iconCollections,
-                    text: (instance as BadgeInstanceModel).gradeAchieved!,
-                    context: context,
-                  ),
-                if (instance?.issuedOn != null)
-                  buildChip(
-                    icon: Assets.iconDate,
-                    text: DateFormat(
-                      'd MMM, yyyy',
-                      l10n.localeName,
-                    ).format(instance!.issuedOn!),
-                    context: context,
-                  ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            if (institution != null)
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (institutionImageUrl != null)
-                    ExcludeSemantics(
-                      child: Image.network(
-                        institutionImageUrl,
-                        height: 25,
-                        width: 25,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const SizedBox(height: 25, width: 25);
-                        },
-                      ),
-                    ),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: Text(
-                      institutionName,
-                      style: textTheme.bodySmall,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
-                    ),
-                  ),
-                ],
-              ),
-            if (instance == null &&
-                badgeClass.userMayEnroll &&
-                badgeClass.selfEnrollmentEnabled)
-              _buildEnrollmentSection(
-                context,
-                ref,
-                l10n,
-                textTheme,
-                colorScheme,
-              ),
-          ],
-        ),
+        child: largeContent,
       ),
     );
   }
