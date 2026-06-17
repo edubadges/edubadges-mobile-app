@@ -158,6 +158,18 @@ abstract class AppLocalizations {
   /// **'Edubadges'**
   String get tabBadges;
 
+  /// Page title for the badges overview screen on desktop
+  ///
+  /// In en, this message translates to:
+  /// **'My Edubadges'**
+  String get badgesOverviewTitle;
+
+  /// Page subtitle for the badges overview screen on desktop
+  ///
+  /// In en, this message translates to:
+  /// **'Overview of your earned and requested edubadges'**
+  String get badgesOverviewSubtitle;
+
   /// Navigation tab label for the catalog section
   ///
   /// In en, this message translates to:

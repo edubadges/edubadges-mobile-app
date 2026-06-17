@@ -41,6 +41,14 @@
     "@tabBadges": {
         "description": "Navigation tab label for the edubadges section"
     },
+    "badgesOverviewTitle": "Mijn Edubadges",
+    "@badgesOverviewTitle": {
+        "description": "Page title for the badges overview screen on desktop"
+    },
+    "badgesOverviewSubtitle": "Overzicht van je behaalde en aangevraagde edubadges",
+    "@badgesOverviewSubtitle": {
+        "description": "Page subtitle for the badges overview screen on desktop"
+    },
     "tabCatalog": "Catalogus",
     "@tabCatalog": {
         "description": "Navigation tab label for the catalog section"
