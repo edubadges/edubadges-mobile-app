@@ -220,7 +220,31 @@ class _MainPageState extends ConsumerState<MainPage>
     );
   }
 
+  Widget _buildDrawerHeader({
+    required AppLocalizations l10n,
+    required ColorScheme colorScheme,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(28, 16, 28, 16),
+          child: SvgPicture.asset(
+            Assets.imageLogo,
+            width: 131,
+            height: 32,
+            semanticsLabel: l10n.appName,
+          ),
+        ),
+        Divider(height: 1, thickness: 1, color: colorScheme.outlineVariant),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+
   Widget _buildExpandedScaffold({
+    required AppLocalizations l10n,
+    required ThemeData theme,
     required ColorScheme colorScheme,
     required Color pillColor,
     required List<_NavigationDestinationData> destinations,
@@ -229,21 +253,39 @@ class _MainPageState extends ConsumerState<MainPage>
     return Scaffold(
       body: Row(
         children: <Widget>[
-          NavigationDrawer(
-            selectedIndex: currentIndex,
-            onDestinationSelected: _onTap,
-            backgroundColor: colorScheme.surfaceContainer,
-            indicatorColor: pillColor,
-            elevation: 0,
-            children: destinations
-                .map(
-                  (_NavigationDestinationData destination) =>
-                      _buildNavigationDrawerDestination(
-                        destination: destination,
-                        colorScheme: colorScheme,
-                      ),
-                )
-                .toList(),
+          NavigationDrawerTheme(
+            data: NavigationDrawerThemeData(
+              labelTextStyle: WidgetStateProperty.resolveWith((
+                Set<WidgetState> states,
+              ) {
+                if (states.contains(WidgetState.selected)) {
+                  return theme.textTheme.labelLarge?.copyWith(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  );
+                }
+                return theme.textTheme.labelLarge?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                );
+              }),
+            ),
+            child: NavigationDrawer(
+              selectedIndex: currentIndex,
+              onDestinationSelected: _onTap,
+              backgroundColor: colorScheme.surfaceContainer,
+              indicatorColor: pillColor,
+              elevation: 0,
+              header: _buildDrawerHeader(l10n: l10n, colorScheme: colorScheme),
+              children: destinations
+                  .map(
+                    (_NavigationDestinationData destination) =>
+                        _buildNavigationDrawerDestination(
+                          destination: destination,
+                          colorScheme: colorScheme,
+                        ),
+                  )
+                  .toList(),
+            ),
           ),
           Expanded(child: SafeArea(child: widget.navigationShell)),
         ],
@@ -266,6 +308,8 @@ class _MainPageState extends ConsumerState<MainPage>
             constraints.maxWidth >= LayoutConstants.navigationDrawerMinWidth;
         if (useNavigationDrawer) {
           return _buildExpandedScaffold(
+            l10n: l10n,
+            theme: theme,
             colorScheme: colorScheme,
             pillColor: pillColor,
             destinations: destinations,
