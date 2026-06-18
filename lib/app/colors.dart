@@ -26,7 +26,7 @@ class AppColors {
   static const Color errorContainer = Color(0xFFF5E7E7);
 
   // Surface colors
-  static const Color outline = Color(0xFFECE6EF);
+  static const Color outline = Color(0xFF929292);
   static const Color scrim = Color(0xFF000000);
   static const Color shadow = Color(0xFF000000);
   static const Color surface = Color(0xFFF6F0F9);
@@ -37,7 +37,7 @@ class AppColors {
   static const Color surfaceContainerLow = Color(0xFFFDFDFD);
   static const Color surfaceContainerLowest = Color(0xFFF8F3FA);
   static const Color surfaceDim = Color(0xFFE3E3E3);
-  static const Color surfaceTint = Color(0xFF7B7B7B);
+  static const Color surfaceTint = Color(0xFFF6F0F9);
 
   // Inverse colors
   static const Color inverseOnSurface = Color(0xFFEEEEEE);
@@ -60,10 +60,13 @@ class AppColors {
   static const Color onSecondaryFixed = Color(0xFF1D192B);
   static const Color onSecondaryFixedVariant = Color(0xFF4A4458);
   static const Color onSurface = Color(0xFF212121);
-  static const Color onSurfaceVariant = Color(0xFF78818C);
+  static const Color onSurfaceVariant = Color(0xFF575757);
   static const Color onTertiary = Color(0xFFFFFFFF);
   static const Color onTertiaryContainer = Color(0xFF31111D);
   static const Color onTertiaryFixed = Color(0xFF31111D);
   static const Color onTertiaryFixedVariant = Color(0xFF555555);
-  static const Color outlineVariant = Color(0xFFCEA0E5);
+  static const Color outlineVariant = Color(0xFFE0E0E0);
+
+
+  static const Color iosBlue = Color(0xFF007AFF);
 }

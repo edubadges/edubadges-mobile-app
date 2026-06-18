@@ -1,12 +1,12 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
 class AppThemes {
   // Private constructor to prevent instantiation
   AppThemes._();
 
-  /// Light theme configuration
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
@@ -14,35 +14,51 @@ class AppThemes {
       colorScheme: _lightColorScheme,
       textTheme: _textTheme,
       appBarTheme: _appBarTheme,
+      switchTheme: _switchTheme,
+      // High-contrast focus indicator for keyboard/screen reader (EU accessibility)
+      focusColor: AppColors.primary,
+    );
+  }
+
+  /// High-contrast theme for accessibility (e.g. OS "increase contrast")
+  static ThemeData get highContrastTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      colorScheme: _lightColorScheme,
+      textTheme: _textTheme,
+      appBarTheme: _appBarTheme,
+      switchTheme: _switchTheme,
+      focusColor: AppColors.onSurface,
     );
   }
 
   static SystemUiOverlayStyle get systemUiOverlayStyle {
-    return SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
+    return const SystemUiOverlayStyle(
+      statusBarColor: AppColors.surface,
       statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarColor: AppColors.surfaceContainer,
       systemNavigationBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.dark,
     );
   }
 
   static SystemUiOverlayStyle get systemUiOverlayStyleLight {
-    return SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
+    return const SystemUiOverlayStyle(
+      statusBarColor: AppColors.surface,
       statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarColor: AppColors.surfaceContainer,
       systemNavigationBarIconBrightness: Brightness.light,
       statusBarBrightness: Brightness.light,
     );
   }
 
-  /// Light color scheme
   static ColorScheme get _lightColorScheme {
     return const ColorScheme(
       brightness: Brightness.light,
       primary: AppColors.primary,
       onPrimary: AppColors.onPrimary,
+      onPrimaryContainer: AppColors.onPrimaryContainer,
       secondary: AppColors.secondary,
       onSecondary: AppColors.onSecondary,
       error: AppColors.error,
@@ -74,145 +90,129 @@ class AppThemes {
 
   /// Text theme with custom typography
   static TextTheme get _textTheme {
-    return TextTheme(
-      // DisplayLarge styles
-      displayLarge: const TextStyle(
+    return const TextTheme(
+      displayLarge: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 57,
-        height: 1.0,
+        height: 64 / 57,
         letterSpacing: -0.25,
         fontWeight: FontWeight.w400,
       ),
 
-      // DisplayMedium styles
-      displayMedium: const TextStyle(
+      displayMedium: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 45,
-        height: 1.0,
+        height: 52 / 45,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
 
-      // DisplaySmall styles
-      displaySmall: const TextStyle(
+      displaySmall: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 36,
-        height: 1.0,
+        height: 44 / 36,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
 
-      // HeadlineLarge styles
-      headlineLarge: const TextStyle(
+      headlineLarge: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 32,
-        height: 1.0,
+        height: 40 / 32,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w700,
       ),
 
-      // HeadlineMedium styles
-      headlineMedium: const TextStyle(
+      headlineMedium: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 28,
-        height: 1.0,
+        height: 36 / 28,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
 
-      // HeadlineSmall styles
-      headlineSmall: const TextStyle(
+      headlineSmall: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 24,
-        height: 1.0,
+        height: 32 / 24,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w700,
       ),
 
-      // TitleLarge styles
-      titleLarge: const TextStyle(
+      titleLarge: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 20,
-        height: 1.0,
+        height: 28 / 20,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w700,
       ),
 
-      // TitleMedium styles
-      titleMedium: const TextStyle(
+      titleMedium: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 17,
-        height: 1.0,
+        height: 24 / 17,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w700,
       ),
 
-      // TitleSmall styles
-      titleSmall: const TextStyle(
+      titleSmall: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 14,
-        height: 1.0,
+        height: 20 / 14,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w700,
       ),
 
-      // BodyLarge styles
-      bodyLarge: const TextStyle(
+      bodyLarge: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 16,
-        height: 1.0,
+        height: 24 / 16,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
 
-      // BodyMedium styles
-      bodyMedium: const TextStyle(
+      bodyMedium: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 15,
-        height: 1.0,
+        height: 22 / 15,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
 
-      // BodySmall styles
-      bodySmall: const TextStyle(
+      bodySmall: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 12,
-        height: 1.0,
+        height: 16 / 12,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
 
-      // LabelLarge styles
-      labelLarge: const TextStyle(
+      labelLarge: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 16,
-        height: 1.0,
+        height: 20 / 16,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w600,
       ),
 
-      // LabelMedium styles
-      labelMedium: const TextStyle(
+      labelMedium: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 14,
-        height: 1.0,
+        height: 16 / 14,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
 
-      // LabelSmall styles
-      labelSmall: const TextStyle(
+      labelSmall: TextStyle(
         fontFamily: 'SourceSans3',
         fontSize: 12,
-        height: 1.0,
+        height: 16 / 12,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
     );
   }
 
-  /// App bar theme
   static AppBarTheme get _appBarTheme {
     return const AppBarTheme(
       elevation: 0,
@@ -221,31 +221,124 @@ class AppThemes {
       titleTextStyle: TextStyle(
         fontFamily: 'Nunito',
         fontSize: 20,
-        height: 1.0,
+        height: 28 / 20,
         letterSpacing: 0.0,
         fontWeight: FontWeight.w700,
         color: AppColors.onSurface,
       ),
+      backgroundColor: AppColors.surface,
+      surfaceTintColor: AppColors.surface,
+    );
+  }
+
+  static SwitchThemeData get _switchTheme {
+    return SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.surfaceContainer;
+        }
+        return AppColors.onSurfaceVariant;
+      }),
+      trackColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.primary;
+        }
+        return null;
+      }),
+    );
+  }
+
+  static MarkdownStyleSheet markdownStyleSheet(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+
+    return MarkdownStyleSheet(
+      h1: textTheme.headlineLarge?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 24,
+      ),
+      h2: textTheme.headlineMedium?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 21,
+      ),
+      h3: textTheme.headlineSmall?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 18,
+      ),
+      h4: textTheme.titleLarge?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 15,
+      ),
+      h5: textTheme.titleMedium?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 12.75,
+      ),
+      h6: textTheme.titleSmall?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 10.5,
+      ),
+      p: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+      code: textTheme.bodyMedium?.copyWith(
+        fontFamily: 'monospace',
+        backgroundColor: colorScheme.surfaceContainerHighest,
+        color: colorScheme.onSurface,
+      ),
+      codeblockDecoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: colorScheme.outline.withValues(alpha: 0.2)),
+      ),
+      a: textTheme.bodyMedium?.copyWith(
+        color: colorScheme.primary,
+        decoration: TextDecoration.underline,
+      ),
+      listBullet: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+      blockquote: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+      blockquoteDecoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(0),
+        border: Border(
+          left: BorderSide(
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.4),
+            width: 4,
+          ),
+        ),
+      ),
+      em: const TextStyle(fontStyle: FontStyle.italic),
+      strong: const TextStyle(fontWeight: FontWeight.bold),
+      del: TextStyle(
+        decoration: TextDecoration.lineThrough,
+        color: colorScheme.onSurface.withValues(alpha: 0.6),
+      ),
+      horizontalRuleDecoration: BoxDecoration(
+        border: Border(top: BorderSide(color: colorScheme.outlineVariant)),
+      ),
+      tableHead: textTheme.titleSmall?.copyWith(
+        fontWeight: FontWeight.bold,
+        color: colorScheme.onSurface,
+      ),
+      tableBody: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+      tableBorder: TableBorder.all(color: colorScheme.outlineVariant, width: 1),
     );
   }
 }
 
 /// Extension for additional custom text styles not covered by Material 3
 extension CustomTextStyles on TextTheme {
-  /// Nunito SemiBold - 16/16 . 0.0
+  /// Nunito SemiBold - 16/20 . 0.0
   TextStyle get m3LabelLargeProminent => const TextStyle(
     fontFamily: 'SourceSans3',
     fontSize: 16,
-    height: 1.0,
+    height: 20 / 16,
     letterSpacing: 0.0,
     fontWeight: FontWeight.w600,
   );
 
-  /// Nunito SemiBold - 14/14 . 0.0
+  /// Nunito SemiBold - 14/16 . 0.0
   TextStyle get m3LabelMediumProminent => const TextStyle(
     fontFamily: 'SourceSans3',
     fontSize: 14,
-    height: 1.0,
+    height: 16 / 14,
     letterSpacing: 0.0,
     fontWeight: FontWeight.w600,
   );

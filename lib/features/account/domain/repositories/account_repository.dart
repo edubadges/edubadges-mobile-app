@@ -1,8 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:edubadges/core/errors/failures.dart';
-import 'package:edubadges/features/account/domain/entities/account_entity.dart';
+import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 
 abstract class AccountRepository {
-  Future<Either<Failure, List<AccountEntity>>> getAccounts();
-  Future<Either<Failure, AccountEntity>> getAccountById(String id);
+  Future<Either<Failure, ProfileEntity>> getProfile();
+  Future<Either<Failure, bool>> deleteProfile();
+  Future<Either<Failure, void>> acceptTerms(String termsEntityId);
+  Future<Either<Failure, void>> rejectTerms(String entityId);
 }

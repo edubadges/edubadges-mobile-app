@@ -1,22 +1,49 @@
 import 'package:edubadges/app/routes.dart';
 import 'package:edubadges/app/themes.dart';
+import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class App extends ConsumerWidget {
+class App extends ConsumerStatefulWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<App> createState() => _AppState();
+}
+
+class _AppState extends ConsumerState<App> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _handleInitialNotification());
+  }
+
+  Future<void> _handleInitialNotification() async {
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null && mounted) {
+      ref.read(appRouter).go(RoutePath.main);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final router = ref.watch(appRouter);
 
     return MaterialApp.router(
       title: 'Edubadges',
       theme: AppThemes.lightTheme,
+      highContrastTheme: AppThemes.highContrastTheme,
       routerConfig: router,
+      // Use to check if semantics are setup correctly for a page
+      showSemanticsDebugger: false,
       localizationsDelegates: const [
         AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
       debugShowCheckedModeBanner: false,

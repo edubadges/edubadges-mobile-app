@@ -1,32 +1,63 @@
-import 'package:aroma_networking/aroma_networking.dart';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
+import 'package:edubadges/core/network/api_client.dart';
+import 'package:edubadges/core/network/interceptors/general_terms_interceptor.dart';
+import 'package:edubadges/core/network/network_config.dart';
+import 'package:edubadges/core/network/network_info.dart';
+import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/logger.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:edubadges/features/general_terms/presentation/navigation/general_terms_navigation.dart';
+import 'package:edubadges/shared/data/datasources/oidc_auth_datasource.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
-final networkConfigProvider = Provider<AromaNetworkConfig>((ref) {
-  return AromaNetworkConfig(
+final oidcAuthDataSourceProvider = Provider<OidcAuthDataSource>((ref) {
+  return OidcAuthDataSource();
+});
+
+final networkConfigProvider = Provider<NetworkConfig>((ref) {
+  final oidcAuth = ref.watch(oidcAuthDataSourceProvider);
+  return NetworkConfig(
     baseUrl: EnvironmentConfig.instance.apiUrl,
-    getAccessToken: () async {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        return await user.getIdToken();
-      }
-      return null;
-    },
-    onUnauthorized: () async {
-      await FirebaseAuth.instance.signOut();
-    },
+    tokenStorage: oidcAuth.tokenStorage,
+    onRefreshToken: oidcAuth.refreshToken,
     logger: logger,
-    // TODO: Add aromaErrorController if using aroma_error package
-    // aromaErrorController: ref.watch(aromaErrorControllerProvider),
   );
+});
+
+final packageInfoProvider = FutureProvider<PackageInfo>((ref) {
+  return PackageInfo.fromPlatform();
 });
 
 final dioProvider = Provider<Dio>((ref) {
   final config = ref.watch(networkConfigProvider);
-  return config.createDio();
+  final oidcAuth = ref.watch(oidcAuthDataSourceProvider);
+  final language = ref.watch(appLanguageProvider);
+
+  final dio = config.createDio();
+  dio.options.headers['x-requested-with'] = 'mobile';
+
+  dio.interceptors.insert(0, InterceptorsWrapper(
+    onRequest: (options, handler) async {
+      final packageInfo = await ref.read(packageInfoProvider.future);
+      options.headers['x-platform'] = Platform.isIOS ? 'ios' : 'android';
+      options.headers['x-app-version'] = packageInfo.version;
+      options.headers['x-language'] = language.code;
+      handler.next(options);
+    },
+  ));
+
+  oidcAuth.setFresh(config.fresh);
+
+  dio.interceptors.add(
+    GeneralTermsInterceptor(
+      onTermsRequired: () => navigateToGeneralTermsIfNeeded(dio),
+    ),
+  );
+
+  return dio;
 });
 
 final apiClientProvider = Provider<ApiClient>((ref) {

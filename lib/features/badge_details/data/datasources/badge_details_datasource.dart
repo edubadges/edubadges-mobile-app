@@ -1,0 +1,98 @@
+import 'package:edubadges/core/network/api_client.dart';
+import 'package:edubadges/core/network/errors/error_codes.dart';
+import 'package:edubadges/core/network/errors/exceptions.dart';
+import 'package:edubadges/shared/data/models/badge_class_model.dart';
+import 'package:edubadges/shared/data/models/badge_instance_model.dart';
+
+abstract class BadgeDetailsDataSource {
+  Future<BadgeClassModel> getBadgeDetails(String entityId);
+  Future<BadgeInstanceModel> getBadgeInstance(String entityId);
+  Future<void> enroll(String badgeclassSlug);
+  Future<void> updateBadgeVisibility(
+    String entityId, {
+    required bool isPublic,
+    required bool includeEvidence,
+    required bool includeGradeAchieved,
+  });
+}
+
+class BadgeDetailsDataSourceImpl implements BadgeDetailsDataSource {
+  final ApiClient apiClient;
+
+  BadgeDetailsDataSourceImpl(this.apiClient);
+
+  @override
+  Future<BadgeClassModel> getBadgeDetails(String entityId) async {
+    final response = await apiClient.get<Map<String, dynamic>>(
+      '/badge-classes/$entityId',
+    );
+
+    if (response.data == null) {
+      throw const ParsingException(
+        message: 'No data received for badge details',
+        code: ErrorCodes.parsingError,
+      );
+    }
+
+    try {
+      return BadgeClassModel.fromJson(response.data!);
+    } catch (e, stackTrace) {
+      throw ParsingException(
+        message: 'Failed to parse badge details: $e',
+        code: ErrorCodes.parsingError,
+        originalError: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  @override
+  Future<BadgeInstanceModel> getBadgeInstance(String entityId) async {
+    final response = await apiClient.get<Map<String, dynamic>>(
+      '/badge-instances/$entityId',
+    );
+
+    if (response.data == null) {
+      throw const ParsingException(
+        message: 'No data received for badge details',
+        code: ErrorCodes.parsingError,
+      );
+    }
+
+    try {
+      return BadgeInstanceModel.fromJson(response.data!);
+    } catch (e, stackTrace) {
+      throw ParsingException(
+        message: 'Failed to parse badge details: $e',
+        code: ErrorCodes.parsingError,
+        originalError: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  @override
+  Future<void> enroll(String badgeclassSlug) async {
+    await apiClient.post<void>(
+      '/enroll',
+      data: {'badgeclass_slug': badgeclassSlug},
+    );
+  }
+
+  @override
+  Future<void> updateBadgeVisibility(
+    String entityId, {
+    required bool isPublic,
+    required bool includeEvidence,
+    required bool includeGradeAchieved,
+  }) async {
+    await apiClient.put<void>(
+      '/badge-instances/$entityId',
+      data: {
+        'public': isPublic,
+        'include_evidence': includeEvidence,
+        'include_grade_achieved': includeGradeAchieved,
+      },
+    );
+  }
+}

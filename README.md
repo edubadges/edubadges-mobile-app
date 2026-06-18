@@ -5,13 +5,6 @@ This application is built to run on the following platforms:
 *   🍎 iOS
 *   🤖 Android
 
-## 🎨 Design
-You can find the design files on Figma:
-[Edubadges Design](https://www.figma.com/design/gPMsf9xuwPBG9yk4EZTabu/Edubadges-Design?t=xZ3tcYWY3fjYnVt1-0)
-
-## 🧑‍💻 Active Members
-*   Peter
-
 ## ⚙️ Installation
 1.  **Clone the repository:**
     ```bash
@@ -20,9 +13,7 @@ You can find the design files on Figma:
     ```
 2.  **Set up Environment Variables:**
     *   This project uses `flutter_dotenv` for configuration.
-    *   Create environment-specific `.env` files (e.g., `.env.dev`, `.env.tst`, `.env.prod`, `.env.acc`) in the root directory.
-    *   You might need to copy from an example file or obtain the necessary keys.
-    *   *(Suggestion: Add details here or link to documentation about required variables)*
+    *   You might need to obtain the necessary keys.
 3.  **Install dependencies:**
     ```bash
     flutter pub get
@@ -53,8 +44,3 @@ You can find the design files on Figma:
 *   **Environment Variables:** `flutter_dotenv`
 *   **Localization:** `flutter_localizations`
 *   **Vector Graphics:** `flutter_svg`
-
-
-## 📊 Project Management
-Track progress and issues on Jira:
-[Edubadges Jira Board](https://digitalclub.atlassian.net/jira/software/c/projects/SURF/summary)
