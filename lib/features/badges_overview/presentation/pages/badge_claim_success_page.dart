@@ -227,6 +227,8 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
           error: (err, stack) => InfoStateView(
             title: l10n.badgeClaimErrorTitle,
             description: l10n.badgeClaimErrorSubtitle,
+            error: err,
+            stackTrace: stack,
           ),
         ),
       ),

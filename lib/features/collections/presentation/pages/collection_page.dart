@@ -3,6 +3,7 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
+import 'package:edubadges/core/widgets/debug_error_log_button.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
@@ -494,8 +495,8 @@ class CollectionPage extends ConsumerWidget {
                   ),
                 ],
               );
-            } catch (e) {
-              return const ErrorMessageWidget();
+            } catch (e, stackTrace) {
+              return ErrorMessageWidget(error: e, stackTrace: stackTrace);
             }
           },
           loading: () => Center(
@@ -519,6 +520,7 @@ class CollectionPage extends ConsumerWidget {
                   onPressed: () => context.pop(),
                   child: Text(l10n.goBack),
                 ),
+                DebugErrorLogButton(error: error, stackTrace: stackTrace),
               ],
             ),
           ),

@@ -20,6 +20,14 @@ class AccountRemoteDataSourceImpl implements AccountDataSource {
   }
 
   @override
+  Future<void> acceptTerms(String termsEntityId) async {
+    await apiClient.post<void>(
+      '/terms-agreements',
+      data: {'terms': termsEntityId},
+    );
+  }
+
+  @override
   Future<void> rejectTerms(String entityId) async {
     await apiClient.patch<void>(
       '/terms-agreements/$entityId',

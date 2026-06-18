@@ -315,9 +315,16 @@ class BadgesOverviewPage extends ConsumerWidget {
                 ),
               ],
             ),
-            error: (error, stackTrace) => const CustomScrollView(
+            error: (error, stackTrace) => CustomScrollView(
               slivers: [
-                SliverFillRemaining(child: Center(child: ErrorMessageWidget())),
+                SliverFillRemaining(
+                  child: Center(
+                    child: ErrorMessageWidget(
+                      error: error,
+                      stackTrace: stackTrace,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

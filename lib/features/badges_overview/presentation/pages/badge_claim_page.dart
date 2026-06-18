@@ -13,6 +13,7 @@ import 'package:edubadges/features/badges_overview/domain/entities/direct_award_
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
+import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
@@ -298,7 +299,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
             ),
           ),
           error: (error, stackTrace) => Center(
-            child: Text(l10n.somethingWentWrong, style: textTheme.bodyMedium),
+            child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
           ),
         ),
       ),

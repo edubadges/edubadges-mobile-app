@@ -30,6 +30,16 @@ class AccountRepositoryImpl implements AccountRepository {
   }
 
   @override
+  Future<Either<Failure, void>> acceptTerms(String termsEntityId) async {
+    return repositoryGuard<void>(
+      () async {
+        await accountDataSource.acceptTerms(termsEntityId);
+      },
+      logMessage: 'Failed to accept terms',
+    );
+  }
+
+  @override
   Future<Either<Failure, void>> rejectTerms(String entityId) async {
     return await repositoryGuard<void>(
       () async {

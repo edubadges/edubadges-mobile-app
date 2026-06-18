@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
+import 'package:dartz/dartz.dart';
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/actionable_content_layout.dart';
@@ -13,7 +17,9 @@ import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
+import 'package:edubadges/features/badges_overview/domain/entities/direct_award_detail_entity.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
+import 'package:edubadges/features/badges_overview/utils/badge_terms_agreement_utils.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/providers/markdown_fetcher.dart';
@@ -87,19 +93,59 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
     );
   }
 
-  Future<void> _handleAccept(BadgeInstanceEntity badge) async {
+  String _getErrorMessage(Failure failure, AppLocalizations l10n) {
+    if (failure is ServerFailure) {
+      return failure.message;
+    }
+    if (failure is NetworkFailure) {
+      return failure.message;
+    }
+    return l10n.somethingWentWrong;
+  }
+
+  Future<void> _handleAccept({
+    required BadgeInstanceEntity badge,
+    required String termsEntityId,
+    required bool userHasAcceptedTerms,
+  }) async {
+    if (_isClaiming || _isDeclining) {
+      return;
+    }
+    final AppLocalizations l10n = AppLocalizations.of(context);
     setState(() {
       _isClaiming = true;
     });
-
     try {
-      final repository = ref.read(badgesOverviewRepositoryProvider);
-      final result = await repository.claimBadge(badge.entityId);
-
-      result.fold(
-        (failure) {
+      if (!userHasAcceptedTerms) {
+        final Either<Failure, void> acceptResult = await ref
+            .read(accountRepositoryProvider)
+            .acceptTerms(termsEntityId);
+        final Failure? acceptFailure = acceptResult.fold(
+          (Failure failure) => failure,
+          (_) => null,
+        );
+        if (acceptFailure != null) {
           if (mounted) {
-            showAppSnackBar(context, failure.toString());
+            showAppSnackBar(
+              context,
+              _getErrorMessage(acceptFailure, l10n),
+            );
+            setState(() {
+              _isClaiming = false;
+            });
+          }
+          return;
+        }
+        ref.invalidate(directAwardDetailProvider(badge.entityId));
+        unawaited(ref.read(profileProvider.notifier).refresh());
+      }
+      final Either<Failure, void> claimResult = await ref
+          .read(badgesOverviewRepositoryProvider)
+          .claimBadge(badge.entityId);
+      claimResult.fold(
+        (Failure failure) {
+          if (mounted) {
+            showAppSnackBar(context, _getErrorMessage(failure, l10n));
             setState(() {
               _isClaiming = false;
             });
@@ -118,15 +164,174 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
       );
     } catch (e) {
       if (mounted) {
-        showAppSnackBar(
-          context,
-          AppLocalizations.of(context).somethingWentWrong,
-        );
+        showAppSnackBar(context, l10n.somethingWentWrong);
         setState(() {
           _isClaiming = false;
         });
       }
     }
+  }
+
+  Widget _buildPrivacyContent({
+    required BadgeInstanceEntity badge,
+    required AgreementRouteModel agreementModel,
+    required bool userHasAcceptedTerms,
+    required AppLocalizations l10n,
+    required ThemeData theme,
+    required ColorScheme colorScheme,
+  }) {
+    if (!_hasInitializedToggle) {
+      _hasInitializedToggle = true;
+      if (agreementModel.titleShort == null ||
+          agreementModel.titleShort!.trim().isEmpty) {
+        _isShowingLongVersion = true;
+      }
+    }
+    final String currentTitle = _isShowingLongVersion
+        ? agreementModel.titleLong
+        : (agreementModel.titleShort?.trim().isEmpty ?? true
+              ? agreementModel.titleLong
+              : agreementModel.titleShort!);
+    final String currentUrlText = _isShowingLongVersion
+        ? agreementModel.textUrlLong
+        : (agreementModel.textUrlShort?.trim().isEmpty ?? true
+              ? agreementModel.textUrlLong
+              : agreementModel.textUrlShort!);
+    final String toggleButtonText = _isShowingLongVersion
+        ? l10n.viewShortText
+        : l10n.viewFullText;
+    final AsyncValue<String> markdownAsyncValue = ref.watch(
+      markdownFetcherProvider(currentUrlText),
+    );
+    return ActionableContentLayout(
+      title: currentTitle,
+      error: markdownAsyncValue.hasError,
+      content: markdownAsyncValue.when(
+        data: (String data) {
+          return MarkdownBody(
+            data: filterBadMarkdown(data),
+            styleSheet: AppThemes.markdownStyleSheet(context).copyWith(
+              h1: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurface,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          );
+        },
+        error: (Object error, StackTrace stackTrace) {
+          return Center(
+            child: InfoStateView(
+              assetPath: Assets.iconInfo,
+              description: l10n.failedToLoadTermsFrom(agreementModel.titleLong),
+              error: error,
+              stackTrace: stackTrace,
+            ),
+          );
+        },
+        loading: () {
+          return Center(
+            child: CircularProgressIndicator(
+              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+            ),
+          );
+        },
+      ),
+      actions: [
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: _isClaiming || _isDeclining
+                ? null
+                : () => _handleAccept(
+                    badge: badge,
+                    termsEntityId: agreementModel.agreementId,
+                    userHasAcceptedTerms: userHasAcceptedTerms,
+                  ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: _isClaiming
+                ? SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        Colors.white,
+                      ),
+                      semanticsLabel: AppLocalizations.of(
+                        context,
+                      ).semanticsLoading,
+                    ),
+                  )
+                : Text(
+                    l10n.badgePrivacyReadButton,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+          ),
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton(
+            onPressed: _isClaiming || _isDeclining
+                ? null
+                : () => _handleDecline(badge),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              side: const BorderSide(color: AppColors.primary),
+            ),
+            child: _isDeclining
+                ? SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        AppColors.primary,
+                      ),
+                      semanticsLabel: AppLocalizations.of(
+                        context,
+                      ).semanticsLoading,
+                    ),
+                  )
+                : Text(
+                    l10n.decline,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+          ),
+        ),
+        if (agreementModel.textUrlShort?.isEmpty != true)
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _isShowingLongVersion = !_isShowingLongVersion;
+              });
+            },
+            child: Text(
+              toggleButtonText,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: AppColors.primary,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
+      ],
+    );
   }
 
   @override
@@ -142,221 +347,81 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
     return MaxWidthWrapper(
       child: badgesAsync.when(
         data: (state) {
-          final badge =
+          final BadgeInstanceEntity? badge =
               state.unclaimedBadges.firstWhereOrNull(
-                (b) => b.id.toString() == widget.badgeId,
+                (BadgeInstanceEntity b) => b.id.toString() == widget.badgeId,
               ) ??
               state.claimedBadges.firstWhereOrNull(
-                (b) => b.id.toString() == widget.badgeId,
-              ) ??
-              state.unclaimedBadges.firstOrNull ??
-              state.claimedBadges.firstOrNull;
+                (BadgeInstanceEntity b) => b.id.toString() == widget.badgeId,
+              );
 
           if (badge == null) {
-            return Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(
-                  semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-                ),
-              ),
-            );
-          }
-
-          final badgeInstitutionId =
-              badge.badgeclass.issuer?.faculty?.institution?.identifier;
-
-          final profile = profileAsync.whenOrNull(data: (p) => p);
-          if (profile == null) {
-            return Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(
-                  semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-                ),
-              ),
-            );
-          }
-
-          final matchingAgreement = profile.termsagreementSet.firstWhereOrNull(
-            (TermsAgreementEntity ta) =>
-                ta.terms.institution?.identifier == badgeInstitutionId,
-          );
-
-          if (matchingAgreement == null) {
             return Scaffold(
               body: Center(
                 child: InfoStateView(
                   assetPath: Assets.iconInfo,
                   description: l10n.somethingWentWrong,
+                  debugContext:
+                      'BadgePrivacy: badge not found for id=${widget.badgeId}',
                 ),
               ),
             );
           }
 
-          final institutionName = getLocalizedString(
-            matchingAgreement.terms.institution?.nameDutch,
-            matchingAgreement.terms.institution?.nameEnglish,
-            langCode,
+          final detailAsync = ref.watch(
+            directAwardDetailProvider(badge.entityId),
           );
 
-          final agreementModel = AgreementRouteModel.create(
-            institutionName,
-            matchingAgreement,
-            langCode,
-          );
-
-          // Initialize toggle state: default to long if no short version
-          if (!_hasInitializedToggle) {
-            _hasInitializedToggle = true;
-            if (agreementModel.titleShort == null ||
-                agreementModel.titleShort!.trim().isEmpty) {
-              _isShowingLongVersion = true;
-            }
-          }
-
-          final currentTitle = _isShowingLongVersion
-              ? agreementModel.titleLong
-              : (agreementModel.titleShort?.trim().isEmpty ?? true
-                    ? agreementModel.titleLong
-                    : agreementModel.titleShort!);
-          final currentUrlText = _isShowingLongVersion
-              ? agreementModel.textUrlLong
-              : (agreementModel.textUrlShort?.trim().isEmpty ?? true
-                    ? agreementModel.textUrlLong
-                    : agreementModel.textUrlShort!);
-          final toggleButtonText = _isShowingLongVersion
-              ? l10n.viewShortText
-              : l10n.viewFullText;
-
-          final markdownAsyncValue = ref.watch(
-            markdownFetcherProvider(currentUrlText),
-          );
-
-          return ActionableContentLayout(
-            title: currentTitle,
-            error: markdownAsyncValue.hasError,
-            content: markdownAsyncValue.when(
-              data: (data) {
-                return MarkdownBody(
-                  data: filterBadMarkdown(data),
-                  styleSheet: AppThemes.markdownStyleSheet(context).copyWith(
-                    h1: theme.textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurface,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+          return detailAsync.when(
+            data: (DirectAwardDetailEntity detail) {
+              final List<TermsAgreementEntity> profileAgreements =
+                  profileAsync
+                      .whenOrNull(data: (ProfileEntity? p) => p?.termsagreementSet) ??
+                  [];
+              final AgreementRouteModel? agreementModel =
+                  resolveBadgePrivacyAgreement(
+                requiredTerms: detail.requiredTerms,
+                badge: badge,
+                profileAgreements: profileAgreements,
+                languageCode: langCode,
+              );
+              if (agreementModel == null) {
+                return Scaffold(
+                  body: Center(
+                    child: InfoStateView(
+                      assetPath: Assets.iconInfo,
+                      description: l10n.somethingWentWrong,
+                      debugContext: buildDirectAwardTermsDebugContext(
+                        routeBadgeId: widget.badgeId,
+                        badge: badge,
+                        requiredTerms: detail.requiredTerms,
+                        profileAgreements: profileAgreements,
+                      ),
                     ),
                   ),
                 );
-              },
-              error: (error, stackTrace) {
-                return Center(
-                  child: InfoStateView(
-                    assetPath: Assets.iconInfo,
-                    description: l10n.failedToLoadTermsFrom(
-                      agreementModel.titleLong,
-                    ),
-                  ),
-                );
-              },
-              loading: () {
-                return Center(
-                  child: CircularProgressIndicator(
-                    semanticsLabel: AppLocalizations.of(
-                      context,
-                    ).semanticsLoading,
-                  ),
-                );
-              },
+              }
+              return _buildPrivacyContent(
+                badge: badge,
+                agreementModel: agreementModel,
+                userHasAcceptedTerms: detail.userHasAcceptedTerms,
+                l10n: l10n,
+                theme: theme,
+                colorScheme: colorScheme,
+              );
+            },
+            loading: () => Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(
+                  semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+                ),
+              ),
             ),
-            actions: [
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isClaiming || _isDeclining
-                      ? null
-                      : () => _handleAccept(badge),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: _isClaiming
-                      ? SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                              Colors.white,
-                            ),
-                            semanticsLabel: AppLocalizations.of(
-                              context,
-                            ).semanticsLoading,
-                          ),
-                        )
-                      : Text(
-                          l10n.badgePrivacyReadButton,
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                ),
+            error: (Object err, StackTrace stack) => Scaffold(
+              body: Center(
+                child: ErrorMessageWidget(error: err, stackTrace: stack),
               ),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: _isClaiming || _isDeclining
-                      ? null
-                      : () => _handleDecline(badge),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    side: const BorderSide(color: AppColors.primary),
-                  ),
-                  child: _isDeclining
-                      ? SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                              AppColors.primary,
-                            ),
-                            semanticsLabel: AppLocalizations.of(
-                              context,
-                            ).semanticsLoading,
-                          ),
-                        )
-                      : Text(
-                          l10n.decline,
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                ),
-              ),
-              if (agreementModel.textUrlShort?.isEmpty != true)
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _isShowingLongVersion = !_isShowingLongVersion;
-                    });
-                  },
-                  child: Text(
-                    toggleButtonText,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.primary,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ),
-            ],
+            ),
           );
         },
         loading: () => Scaffold(
@@ -366,8 +431,11 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
             ),
           ),
         ),
-        error: (err, stack) =>
-            const Scaffold(body: Center(child: ErrorMessageWidget())),
+        error: (err, stack) => Scaffold(
+          body: Center(
+            child: ErrorMessageWidget(error: err, stackTrace: stack),
+          ),
+        ),
       ),
     );
   }
