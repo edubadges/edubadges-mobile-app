@@ -3,7 +3,6 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/image.dart';
-import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
@@ -94,10 +93,7 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: colorScheme.outlineVariant,
-          width: 1,
-        ),
+        border: Border.all(color: colorScheme.outlineVariant, width: 1),
       ),
       child: MergeSemantics(
         child: InkWell(
@@ -119,11 +115,7 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
                   child: SizedBox(
                     width: 80,
                     height: 80,
-                    child: _buildBadgeGrid(
-                      badges,
-                      badgeCount,
-                      colorScheme,
-                    ),
+                    child: _buildBadgeGrid(badges, badgeCount, colorScheme),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -234,97 +226,91 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
                     ),
                   ],
                 ),
-          body: MaxWidthWrapper(
-            maxWidth: isGridLayout
-                ? LayoutConstants.badgesOverviewDesktopMaxWidth
-                : 720,
-            scrollController: _scrollController,
-            child: collectionsAsync.when(
-              data: (collections) {
-                return RefreshIndicator(
-                  backgroundColor: colorScheme.surfaceContainer,
-                  onRefresh: () async {
-                    await ref.read(collectionsProvider.notifier).refresh();
-                  },
-                  child: collections.isEmpty
-                      ? CustomScrollView(
-                          controller: _scrollController,
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          slivers: [
-                            if (isGridLayout)
-                              _buildDesktopHeaderSliver(
-                                l10n: l10n,
-                                textTheme: textTheme,
-                                colorScheme: colorScheme,
-                              ),
-                            SliverFillRemaining(
-                              hasScrollBody: false,
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SvgIcon(
-                                      assetPath: Assets.iconCollections,
-                                      size: 40,
-                                      color: colorScheme.primary,
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      l10n.noCollectionsYet,
-                                      style: textTheme.bodyMedium?.copyWith(
-                                        color: colorScheme.onSurfaceVariant,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      : CustomScrollView(
-                          controller: _scrollController,
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          slivers: [
-                            if (isGridLayout)
-                              _buildDesktopHeaderSliver(
-                                l10n: l10n,
-                                textTheme: textTheme,
-                                colorScheme: colorScheme,
-                              ),
-                            _buildCollectionSliver(
-                              collections: collections,
-                              isGridLayout: isGridLayout,
-                              colorScheme: colorScheme,
-                              textTheme: textTheme,
+          body: collectionsAsync.when(
+            data: (collections) {
+              return RefreshIndicator(
+                backgroundColor: colorScheme.surfaceContainer,
+                onRefresh: () async {
+                  await ref.read(collectionsProvider.notifier).refresh();
+                },
+                child: collections.isEmpty
+                    ? CustomScrollView(
+                        controller: _scrollController,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        slivers: [
+                          if (isGridLayout)
+                            _buildDesktopHeaderSliver(
                               l10n: l10n,
+                              textTheme: textTheme,
+                              colorScheme: colorScheme,
                             ),
-                          ],
-                        ),
-                );
-              },
-              loading: () => Center(
-                child: CircularProgressIndicator(
-                  semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-                ),
-              ),
-              error: (error, stackTrace) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      l10n.errorLoadingCollections,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: colorScheme.error,
+                          SliverFillRemaining(
+                            hasScrollBody: false,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SvgIcon(
+                                    assetPath: Assets.iconCollections,
+                                    size: 40,
+                                    color: colorScheme.primary,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    l10n.noCollectionsYet,
+                                    style: textTheme.bodyMedium?.copyWith(
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : CustomScrollView(
+                        controller: _scrollController,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        slivers: [
+                          if (isGridLayout)
+                            _buildDesktopHeaderSliver(
+                              l10n: l10n,
+                              textTheme: textTheme,
+                              colorScheme: colorScheme,
+                            ),
+                          _buildCollectionSliver(
+                            collections: collections,
+                            isGridLayout: isGridLayout,
+                            colorScheme: colorScheme,
+                            textTheme: textTheme,
+                            l10n: l10n,
+                          ),
+                        ],
                       ),
+              );
+            },
+            loading: () => Center(
+              child: CircularProgressIndicator(
+                semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+              ),
+            ),
+            error: (error, stackTrace) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    l10n.errorLoadingCollections,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: colorScheme.error,
                     ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () =>
-                          ref.read(collectionsProvider.notifier).refresh(),
-                      child: Text(l10n.retry),
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () =>
+                        ref.read(collectionsProvider.notifier).refresh(),
+                    child: Text(l10n.retry),
+                  ),
+                ],
               ),
             ),
           ),
