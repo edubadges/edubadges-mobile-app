@@ -1,10 +1,11 @@
 import 'dart:async';
 
 import 'package:edubadges/app/app.dart';
+import 'package:edubadges/core/analytics/piwik_pro_analytics.dart';
+import 'package:edubadges/core/app_container.dart';
 import 'package:edubadges/core/constants/env_keys.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/constants/route_path.dart';
-import 'package:edubadges/core/app_container.dart';
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
@@ -24,7 +25,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_piwikpro/flutter_piwikpro.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -72,14 +72,12 @@ void main() async {
   // Initialize Firebase
   await Firebase.initializeApp(options: _getFirebaseOptions());
 
-  // Initialize Analytics
-  final analyticsEnabled = EnvironmentConfig.instance.enableAnalytics;
-  if (analyticsEnabled) {
-    await FlutterPiwikPro.sharedInstance.configureTracker(
-      baseURL: EnvironmentConfig.instance.piwikProBaseUrl,
-      siteId: EnvironmentConfig.instance.piwikProSiteId,
-    );
-  }
+  final bool analyticsEnabled = EnvironmentConfig.instance.enableAnalytics;
+  await PiwikProAnalytics.instance.initialize(
+    baseUrl: EnvironmentConfig.instance.piwikProBaseUrl,
+    siteId: EnvironmentConfig.instance.piwikProSiteId,
+    enabled: analyticsEnabled,
+  );
 
   // Initialize Crashlytics (iOS/Android only)
   if (!kIsWeb) {

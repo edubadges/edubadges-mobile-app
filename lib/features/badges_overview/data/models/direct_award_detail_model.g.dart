@@ -18,10 +18,17 @@ DirectAwardDetailModel _$DirectAwardDetailModelFromJson(
         'user_has_accepted_terms',
         (v) => v as bool? ?? false,
       ),
+      requiredTerms: $checkedConvert(
+        'required_terms',
+        (v) => DirectAwardDetailModel._requiredTermsFromJson(v),
+      ),
     );
     return val;
   },
-  fieldKeyMap: const {'userHasAcceptedTerms': 'user_has_accepted_terms'},
+  fieldKeyMap: const {
+    'userHasAcceptedTerms': 'user_has_accepted_terms',
+    'requiredTerms': 'required_terms',
+  },
 );
 
 Map<String, dynamic> _$DirectAwardDetailModelToJson(
@@ -29,4 +36,7 @@ Map<String, dynamic> _$DirectAwardDetailModelToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'user_has_accepted_terms': instance.userHasAcceptedTerms,
+  'required_terms': ?DirectAwardDetailModel._requiredTermsToJson(
+    instance.requiredTerms,
+  ),
 };
