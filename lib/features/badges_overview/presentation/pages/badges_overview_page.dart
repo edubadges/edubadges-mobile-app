@@ -38,6 +38,7 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      useRootNavigator: true,
       builder: (context) => const FeedbackBottomSheet(),
     );
   }
