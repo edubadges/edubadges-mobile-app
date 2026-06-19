@@ -19,7 +19,6 @@ class BadgeVisibilityCard extends ConsumerStatefulWidget {
   final EdgeInsets margin;
   final BadgeInstanceEntity badge;
   final bool showCopyLink;
-  final bool embedded;
 
   const BadgeVisibilityCard({
     super.key,
@@ -31,7 +30,6 @@ class BadgeVisibilityCard extends ConsumerStatefulWidget {
       top: 16,
     ),
     this.showCopyLink = true,
-    this.embedded = false,
   });
 
   @override
@@ -146,72 +144,43 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
       ],
     );
 
-    final Widget content = widget.embedded
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            spacing: 16,
-            children: [
-              MergeSemantics(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        l10n.badgeVisibleAndShareable,
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onSurface,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    visibilityToggle,
-                  ],
-                ),
-              ),
-              shareButtons,
-            ],
-          )
-        : Column(
-            spacing: 16,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+    final Widget content = Column(
+      spacing: 16,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Semantics(
-                          header: true,
-                          child: Text(
-                            l10n.badgeVisibleAndShareable,
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          l10n.badgeVisibleAndShareableDescription,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      l10n.badgeVisibleAndShareable,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  visibilityToggle,
+                  const SizedBox(height: 4),
+                  Text(
+                    l10n.badgeVisibleAndShareableDescription,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ],
               ),
-              shareButtons,
-            ],
-          );
-
-    if (widget.embedded) {
-      return content;
-    }
+            ),
+            const SizedBox(width: 12),
+            visibilityToggle,
+          ],
+        ),
+        shareButtons,
+      ],
+    );
 
     return Container(
       decoration: BoxDecoration(

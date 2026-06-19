@@ -197,7 +197,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     BadgeClassModel? carouselBadgeClass,
     Widget? badgePreview,
   }) {
-    final colorScheme = Theme.of(context).colorScheme;
     final badgeClass = details?.badgeClass ?? carouselBadgeClass;
     if (badgeClass == null) {
       return const SizedBox.shrink();
@@ -208,49 +207,34 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         ? BadgeVisibilityCard(
             badge: badgeInstance,
             showCopyLink: badgeInstance.public,
-            embedded: true,
+            margin: EdgeInsets.zero,
           )
         : null;
 
     return FocusableSection(
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: colorScheme.outlineVariant),
-          color: colorScheme.surfaceContainer,
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (badgePreview != null)
-              badgePreview
-            else
-              BadgeCard(
-                instance: badgeInstance,
-                badgeClass: badgeClass,
-                style: BadgeCardStyle.large,
-                onTapDisabled: true,
-                badgeRequested: details?.requested ?? false,
-                embedded: true,
-              ),
-            if (visibilitySection != null) ...[
-              const SizedBox(height: 16),
-              Divider(color: colorScheme.outlineVariant, height: 1),
-              const SizedBox(height: 16),
-              visibilitySection,
-            ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (badgePreview != null)
+            badgePreview
+          else
+            BadgeCard(
+              instance: badgeInstance,
+              badgeClass: badgeClass,
+              style: BadgeCardStyle.large,
+              onTapDisabled: true,
+              badgeRequested: details?.requested ?? false,
+            ),
+          if (visibilitySection != null) ...[
+            const SizedBox(height: 16),
+            visibilitySection,
           ],
-        ),
+        ],
       ),
     );
   }
 
-  Widget? _buildVisibilitySection(
-    BadgeDetailsModel? details, {
-    required bool useSidebarLayout,
-  }) {
+  Widget? _buildVisibilitySection(BadgeDetailsModel? details) {
     if (details?.badgeInstance == null) {
       return null;
     }
@@ -259,9 +243,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
       child: BadgeVisibilityCard(
         badge: details!.badgeInstance!,
         showCopyLink: details.badgeInstance?.public ?? false,
-        margin: useSidebarLayout
-            ? const EdgeInsets.only(top: 16)
-            : const EdgeInsets.only(left: 20, right: 20, bottom: 8, top: 16),
+        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 8, top: 16),
       ),
     );
   }
@@ -397,7 +379,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                     as BadgeClassModel,
             style: BadgeCardStyle.large,
             onTapDisabled: true,
-            embedded: useSidebarLayout,
           );
         }
 
@@ -419,7 +400,6 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                             as BadgeClassModel,
                     style: BadgeCardStyle.large,
                     onTapDisabled: true,
-                    embedded: useSidebarLayout,
                   ),
                 ),
               );
@@ -592,15 +572,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                 details: badgeDetailsAsync.value,
                 useSidebarLayout: false,
               ),
-              if (_buildVisibilitySection(
-                    badgeDetailsAsync.value,
-                    useSidebarLayout: false,
-                  ) !=
-                  null)
-                _buildVisibilitySection(
-                  badgeDetailsAsync.value,
-                  useSidebarLayout: false,
-                )!,
+              _buildVisibilitySection(badgeDetailsAsync.value)!,
             ],
           );
 

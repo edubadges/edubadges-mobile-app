@@ -14,7 +14,6 @@ import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
-import 'package:edubadges/shared/presentation/widgets/badge_visibility_dialog.dart';
 import 'package:edubadges/shared/presentation/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,7 +38,6 @@ class BadgeCard extends ConsumerWidget {
   final bool showClaimedGalleryOnOpen;
 
   final VoidCallback? onTap;
-  final bool embedded;
 
   const BadgeCard({
     super.key,
@@ -53,7 +51,6 @@ class BadgeCard extends ConsumerWidget {
     this.badgeNavigationEntityId,
     this.showClaimedGalleryOnOpen = false,
     this.onTap,
-    this.embedded = false,
   });
 
   int? getTimeInvestment() {
@@ -200,28 +197,6 @@ class BadgeCard extends ConsumerWidget {
                 ),
               ),
             ),
-            if (instance != null && !embedded)
-              SizedBox(
-                height: 32,
-                width: 32,
-                child: KeyboardActivatable(
-                  semanticLabel: instance!.public
-                      ? l10n.semanticsBadgePublic
-                      : l10n.semanticsBadgePrivate,
-                  onActivate: () {
-                    BadgeVisibilityDialog.show(
-                      context: context,
-                      ref: ref,
-                      badgeInstance: instance as BadgeInstanceModel,
-                      isPublic: !instance!.public,
-                    );
-                  },
-                  child: SvgPicture.asset(
-                    instance!.public ? Assets.iconUnlocked : Assets.iconLocked,
-                  ),
-                ),
-              )
-            else
               const SizedBox(height: 32, width: 32),
           ],
         ),
@@ -299,11 +274,7 @@ class BadgeCard extends ConsumerWidget {
           _buildEnrollmentSection(context, ref, l10n, textTheme, colorScheme),
       ],
     );
-
-    if (embedded) {
-      return largeContent;
-    }
-
+    
     return KeyboardActivatable(
       enabled: !onTapDisabled,
       onActivate: onTapDisabled ? null : () => _openDetails(context),
