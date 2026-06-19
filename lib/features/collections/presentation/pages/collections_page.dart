@@ -35,6 +35,7 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
       isDismissible: true,
       enableDrag: true,
       isScrollControlled: true,
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       builder: (context) => const CreateCollectionBottomSheet(),
     );
