@@ -9,6 +9,7 @@ class ActionableContentLayout extends StatefulWidget {
   final Widget content;
   final List<Widget> actions;
   final bool showBackButton, error;
+  final VoidCallback? onBack;
 
   const ActionableContentLayout({
     super.key,
@@ -17,6 +18,7 @@ class ActionableContentLayout extends StatefulWidget {
     required this.actions,
     this.showBackButton = true,
     this.error = false,
+    this.onBack,
   });
 
   @override
@@ -52,7 +54,7 @@ class _ActionableContentLayoutState extends State<ActionableContentLayout> {
         leading: widget.showBackButton
             ? IconButton(
                 icon: const Icon(Icons.arrow_back, color: AppColors.primary),
-                onPressed: () => context.pop(),
+                onPressed: widget.onBack ?? () => context.pop(),
                 tooltip: AppLocalizations.of(context).semanticsBack,
               )
             : null,

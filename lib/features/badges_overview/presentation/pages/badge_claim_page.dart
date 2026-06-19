@@ -23,11 +23,17 @@ import 'package:intl/intl.dart';
 class BadgeClaimPage extends ConsumerStatefulWidget {
   final String badgeId;
   final int remainingCount;
+  final VoidCallback? onClose;
+  final void Function(String badgeId)? onNavigateToPrivacy;
+  final void Function(String badgeClassId)? onNavigateToSuccess;
 
   const BadgeClaimPage({
     super.key,
     required this.badgeId,
     required this.remainingCount,
+    this.onClose,
+    this.onNavigateToPrivacy,
+    this.onNavigateToSuccess,
   });
 
   @override
@@ -60,8 +66,12 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
     final needsPrivacyPage =
         detailAsync.hasError || detail == null || !detail.userHasAcceptedTerms;
     if (needsPrivacyPage) {
-      if (context.mounted) {
-        unawaited(context.push(RoutePath.badgePrivacyPath(id: widget.badgeId)));
+      if (widget.onNavigateToPrivacy != null) {
+        widget.onNavigateToPrivacy!(widget.badgeId);
+      } else {
+        if (context.mounted) {
+          unawaited(context.push(RoutePath.badgePrivacyPath(id: widget.badgeId)));
+        }
       }
       return;
     }
@@ -82,9 +92,13 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         (_) {
           if (mounted) {
             ref.read(badgesOverviewProvider.notifier).refresh();
-            context.go(
-              RoutePath.badgeClaimSuccessPath(id: badge.badgeclass.entityId),
-            );
+            if (widget.onNavigateToSuccess != null) {
+              widget.onNavigateToSuccess!(badge.badgeclass.entityId);
+            } else {
+              context.go(
+                RoutePath.badgeClaimSuccessPath(id: badge.badgeclass.entityId),
+              );
+            }
           }
         },
       );
@@ -131,6 +145,11 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
                 if (mounted) {
                   ref.read(badgesOverviewProvider.notifier).refresh();
                   Navigator.of(context).pop();
+                  if (widget.onClose != null) {
+                    widget.onClose!();
+                  } else {
+                    Navigator.of(context).pop();
+                  }
                 }
               },
             );
@@ -163,7 +182,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.close, color: colorScheme.primary),
-            onPressed: () {
+            onPressed: widget.onClose ?? () {
               if (context.canPop()) {
                 context.pop();
               } else {

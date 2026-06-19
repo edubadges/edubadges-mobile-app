@@ -5,6 +5,7 @@ import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/badges_overview/domain/entities/badges_overview_state.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
+import 'package:edubadges/features/badges_overview/presentation/widgets/desktop_badge_claim_dialog.dart';
 import 'package:edubadges/features/badges_overview/presentation/widgets/feedback_bottom_sheet.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
@@ -245,12 +246,20 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
       final remainingCount = state.unclaimedBadges.length;
 
       void onClaimBannerTap() {
-        context.push(
-          RoutePath.badgeClaimPath(
-            id: firstBadge.id.toString(),
+        if (isGridLayout) {
+          DesktopBadgeClaimDialog.show(
+            context: context,
+            badgeId: firstBadge.id.toString(),
             remainingCount: remainingCount,
-          ),
-        );
+          );
+        } else {
+          context.push(
+            RoutePath.badgeClaimPath(
+              id: firstBadge.id.toString(),
+              remainingCount: remainingCount,
+            ),
+          );
+        }
       }
 
       final claimBannerLabel = l10n.newBadgeReady(state.unclaimedCount);
