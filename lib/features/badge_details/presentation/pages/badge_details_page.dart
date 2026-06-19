@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:edubadges/app/constants.dart';
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
@@ -12,6 +14,7 @@ import 'package:edubadges/features/badge_details/data/models/badge_details_route
 import 'package:edubadges/features/badge_details/domain/constants/badge_extensions.dart';
 import 'package:edubadges/features/badge_details/domain/entities/badge_details_query.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
+import 'package:edubadges/features/badge_details/presentation/pages/quality_assurance_page.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/features/badge_details/presentation/widgets/badge_visibility_card.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -769,11 +772,42 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                 Center(
                   child: WideButton(
                     onTap: () {
-                      final path = RoutePath.badgeQualityAssurancePath(
-                        scope: widget.badge.scope,
-                        id: badgeId,
-                      );
-                      context.push(path);
+                      if (useSidebarLayout) {
+                        showDialog<void>(
+                          context: context,
+                          builder: (context) {
+                            final size = MediaQuery.sizeOf(context);
+                            final double width = math.min(
+                              600.0,
+                              size.width * 0.85,
+                            );
+                            final double height = width * 16 / 9;
+                            return Dialog(
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.surface,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: SizedBox(
+                                width: width,
+                                height: height,
+                                child: QualityAssurancePage(
+                                  badgeId: badgeId,
+                                  scope: widget.badge.scope,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        final path = RoutePath.badgeQualityAssurancePath(
+                          scope: widget.badge.scope,
+                          id: badgeId,
+                        );
+                        context.push(path);
+                      }
                     },
                     icon: null,
                     text: l10n.readMore,
