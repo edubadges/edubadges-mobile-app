@@ -24,7 +24,7 @@ android.apply {
         create("prod") {
             dimension = "flavor-type"
             applicationId = "nl.surf.edubadges"
-            resValue(type = "string", name = "app_name", value = "Edubadges Prod")
+            resValue(type = "string", name = "app_name", value = "Edubadges")
         }
     }
 }
