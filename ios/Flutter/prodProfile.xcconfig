@@ -2,6 +2,6 @@
 #include "Generated.xcconfig"
 
 ASSET_PREFIX=prod
-BUNDLE_NAME=Edubadges Prod
-BUNDLE_DISPLAY_NAME=Edubadges Prod
+BUNDLE_NAME=Edubadges
+BUNDLE_DISPLAY_NAME=Edubadges
 BASE_URL=https://api.edubadges.nl
