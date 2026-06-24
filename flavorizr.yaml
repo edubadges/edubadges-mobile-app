@@ -40,7 +40,7 @@ flavors:
           value: "https://api-demo.edubadges.nl"
   prod:
     app:
-      name: "Edubadges Prod"
+      name: "Edubadges"
     android:
       applicationId: "nl.surf.edubadges"
       variables:
