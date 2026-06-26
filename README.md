@@ -53,9 +53,14 @@ This application is built to run on the following platforms:
 
 5.  **Build for web:**
     ```bash
-    flutter build web --dart-define=APP_FLAVOR=tst
+    flutter build web \
+      --release \
+      --dart-define=APP_FLAVOR=tst \
+      --wasm
     ```
-    Deploy the `build/web` output to static hosting with SPA path fallback (see `firebase.json`).
+    Use `--source-maps` for staging builds when debugging. Omit it for production.
+
+    Deploy the `build/web` output to static hosting with SPA path fallback (see `firebase.json` and `web/nginx.conf`).
 
 ## 🛠️ Tech Stack
 *   **Framework:** Flutter & Dart

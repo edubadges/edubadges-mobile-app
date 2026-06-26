@@ -1,3 +1,4 @@
+import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
@@ -35,8 +36,8 @@ class ListRowCard extends StatelessWidget {
           ExcludeSemantics(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                imageUrl ?? '',
+              child: AppNetworkImage(
+                imageUrl: imageUrl ?? '',
                 height: 64,
                 width: 64,
                 fit: BoxFit.cover,

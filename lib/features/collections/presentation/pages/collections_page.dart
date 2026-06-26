@@ -3,6 +3,7 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/image.dart';
+import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
@@ -362,8 +363,10 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
           return ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: badgeImageUrl != null
-                ? Image.network(
-                    badgeImageUrl,
+                ? AppNetworkImage(
+                    imageUrl: badgeImageUrl,
+                    width: 48,
+                    height: 48,
                     fit: BoxFit.cover,
                     semanticLabel: l10n.semanticsBadgeImage,
                     errorBuilder: (context, error, stackTrace) {

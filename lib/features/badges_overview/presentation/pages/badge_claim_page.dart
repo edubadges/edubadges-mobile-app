@@ -6,6 +6,7 @@ import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
+import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
@@ -70,7 +71,9 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         widget.onNavigateToPrivacy!(widget.badgeId);
       } else {
         if (context.mounted) {
-          unawaited(context.push(RoutePath.badgePrivacyPath(id: widget.badgeId)));
+          unawaited(
+            context.push(RoutePath.badgePrivacyPath(id: widget.badgeId)),
+          );
         }
       }
       return;
@@ -182,13 +185,15 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.close, color: colorScheme.primary),
-            onPressed: widget.onClose ?? () {
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                context.go(RoutePath.main);
-              }
-            },
+            onPressed:
+                widget.onClose ??
+                () {
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    context.go(RoutePath.main);
+                  }
+                },
             tooltip: l10n.semanticsClose,
           ),
         ],
@@ -354,9 +359,12 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
           if (badgeImageUrl != null)
             ExcludeSemantics(
               child: Container(
-                constraints: const BoxConstraints(maxWidth: 200, maxHeight: 200),
-                child: Image.network(
-                  badgeImageUrl,
+                constraints: const BoxConstraints(
+                  maxWidth: 200,
+                  maxHeight: 200,
+                ),
+                child: AppNetworkImage(
+                  imageUrl: badgeImageUrl,
                   height: imageSize,
                   width: imageSize,
                   semanticLabel: l10n.semanticsBadgeImage,
@@ -425,8 +433,8 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
               children: [
                 if (institutionImageUrl != null)
                   ExcludeSemantics(
-                    child: Image.network(
-                      institutionImageUrl,
+                    child: AppNetworkImage(
+                      imageUrl: institutionImageUrl,
                       height: 25,
                       width: 25,
                       semanticLabel: l10n.semanticsInstitutionLogo,

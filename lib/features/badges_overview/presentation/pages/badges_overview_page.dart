@@ -419,7 +419,20 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    final badgesAsync = ref.watch(badgesOverviewProvider);
+    final BadgesOverviewState? badgesState = ref.watch(
+      badgesOverviewProvider.select((asyncValue) => asyncValue.asData?.value),
+    );
+    final bool isBadgesLoading = ref.watch(
+      badgesOverviewProvider.select(
+        (asyncValue) => asyncValue.isLoading && !asyncValue.hasValue,
+      ),
+    );
+    final Object? badgesError = ref.watch(
+      badgesOverviewProvider.select((asyncValue) => asyncValue.error),
+    );
+    final StackTrace? badgesStackTrace = ref.watch(
+      badgesOverviewProvider.select((asyncValue) => asyncValue.stackTrace),
+    );
     final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
@@ -450,11 +463,45 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
                 ),
           body: FocusTraversalGroup(
             policy: OrderedTraversalPolicy(),
-            child: badgesAsync.when(
-              data: (state) {
+            child: Builder(
+              builder: (BuildContext context) {
+                if (isBadgesLoading) {
+                  return CustomScrollView(
+                    controller: _scrollController,
+                    slivers: [
+                      SliverFillRemaining(
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            semanticsLabel: AppLocalizations.of(
+                              context,
+                            ).semanticsLoading,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+                if (badgesError != null) {
+                  return CustomScrollView(
+                    controller: _scrollController,
+                    slivers: [
+                      SliverFillRemaining(
+                        child: Center(
+                          child: ErrorMessageWidget(
+                            error: badgesError,
+                            stackTrace: badgesStackTrace,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+                if (badgesState == null) {
+                  return const SizedBox.shrink();
+                }
                 final slivers = _buildContentSlivers(
                   context: context,
-                  state: state,
+                  state: badgesState,
                   l10n: l10n,
                   colorScheme: colorScheme,
                   textTheme: textTheme,
@@ -473,33 +520,6 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
                   ),
                 );
               },
-              loading: () => CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  SliverFillRemaining(
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        semanticsLabel: AppLocalizations.of(
-                          context,
-                        ).semanticsLoading,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              error: (error, stackTrace) => CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  SliverFillRemaining(
-                    child: Center(
-                      child: ErrorMessageWidget(
-                        error: error,
-                        stackTrace: stackTrace,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         );

@@ -295,7 +295,7 @@ class _MainPageState extends ConsumerState<MainPage>
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(profileProvider);
+    ref.watch(profileProvider.select((asyncValue) => asyncValue.hasValue));
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;

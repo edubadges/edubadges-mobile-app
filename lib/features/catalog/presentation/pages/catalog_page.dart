@@ -40,8 +40,12 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent * 0.9) {
-      final catalogState = ref.read(catalogProvider);
-      if (catalogState.value?.hasMore == true) {
+      final bool hasMore = ref.read(
+        catalogProvider.select(
+          (asyncValue) => asyncValue.value?.hasMore ?? false,
+        ),
+      );
+      if (hasMore) {
         ref.read(catalogProvider.notifier).loadMore();
       }
     }
@@ -191,7 +195,20 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
 
   @override
   Widget build(BuildContext context) {
-    final catalogAsync = ref.watch(catalogProvider);
+    final CatalogState? catalogState = ref.watch(
+      catalogProvider.select((asyncValue) => asyncValue.asData?.value),
+    );
+    final bool isCatalogLoading = ref.watch(
+      catalogProvider.select(
+        (asyncValue) => asyncValue.isLoading && !asyncValue.hasValue,
+      ),
+    );
+    final Object? catalogError = ref.watch(
+      catalogProvider.select((asyncValue) => asyncValue.error),
+    );
+    final StackTrace? catalogStackTrace = ref.watch(
+      catalogProvider.select((asyncValue) => asyncValue.stackTrace),
+    );
     final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
@@ -210,11 +227,44 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
             onTap: () {
               FocusScope.of(context).unfocus();
             },
-            child: catalogAsync.when(
-              data: (state) {
+            child: Builder(
+              builder: (BuildContext context) {
+                if (isCatalogLoading) {
+                  return CustomScrollView(
+                    controller: _scrollController,
+                    slivers: [
+                      SliverFillRemaining(
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            semanticsLabel: l10n.semanticsLoading,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+                if (catalogError != null) {
+                  return CustomScrollView(
+                    controller: _scrollController,
+                    slivers: [
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Center(
+                          child: ErrorMessageWidget(
+                            error: catalogError,
+                            stackTrace: catalogStackTrace,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+                if (catalogState == null) {
+                  return const SizedBox.shrink();
+                }
                 final content = _buildCatalogContent(
                   context: context,
-                  state: state,
+                  state: catalogState,
                   l10n: l10n,
                   colorScheme: colorScheme,
                   textTheme: textTheme,
@@ -236,32 +286,6 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
 
                 return content;
               },
-              loading: () => CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  SliverFillRemaining(
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        semanticsLabel: l10n.semanticsLoading,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              error: (error, stackTrace) => CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(
-                      child: ErrorMessageWidget(
-                        error: error,
-                        stackTrace: stackTrace,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         );

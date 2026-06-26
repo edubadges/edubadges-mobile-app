@@ -5,6 +5,7 @@ import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/core/utils/string.dart';
+import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
@@ -106,12 +107,12 @@ class BadgeCard extends ConsumerWidget {
               ? colorScheme.surface
               : colorScheme.surfaceContainer,
         ),
-        padding:  const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Row(
           children: [
             ExcludeSemantics(
-              child: Image.network(
-                badgeImageUrl ?? '',
+              child: AppNetworkImage(
+                imageUrl: badgeImageUrl ?? '',
                 height: 64,
                 width: 64,
                 errorBuilder: (context, error, stackTrace) {
@@ -179,8 +180,8 @@ class BadgeCard extends ConsumerWidget {
             const SizedBox(height: 32, width: 32),
             Expanded(
               child: ExcludeSemantics(
-                child: Image.network(
-                  badgeImageUrl ?? '',
+                child: AppNetworkImage(
+                  imageUrl: badgeImageUrl ?? '',
                   height: 100,
                   width: 100,
                   semanticLabel: l10n.semanticsBadgeImage,
@@ -197,7 +198,7 @@ class BadgeCard extends ConsumerWidget {
                 ),
               ),
             ),
-              const SizedBox(height: 32, width: 32),
+            const SizedBox(height: 32, width: 32),
           ],
         ),
         const SizedBox(height: 12),
@@ -247,8 +248,8 @@ class BadgeCard extends ConsumerWidget {
             children: [
               if (institutionImageUrl != null)
                 ExcludeSemantics(
-                  child: Image.network(
-                    institutionImageUrl,
+                  child: AppNetworkImage(
+                    imageUrl: institutionImageUrl,
                     height: 25,
                     width: 25,
                     errorBuilder: (context, error, stackTrace) {
@@ -274,7 +275,7 @@ class BadgeCard extends ConsumerWidget {
           _buildEnrollmentSection(context, ref, l10n, textTheme, colorScheme),
       ],
     );
-    
+
     return KeyboardActivatable(
       enabled: !onTapDisabled,
       onActivate: onTapDisabled ? null : () => _openDetails(context),
