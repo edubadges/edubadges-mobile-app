@@ -7,7 +7,15 @@ import 'package:fresh_dio/fresh_dio.dart';
 final EnvironmentConfig config = EnvironmentConfig.instance;
 final String issuer = config.openIdUrl;
 final String clientId = config.openIdClientId;
-const String redirectUri = 'edubadges://oauth/callback';
+
+// Redirect URIs must match what is registered on SurfConext per client:
+// - prod (`edubadges.mobile`): only accepts the reverse-DNS scheme, since the
+//   SP Dashboard rejects `edubadges://` as "not a proper URL".
+// - test (`edubadges.mobile.test`): has the legacy `edubadges://` scheme
+//   registered.
+final String redirectUri = clientId == 'edubadges.mobile'
+    ? 'mobile.edubadges:/oauth/callback'
+    : 'edubadges://oauth/callback';
 
 class OidcAuthDataSource {
   final FlutterAppAuth _appAuth = const FlutterAppAuth();
