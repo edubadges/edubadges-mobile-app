@@ -30,6 +30,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>edubadges</string>
+				<string>mobile.edubadges</string>
 			</array>
 		</dict>
 	</array>
