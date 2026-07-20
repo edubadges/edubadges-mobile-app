@@ -22,8 +22,15 @@ import 'package:go_router/go_router.dart';
 
 class BadgeClaimSuccessPage extends ConsumerStatefulWidget {
   final String badgeClassId;
+  final VoidCallback? onGoToOverview;
+  final void Function(String nextBadgeId, int count)? onClaimNextBadge;
 
-  const BadgeClaimSuccessPage({super.key, required this.badgeClassId});
+  const BadgeClaimSuccessPage({
+    super.key,
+    required this.badgeClassId,
+    this.onGoToOverview,
+    this.onClaimNextBadge,
+  });
 
   @override
   ConsumerState<BadgeClaimSuccessPage> createState() =>
@@ -127,7 +134,7 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
             opacity: _opacityAnimation,
             child: IconButton(
               icon: const Icon(Icons.close, color: AppColors.primary),
-              onPressed: () => context.go(RoutePath.main),
+              onPressed: widget.onGoToOverview ?? () => context.go(RoutePath.main),
               tooltip: AppLocalizations.of(context).semanticsClose,
             ),
           ),
@@ -255,9 +262,13 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
               .id
               .toString();
           if (nextBadgeId != null) {
-            context.pushReplacement(
-              RoutePath.badgeClaimPath(id: nextBadgeId, remainingCount: count),
-            );
+            if (widget.onClaimNextBadge != null) {
+              widget.onClaimNextBadge!(nextBadgeId, count);
+            } else {
+              context.pushReplacement(
+                RoutePath.badgeClaimPath(id: nextBadgeId, remainingCount: count),
+              );
+            }
           }
         },
         child: Text(
@@ -271,7 +282,7 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
       );
     } else {
       return TextButton(
-        onPressed: () => context.go(RoutePath.main),
+        onPressed: widget.onGoToOverview ?? () => context.go(RoutePath.main),
         child: Text(
           l10n.goToOverview,
           style: theme.textTheme.bodyLarge?.copyWith(

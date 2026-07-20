@@ -1,7 +1,11 @@
+import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
-import 'package:edubadges/core/widgets/max_width_wrapper.dart';
+import 'package:edubadges/core/widgets/page_header.dart';
+import 'package:edubadges/core/widgets/sidebar_list_layout.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
+import 'package:edubadges/features/catalog/domain/entities/catalog_badge.dart';
+import 'package:edubadges/features/catalog/domain/entities/catalog_state.dart';
 import 'package:edubadges/features/catalog/presentation/providers/catalog_providers.dart';
 import 'package:edubadges/features/catalog/presentation/widgets/catalog_badge_card.dart';
 import 'package:edubadges/features/catalog/presentation/widgets/catalog_filters.dart';
@@ -36,182 +40,256 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent * 0.9) {
-      final catalogState = ref.read(catalogProvider);
-      if (catalogState.value?.hasMore == true) {
+      final bool hasMore = ref.read(
+        catalogProvider.select(
+          (asyncValue) => asyncValue.value?.hasMore ?? false,
+        ),
+      );
+      if (hasMore) {
         ref.read(catalogProvider.notifier).loadMore();
       }
     }
   }
 
+  Widget _buildFilters() {
+    return CatalogFilters(
+      onLevelChanged: (institutionType) {
+        ref
+            .read(catalogProvider.notifier)
+            .filterByInstitutionType(institutionType);
+      },
+      onInstitutionChanged: (institutionId) {
+        ref.read(catalogProvider.notifier).filterByInstitution(institutionId);
+      },
+      onSearchSubmitted: (searchText) {
+        ref.read(catalogProvider.notifier).search(searchText);
+      },
+    );
+  }
+
+  List<Widget> _buildBadgeListSlivers({
+    required BuildContext context,
+    required CatalogState state,
+    required AppLocalizations l10n,
+    required ColorScheme colorScheme,
+    required TextTheme textTheme,
+    required bool useSidebarLayout,
+  }) {
+    final displayBadges = state.displayBadges;
+    final horizontalPadding = useSidebarLayout
+        ? 0.0
+        : LayoutConstants.sidebarListLayoutPadding;
+
+    if (displayBadges.isEmpty) {
+      return [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: MergeSemantics(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ExcludeSemantics(
+                    child: Icon(
+                      Icons.search_off,
+                      size: 48,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    state.isSearching
+                        ? l10n.catalogNoSearchResults
+                        : l10n.catalogNoBadgesAvailable,
+                    style: textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ];
+    }
+
+    return [
+      SliverPadding(
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+        sliver: SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            if (index < displayBadges.length) {
+              return _buildBadgeListItem(
+                context: context,
+                badge: displayBadges[index],
+                index: index,
+              );
+            } else if (state.hasMore) {
+              return Padding(
+                padding: const EdgeInsets.all(16),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    semanticsLabel: l10n.semanticsLoading,
+                  ),
+                ),
+              );
+            }
+            return null;
+          }, childCount: displayBadges.length + (state.hasMore ? 1 : 0)),
+        ),
+      ),
+    ];
+  }
+
+  Widget _buildBadgeListItem({
+    required BuildContext context,
+    required CatalogBadge badge,
+    required int index,
+  }) {
+    void openBadgeDetails() {
+      context.push(
+        RoutePath.badgeDetailsLocation(
+          scope: BadgeDetailsScope.public,
+          id: badge.entityId,
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: FocusTraversalOrder(
+        order: NumericFocusOrder(index.toDouble()),
+        child: KeyboardActivatable(
+          key: ValueKey('catalog_badge_${badge.entityId}'),
+          wrapWithSemantics: false,
+          includeOuterTapTarget: false,
+          onActivate: openBadgeDetails,
+          child: CatalogBadgeCard(badge: badge, onTap: openBadgeDetails),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCatalogContent({
+    required BuildContext context,
+    required CatalogState state,
+    required AppLocalizations l10n,
+    required ColorScheme colorScheme,
+    required TextTheme textTheme,
+    required bool useSidebarLayout,
+  }) {
+    return SidebarListLayout(
+      sidebar: _buildFilters(),
+      scrollController: _scrollController,
+      onRefresh: () => ref.read(catalogProvider.notifier).refresh(),
+      useSidebarLayout: useSidebarLayout,
+      slivers: _buildBadgeListSlivers(
+        context: context,
+        state: state,
+        l10n: l10n,
+        colorScheme: colorScheme,
+        textTheme: textTheme,
+        useSidebarLayout: useSidebarLayout,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final catalogAsync = ref.watch(catalogProvider);
+    final CatalogState? catalogState = ref.watch(
+      catalogProvider.select((asyncValue) => asyncValue.asData?.value),
+    );
+    final bool isCatalogLoading = ref.watch(
+      catalogProvider.select(
+        (asyncValue) => asyncValue.isLoading && !asyncValue.hasValue,
+      ),
+    );
+    final Object? catalogError = ref.watch(
+      catalogProvider.select((asyncValue) => asyncValue.error),
+    );
+    final StackTrace? catalogStackTrace = ref.watch(
+      catalogProvider.select((asyncValue) => asyncValue.stackTrace),
+    );
     final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.tabCatalog)),
-      body: GestureDetector(
-        excludeFromSemantics: true,
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: MaxWidthWrapper(
-          child: catalogAsync.when(
-            data: (state) {
-              final displayBadges = state.displayBadges;
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final bool useSidebarLayout =
+            constraints.maxWidth >= LayoutConstants.sidebarListLayoutMinWidth;
 
-              return RefreshIndicator(
-                backgroundColor: colorScheme.surfaceContainer,
-                onRefresh: () async {
-                  await ref.read(catalogProvider.notifier).refresh();
-                },
-                child: CustomScrollView(
-                  controller: _scrollController,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  slivers: [
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 0,
-                        left: 16,
-                        right: 16,
-                        bottom: 16,
-                      ),
-                      child: CatalogFilters(
-                        onLevelChanged: (institutionType) {
-                          ref
-                              .read(catalogProvider.notifier)
-                              .filterByInstitutionType(institutionType);
-                        },
-                        onInstitutionChanged: (institutionId) {
-                          ref
-                              .read(catalogProvider.notifier)
-                              .filterByInstitution(institutionId);
-                        },
-                        onSearchSubmitted: (searchText) {
-                          ref.read(catalogProvider.notifier).search(searchText);
-                        },
-                      ),
-                    ),
-                  ),
-
-                  if (displayBadges.isEmpty)
-                    SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Center(
-                        child: MergeSemantics(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ExcludeSemantics(
-                                child: Icon(
-                                  Icons.search_off,
-                                  size: 48,
-                                  color: colorScheme.primary,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                state.isSearching
-                                    ? l10n.catalogNoSearchResults
-                                    : l10n.catalogNoBadgesAvailable,
-                                style: textTheme.bodyMedium,
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
+        return Scaffold(
+          appBar: useSidebarLayout
+              ? null
+              : AppBar(title: Text(l10n.tabCatalog)),
+          body: GestureDetector(
+            excludeFromSemantics: true,
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: Builder(
+              builder: (BuildContext context) {
+                if (isCatalogLoading) {
+                  return CustomScrollView(
+                    controller: _scrollController,
+                    slivers: [
+                      SliverFillRemaining(
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            semanticsLabel: l10n.semanticsLoading,
                           ),
                         ),
                       ),
-                    )
-                  else
-                    SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            if (index < displayBadges.length) {
-                              final badge = displayBadges[index];
-                              void openBadgeDetails() {
-                                context.push(
-                                  RoutePath.badgeDetailsLocation(
-                                    scope: BadgeDetailsScope.public,
-                                    id: badge.entityId,
-                                  ),
-                                );
-                              }
-
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: FocusTraversalOrder(
-                                  order: NumericFocusOrder(index.toDouble()),
-                                  child: KeyboardActivatable(
-                                    key: ValueKey('catalog_badge_${badge.entityId}'),
-                                    wrapWithSemantics: false,
-                                    includeOuterTapTarget: false,
-                                    onActivate: openBadgeDetails,
-                                    child: CatalogBadgeCard(
-                                      badge: badge,
-                                      onTap: openBadgeDetails,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            } else if (state.hasMore) {
-                              return Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    semanticsLabel: AppLocalizations.of(
-                                      context,
-                                    ).semanticsLoading,
-                                  ),
-                                ),
-                              );
-                            }
-                            return null;
-                          },
-                          childCount:
-                              displayBadges.length + (state.hasMore ? 1 : 0),
+                    ],
+                  );
+                }
+                if (catalogError != null) {
+                  return CustomScrollView(
+                    controller: _scrollController,
+                    slivers: [
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Center(
+                          child: ErrorMessageWidget(
+                            error: catalogError,
+                            stackTrace: catalogStackTrace,
+                          ),
                         ),
                       ),
-                    ),
+                    ],
+                  );
+                }
+                if (catalogState == null) {
+                  return const SizedBox.shrink();
+                }
+                final content = _buildCatalogContent(
+                  context: context,
+                  state: catalogState,
+                  l10n: l10n,
+                  colorScheme: colorScheme,
+                  textTheme: textTheme,
+                  useSidebarLayout: useSidebarLayout,
+                );
 
-                    const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                  ],
-                ),
-              );
-            },
-            loading: () => CustomScrollView(
-              slivers: [
-                SliverFillRemaining(
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      semanticsLabel: AppLocalizations.of(
-                        context,
-                      ).semanticsLoading,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            error: (error, stackTrace) => CustomScrollView(
-              slivers: [
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(
-                    child: ErrorMessageWidget(
-                      error: error,
-                      stackTrace: stackTrace,
-                    ),
-                  ),
-                ),
-              ],
+                if (useSidebarLayout) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      PageHeader(
+                        title: l10n.tabCatalog,
+                        subtitle: l10n.catalogSubtitle,
+                      ),
+                      Expanded(child: content),
+                    ],
+                  );
+                }
+
+                return content;
+              },
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

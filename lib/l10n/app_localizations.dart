@@ -152,17 +152,47 @@ abstract class AppLocalizations {
   /// **'Account'**
   String get tabAccount;
 
+  /// Page subtitle for the account screen on desktop
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your data and settings'**
+  String get accountSubtitle;
+
   /// Navigation tab label for the edubadges section
   ///
   /// In en, this message translates to:
   /// **'Edubadges'**
   String get tabBadges;
 
+  /// Page title for the badges overview screen on desktop
+  ///
+  /// In en, this message translates to:
+  /// **'My Edubadges'**
+  String get badgesOverviewTitle;
+
+  /// Page subtitle for the badges overview screen on desktop
+  ///
+  /// In en, this message translates to:
+  /// **'Overview of your earned and requested edubadges'**
+  String get badgesOverviewSubtitle;
+
   /// Navigation tab label for the catalog section
   ///
   /// In en, this message translates to:
   /// **'Catalog'**
   String get tabCatalog;
+
+  /// Page subtitle for the catalog screen on desktop
+  ///
+  /// In en, this message translates to:
+  /// **'Discover available edubadges per institution'**
+  String get catalogSubtitle;
+
+  /// Placeholder text for the catalog search input field
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name or institution...'**
+  String get catalogSearchPlaceholder;
 
   /// Navigation tab label for the collections section
   ///

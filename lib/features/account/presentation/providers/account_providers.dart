@@ -7,6 +7,7 @@ import 'package:edubadges/features/account/data/repositories/account_repository_
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/features/account/domain/repositories/account_repository.dart';
 import 'package:edubadges/shared/presentation/providers/device_registration_providers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -64,6 +65,9 @@ final notificationEnabledProvider =
 class NotificationEnabledNotifier extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
+    if (kIsWeb) {
+      return false;
+    }
     final active = await ref
         .read(deviceRegistrationServiceProvider)
         .getNotificationActive();
@@ -73,6 +77,9 @@ class NotificationEnabledNotifier extends AsyncNotifier<bool> {
 
   /// Updates the toggle and sends the new [active] value to the backend.
   Future<void> setEnabled(bool enabled) async {
+    if (kIsWeb) {
+      return;
+    }
     final PermissionStatus notification = await Permission.notification.request();
 
     if (notification == PermissionStatus.granted ||

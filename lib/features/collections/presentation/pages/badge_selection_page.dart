@@ -32,7 +32,14 @@ class BadgeSelectionPage extends ConsumerStatefulWidget {
 }
 
 class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
+  final ScrollController _scrollController = ScrollController();
   final Set<String> _selectedBadgeIds = {};
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   void _toggleBadgeSelection(String badgeEntityId) {
     setState(() {
@@ -137,6 +144,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
         ),
       ),
       body: MaxWidthWrapper(
+        scrollController: _scrollController,
         child: Column(
           children: [
             Expanded(
@@ -158,6 +166,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
                   }
 
                   return ListView.builder(
+                    controller: _scrollController,
                     padding: const EdgeInsets.all(16),
                     itemCount: badges.length,
                     itemBuilder: (context, index) {

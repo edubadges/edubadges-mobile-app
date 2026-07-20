@@ -54,12 +54,6 @@
 @import flutter_appauth;
 #endif
 
-#if __has_include(<flutter_native_splash/FlutterNativeSplashPlugin.h>)
-#import <flutter_native_splash/FlutterNativeSplashPlugin.h>
-#else
-@import flutter_native_splash;
-#endif
-
 #if __has_include(<flutter_piwikpro/FlutterPiwikProPlugin.h>)
 #import <flutter_piwikpro/FlutterPiwikProPlugin.h>
 #else
@@ -76,12 +70,6 @@
 #import <package_info_plus/FPPPackageInfoPlusPlugin.h>
 #else
 @import package_info_plus;
-#endif
-
-#if __has_include(<path_provider_foundation/PathProviderPlugin.h>)
-#import <path_provider_foundation/PathProviderPlugin.h>
-#else
-@import path_provider_foundation;
 #endif
 
 #if __has_include(<permission_handler_apple/PermissionHandlerPlugin.h>)
@@ -119,11 +107,9 @@
   [FLTFirebaseCrashlyticsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCrashlyticsPlugin"]];
   [FLTFirebaseMessagingPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseMessagingPlugin"]];
   [FlutterAppauthPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterAppauthPlugin"]];
-  [FlutterNativeSplashPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterNativeSplashPlugin"]];
   [FlutterPiwikProPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterPiwikProPlugin"]];
   [FlutterSecureStorageDarwinPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterSecureStorageDarwinPlugin"]];
   [FPPPackageInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPPackageInfoPlusPlugin"]];
-  [PathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"PathProviderPlugin"]];
   [PermissionHandlerPlugin registerWithRegistrar:[registry registrarForPlugin:@"PermissionHandlerPlugin"]];
   [PointerInterceptorIosPlugin registerWithRegistrar:[registry registrarForPlugin:@"PointerInterceptorIosPlugin"]];
   [SharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferencesPlugin"]];

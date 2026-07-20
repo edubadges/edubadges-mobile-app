@@ -18,8 +18,13 @@ class RoutePath {
   /// Catalog / shared class (badge class id).
   static const String badgePublic = '/public/:id';
 
-  /// Quality assurance details page for a specific badge scope and id.
-  static const String badgeQualityAssurance = '/quality-assurance/:scope/:id';
+  /// Quality assurance details nested under badge detail routes.
+  static const String badgeQualityAssuranceClaimed =
+      '/details/:id/quality-assurance';
+  static const String badgeQualityAssuranceEnrollment =
+      '/enrollment/:id/quality-assurance';
+  static const String badgeQualityAssurancePublic =
+      '/public/:id/quality-assurance';
   static const String catalog = '/catalog';
   static const String account = '/account';
   static const String notificationPermission = '/notification-permission';
@@ -33,6 +38,20 @@ class RoutePath {
 
   /// List of routes that don't require authentication
   static const List<String> publicRoutes = [login];
+
+  /// Returns true when [path] can be accessed without logging in.
+  static bool isPublicPath(String path) {
+    if (publicRoutes.contains(path)) {
+      return true;
+    }
+    if (path.startsWith('/public/')) {
+      return true;
+    }
+    if (path.startsWith('/enrollment/')) {
+      return true;
+    }
+    return false;
+  }
 
   /// List of routes that should redirect logged-in users to their home page.
   static const List<String> redirectRoutesForLoggedInUsers = [login];
@@ -66,7 +85,15 @@ class RoutePath {
     required BadgeDetailsScope scope,
     required String id,
   }) {
-    return '/quality-assurance/${scope.name}/${Uri.encodeComponent(id)}';
+    final encoded = Uri.encodeComponent(id);
+    switch (scope) {
+      case BadgeDetailsScope.claimed:
+        return '/details/$encoded/quality-assurance';
+      case BadgeDetailsScope.enrollment:
+        return '/enrollment/$encoded/quality-assurance';
+      case BadgeDetailsScope.public:
+        return '/public/$encoded/quality-assurance';
+    }
   }
 
   static String collectionPath({
