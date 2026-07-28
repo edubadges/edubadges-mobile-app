@@ -9,14 +9,10 @@ final EnvironmentConfig config = EnvironmentConfig.instance;
 final String issuer = config.openIdUrl;
 final String clientId = config.openIdClientId;
 
-// Redirect URIs must match what is registered on SurfConext per client:
-// - prod (`edubadges.mobile`): only accepts the reverse-DNS scheme, since the
-//   SP Dashboard rejects `edubadges://` as "not a proper URL".
-// - test (`edubadges.mobile.test`): has the legacy `edubadges://` scheme
-//   registered.
-final String redirectUri = clientId == 'edubadges.mobile'
-    ? 'mobile.edubadges:/oauth/callback'
-    : 'edubadges://oauth/callback';
+// Registered on both SurfConext clients. The single slash is the RFC 8252 form
+// for a private-use scheme (no authority); the SP Dashboard rejects the legacy
+// `edubadges://` as "not a proper URL".
+const String redirectUri = 'mobile.edubadges:/oauth/callback';
 
 class OidcAuthDataSource {
   final FlutterAppAuth _appAuth = const FlutterAppAuth();
