@@ -1,3 +1,4 @@
+import 'package:edubadges/core/auth/oidc_error_classifier.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/shared/data/datasources/secure_token_storage.dart';
@@ -100,7 +101,10 @@ class OidcAuthDataSource {
     );
     await _tokenStorage.write(oauth2token);
     await _fresh?.setToken(oauth2token);
-    await _tokenStorage.writeExpiration(expirationDateTime);
+    await _tokenStorage.writeExpiration(
+      expirationDateTime,
+      accessToken: accessToken,
+    );
   }
 
   /// Refreshes the access token when it is near expiry or missing expiration.
@@ -137,7 +141,7 @@ class OidcAuthDataSource {
   Future<void> _refreshTokenIfPossible() async {
     final token = await _tokenStorage.read();
     if (token?.refreshToken == null) {
-      logger.w('Auth: No refresh token, logging out');
+      logger.w('Auth: No refresh token available');
       return;
     }
     try {
@@ -180,26 +184,37 @@ class OidcAuthDataSource {
         ),
       );
       if (result.accessToken != null) {
-        logger.i('Auth: Token refresh successful');
+        logger.i(
+          'Auth: Token refresh successful '
+          '(server returned refresh_token: ${result.refreshToken != null}, '
+          'expires: ${result.accessTokenExpirationDateTime})',
+        );
+        // SurfConext only returns `refresh_token` when rotation is enabled.
+        // Storing null on the responses that omit it would strand the session
+        // at the next expiry, so fall back to the token we just used.
+        final refreshToken = result.refreshToken ?? token.refreshToken;
         final newToken = OAuth2Token(
           accessToken: result.accessToken!,
-          refreshToken: result.refreshToken,
+          refreshToken: refreshToken,
         );
         await _saveTokens(
           result.accessToken!,
-          result.refreshToken,
+          refreshToken,
           result.accessTokenExpirationDateTime,
           result.idToken,
         );
         return newToken;
       } else {
         logger.e('Auth: Token refresh failed - no access token received');
-        await logout();
         throw Exception('Token refresh failed');
       }
     } catch (e) {
-      logger.e('Auth: Token refresh failed', error: e);
-      await logout();
+      if (isPermanentAuthFailure(e)) {
+        logger.e('Auth: Refresh token rejected, clearing session', error: e);
+        await logout();
+      } else {
+        logger.w('Auth: Token refresh failed, keeping session', error: e);
+      }
       rethrow;
     }
   }
