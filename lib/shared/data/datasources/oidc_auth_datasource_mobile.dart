@@ -29,6 +29,11 @@ class OidcAuthDataSource {
     _fresh = fresh;
   }
 
+  /// Mobile completes the flow inline via [login]; there is no browser redirect
+  /// to finish. Present only so the shared web bootstrap type-checks against the
+  /// conditional-export barrel (never invoked on mobile).
+  Future<bool> completeLoginFromRedirect(Uri uri) async => false;
+
   Future<void> login({bool addAcrValues = false}) async {
     try {
       final Map<String, String> additionalParameters = {};

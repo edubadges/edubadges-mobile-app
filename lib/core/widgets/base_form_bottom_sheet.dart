@@ -1,3 +1,4 @@
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 
@@ -40,11 +41,18 @@ class BaseFormBottomSheet extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    // On web this widget is hosted inside a centered dialog rather than a
+    // bottom sheet, so it uses fully rounded corners and hides the drag handle.
+    final bool isDialog = PlatformInfo.isWeb;
+
     return Container(
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainer,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        borderRadius: isDialog
+            ? BorderRadius.circular(28)
+            : const BorderRadius.vertical(top: Radius.circular(28)),
       ),
+      clipBehavior: Clip.antiAlias,
       child: SafeArea(
         child: Padding(
           padding: EdgeInsets.fromLTRB(
@@ -62,17 +70,18 @@ class BaseFormBottomSheet extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
-                    child: Container(
-                      width: 32,
-                      height: 4,
-                      margin: const EdgeInsets.only(bottom: 32),
-                      decoration: BoxDecoration(
-                        color: colorScheme.outline,
-                        borderRadius: BorderRadius.circular(100),
+                  if (!isDialog)
+                    Center(
+                      child: Container(
+                        width: 32,
+                        height: 4,
+                        margin: const EdgeInsets.only(bottom: 32),
+                        decoration: BoxDecoration(
+                          color: colorScheme.outline,
+                          borderRadius: BorderRadius.circular(100),
+                        ),
                       ),
                     ),
-                  ),
                   Center(
                     child: Text(
                       title,

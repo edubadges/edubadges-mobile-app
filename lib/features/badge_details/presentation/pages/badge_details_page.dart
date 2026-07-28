@@ -5,6 +5,7 @@ import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
@@ -163,18 +164,26 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
       padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
       child: Row(
         children: [
-          TextButton.icon(
-            onPressed: _handleBack,
-            icon: Icon(Icons.arrow_back, color: colorScheme.primary, size: 20),
-            label: Text(
-              l10n.semanticsBack,
-              style: textTheme.labelLarge?.copyWith(color: colorScheme.primary),
+          if (PlatformInfo.showInAppBackButton) ...[
+            TextButton.icon(
+              onPressed: _handleBack,
+              icon: Icon(
+                Icons.arrow_back,
+                color: colorScheme.primary,
+                size: 20,
+              ),
+              label: Text(
+                l10n.semanticsBack,
+                style: textTheme.labelLarge?.copyWith(
+                  color: colorScheme.primary,
+                ),
+              ),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+              ),
             ),
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-            ),
-          ),
-          const SizedBox(width: 8),
+            const SizedBox(width: 8),
+          ],
           Expanded(
             child: Text(
               title ?? '',
@@ -351,7 +360,9 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             : _buildSingleBadgeView(useSidebarLayout: useSidebarLayout);
 
         return Scaffold(
-          appBar: useSidebarLayout ? null : _buildBackAppBar(),
+          appBar: (useSidebarLayout || !PlatformInfo.showInAppBackButton)
+              ? null
+              : _buildBackAppBar(),
           body: body,
         );
       },

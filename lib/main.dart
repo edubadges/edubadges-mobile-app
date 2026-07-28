@@ -4,6 +4,7 @@ import 'package:edubadges/app/app.dart';
 import 'package:edubadges/core/analytics/piwik_pro_analytics.dart';
 import 'package:edubadges/core/app_container.dart';
 import 'package:edubadges/core/auth/dev_auth_bootstrap.dart';
+import 'package:edubadges/core/auth/web_auth_bootstrap.dart';
 import 'package:edubadges/core/constants/env_keys.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/constants/route_path.dart';
@@ -119,6 +120,7 @@ void main() async {
   final apiClient = container.read(apiClientProvider);
   await apiClient.init();
   await applyDevAccessTokenIfDefined(container);
+  await completeWebLoginRedirect(container);
   if (!kIsWeb) {
     unawaited(_syncBadgeCountOnStartup(container));
   }

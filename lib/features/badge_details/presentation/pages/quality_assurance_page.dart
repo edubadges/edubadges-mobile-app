@@ -1,5 +1,6 @@
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
@@ -70,19 +71,22 @@ class _QualityAssurancePageState extends ConsumerState<QualityAssurancePage> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go(RoutePath.catalog);
-            }
-          },
-          icon: Icon(
-            Icons.arrow_back,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
+        automaticallyImplyLeading: false,
+        leading: PlatformInfo.showInAppBackButton
+            ? IconButton(
+                onPressed: () {
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    context.go(RoutePath.catalog);
+                  }
+                },
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              )
+            : null,
         title: Text(l10n.qualityAssurance),
         backgroundColor: colorScheme.surfaceContainer,
         surfaceTintColor: colorScheme.surfaceContainer,

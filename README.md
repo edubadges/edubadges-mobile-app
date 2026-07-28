@@ -43,13 +43,11 @@ This application is built to run on the following platforms:
     flutter run -d chrome --dart-define=APP_FLAVOR=dev
     ```
 
-    **Local dev without OIDC login** (debug + non-prod only): pass an access token from another session (e.g. mobile or Postman):
+    **Local dev for web** (
     ```bash
-    flutter run -d chrome \
-      --dart-define=APP_FLAVOR=dev \
-      --dart-define=DEV_ACCESS_TOKEN=your_access_token_here
+   flutter run -d chrome --web-port=8080 --dart-define=APP_FLAVOR=dev
     ```
-    The token is stored with a 24-hour expiration. `Bearer ` prefix is stripped automatically. Not available in release builds or the `prod` flavor.
+  
 
 5.  **Build for web:**
     ```bash
@@ -70,3 +68,6 @@ This application is built to run on the following platforms:
 *   **Environment Variables:** `flutter_dotenv`
 *   **Localization:** `flutter_localizations`
 *   **Vector Graphics:** `flutter_svg`
+
+
+star

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -287,7 +288,14 @@ class _MainPageState extends ConsumerState<MainPage>
                   .toList(),
             ),
           ),
-          Expanded(child: SafeArea(child: widget.navigationShell)),
+          Expanded(
+            child: SafeArea(
+              // On web there is no system inset; the bottom inset otherwise
+              // renders as a background-coloured strip under the side view.
+              bottom: !PlatformInfo.isWeb,
+              child: widget.navigationShell,
+            ),
+          ),
         ],
       ),
     );

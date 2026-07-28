@@ -1,6 +1,7 @@
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/widgets/app_modal.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/badges_overview/domain/entities/badges_overview_state.dart';
@@ -34,10 +35,8 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
   }
 
   void _showFeedbackBottomSheet(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+    showAppFormModal<void>(
+      context,
       useRootNavigator: true,
       builder: (context) => const FeedbackBottomSheet(),
     );

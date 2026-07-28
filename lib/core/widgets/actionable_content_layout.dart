@@ -1,4 +1,5 @@
 import 'package:edubadges/app/colors.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +40,10 @@ class _ActionableContentLayoutState extends State<ActionableContentLayout> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    // On web the browser's back navigation is used, so hide in-app back buttons.
+    final bool showBack =
+        widget.showBackButton && PlatformInfo.showInAppBackButton;
+
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
@@ -51,7 +56,8 @@ class _ActionableContentLayoutState extends State<ActionableContentLayout> {
           maxLines: 2,
         ),
         centerTitle: true,
-        leading: widget.showBackButton
+        automaticallyImplyLeading: false,
+        leading: showBack
             ? IconButton(
                 icon: const Icon(Icons.arrow_back, color: AppColors.primary),
                 onPressed: widget.onBack ?? () => context.pop(),
@@ -59,7 +65,7 @@ class _ActionableContentLayoutState extends State<ActionableContentLayout> {
               )
             : null,
         backgroundColor: colorScheme.surface,
-        actions: widget.showBackButton ? [const SizedBox(width: 56)] : null,
+        actions: showBack ? [const SizedBox(width: 56)] : null,
       ),
       body: MaxWidthWrapper(
         scrollController: _scrollController,

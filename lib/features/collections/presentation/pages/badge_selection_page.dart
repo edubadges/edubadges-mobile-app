@@ -2,9 +2,11 @@ import 'package:collection/collection.dart';
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/error_message.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
+import 'package:edubadges/features/badges_overview/domain/entities/badges_overview_state.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
@@ -129,12 +131,14 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
       backgroundColor: colorScheme.surfaceContainer,
       appBar: AppBar(
         backgroundColor: colorScheme.surfaceContainer,
-
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
-          onPressed: () => context.pop(),
-          tooltip: l10n.semanticsBack,
-        ),
+        automaticallyImplyLeading: false,
+        leading: PlatformInfo.showInAppBackButton
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back, color: AppColors.primary),
+                onPressed: () => context.pop(),
+                tooltip: l10n.semanticsBack,
+              )
+            : null,
         title: Text(
           l10n.addEdubadges,
           style: theme.textTheme.titleLarge?.copyWith(
@@ -143,115 +147,159 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
           ),
         ),
       ),
-      body: MaxWidthWrapper(
-        scrollController: _scrollController,
-        child: Column(
-          children: [
-            Expanded(
-              child: badgesAsync.when(
-                data: (badgesState) {
-                  final badges = [
-                    ...badgesState.claimedBadges,
-                  ];
+      body: _buildBody(context, l10n, theme, colorScheme, badgesAsync),
+    );
+  }
 
-                  if (badges.isEmpty) {
-                    return Center(
-                      child: Text(
-                        l10n.noBadgesAvailable,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    );
-                  }
+  Widget _buildBody(
+    BuildContext context,
+    AppLocalizations l10n,
+    ThemeData theme,
+    ColorScheme colorScheme,
+    AsyncValue<BadgesOverviewState> badgesAsync,
+  ) {
+    final Widget badgeList = badgesAsync.when(
+      data: (badgesState) {
+        final badges = [
+          ...badgesState.claimedBadges,
+        ];
 
-                  return ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(16),
-                    itemCount: badges.length,
-                    itemBuilder: (context, index) {
-                      final badge = badges[index];
-                      final isSelected = _selectedBadgeIds.contains(
-                        badge.entityId,
-                      );
-
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: KeyboardActivatable(
-                          wrapWithSemantics: false,
-                          includeOuterTapTarget: false,
-                          onActivate: () =>
-                              _toggleBadgeSelection(badge.entityId),
-                          child: BadgeCard(
-                            instance: badge,
-                            badgeClass: badge.badgeclass as BadgeClassModel,
-                            style: BadgeCardStyle.small,
-                            isSelected: isSelected,
-                            onTap: () => _toggleBadgeSelection(badge.entityId),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-                loading: () => Center(
-                  child: CircularProgressIndicator(
-                    semanticsLabel: AppLocalizations.of(
-                      context,
-                    ).semanticsLoading,
-                  ),
-                ),
-                error: (error, stackTrace) => Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        l10n.somethingWentWrong,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: colorScheme.error,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () => context.pop(),
-                        child: Text(l10n.goBack),
-                      ),
-                    ],
-                  ),
-                ),
+        if (badges.isEmpty) {
+          return Center(
+            child: Text(
+              l10n.noBadgesAvailable,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: colorScheme.surface,
-                border: Border(
-                  top: BorderSide(color: colorScheme.outlineVariant, width: 1),
+          );
+        }
+
+        return ListView.builder(
+          controller: _scrollController,
+          padding: const EdgeInsets.all(16),
+          itemCount: badges.length,
+          itemBuilder: (context, index) {
+            final badge = badges[index];
+            final isSelected = _selectedBadgeIds.contains(
+              badge.entityId,
+            );
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: KeyboardActivatable(
+                wrapWithSemantics: false,
+                includeOuterTapTarget: false,
+                onActivate: () => _toggleBadgeSelection(badge.entityId),
+                child: BadgeCard(
+                  instance: badge,
+                  badgeClass: badge.badgeclass as BadgeClassModel,
+                  style: BadgeCardStyle.small,
+                  isSelected: isSelected,
+                  onTap: () => _toggleBadgeSelection(badge.entityId),
                 ),
               ),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _handleCreate,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colorScheme.primary,
-                    foregroundColor: colorScheme.onPrimary,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    l10n.add,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: colorScheme.onPrimary,
-                    ),
-                  ),
-                ),
+            );
+          },
+        );
+      },
+      loading: () => Center(
+        child: CircularProgressIndicator(
+          semanticsLabel: AppLocalizations.of(
+            context,
+          ).semanticsLoading,
+        ),
+      ),
+      error: (error, stackTrace) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              l10n.somethingWentWrong,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: colorScheme.error,
               ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => context.pop(),
+              child: Text(l10n.goBack),
             ),
           ],
         ),
+      ),
+    );
+
+    final Widget actionButton = SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: _handleCreate,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        child: Text(
+          l10n.add,
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: colorScheme.onPrimary,
+          ),
+        ),
+      ),
+    );
+
+    // On web the action bar background/border spans the full width while the
+    // button itself stays constrained to the content width (matching the list).
+    if (PlatformInfo.isWeb) {
+      return Column(
+        children: [
+          Expanded(
+            child: MaxWidthWrapper(
+              scrollController: _scrollController,
+              child: badgeList,
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              border: Border(
+                top: BorderSide(color: colorScheme.outlineVariant, width: 1),
+              ),
+            ),
+            child: Center(
+              child: ConstrainedBox(
+                // Matches MaxWidthWrapper's default max content width.
+                constraints: const BoxConstraints(maxWidth: 720),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: actionButton,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return MaxWidthWrapper(
+      scrollController: _scrollController,
+      child: Column(
+        children: [
+          Expanded(child: badgeList),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              border: Border(
+                top: BorderSide(color: colorScheme.outlineVariant, width: 1),
+              ),
+            ),
+            child: actionButton,
+          ),
+        ],
       ),
     );
   }

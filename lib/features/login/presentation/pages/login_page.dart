@@ -4,7 +4,6 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -178,23 +177,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                         const SizedBox(height: 24),
 
-                        if (kIsWeb)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: Text(
-                              'Web login is not yet available.',
-                              style: textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-
                         SizedBox(
                           width: double.infinity,
                           height: 54,
                           child: ElevatedButton(
-                            onPressed: authAsync.isLoading || kIsWeb
+                            onPressed: authAsync.isLoading
                                 ? null
                                 : () async {
                                     await ref

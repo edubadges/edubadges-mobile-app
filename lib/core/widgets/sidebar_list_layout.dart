@@ -1,4 +1,5 @@
 import 'package:edubadges/core/constants/layout_constants.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:flutter/material.dart';
 
 class SidebarListLayout extends StatelessWidget {
@@ -28,8 +29,13 @@ class SidebarListLayout extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     if (useSidebarLayout) {
+      // On web, drop the bottom padding so no background-coloured strip shows
+      // beneath the side view; the trailing sliver still provides scroll spacing.
+      final EdgeInsets outerPadding = PlatformInfo.isWeb
+          ? EdgeInsets.fromLTRB(padding, padding, padding, 0)
+          : EdgeInsets.all(padding);
       return Padding(
-        padding: EdgeInsets.all(padding),
+        padding: outerPadding,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

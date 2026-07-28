@@ -3,6 +3,7 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/image.dart';
+import 'package:edubadges/core/widgets/app_modal.dart';
 import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
@@ -31,13 +32,9 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
   }
 
   void _showCreateCollectionBottomSheet(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      isDismissible: true,
-      enableDrag: true,
-      isScrollControlled: true,
+    showAppFormModal<void>(
+      context,
       useRootNavigator: true,
-      backgroundColor: Colors.transparent,
       builder: (context) => const CreateCollectionBottomSheet(),
     );
   }

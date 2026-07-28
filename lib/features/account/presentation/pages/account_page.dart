@@ -16,6 +16,7 @@ import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
+import 'package:edubadges/features/account/presentation/widgets/agreement_details_view.dart';
 import 'package:edubadges/features/account/presentation/widgets/delete_account_dialog.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
@@ -335,6 +336,30 @@ class _AccountPageState extends ConsumerState<AccountPage> {
         agreement,
         langCode,
       );
+
+      // On web, open the agreement in a dialog instead of a full page.
+      if (kIsWeb) {
+        showDialog<void>(
+          context: context,
+          builder: (dialogContext) => Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            insetPadding: const EdgeInsets.all(24),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: 560,
+                maxHeight: MediaQuery.sizeOf(dialogContext).height * 0.9,
+              ),
+              child: AgreementDetailsView(
+                agreement: agreementModel,
+                isDialog: true,
+              ),
+            ),
+          ),
+        );
+        return;
+      }
+
       context.push(
         RoutePath.agreementDetailsPath(
           agreementId: agreementModel.agreementId,

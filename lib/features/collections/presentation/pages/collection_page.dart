@@ -3,7 +3,9 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
+import 'package:edubadges/core/widgets/app_modal.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/debug_error_log_button.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
@@ -355,12 +357,18 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
           backgroundColor: colorScheme.surface,
           appBar: AppBar(
             centerTitle: false,
-            titleSpacing: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.primary),
-              onPressed: () => context.pop(),
-              tooltip: l10n.semanticsBack,
-            ),
+            titleSpacing: PlatformInfo.showInAppBackButton ? 0 : 16,
+            automaticallyImplyLeading: false,
+            leading: PlatformInfo.showInAppBackButton
+                ? IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: AppColors.primary,
+                    ),
+                    onPressed: () => context.pop(),
+                    tooltip: l10n.semanticsBack,
+                  )
+                : null,
             title: Text(
               collectionTitle,
               style: theme.textTheme.titleLarge?.copyWith(
@@ -378,12 +386,8 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                         final foundCollection = collections.firstWhere(
                           (c) => c.entityId == collection.id,
                         );
-                        await showModalBottomSheet<void>(
-                          context: context,
-                          isDismissible: true,
-                          enableDrag: true,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
+                        await showAppFormModal<void>(
+                          context,
                           builder: (context) => EditCollectionBottomSheet(
                             collection: foundCollection,
                           ),
