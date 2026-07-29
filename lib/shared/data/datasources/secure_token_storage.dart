@@ -44,14 +44,48 @@ class SecureTokenStorage implements TokenStorage<OAuth2Token> {
     await _storage.write(key: _tokenKey, value: json.encode(data));
   }
   
-  Future<void> writeExpiration(DateTime? expirationDateTime) async {
-    if (expirationDateTime != null) {
+  /// Stores when the access token expires.
+  ///
+  /// When the authorization server omits `expires_in`, falls back to the `exp`
+  /// claim of [accessToken]. Without a known expiry every read counts as
+  /// expired, which triggers a refresh on each call.
+  Future<void> writeExpiration(
+    DateTime? expirationDateTime, {
+    String? accessToken,
+  }) async {
+    final expiration = expirationDateTime ??
+        (accessToken != null ? _expirationFromJwt(accessToken) : null);
+
+    if (expiration != null) {
       await _storage.write(
         key: _expirationKey,
-        value: expirationDateTime.toIso8601String(),
+        value: expiration.toIso8601String(),
       );
     } else {
       await _storage.delete(key: _expirationKey);
+    }
+  }
+
+  /// Returns null for opaque tokens, which the OAuth 2 spec permits.
+  static DateTime? _expirationFromJwt(String token) {
+    final parts = token.split('.');
+    if (parts.length != 3) return null;
+
+    try {
+      final payload = json.decode(
+        utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
+      );
+      if (payload is! Map) return null;
+
+      final exp = payload['exp'];
+      if (exp is! num) return null;
+
+      return DateTime.fromMillisecondsSinceEpoch(
+        exp.toInt() * 1000,
+        isUtc: true,
+      ).toLocal();
+    } catch (e) {
+      return null;
     }
   }
   

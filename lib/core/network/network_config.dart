@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:edubadges/core/auth/oidc_error_classifier.dart';
 import 'package:edubadges/core/network/auth_error_constants.dart';
 import 'package:edubadges/core/network/interceptors/header_interceptor.dart';
 import 'package:edubadges/core/network/interceptors/logging_interceptor.dart';
@@ -140,7 +141,13 @@ class NetworkConfig {
           try {
             return await onRefreshToken!();
           } catch (e) {
-            throw RevokeTokenException();
+            // Revoking clears the stored token, so reserve it for grants the
+            // server has definitively rejected. Transient failures propagate
+            // as-is and leave the session intact.
+            if (isPermanentAuthFailure(e)) {
+              throw RevokeTokenException();
+            }
+            rethrow;
           }
         },
       );
