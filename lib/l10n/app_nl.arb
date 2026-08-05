@@ -1,19 +1,19 @@
 {
     "@@locale": "nl",
-    "@@last_modified": "2026-01-12T10:13:17+01:00",
+    "@@last_modified": "2026-07-22T11:46:54+02:00",
     "appName": "Edubadges",
     "@appName": {
         "description": "The name of the application displayed throughout the app"
     },
-    "loginCardButton": "Ga naar mijn edubadges",
+    "loginCardButton": "Ga naar je backpack",
     "@loginCardButton": {
         "description": "Button text on the login card to navigate to the user's edubadges"
     },
-    "loginCardText": "Mijn badges is de plek om edubadges te ontvangen en verzamelen. Een eduID is nodig om 'mijn badges' aan te maken en te gebruiken. Het maken van een eduID duurt minder dan 30 seconden.",
+    "loginCardText": "Je backpack is de plek waar je jouw edubadges kunt ontvangen, beheren en delen.\n\nOm in te loggen op je backpack heb je een eduID nodig. Klik op de onderstaande knop en log in met je eduID.\n\nHeb je nog geen eduID? Dan kun je eenvoudig een eduID aanmaken.",
     "@loginCardText": {
         "description": "Explanatory text on the login card describing the app and eduID requirement"
     },
-    "loginSubtitle": "Edubadges zijn digitale certificaten die aantonen welke kennis of vaardigheden iemand heeft opgedaan, binnen of buiten het formele onderwijs.",
+    "loginSubtitle": "Edubadges zijn digitale certificaten die aantonen welke kennis en vaardigheden iemand heeft opgedaan, binnen of buiten het formele onderwijs.",
     "@loginSubtitle": {
         "description": "Subtitle on the login page explaining what edubadges are"
     },
@@ -109,7 +109,7 @@
     "@save": {
         "description": "Button text to save changes or create new items"
     },
-    "cancel": "Annuleren",
+    "cancel": "Annuleer",
     "@cancel": {
         "description": "Button text to cancel an action or close a dialog"
     },
@@ -200,7 +200,7 @@
             }
         }
     },
-    "notificationSettings": "Notificatieinstellingen",
+    "notificationSettings": "Notificatie-instellingen",
     "@notificationSettings": {
         "description": "Section header or link text for notification settings"
     },
@@ -252,7 +252,7 @@
     "@deleteAccount": {
         "description": "Section header or button text for account deletion"
     },
-    "deleteAccountDescription": "Je kunt je edubadges account verwijderen als je dat wilt.\n\nWees je dan wel bewust dat hierna al je edubadges niet meer gevalideerd kunnen worden. Het verwijderen van je edubadges account betekent overigens niet dat je eduID ook verwijderd wordt.\n\nOm het proces van het verwijderen van je edubadges account te voltooien, moet je je browser sluiten nadat je account is verwijderd.",
+    "deleteAccountDescription": "Je kunt je edubadges-account verwijderen als je dat wilt.\n\nHoud er rekening mee dat wanneer je je account verwijdert, ook al je behaalde edubadges worden verwijderd. \nEdubadges die je eerder hebt gedeeld, kunnen daarna niet meer worden geverifieerd.\n\nHet verwijderen van je account is definitief en kan niet ongedaan worden gemaakt.",
     "@deleteAccountDescription": {
         "description": "Detailed description explaining the consequences of deleting an edubadges account"
     },
