@@ -12,15 +12,15 @@ class AppLocalizationsNl extends AppLocalizations {
   String get appName => 'Edubadges';
 
   @override
-  String get loginCardButton => 'Ga naar mijn edubadges';
+  String get loginCardButton => 'Ga naar je backpack';
 
   @override
   String get loginCardText =>
-      'Mijn badges is de plek om edubadges te ontvangen en verzamelen. Een eduID is nodig om \'mijn badges\' aan te maken en te gebruiken. Het maken van een eduID duurt minder dan 30 seconden.';
+      'Je backpack is de plek waar je jouw edubadges kunt ontvangen, beheren en delen.\n\nOm in te loggen op je backpack heb je een eduID nodig. Klik op de onderstaande knop en log in met je eduID.\n\nHeb je nog geen eduID? Dan kun je eenvoudig een eduID aanmaken.';
 
   @override
   String get loginSubtitle =>
-      'Edubadges zijn digitale certificaten die aantonen welke kennis of vaardigheden iemand heeft opgedaan, binnen of buiten het formele onderwijs.';
+      'Edubadges zijn digitale certificaten die aantonen welke kennis en vaardigheden iemand heeft opgedaan, binnen of buiten het formele onderwijs.';
 
   @override
   String get loginTitle => 'Never stop learning';
@@ -94,7 +94,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get save => 'Opslaan';
 
   @override
-  String get cancel => 'Annuleren';
+  String get cancel => 'Annuleer';
 
   @override
   String get collectionNameRequired => 'Naam is verplicht';
@@ -169,7 +169,7 @@ class AppLocalizationsNl extends AppLocalizations {
   }
 
   @override
-  String get notificationSettings => 'Notificatieinstellingen';
+  String get notificationSettings => 'Notificatie-instellingen';
 
   @override
   String get generalNotifications => 'Algemene meldingen';
@@ -212,7 +212,7 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get deleteAccountDescription =>
-      'Je kunt je edubadges account verwijderen als je dat wilt.\n\nWees je dan wel bewust dat hierna al je edubadges niet meer gevalideerd kunnen worden. Het verwijderen van je edubadges account betekent overigens niet dat je eduID ook verwijderd wordt.\n\nOm het proces van het verwijderen van je edubadges account te voltooien, moet je je browser sluiten nadat je account is verwijderd.';
+      'Je kunt je edubadges-account verwijderen als je dat wilt.\n\nHoud er rekening mee dat wanneer je je account verwijdert, ook al je behaalde edubadges worden verwijderd. \nEdubadges die je eerder hebt gedeeld, kunnen daarna niet meer worden geverifieerd.\n\nHet verwijderen van je account is definitief en kan niet ongedaan worden gemaakt.';
 
   @override
   String get deleteMyAccount => 'Verwijder mijn account';

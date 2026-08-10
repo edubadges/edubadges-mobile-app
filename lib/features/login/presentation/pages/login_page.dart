@@ -186,11 +186,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             onPressed: authAsync.isLoading
                                 ? null
                                 : () async {
-                                    await ref
+                                    final success = await ref
                                         .read(authProvider.notifier)
                                         .login();
 
-                                    if (context.mounted) {
+                                    if (context.mounted && success) {
                                       context.go(
                                         RoutePath.notificationPermission,
                                       );
