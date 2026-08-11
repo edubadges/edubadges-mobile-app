@@ -54,6 +54,12 @@ class RoutePath {
     if (path.startsWith('/enrollment/')) {
       return true;
     }
+    // Legacy quality assurance URLs redirect to the canonical routes, so their
+    // anonymous scopes must stay reachable without logging in.
+    if (path.startsWith('/quality-assurance/public/') ||
+        path.startsWith('/quality-assurance/enrollment/')) {
+      return true;
+    }
     return false;
   }
 

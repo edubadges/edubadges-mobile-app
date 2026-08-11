@@ -55,10 +55,18 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
     super.dispose();
   }
 
+  /// Called from `build`, so the notifier is only updated after the current
+  /// frame and never while the widget tree is being built.
   void _syncPublicNotifier(bool isPublic) {
-    if (_publicNotifier.value != isPublic) {
-      _publicNotifier.value = isPublic;
+    if (_publicNotifier.value == isPublic) {
+      return;
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _publicNotifier.value = isPublic;
+    });
   }
 
   Widget _buildVisibilitySection(
@@ -489,85 +497,83 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
           ),
           body: collectionsAsync.when(
             data: (collections) {
-              try {
-                final foundCollection = collections.firstWhere(
-                  (c) => c.entityId == collection.id,
+              final foundCollection = collections.firstWhereOrNull(
+                (c) => c.entityId == collection.id,
+              );
+
+              if (foundCollection == null) {
+                return const ErrorMessageWidget();
+              }
+
+              _syncPublicNotifier(foundCollection.public);
+
+              final badges = foundCollection.badgeInstances ?? [];
+
+              if (badges.isEmpty) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: _buildEmptyState(
+                    context,
+                    MediaQuery.of(context).size.width,
+                    collectionDescription: foundCollection.description,
+                  ),
                 );
+              }
 
-                _syncPublicNotifier(foundCollection.public);
-
-                final badges = foundCollection.badgeInstances ?? [];
-
-                if (badges.isEmpty) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: _buildEmptyState(
+              return SidebarListLayout(
+                sidebar: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildCollectionDescription(
                       context,
-                      MediaQuery.of(context).size.width,
-                      collectionDescription: foundCollection.description,
+                      foundCollection.description,
                     ),
-                  );
-                }
-
-                return SidebarListLayout(
-                  sidebar: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildCollectionDescription(
+                    _buildVisibilitySection(
+                      context,
+                      ref,
+                      foundCollection,
+                      badges,
+                      _publicNotifier,
+                    ),
+                  ],
+                ),
+                scrollController: _scrollController,
+                onRefresh: () async {
+                  return await ref.read(collectionsProvider.notifier).refresh();
+                },
+                slivers: [
+                  if (!isLargeScreen) ...[
+                    SliverToBoxAdapter(
+                      child: _buildCollectionDescription(
                         context,
                         foundCollection.description,
                       ),
-                      _buildVisibilitySection(
+                    ),
+                    SliverToBoxAdapter(
+                      child: _buildVisibilitySection(
                         context,
                         ref,
                         foundCollection,
                         badges,
                         _publicNotifier,
                       ),
-                    ],
-                  ),
-                  scrollController: _scrollController,
-                  onRefresh: () async {
-                    return await ref
-                        .read(collectionsProvider.notifier)
-                        .refresh();
-                  },
-                  slivers: [
-                    if (!isLargeScreen) ...[
-                      SliverToBoxAdapter(
-                        child: _buildCollectionDescription(
-                          context,
-                          foundCollection.description,
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: _buildVisibilitySection(
-                          context,
-                          ref,
-                          foundCollection,
-                          badges,
-                          _publicNotifier,
-                        ),
-                      ),
-                    ],
-                    ...badges.map(
-                      (badge) => SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 16),
-                          child: BadgeCard(
-                            instance: badge,
-                            badgeClass: badge.badgeclass as BadgeClassModel,
-                            style: BadgeCardStyle.large,
-                          ),
+                    ),
+                  ],
+                  ...badges.map(
+                    (badge) => SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: BadgeCard(
+                          instance: badge,
+                          badgeClass: badge.badgeclass as BadgeClassModel,
+                          style: BadgeCardStyle.large,
                         ),
                       ),
                     ),
-                  ],
-                  useSidebarLayout: isLargeScreen,
-                );
-              } catch (e, stackTrace) {
-                return ErrorMessageWidget(error: e, stackTrace: stackTrace);
-              }
+                  ),
+                ],
+                useSidebarLayout: isLargeScreen,
+              );
             },
             loading: () => Center(
               child: CircularProgressIndicator(

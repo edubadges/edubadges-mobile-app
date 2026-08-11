@@ -125,16 +125,19 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
   }
 
   Future<void> _refreshBadgeDetails(String badgeId) async {
-    ref.invalidate(
-      badgeDetailsModelProvider(
-        BadgeDetailsQuery(
-          scope: _shouldShowCarousel
-              ? BadgeDetailsScope.claimed
-              : widget.badge.scope,
-          entityId: badgeId,
-        ),
-      ),
+    final query = BadgeDetailsQuery(
+      scope: _shouldShowCarousel
+          ? BadgeDetailsScope.claimed
+          : widget.badge.scope,
+      entityId: badgeId,
     );
+    ref.invalidate(badgeDetailsModelProvider(query));
+    try {
+      // Keep the refresh indicator up until the details are loaded again.
+      await ref.read(badgeDetailsModelProvider(query).future);
+    } catch (_) {
+      // The watched provider renders the failure state.
+    }
   }
 
   EdgeInsets _sectionMargin(bool useSidebarLayout) {

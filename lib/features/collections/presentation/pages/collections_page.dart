@@ -265,6 +265,7 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
                   },
                   loading: () => [
                     SliverFillRemaining(
+                      hasScrollBody: false,
                       child: Center(
                         child: CircularProgressIndicator(
                           semanticsLabel: l10n.semanticsLoading,

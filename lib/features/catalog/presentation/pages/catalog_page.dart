@@ -209,14 +209,16 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    // Failures that kept the loaded catalog are surfaced as a snackbar; a
+    // failure without data renders ErrorMessageWidget instead.
     ref.listen<AsyncValue<CatalogState>>(catalogProvider, (previous, next) {
-      next.whenOrNull(
-        error: (error, stackTrace) {
-          if (previous?.hasValue == true && context.mounted) {
-            showAppSnackBar(context, l10n.somethingWentWrong);
-          }
-        },
-      );
+      final CatalogFailure? failure = next.value?.failure;
+      if (failure == null || failure == previous?.value?.failure) {
+        return;
+      }
+      if (context.mounted) {
+        showAppSnackBar(context, l10n.somethingWentWrong);
+      }
     });
 
     return LayoutBuilder(
