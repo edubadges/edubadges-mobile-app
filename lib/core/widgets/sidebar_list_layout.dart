@@ -39,7 +39,10 @@ class SidebarListLayout extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(width: sidebarWidth, child: sidebar),
+            SizedBox(
+              width: sidebarWidth,
+              child: SingleChildScrollView(child: sidebar),
+            ),
             SizedBox(width: columnGap),
             Expanded(
               child: RefreshIndicator(

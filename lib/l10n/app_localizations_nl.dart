@@ -44,7 +44,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get tabBadges => 'Edubadges';
 
   @override
-  String get badgesOverviewTitle => 'Mijn Edubadges';
+  String get badgesOverviewTitle => 'Mijn edubadges';
 
   @override
   String get badgesOverviewSubtitle =>

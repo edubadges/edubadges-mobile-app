@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:edubadges/core/network/auth_error_constants.dart';
 import 'package:edubadges/core/network/interceptors/header_interceptor.dart';
@@ -117,7 +115,6 @@ class NetworkConfig {
       _fresh = Fresh.oAuth2(
         tokenStorage: tokenStorage!,
         tokenHeader: (token) {
-          log(token.accessToken);
           return {'Authorization': 'Bearer ${token.accessToken}'};
         },
         shouldRefresh: (response) {

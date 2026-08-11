@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
@@ -37,13 +38,27 @@ class CollectionPage extends ConsumerStatefulWidget {
 
 class _CollectionPageState extends ConsumerState<CollectionPage> {
   final ScrollController _scrollController = ScrollController();
+  late final ValueNotifier<bool> _publicNotifier;
 
   CollectionRouteModel get collection => widget.collection;
 
   @override
+  void initState() {
+    super.initState();
+    _publicNotifier = ValueNotifier<bool>(false);
+  }
+
+  @override
   void dispose() {
+    _publicNotifier.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _syncPublicNotifier(bool isPublic) {
+    if (_publicNotifier.value != isPublic) {
+      _publicNotifier.value = isPublic;
+    }
   }
 
   Widget _buildVisibilitySection(
@@ -351,7 +366,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         final bool isLargeScreen =
-            constraints.maxWidth >= LayoutConstants.badgesOverviewGridMinWidth;
+            constraints.maxWidth >= LayoutConstants.sidebarListLayoutMinWidth;
 
         return Scaffold(
           backgroundColor: colorScheme.surface,
@@ -441,15 +456,16 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                           return;
                         }
 
-                        final foundCollection = collections.firstWhere(
+                        final foundCollection = collections.firstWhereOrNull(
                           (c) => c.entityId == collection.id,
-                          orElse: () {
-                            if (context.mounted && context.canPop()) {
-                              context.pop();
-                            }
-                            throw StateError('Collection not found');
-                          },
                         );
+
+                        if (foundCollection == null) {
+                          if (context.mounted && context.canPop()) {
+                            context.pop();
+                          }
+                          return;
+                        }
 
                         final success = await ref
                             .read(collectionsProvider.notifier)
@@ -478,10 +494,9 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                   (c) => c.entityId == collection.id,
                 );
 
+                _syncPublicNotifier(foundCollection.public);
+
                 final badges = foundCollection.badgeInstances ?? [];
-                final publicNotifier = ValueNotifier<bool>(
-                  foundCollection.public,
-                );
 
                 if (badges.isEmpty) {
                   return Padding(
@@ -507,7 +522,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                         ref,
                         foundCollection,
                         badges,
-                        publicNotifier,
+                        _publicNotifier,
                       ),
                     ],
                   ),
@@ -519,16 +534,20 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                   },
                   slivers: [
                     if (!isLargeScreen) ...[
-                      _buildCollectionDescription(
-                        context,
-                        foundCollection.description,
+                      SliverToBoxAdapter(
+                        child: _buildCollectionDescription(
+                          context,
+                          foundCollection.description,
+                        ),
                       ),
-                      _buildVisibilitySection(
-                        context,
-                        ref,
-                        foundCollection,
-                        badges,
-                        publicNotifier,
+                      SliverToBoxAdapter(
+                        child: _buildVisibilitySection(
+                          context,
+                          ref,
+                          foundCollection,
+                          badges,
+                          _publicNotifier,
+                        ),
                       ),
                     ],
                     ...badges.map(

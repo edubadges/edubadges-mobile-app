@@ -147,10 +147,9 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
               (_) {
                 if (mounted) {
                   ref.read(badgesOverviewProvider.notifier).refresh();
-                  Navigator.of(context).pop();
                   if (widget.onClose != null) {
                     widget.onClose!();
-                  } else {
+                  } else if (Navigator.of(context).canPop()) {
                     Navigator.of(context).pop();
                   }
                 }
@@ -350,7 +349,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         : null;
 
     final screenWidth = MediaQuery.of(context).size.width;
-    final imageSize = screenWidth * 180 / 393;
+    final imageSize = (screenWidth * 180 / 393).clamp(0.0, 200.0);
 
     return MergeSemantics(
       child: Column(
@@ -358,27 +357,21 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         children: [
           if (badgeImageUrl != null)
             ExcludeSemantics(
-              child: Container(
-                constraints: const BoxConstraints(
-                  maxWidth: 200,
-                  maxHeight: 200,
-                ),
-                child: AppNetworkImage(
-                  imageUrl: badgeImageUrl,
-                  height: imageSize,
-                  width: imageSize,
-                  semanticLabel: l10n.semanticsBadgeImage,
-                  errorBuilder: (context, error, stackTrace) {
-                    return SizedBox(
-                      height: imageSize,
-                      width: imageSize,
-                      child: Icon(
-                        Icons.image_not_supported_outlined,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    );
-                  },
-                ),
+              child: AppNetworkImage(
+                imageUrl: badgeImageUrl,
+                height: imageSize,
+                width: imageSize,
+                semanticLabel: l10n.semanticsBadgeImage,
+                errorBuilder: (context, error, stackTrace) {
+                  return SizedBox(
+                    height: imageSize,
+                    width: imageSize,
+                    child: Icon(
+                      Icons.image_not_supported_outlined,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  );
+                },
               ),
             ),
           const SizedBox(height: 12),

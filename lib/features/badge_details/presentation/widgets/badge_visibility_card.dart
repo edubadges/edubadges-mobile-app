@@ -96,53 +96,60 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
       },
     );
 
-    final Widget shareButtons = Column(
-      children: [
-        if (widget.showCopyLink && isPublic)
-          WideButton(
-            text: l10n.copyLink,
-            icon: Icon(
-              Icons.copy,
-              size: 20,
-              color: getContrastingTextColor(colorScheme.primary),
-            ),
-            color: colorScheme.primary,
-            onTap: () async {
-              final String link = createBadgeInstanceLink(
-                widget.badge.entityId,
-                ref,
-              );
+    final bool hasCopyLinkOption = widget.showCopyLink && isPublic;
+    final bool hasLinkedInOption =
+        widget.showCopyLink &&
+        widget.badge.linkedinUrl != null &&
+        isPublic;
+    final bool hasShareOptions = hasCopyLinkOption || hasLinkedInOption;
 
-              await Clipboard.setData(ClipboardData(text: link));
+    final Widget? shareButtons = hasShareOptions
+        ? Column(
+            children: [
+              if (hasCopyLinkOption)
+                WideButton(
+                  text: l10n.copyLink,
+                  icon: Icon(
+                    Icons.copy,
+                    size: 20,
+                    color: getContrastingTextColor(colorScheme.primary),
+                  ),
+                  color: colorScheme.primary,
+                  onTap: () async {
+                    final String link = createBadgeInstanceLink(
+                      widget.badge.entityId,
+                      ref,
+                    );
 
-              if (context.mounted) {
-                showAppSnackBar(context, l10n.badgeLinkCopied);
-              }
-            },
-          ),
-        if (widget.showCopyLink &&
-            widget.badge.linkedinUrl != null &&
-            isPublic) ...[
-          const SizedBox(height: 8),
-          WideButton(
-            text: linkedinBrand,
-            icon: SvgPicture.asset(
-              Assets.imageLinkedInLogo,
-              height: 18,
-              width: 18,
-            ),
-            color: linkedinBrandColor,
-            secondary: true,
-            onTap: () {
-              launchUrlString(
-                widget.badge.linkedinUrl!,
-                mode: LaunchMode.externalApplication,
-              );
-            },
-          ),
-        ],
-      ],
-    );
+                    await Clipboard.setData(ClipboardData(text: link));
+
+                    if (context.mounted) {
+                      showAppSnackBar(context, l10n.badgeLinkCopied);
+                    }
+                  },
+                ),
+              if (hasLinkedInOption) ...[
+                const SizedBox(height: 8),
+                WideButton(
+                  text: linkedinBrand,
+                  icon: SvgPicture.asset(
+                    Assets.imageLinkedInLogo,
+                    height: 18,
+                    width: 18,
+                  ),
+                  color: linkedinBrandColor,
+                  secondary: true,
+                  onTap: () {
+                    launchUrlString(
+                      widget.badge.linkedinUrl!,
+                      mode: LaunchMode.externalApplication,
+                    );
+                  },
+                ),
+              ],
+            ],
+          )
+        : null;
 
     final Widget content = Column(
       spacing: 16,
@@ -178,7 +185,7 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
             visibilityToggle,
           ],
         ),
-        shareButtons,
+        ?shareButtons,
       ],
     );
 

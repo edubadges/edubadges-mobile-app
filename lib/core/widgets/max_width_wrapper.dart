@@ -3,18 +3,20 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class MaxWidthWrapper extends StatefulWidget {
+  static const double defaultMaxWidth = 720.0;
+
   final Widget child;
   final double maxWidth;
   final bool captureOutsideScrolling;
   final ScrollController? scrollController;
 
-  @visibleForTesting
+  /// When non-null, overrides [PlatformInfo.isWeb] for scrollbar rendering.
   final bool? enableWebScrollbar;
 
   const MaxWidthWrapper({
     super.key,
     required this.child,
-    this.maxWidth = 720.0,
+    this.maxWidth = defaultMaxWidth,
     this.captureOutsideScrolling = true,
     this.scrollController,
     this.enableWebScrollbar,
@@ -42,6 +44,17 @@ class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
 
   bool get _useWebScrollbar =>
       widget.enableWebScrollbar ?? PlatformInfo.isWeb;
+
+  @override
+  void didUpdateWidget(covariant MaxWidthWrapper oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.scrollController != widget.scrollController) {
+      _discoveredScrollController = null;
+      _activeScrollPosition = null;
+      _isScrollbarReady = false;
+      _didInitializeScrollState = false;
+    }
+  }
 
   @override
   void dispose() {
@@ -139,8 +152,13 @@ class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
 
   ScrollPosition? _resolveScrollPosition(ScrollController scrollController) {
     final ScrollPosition? cached = _activeScrollPosition;
-    if (cached != null && cached.hasContentDimensions) {
-      return cached;
+    if (cached != null) {
+      if (cached.hasContentDimensions &&
+          scrollController.hasClients &&
+          identical(cached, scrollController.position)) {
+        return cached;
+      }
+      _activeScrollPosition = null;
     }
     if (scrollController.hasClients) {
       final ScrollPosition position = scrollController.position;
@@ -186,16 +204,10 @@ class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
     if (targetPixels == position.pixels) {
       return;
     }
-    if (position.context.notificationContext != null) {
-      position.pointerScroll(delta);
+    if (position.context.notificationContext == null) {
       return;
     }
-    if (position is ScrollPositionWithSingleContext) {
-      position.goIdle();
-      // Scrollable notification context is not ready yet; update pixels directly.
-      // ignore: invalid_use_of_protected_member
-      position.forcePixels(targetPixels);
-    }
+    position.pointerScroll(delta);
   }
 
   void _handleMarginPointerScroll({

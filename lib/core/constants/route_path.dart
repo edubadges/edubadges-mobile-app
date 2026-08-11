@@ -25,6 +25,10 @@ class RoutePath {
       '/enrollment/:id/quality-assurance';
   static const String badgeQualityAssurancePublic =
       '/public/:id/quality-assurance';
+
+  /// Legacy quality assurance path; redirects to the nested canonical routes.
+  static const String badgeQualityAssuranceLegacy =
+      '/quality-assurance/:scope/:id';
   static const String catalog = '/catalog';
   static const String account = '/account';
   static const String notificationPermission = '/notification-permission';

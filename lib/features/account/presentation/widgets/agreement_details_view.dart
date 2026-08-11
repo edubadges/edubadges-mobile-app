@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/errors/failures.dart';
@@ -74,7 +76,7 @@ class _AgreementDetailsViewState extends ConsumerState<AgreementDetailsView> {
         showAppSnackBar(context, message);
       },
       (_) {
-        ref.read(profileProvider.notifier).refresh();
+        unawaited(ref.read(profileProvider.notifier).refresh());
         if (!context.mounted) return;
         // Show before closing: the messenger lives above the dialog/page so
         // the snackbar persists once this view is dismissed.
@@ -167,9 +169,8 @@ class _AgreementDetailsViewState extends ConsumerState<AgreementDetailsView> {
           ),
         ),
       ),
-      if (widget.agreement.textUrlShort?.isEmpty == true)
+      if (!(widget.agreement.textUrlShort?.trim().isEmpty ?? true)) ...[
         const SizedBox(height: 12),
-      if (widget.agreement.textUrlShort?.isEmpty != true)
         TextButton(
           onPressed: () {
             setState(() {
@@ -184,6 +185,7 @@ class _AgreementDetailsViewState extends ConsumerState<AgreementDetailsView> {
             ),
           ),
         ),
+      ],
     ];
 
     if (!widget.isDialog) {

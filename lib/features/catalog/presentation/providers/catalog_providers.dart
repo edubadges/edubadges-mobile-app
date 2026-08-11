@@ -21,6 +21,10 @@ final catalogProvider = AsyncNotifierProvider<CatalogNotifier, CatalogState>(
 );
 
 class CatalogNotifier extends AsyncNotifier<CatalogState> {
+  bool _isLoadingMore = false;
+
+  bool get isLoadingMore => _isLoadingMore;
+
   @override
   Future<CatalogState> build() async {
     return _loadCatalogBadges(page: 1);
@@ -55,49 +59,72 @@ class CatalogNotifier extends AsyncNotifier<CatalogState> {
   }
 
   Future<void> loadMore() async {
+    if (_isLoadingMore) return;
+
     final currentState = state.value;
     if (currentState == null || !currentState.hasMore) return;
 
-    final repository = ref.read(catalogRepositoryProvider);
-    final nextPage = currentState.currentPage + 1;
+    _isLoadingMore = true;
+    try {
+      final repository = ref.read(catalogRepositoryProvider);
+      final nextPage = currentState.currentPage + 1;
 
-    if (currentState.isSearching) {
-      final result = await repository.getCatalogBadges(
-        search: currentState.searchTerm,
-        institutionType: currentState.selectedInstitutionType,
-        institutionId: currentState.selectedInstitutionId,
-        page: nextPage,
-      );
-
-      result.fold((failure) => throw failure, (response) {
-        state = AsyncData(
-          currentState.copyWith(
-            badges: [...currentState.badges, ...response.results],
-            hasMore: response.hasMore,
-            currentPage: nextPage,
-            totalCount: response.count,
-          ),
+      if (currentState.isSearching) {
+        final result = await repository.getCatalogBadges(
+          search: currentState.searchTerm,
+          institutionType: currentState.selectedInstitutionType,
+          institutionId: currentState.selectedInstitutionId,
+          page: nextPage,
         );
-      });
-    } else {
-      final result = await repository.getCatalogBadges(
-        page: nextPage,
-        institutionType: currentState.selectedInstitutionType,
-        institutionId: currentState.selectedInstitutionId,
-      );
 
-      result.fold((failure) => throw failure, (response) {
-        state = AsyncData(
-          currentState.copyWith(
-            badges: [...currentState.badges, ...response.results],
-            catalogBadges: [...currentState.catalogBadges, ...response.results],
-            hasMore: response.hasMore,
-            currentPage: nextPage,
-            catalogPage: nextPage,
-            catalogHasMore: response.hasMore,
-          ),
+        result.fold((failure) => throw failure, (response) {
+          state = AsyncData(
+            currentState.copyWith(
+              badges: [...currentState.badges, ...response.results],
+              hasMore: response.hasMore,
+              currentPage: nextPage,
+              totalCount: response.count,
+            ),
+          );
+        });
+      } else {
+        final result = await repository.getCatalogBadges(
+          page: nextPage,
+          institutionType: currentState.selectedInstitutionType,
+          institutionId: currentState.selectedInstitutionId,
         );
-      });
+
+        result.fold((failure) => throw failure, (response) {
+          state = AsyncData(
+            currentState.copyWith(
+              badges: [...currentState.badges, ...response.results],
+              catalogBadges: [
+                ...currentState.catalogBadges,
+                ...response.results,
+              ],
+              hasMore: response.hasMore,
+              currentPage: nextPage,
+              catalogPage: nextPage,
+              catalogHasMore: response.hasMore,
+            ),
+          );
+        });
+      }
+    } catch (error, stackTrace) {
+      final AsyncValue<CatalogState> previous = state;
+      final AsyncError<CatalogState> errorState = AsyncError<CatalogState>(
+        error,
+        stackTrace,
+      );
+      if (previous.hasValue) {
+        // Retain prior catalog data so loadMore failures stay soft.
+        // ignore: invalid_use_of_internal_member
+        state = errorState.copyWithPrevious(previous);
+      } else {
+        state = errorState;
+      }
+    } finally {
+      _isLoadingMore = false;
     }
   }
 
@@ -144,8 +171,17 @@ class CatalogNotifier extends AsyncNotifier<CatalogState> {
         state = AsyncData(newState);
       }
     } catch (error, stackTrace) {
-      if (!silent || !state.hasValue) {
-        state = AsyncError(error, stackTrace);
+      final AsyncValue<CatalogState> previous = state;
+      final AsyncError<CatalogState> errorState = AsyncError<CatalogState>(
+        error,
+        stackTrace,
+      );
+      if (!silent || !previous.hasValue) {
+        state = errorState;
+      } else {
+        // Retain prior catalog data so background refresh failures stay soft.
+        // ignore: invalid_use_of_internal_member
+        state = errorState.copyWithPrevious(previous);
       }
     }
   }

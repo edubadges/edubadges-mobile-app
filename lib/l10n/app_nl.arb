@@ -45,7 +45,7 @@
     "@tabBadges": {
         "description": "Navigation tab label for the edubadges section"
     },
-    "badgesOverviewTitle": "Mijn Edubadges",
+    "badgesOverviewTitle": "Mijn edubadges",
     "@badgesOverviewTitle": {
         "description": "Page title for the badges overview screen on desktop"
     },

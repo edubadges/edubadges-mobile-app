@@ -85,7 +85,6 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
               (_) {
                 if (mounted) {
                   ref.read(badgesOverviewProvider.notifier).refresh();
-                  Navigator.of(context).pop(); // Pops confirmation dialog
                   if (widget.onNavigateToMain != null) {
                     widget.onNavigateToMain!();
                   } else {

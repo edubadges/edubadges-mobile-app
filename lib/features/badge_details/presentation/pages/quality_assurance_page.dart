@@ -19,11 +19,15 @@ import 'package:url_launcher/url_launcher_string.dart';
 class QualityAssurancePage extends ConsumerStatefulWidget {
   final String badgeId;
   final BadgeDetailsScope scope;
+  final bool isDialog;
+  final VoidCallback? onClose;
 
   const QualityAssurancePage({
     super.key,
     required this.badgeId,
     required this.scope,
+    this.isDialog = false,
+    this.onClose,
   });
 
   @override
@@ -57,6 +61,18 @@ class _QualityAssurancePageState extends ConsumerState<QualityAssurancePage> {
         mode: LaunchMode.externalApplication,
       );
 
+  void _close() {
+    if (widget.onClose != null) {
+      widget.onClose!();
+    } else if (widget.isDialog) {
+      Navigator.of(context).pop();
+    } else if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go(RoutePath.catalog);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -72,15 +88,9 @@ class _QualityAssurancePageState extends ConsumerState<QualityAssurancePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leading: PlatformInfo.showInAppBackButton
+        leading: PlatformInfo.showInAppBackButton && !widget.isDialog
             ? IconButton(
-                onPressed: () {
-                  if (context.canPop()) {
-                    context.pop();
-                  } else {
-                    context.go(RoutePath.catalog);
-                  }
-                },
+                onPressed: _close,
                 icon: Icon(
                   Icons.arrow_back,
                   color: Theme.of(context).colorScheme.primary,
@@ -91,6 +101,12 @@ class _QualityAssurancePageState extends ConsumerState<QualityAssurancePage> {
         backgroundColor: colorScheme.surfaceContainer,
         surfaceTintColor: colorScheme.surfaceContainer,
         actions: [
+          if (widget.isDialog)
+            IconButton(
+              onPressed: _close,
+              icon: Icon(Icons.close, color: colorScheme.primary),
+              tooltip: l10n.semanticsClose,
+            ),
           if (qualityAssuranceUrl != null && qualityAssuranceUrl.isNotEmpty)
             IconButton(
               onPressed: () => _launchExternalUrl(qualityAssuranceUrl),

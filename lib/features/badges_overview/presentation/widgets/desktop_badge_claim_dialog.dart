@@ -4,11 +4,26 @@ import 'package:edubadges/features/badges_overview/presentation/pages/badge_clai
 import 'package:edubadges/features/badges_overview/presentation/pages/badge_claim_success_page.dart';
 import 'package:edubadges/features/badges_overview/presentation/pages/badge_privacy_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-enum _ClaimFlowStep { claim, privacy, success }
+sealed class _ClaimFlowStep {
+  const _ClaimFlowStep();
+}
 
-class DesktopBadgeClaimDialog extends ConsumerStatefulWidget {
+final class _ClaimFlowClaim extends _ClaimFlowStep {
+  const _ClaimFlowClaim();
+}
+
+final class _ClaimFlowPrivacy extends _ClaimFlowStep {
+  const _ClaimFlowPrivacy();
+}
+
+final class _ClaimFlowSuccess extends _ClaimFlowStep {
+  final String badgeClassId;
+
+  const _ClaimFlowSuccess(this.badgeClassId);
+}
+
+class DesktopBadgeClaimDialog extends StatefulWidget {
   final String initialBadgeId;
   final int initialRemainingCount;
 
@@ -23,7 +38,7 @@ class DesktopBadgeClaimDialog extends ConsumerStatefulWidget {
     required String badgeId,
     required int remainingCount,
   }) {
-    return showDialog(
+    return showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (context) => DesktopBadgeClaimDialog(
@@ -34,13 +49,13 @@ class DesktopBadgeClaimDialog extends ConsumerStatefulWidget {
   }
 
   @override
-  ConsumerState<DesktopBadgeClaimDialog> createState() => _DesktopBadgeClaimDialogState();
+  State<DesktopBadgeClaimDialog> createState() =>
+      _DesktopBadgeClaimDialogState();
 }
 
-class _DesktopBadgeClaimDialogState extends ConsumerState<DesktopBadgeClaimDialog> {
+class _DesktopBadgeClaimDialogState extends State<DesktopBadgeClaimDialog> {
   late String _badgeId;
   late int _remainingCount;
-  String? _badgeClassId;
   late _ClaimFlowStep _step;
 
   @override
@@ -48,7 +63,7 @@ class _DesktopBadgeClaimDialogState extends ConsumerState<DesktopBadgeClaimDialo
     super.initState();
     _badgeId = widget.initialBadgeId;
     _remainingCount = widget.initialRemainingCount;
-    _step = _ClaimFlowStep.claim;
+    _step = const _ClaimFlowClaim();
   }
 
   @override
@@ -56,9 +71,10 @@ class _DesktopBadgeClaimDialogState extends ConsumerState<DesktopBadgeClaimDialo
     final size = MediaQuery.sizeOf(context);
     final colorScheme = Theme.of(context).colorScheme;
 
-    // Constrain the dialog to 9/16 aspect ratio with a max-width of 400
+    // Portrait 9:16 (width:height); clamp height so the dialog fits short windows.
     final double width = math.min(400.0, size.width * 0.85);
-    final double height = width * 16 / 9;
+    final double preferredHeight = width * 16 / 9;
+    final double height = math.min(preferredHeight, size.height);
 
     return Dialog(
       backgroundColor: colorScheme.surface,
@@ -70,46 +86,44 @@ class _DesktopBadgeClaimDialogState extends ConsumerState<DesktopBadgeClaimDialo
         width: width,
         height: height,
         child: switch (_step) {
-          _ClaimFlowStep.claim => BadgeClaimPage(
+          _ClaimFlowClaim() => BadgeClaimPage(
               badgeId: _badgeId,
               remainingCount: _remainingCount,
               onClose: () => Navigator.of(context).pop(),
               onNavigateToPrivacy: (id) {
                 setState(() {
                   _badgeId = id;
-                  _step = _ClaimFlowStep.privacy;
+                  _step = const _ClaimFlowPrivacy();
                 });
               },
               onNavigateToSuccess: (classId) {
                 setState(() {
-                  _badgeClassId = classId;
-                  _step = _ClaimFlowStep.success;
+                  _step = _ClaimFlowSuccess(classId);
                 });
               },
             ),
-          _ClaimFlowStep.privacy => BadgePrivacyPage(
+          _ClaimFlowPrivacy() => BadgePrivacyPage(
               badgeId: _badgeId,
               onBack: () {
                 setState(() {
-                  _step = _ClaimFlowStep.claim;
+                  _step = const _ClaimFlowClaim();
                 });
               },
               onNavigateToSuccess: (classId) {
                 setState(() {
-                  _badgeClassId = classId;
-                  _step = _ClaimFlowStep.success;
+                  _step = _ClaimFlowSuccess(classId);
                 });
               },
               onNavigateToMain: () => Navigator.of(context).pop(),
             ),
-          _ClaimFlowStep.success => BadgeClaimSuccessPage(
-              badgeClassId: _badgeClassId ?? '',
+          _ClaimFlowSuccess(:final badgeClassId) => BadgeClaimSuccessPage(
+              badgeClassId: badgeClassId,
               onGoToOverview: () => Navigator.of(context).pop(),
               onClaimNextBadge: (nextBadgeId, count) {
                 setState(() {
                   _badgeId = nextBadgeId;
                   _remainingCount = count;
-                  _step = _ClaimFlowStep.claim;
+                  _step = const _ClaimFlowClaim();
                 });
               },
             ),

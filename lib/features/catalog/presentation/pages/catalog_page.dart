@@ -1,5 +1,6 @@
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/page_header.dart';
 import 'package:edubadges/core/widgets/sidebar_list_layout.dart';
@@ -40,13 +41,16 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent * 0.9) {
+      final notifier = ref.read(catalogProvider.notifier);
+      if (notifier.isLoadingMore) return;
+
       final bool hasMore = ref.read(
         catalogProvider.select(
           (asyncValue) => asyncValue.value?.hasMore ?? false,
         ),
       );
       if (hasMore) {
-        ref.read(catalogProvider.notifier).loadMore();
+        notifier.loadMore();
       }
     }
   }
@@ -195,23 +199,25 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
 
   @override
   Widget build(BuildContext context) {
-    final CatalogState? catalogState = ref.watch(
-      catalogProvider.select((asyncValue) => asyncValue.asData?.value),
-    );
-    final bool isCatalogLoading = ref.watch(
-      catalogProvider.select(
-        (asyncValue) => asyncValue.isLoading && !asyncValue.hasValue,
-      ),
-    );
-    final Object? catalogError = ref.watch(
-      catalogProvider.select((asyncValue) => asyncValue.error),
-    );
-    final StackTrace? catalogStackTrace = ref.watch(
-      catalogProvider.select((asyncValue) => asyncValue.stackTrace),
-    );
+    final catalogAsync = ref.watch(catalogProvider);
+    final CatalogState? catalogState = catalogAsync.value;
+    final bool isCatalogLoading =
+        catalogAsync.isLoading && !catalogAsync.hasValue;
+    final Object? catalogError = catalogAsync.error;
+    final StackTrace? catalogStackTrace = catalogAsync.stackTrace;
     final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+
+    ref.listen<AsyncValue<CatalogState>>(catalogProvider, (previous, next) {
+      next.whenOrNull(
+        error: (error, stackTrace) {
+          if (previous?.hasValue == true && context.mounted) {
+            showAppSnackBar(context, l10n.somethingWentWrong);
+          }
+        },
+      );
+    });
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
@@ -222,71 +228,53 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
           appBar: useSidebarLayout
               ? null
               : AppBar(title: Text(l10n.tabCatalog)),
-          body: GestureDetector(
-            excludeFromSemantics: true,
-            onTap: () {
-              FocusScope.of(context).unfocus();
-            },
-            child: Builder(
-              builder: (BuildContext context) {
-                if (isCatalogLoading) {
-                  return CustomScrollView(
-                    controller: _scrollController,
-                    slivers: [
-                      SliverFillRemaining(
-                        child: Center(
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (useSidebarLayout)
+                PageHeader(
+                  title: l10n.tabCatalog,
+                  subtitle: l10n.catalogSubtitle,
+                ),
+              Expanded(
+                child: GestureDetector(
+                  excludeFromSemantics: true,
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                  },
+                  child: Builder(
+                    builder: (BuildContext context) {
+                      if (isCatalogLoading) {
+                        return Center(
                           child: CircularProgressIndicator(
                             semanticsLabel: l10n.semanticsLoading,
                           ),
-                        ),
-                      ),
-                    ],
-                  );
-                }
-                if (catalogError != null) {
-                  return CustomScrollView(
-                    controller: _scrollController,
-                    slivers: [
-                      SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: Center(
+                        );
+                      }
+                      if (catalogError != null && catalogState == null) {
+                        return Center(
                           child: ErrorMessageWidget(
                             error: catalogError,
                             stackTrace: catalogStackTrace,
                           ),
-                        ),
-                      ),
-                    ],
-                  );
-                }
-                if (catalogState == null) {
-                  return const SizedBox.shrink();
-                }
-                final content = _buildCatalogContent(
-                  context: context,
-                  state: catalogState,
-                  l10n: l10n,
-                  colorScheme: colorScheme,
-                  textTheme: textTheme,
-                  useSidebarLayout: useSidebarLayout,
-                );
-
-                if (useSidebarLayout) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      PageHeader(
-                        title: l10n.tabCatalog,
-                        subtitle: l10n.catalogSubtitle,
-                      ),
-                      Expanded(child: content),
-                    ],
-                  );
-                }
-
-                return content;
-              },
-            ),
+                        );
+                      }
+                      if (catalogState == null) {
+                        return const SizedBox.shrink();
+                      }
+                      return _buildCatalogContent(
+                        context: context,
+                        state: catalogState,
+                        l10n: l10n,
+                        colorScheme: colorScheme,
+                        textTheme: textTheme,
+                        useSidebarLayout: useSidebarLayout,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },

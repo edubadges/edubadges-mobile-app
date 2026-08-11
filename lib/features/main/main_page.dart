@@ -141,22 +141,21 @@ class _MainPageState extends ConsumerState<MainPage>
   }
 
   NavigationDestination _buildNavigationBarDestination({
-    required int index,
-    required int currentIndex,
     required _NavigationDestinationData destination,
     required ColorScheme colorScheme,
   }) {
-    final bool isSelected = index == currentIndex;
     return NavigationDestination(
       label: destination.label,
       tooltip: destination.label,
-      icon: Padding(
-        padding: const EdgeInsets.only(top: 0.0, bottom: 0.0),
-        child: _buildNavIcon(
-          iconPath: destination.iconPath,
-          isSelected: isSelected,
-          colorScheme: colorScheme,
-        ),
+      icon: _buildNavIcon(
+        iconPath: destination.iconPath,
+        isSelected: false,
+        colorScheme: colorScheme,
+      ),
+      selectedIcon: _buildNavIcon(
+        iconPath: destination.iconPath,
+        isSelected: true,
+        colorScheme: colorScheme,
       ),
     );
   }
@@ -211,8 +210,6 @@ class _MainPageState extends ConsumerState<MainPage>
         destinations: List<NavigationDestination>.generate(
           destinations.length,
           (int index) => _buildNavigationBarDestination(
-            index: index,
-            currentIndex: currentIndex,
             destination: destinations[index],
             colorScheme: colorScheme,
           ),
@@ -254,38 +251,41 @@ class _MainPageState extends ConsumerState<MainPage>
     return Scaffold(
       body: Row(
         children: <Widget>[
-          NavigationDrawerTheme(
-            data: NavigationDrawerThemeData(
-              labelTextStyle: WidgetStateProperty.resolveWith((
-                Set<WidgetState> states,
-              ) {
-                if (states.contains(WidgetState.selected)) {
+          SafeArea(
+            bottom: !PlatformInfo.isWeb,
+            child: NavigationDrawerTheme(
+              data: NavigationDrawerThemeData(
+                labelTextStyle: WidgetStateProperty.resolveWith((
+                  Set<WidgetState> states,
+                ) {
+                  if (states.contains(WidgetState.selected)) {
+                    return theme.textTheme.labelLarge?.copyWith(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                    );
+                  }
                   return theme.textTheme.labelLarge?.copyWith(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onSurfaceVariant,
                   );
-                }
-                return theme.textTheme.labelLarge?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                );
-              }),
-            ),
-            child: NavigationDrawer(
-              selectedIndex: currentIndex,
-              onDestinationSelected: _onTap,
-              backgroundColor: colorScheme.surfaceContainer,
-              indicatorColor: pillColor,
-              elevation: 0,
-              header: _buildDrawerHeader(l10n: l10n, colorScheme: colorScheme),
-              children: destinations
-                  .map(
-                    (_NavigationDestinationData destination) =>
-                        _buildNavigationDrawerDestination(
-                          destination: destination,
-                          colorScheme: colorScheme,
-                        ),
-                  )
-                  .toList(),
+                }),
+              ),
+              child: NavigationDrawer(
+                selectedIndex: currentIndex,
+                onDestinationSelected: _onTap,
+                backgroundColor: colorScheme.surfaceContainer,
+                indicatorColor: pillColor,
+                elevation: 0,
+                header: _buildDrawerHeader(l10n: l10n, colorScheme: colorScheme),
+                children: destinations
+                    .map(
+                      (_NavigationDestinationData destination) =>
+                          _buildNavigationDrawerDestination(
+                            destination: destination,
+                            colorScheme: colorScheme,
+                          ),
+                    )
+                    .toList(),
+              ),
             ),
           ),
           Expanded(
@@ -303,6 +303,8 @@ class _MainPageState extends ConsumerState<MainPage>
 
   @override
   Widget build(BuildContext context) {
+    // Intentionally watch profile resolution so the shell rebuilds once
+    // auth-dependent navigation state is available.
     ref.watch(profileProvider.select((asyncValue) => asyncValue.hasValue));
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);

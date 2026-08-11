@@ -6,8 +6,10 @@ import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
+import 'package:edubadges/core/widgets/app_modal.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
 import 'package:edubadges/core/widgets/page_header.dart';
@@ -20,7 +22,6 @@ import 'package:edubadges/features/account/presentation/widgets/agreement_detail
 import 'package:edubadges/features/account/presentation/widgets/delete_account_dialog.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -338,23 +339,13 @@ class _AccountPageState extends ConsumerState<AccountPage> {
       );
 
       // On web, open the agreement in a dialog instead of a full page.
-      if (kIsWeb) {
-        showDialog<void>(
-          context: context,
-          builder: (dialogContext) => Dialog(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            insetPadding: const EdgeInsets.all(24),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: 560,
-                maxHeight: MediaQuery.sizeOf(dialogContext).height * 0.9,
-              ),
-              child: AgreementDetailsView(
-                agreement: agreementModel,
-                isDialog: true,
-              ),
-            ),
+      if (PlatformInfo.isWeb) {
+        showAppFormModal<void>(
+          context,
+          useRootNavigator: true,
+          builder: (dialogContext) => AgreementDetailsView(
+            agreement: agreementModel,
+            isDialog: true,
           ),
         );
         return;
@@ -639,7 +630,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
           autofocus: true,
           child: _buildDataSection(context, profile),
         ),
-        if (!kIsWeb) _buildNotificationSection(context, ref, profile),
+        if (!PlatformInfo.isWeb) _buildNotificationSection(context, ref, profile),
       ],
     );
   }
@@ -673,7 +664,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
     final refreshTasks = <Future<void>>[
       ref.read(profileProvider.notifier).refresh(),
     ];
-    if (!kIsWeb) {
+    if (!PlatformInfo.isWeb) {
       refreshTasks.add(
         ref.read(notificationEnabledProvider.notifier).refresh(),
       );
@@ -738,66 +729,63 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                     ),
                   ],
                 ),
-          body: profileAsync.when(
-            data: (profile) {
-              if (profile == null) {
-                return Center(child: Text(l10n.noProfileData));
-              }
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (useSidebarLayout)
+                PageHeader(
+                  title: l10n.tabAccount,
+                  subtitle: l10n.accountSubtitle,
+                  actions: [
+                    _buildLogoutButton(
+                      context: context,
+                      ref: ref,
+                      l10n: l10n,
+                      colorScheme: colorScheme,
+                    ),
+                  ],
+                ),
+              Expanded(
+                child: profileAsync.when(
+                  data: (profile) {
+                    if (profile == null) {
+                      return Center(child: Text(l10n.noProfileData));
+                    }
 
-              final content = _buildAccountContent(
-                context: context,
-                ref: ref,
-                profile: profile,
-                useSidebarLayout: useSidebarLayout,
-              );
-
-              if (useSidebarLayout) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    PageHeader(
-                      title: l10n.tabAccount,
-                      subtitle: l10n.accountSubtitle,
-                      actions: [
-                        _buildLogoutButton(
-                          context: context,
-                          ref: ref,
-                          l10n: l10n,
-                          colorScheme: colorScheme,
+                    return _buildAccountContent(
+                      context: context,
+                      ref: ref,
+                      profile: profile,
+                      useSidebarLayout: useSidebarLayout,
+                    );
+                  },
+                  loading: () => Center(
+                    child: CircularProgressIndicator(
+                      semanticsLabel: l10n.semanticsLoading,
+                    ),
+                  ),
+                  error: (error, stack) => Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          l10n.somethingWentWrong,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: colorScheme.error,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () =>
+                              ref.read(profileProvider.notifier).refresh(),
+                          child: Text(l10n.retry),
                         ),
                       ],
                     ),
-                    Expanded(child: content),
-                  ],
-                );
-              }
-
-              return content;
-            },
-            loading: () => Center(
-              child: CircularProgressIndicator(
-                semanticsLabel: l10n.semanticsLoading,
-              ),
-            ),
-            error: (error, stack) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    l10n.somethingWentWrong,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: colorScheme.error,
-                    ),
                   ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () =>
-                        ref.read(profileProvider.notifier).refresh(),
-                    child: Text(l10n.retry),
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         );
       },

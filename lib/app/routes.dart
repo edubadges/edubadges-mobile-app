@@ -165,6 +165,25 @@ final appRouter = Provider<GoRouter>((ref) {
       ),
 
       GoRoute(
+        path: RoutePath.badgeQualityAssuranceLegacy,
+        name: 'badge-quality-assurance-legacy',
+        redirect: (context, state) {
+          final scopeName = state.pathParameters['scope'];
+          final id = state.pathParameters['id'];
+          if (scopeName == null || id == null || id.isEmpty) {
+            return RoutePath.main;
+          }
+          final BadgeDetailsScope? scope = BadgeDetailsScope.values
+              .where((value) => value.name == scopeName)
+              .firstOrNull;
+          if (scope == null) {
+            return RoutePath.main;
+          }
+          return RoutePath.badgeQualityAssurancePath(scope: scope, id: id);
+        },
+      ),
+
+      GoRoute(
         path: RoutePath.badgeQualityAssuranceClaimed,
         name: 'badge-quality-assurance-claimed',
         builder: (context, state) {
@@ -364,7 +383,10 @@ final appRouter = Provider<GoRouter>((ref) {
               StatefulNavigationShell navigationShell,
               List<Widget> children,
             ) {
-              return children[navigationShell.currentIndex];
+              return IndexedStack(
+                index: navigationShell.currentIndex,
+                children: children,
+              );
             },
         branches: [
           // Branch 0: Badges Overview (default home)

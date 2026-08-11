@@ -2,6 +2,7 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/app_modal.dart';
+import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/badges_overview/domain/entities/badges_overview_state.dart';
@@ -144,6 +145,29 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
     bool showClaimedGalleryOnOpen = false,
     double focusOrderOffset = 0,
   }) {
+    Widget buildItem(BadgeInstanceEntity badge, int index) {
+      final navigationEntityId = scope == BadgeDetailsScope.enrollment
+          ? badge.badgeclass.entityId
+          : badge.entityId;
+      void activate() => onActivate(badge);
+      return FocusTraversalOrder(
+        order: NumericFocusOrder(focusOrderOffset + index),
+        child: KeyboardActivatable(
+          key: ValueKey('${keyPrefix}_${badge.entityId}'),
+          wrapWithSemantics: false,
+          includeOuterTapTarget: false,
+          onActivate: activate,
+          child: _buildBadgeCard(
+            badge: badge,
+            scope: scope,
+            navigationEntityId: navigationEntityId,
+            onActivate: activate,
+            showClaimedGalleryOnOpen: showClaimedGalleryOnOpen,
+          ),
+        ),
+      );
+    }
+
     if (isGridLayout) {
       return SliverPadding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -154,61 +178,23 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
             mainAxisSpacing: 8,
             mainAxisExtent: LayoutConstants.badgesOverviewGridMainAxisExtent,
           ),
-          delegate: SliverChildBuilderDelegate((context, index) {
-            final badge = badges[index];
-            final navigationEntityId = scope == BadgeDetailsScope.enrollment
-                ? badge.badgeclass.entityId
-                : badge.entityId;
-            void activate() => onActivate(badge);
-            return FocusTraversalOrder(
-              order: NumericFocusOrder(focusOrderOffset + index),
-              child: KeyboardActivatable(
-                key: ValueKey('${keyPrefix}_${badge.entityId}'),
-                wrapWithSemantics: false,
-                includeOuterTapTarget: false,
-                onActivate: activate,
-                child: _buildBadgeCard(
-                  badge: badge,
-                  scope: scope,
-                  navigationEntityId: navigationEntityId,
-                  onActivate: activate,
-                  showClaimedGalleryOnOpen: showClaimedGalleryOnOpen,
-                ),
-              ),
-            );
-          }, childCount: badges.length),
+          delegate: SliverChildBuilderDelegate(
+            (context, index) => buildItem(badges[index], index),
+            childCount: badges.length,
+          ),
         ),
       );
     }
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       sliver: SliverList(
-        delegate: SliverChildBuilderDelegate((context, index) {
-          final badge = badges[index];
-          final navigationEntityId = scope == BadgeDetailsScope.enrollment
-              ? badge.badgeclass.entityId
-              : badge.entityId;
-          void activate() => onActivate(badge);
-          return Padding(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: FocusTraversalOrder(
-              order: NumericFocusOrder(focusOrderOffset + index),
-              child: KeyboardActivatable(
-                key: ValueKey('${keyPrefix}_${badge.entityId}'),
-                wrapWithSemantics: false,
-                includeOuterTapTarget: false,
-                onActivate: activate,
-                child: _buildBadgeCard(
-                  badge: badge,
-                  scope: scope,
-                  navigationEntityId: navigationEntityId,
-                  onActivate: activate,
-                  showClaimedGalleryOnOpen: showClaimedGalleryOnOpen,
-                ),
-              ),
-            ),
-          );
-        }, childCount: badges.length),
+            child: buildItem(badges[index], index),
+          ),
+          childCount: badges.length,
+        ),
       ),
     );
   }
@@ -418,21 +404,26 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    final BadgesOverviewState? badgesState = ref.watch(
-      badgesOverviewProvider.select((asyncValue) => asyncValue.asData?.value),
-    );
-    final bool isBadgesLoading = ref.watch(
-      badgesOverviewProvider.select(
-        (asyncValue) => asyncValue.isLoading && !asyncValue.hasValue,
-      ),
-    );
-    final Object? badgesError = ref.watch(
-      badgesOverviewProvider.select((asyncValue) => asyncValue.error),
-    );
-    final StackTrace? badgesStackTrace = ref.watch(
-      badgesOverviewProvider.select((asyncValue) => asyncValue.stackTrace),
-    );
+    final badgesAsync = ref.watch(badgesOverviewProvider);
+    final BadgesOverviewState? badgesState = badgesAsync.value;
+    final bool isBadgesLoading =
+        badgesAsync.isLoading && !badgesAsync.hasValue;
+    final Object? badgesError = badgesAsync.error;
+    final StackTrace? badgesStackTrace = badgesAsync.stackTrace;
     final l10n = AppLocalizations.of(context);
+
+    ref.listen<AsyncValue<BadgesOverviewState>>(badgesOverviewProvider, (
+      previous,
+      next,
+    ) {
+      next.whenOrNull(
+        error: (error, stackTrace) {
+          if (previous?.hasValue == true && context.mounted) {
+            showAppSnackBar(context, l10n.somethingWentWrong);
+          }
+        },
+      );
+    });
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -480,7 +471,7 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
                     ],
                   );
                 }
-                if (badgesError != null) {
+                if (badgesError != null && badgesState == null) {
                   return CustomScrollView(
                     controller: _scrollController,
                     slivers: [

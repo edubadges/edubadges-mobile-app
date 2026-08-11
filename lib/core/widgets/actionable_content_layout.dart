@@ -41,8 +41,8 @@ class _ActionableContentLayoutState extends State<ActionableContentLayout> {
     final colorScheme = theme.colorScheme;
 
     // On web the browser's back navigation is used, so hide in-app back buttons.
-    final bool showBack =
-        widget.showBackButton && PlatformInfo.showInAppBackButton;
+    final bool showBack = widget.showBackButton &&
+        (widget.onBack != null || PlatformInfo.showInAppBackButton);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,

@@ -272,7 +272,9 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
             child: Center(
               child: ConstrainedBox(
                 // Matches MaxWidthWrapper's default max content width.
-                constraints: const BoxConstraints(maxWidth: 720),
+                constraints: const BoxConstraints(
+                  maxWidth: MaxWidthWrapper.defaultMaxWidth,
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: actionButton,

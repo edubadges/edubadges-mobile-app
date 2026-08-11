@@ -18,4 +18,6 @@ class LayoutConstants {
 
   static const int badgeDetailsSidebarFlex = 2;
   static const int badgeDetailsMainFlex = 5;
+
+  static const double webFormModalMaxWidth = 480;
 }

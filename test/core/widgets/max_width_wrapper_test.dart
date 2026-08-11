@@ -21,6 +21,14 @@ Future<void> _withMacOsPlatform(
   }
 }
 
+Future<void> _setWideViewport(WidgetTester tester) async {
+  final TestFlutterView view = tester.view;
+  view.physicalSize = _wideViewport;
+  view.devicePixelRatio = 1.0;
+  addTearDown(view.resetPhysicalSize);
+  addTearDown(view.resetDevicePixelRatio);
+}
+
 Widget _buildTestApp({
   required Widget child,
   ScrollController? scrollController,
@@ -90,6 +98,7 @@ void main() {
     'links child scroll controller when child has explicit controller',
     (WidgetTester tester) async {
       await _withMacOsPlatform(tester, () async {
+        await _setWideViewport(tester);
         final ScrollController scrollController = ScrollController();
         addTearDown(scrollController.dispose);
 
@@ -111,6 +120,7 @@ void main() {
     'links child via PrimaryScrollController when no explicit controller',
     (WidgetTester tester) async {
       await _withMacOsPlatform(tester, () async {
+        await _setWideViewport(tester);
         await tester.pumpWidget(
           _buildTestApp(child: _accountStyleScrollView()),
         );
@@ -128,6 +138,7 @@ void main() {
 
   testWidgets('shared scroll controller moves content', (WidgetTester tester) async {
     await _withMacOsPlatform(tester, () async {
+      await _setWideViewport(tester);
       final ScrollController scrollController = ScrollController();
       addTearDown(scrollController.dispose);
 
@@ -150,6 +161,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await _withMacOsPlatform(tester, () async {
+      await _setWideViewport(tester);
       final ScrollController scrollController = ScrollController();
       addTearDown(scrollController.dispose);
 
@@ -180,6 +192,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await _withMacOsPlatform(tester, () async {
+      await _setWideViewport(tester);
       final ScrollController scrollController = ScrollController();
       addTearDown(scrollController.dispose);
 
@@ -201,6 +214,7 @@ void main() {
     'margin scroll does nothing when content fits viewport',
     (WidgetTester tester) async {
       await _withMacOsPlatform(tester, () async {
+        await _setWideViewport(tester);
         final ScrollController scrollController = ScrollController();
         addTearDown(scrollController.dispose);
 
@@ -218,7 +232,9 @@ void main() {
         await tester.pumpAndSettle();
 
         final TestPointer pointer = TestPointer(1, PointerDeviceKind.mouse);
-        await tester.sendEventToBinding(pointer.hover(const Offset(100, 300)));
+        await tester.sendEventToBinding(
+          pointer.hover(const Offset(_horizontalMargin / 2, 300)),
+        );
         await tester.pump();
         await tester.sendEventToBinding(pointer.scroll(const Offset(0, 200)));
         await tester.pump();

@@ -39,26 +39,29 @@ This application is built to run on the following platforms:
 
 4.  **Run on web:**
     Flavors use `--dart-define` instead of `--flavor` on web:
+
     ```bash
     flutter run -d chrome --dart-define=APP_FLAVOR=dev
     ```
 
-    **Local dev for web** (
-    ```bash
-   flutter run -d chrome --web-port=8080 --dart-define=APP_FLAVOR=dev
-    ```
-  
+5.  **Local dev for web:**
 
-5.  **Build for web:**
+    ```bash
+    flutter run -d chrome --web-port=8080 --dart-define=APP_FLAVOR=dev
+    ```
+
+6.  **Build for web:**
+
     ```bash
     flutter build web \
       --release \
       --dart-define=APP_FLAVOR=tst \
       --wasm
     ```
+
     Use `--source-maps` for staging builds when debugging. Omit it for production.
 
-    Deploy the `build/web` output to static hosting with SPA path fallback (see `firebase.json` and `web/nginx.conf`).
+    Deploy the `build/web` output to static hosting with SPA path fallback (see `web/nginx.conf`).
 
 ## 🛠️ Tech Stack
 *   **Framework:** Flutter & Dart
@@ -68,6 +71,3 @@ This application is built to run on the following platforms:
 *   **Environment Variables:** `flutter_dotenv`
 *   **Localization:** `flutter_localizations`
 *   **Vector Graphics:** `flutter_svg`
-
-
-star

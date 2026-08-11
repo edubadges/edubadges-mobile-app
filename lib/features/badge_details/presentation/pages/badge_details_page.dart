@@ -282,10 +282,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     );
   }
 
-  List<Widget> _buildMainContentSlivers({
-    required List<Widget> children,
-    required bool useSidebarLayout,
-  }) {
+  List<Widget> _buildMainContentSlivers({required List<Widget> children}) {
     return [
       SliverToBoxAdapter(
         child: Column(
@@ -334,10 +331,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                 controller: _scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
-                  ..._buildMainContentSlivers(
-                    children: mainContent,
-                    useSidebarLayout: useSidebarLayout,
-                  ),
+                  ..._buildMainContentSlivers(children: mainContent),
                   const SliverToBoxAdapter(child: SizedBox(height: 16)),
                 ],
               ),
@@ -575,6 +569,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
       useSidebarLayout: useSidebarLayout,
     );
 
+    final visibilitySection = _buildVisibilitySection(badgeDetailsAsync.value);
     final Widget sidebar = useSidebarLayout
         ? _buildCombinedDesktopSidebar(details: badgeDetailsAsync.value)
         : Column(
@@ -583,7 +578,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                 details: badgeDetailsAsync.value,
                 useSidebarLayout: false,
               ),
-              _buildVisibilitySection(badgeDetailsAsync.value)!,
+              ?visibilitySection,
             ],
           );
 
@@ -764,7 +759,11 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                               600.0,
                               size.width * 0.85,
                             );
-                            final double height = width * 16 / 9;
+                            final double preferredHeight = width * 16 / 9;
+                            final double height = math.min(
+                              preferredHeight,
+                              size.height,
+                            );
                             return Dialog(
                               backgroundColor: Theme.of(
                                 context,
@@ -779,6 +778,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                                 child: QualityAssurancePage(
                                   badgeId: badgeId,
                                   scope: widget.badge.scope,
+                                  isDialog: true,
                                 ),
                               ),
                             );

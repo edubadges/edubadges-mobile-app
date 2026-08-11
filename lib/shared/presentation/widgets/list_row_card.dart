@@ -1,5 +1,4 @@
 import 'package:edubadges/core/widgets/app_network_image.dart';
-import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class ListRowCard extends StatelessWidget {
@@ -18,11 +17,44 @@ class ListRowCard extends StatelessWidget {
     this.semanticLabel,
   });
 
+  Widget _buildImage(ColorScheme colorScheme) {
+    final Widget placeholder = Container(
+      height: 64,
+      width: 64,
+      color: colorScheme.surfaceContainerHighest,
+      child: Icon(
+        Icons.image_not_supported_outlined,
+        color: colorScheme.onSurfaceVariant,
+      ),
+    );
+
+    if (imageUrl == null || imageUrl!.isEmpty) {
+      return ExcludeSemantics(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: placeholder,
+        ),
+      );
+    }
+
+    return ExcludeSemantics(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: AppNetworkImage(
+          imageUrl: imageUrl!,
+          height: 64,
+          width: 64,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => placeholder,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context);
 
     final cardContent = Container(
       decoration: BoxDecoration(
@@ -33,29 +65,7 @@ class ListRowCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          ExcludeSemantics(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: AppNetworkImage(
-                imageUrl: imageUrl ?? '',
-                height: 64,
-                width: 64,
-                fit: BoxFit.cover,
-                semanticLabel: l10n.semanticsBadgeImage,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 64,
-                    width: 64,
-                    color: colorScheme.surfaceContainerHighest,
-                    child: Icon(
-                      Icons.image_not_supported_outlined,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
+          _buildImage(colorScheme),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

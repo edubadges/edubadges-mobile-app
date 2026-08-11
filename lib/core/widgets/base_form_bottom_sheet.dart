@@ -1,4 +1,5 @@
 import 'package:edubadges/core/utils/platform_info.dart';
+import 'package:edubadges/core/widgets/app_modal.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,10 @@ class BaseFormBottomSheet extends StatelessWidget {
   final String cancelButtonText;
   final bool handleKeyboardPadding;
 
+  /// When null, uses [AppFormModalPresentation] from [showAppFormModal], then
+  /// falls back to [PlatformInfo.isWeb] to preserve historical behavior.
+  final bool? isDialog;
+
   const BaseFormBottomSheet({
     super.key,
     required this.title,
@@ -24,6 +29,7 @@ class BaseFormBottomSheet extends StatelessWidget {
     required this.cancelButtonText,
     this.onCancel,
     this.handleKeyboardPadding = true,
+    this.isDialog,
   });
 
   void _handleSave() {
@@ -41,9 +47,9 @@ class BaseFormBottomSheet extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    // On web this widget is hosted inside a centered dialog rather than a
-    // bottom sheet, so it uses fully rounded corners and hides the drag handle.
-    final bool isDialog = PlatformInfo.isWeb;
+    final bool isDialog = this.isDialog ??
+        AppFormModalPresentation.maybeOf(context) ??
+        PlatformInfo.isWeb;
 
     return Container(
       decoration: BoxDecoration(

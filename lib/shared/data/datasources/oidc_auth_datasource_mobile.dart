@@ -141,6 +141,7 @@ class OidcAuthDataSource {
     final token = await _tokenStorage.read();
     if (token?.refreshToken == null) {
       logger.w('Auth: No refresh token, logging out');
+      await logout();
       return;
     }
     try {
@@ -184,13 +185,15 @@ class OidcAuthDataSource {
       );
       if (result.accessToken != null) {
         logger.i('Auth: Token refresh successful');
+        final String? refreshToken =
+            result.refreshToken ?? token.refreshToken;
         final newToken = OAuth2Token(
           accessToken: result.accessToken!,
-          refreshToken: result.refreshToken,
+          refreshToken: refreshToken,
         );
         await _saveTokens(
           result.accessToken!,
-          result.refreshToken,
+          refreshToken,
           result.accessTokenExpirationDateTime,
           result.idToken,
         );

@@ -1,8 +1,28 @@
+import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:flutter/material.dart';
 
-/// Maximum width of the dialog variant shown on web.
-const double _webModalMaxWidth = 480;
+/// Presentation mode for content shown via [showAppFormModal].
+class AppFormModalPresentation extends InheritedWidget {
+  final bool isDialog;
+
+  const AppFormModalPresentation({
+    super.key,
+    required this.isDialog,
+    required super.child,
+  });
+
+  static bool? maybeOf(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<AppFormModalPresentation>()
+        ?.isDialog;
+  }
+
+  @override
+  bool updateShouldNotify(AppFormModalPresentation oldWidget) {
+    return isDialog != oldWidget.isDialog;
+  }
+}
 
 /// Shows a modal form.
 ///
@@ -13,9 +33,17 @@ Future<T?> showAppFormModal<T>(
   BuildContext context, {
   required WidgetBuilder builder,
   bool isDismissible = true,
+  /// No-op on web: the dialog branch does not use [enableDrag].
   bool enableDrag = true,
   bool useRootNavigator = false,
 }) {
+  Widget wrap(BuildContext context, {required bool isDialog}) {
+    return AppFormModalPresentation(
+      isDialog: isDialog,
+      child: builder(context),
+    );
+  }
+
   if (PlatformInfo.isWeb) {
     return showDialog<T>(
       context: context,
@@ -27,10 +55,10 @@ Future<T?> showAppFormModal<T>(
         insetPadding: const EdgeInsets.all(24),
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            maxWidth: _webModalMaxWidth,
+            maxWidth: LayoutConstants.webFormModalMaxWidth,
             maxHeight: MediaQuery.sizeOf(context).height * 0.9,
           ),
-          child: builder(context),
+          child: wrap(context, isDialog: true),
         ),
       ),
     );
@@ -43,6 +71,6 @@ Future<T?> showAppFormModal<T>(
     isScrollControlled: true,
     useRootNavigator: useRootNavigator,
     backgroundColor: Colors.transparent,
-    builder: builder,
+    builder: (context) => wrap(context, isDialog: false),
   );
 }

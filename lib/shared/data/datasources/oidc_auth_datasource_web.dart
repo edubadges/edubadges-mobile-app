@@ -107,7 +107,7 @@ class OidcAuthDataSource {
     }
 
     try {
-      final Response<dynamic> response = await Dio().post(
+      final Response<dynamic> response = await _authDio.post(
         _tokenEndpoint,
         data: {
           'grant_type': 'authorization_code',
@@ -129,12 +129,24 @@ class OidcAuthDataSource {
     }
   }
 
-  Future<void> _persistTokenResponse(Map<String, dynamic> data) async {
+  static final Dio _authDio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 30),
+      sendTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+    ),
+  );
+
+  Future<void> _persistTokenResponse(
+    Map<String, dynamic> data, {
+    String? fallbackRefreshToken,
+  }) async {
     final String? accessToken = data['access_token'] as String?;
     if (accessToken == null) {
       throw Exception('Token response did not contain an access token');
     }
-    final String? refreshToken = data['refresh_token'] as String?;
+    final String? refreshToken =
+        data['refresh_token'] as String? ?? fallbackRefreshToken;
     final OAuth2Token token = OAuth2Token(
       accessToken: accessToken,
       refreshToken: refreshToken,
@@ -219,7 +231,7 @@ class OidcAuthDataSource {
     }
     try {
       logger.i('Auth(web): refreshing token via OIDC');
-      final Response<dynamic> response = await Dio().post(
+      final Response<dynamic> response = await _authDio.post(
         _tokenEndpoint,
         data: {
           'grant_type': 'refresh_token',
@@ -228,7 +240,10 @@ class OidcAuthDataSource {
         },
         options: Options(contentType: Headers.formUrlEncodedContentType),
       );
-      await _persistTokenResponse(response.data as Map<String, dynamic>);
+      await _persistTokenResponse(
+        response.data as Map<String, dynamic>,
+        fallbackRefreshToken: token.refreshToken,
+      );
       final newToken = await _tokenStorage.read();
       if (newToken == null) {
         throw Exception('Token refresh did not produce a token');

@@ -24,7 +24,7 @@ class CatalogBadgeCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final language = ref.read(appLanguageProvider);
+    final language = ref.watch(appLanguageProvider);
     final issuerName = getLocalizedString(
       badge.issuerNameDutch,
       badge.issuerNameEnglish,

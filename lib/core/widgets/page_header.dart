@@ -28,7 +28,10 @@ class PageHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: textTheme.titleLarge),
+                Semantics(
+                  header: true,
+                  child: Text(title, style: textTheme.titleLarge),
+                ),
                 if (subtitle != null) ...[
                   const SizedBox(height: 4),
                   Text(

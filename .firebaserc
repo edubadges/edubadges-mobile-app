@@ -1,9 +1,0 @@
-{
-  "projects": {
-    "default": "edubadges-tst",
-    "dev": "edubadges-dev",
-    "tst": "edubadges-tst",
-    "acc": "edubadges-acc",
-    "prod": "edubadges-prod"
-  }
-}
