@@ -77,9 +77,7 @@ class CatalogNotifier extends AsyncNotifier<CatalogState> {
       return;
     }
     state = AsyncData(
-      currentState.copyWith(
-        failure: (error: error, stackTrace: stackTrace),
-      ),
+      currentState.copyWith(failure: (error: error, stackTrace: stackTrace)),
     );
   }
 
