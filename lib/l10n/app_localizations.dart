@@ -746,11 +746,29 @@ abstract class AppLocalizations {
   /// **'Requested badges'**
   String get requestedBadges;
 
+  /// Tab label on the badges overview for the edubadges the user has earned, with the number of badges
+  ///
+  /// In en, this message translates to:
+  /// **'Earned ({count})'**
+  String badgesTabEarned(int count);
+
+  /// Tab label on the badges overview for the edubadges the user has requested, with the number of badges
+  ///
+  /// In en, this message translates to:
+  /// **'Requested ({count})'**
+  String badgesTabRequested(int count);
+
   /// Message shown when user has no edubadges in their collection
   ///
   /// In en, this message translates to:
   /// **'You don\'t have any edubadges yet'**
   String get noEdubadgesYet;
+
+  /// Message shown on the requested tab when the user has not requested any edubadges
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t requested any edubadges yet'**
+  String get noRequestedBadges;
 
   /// Button text or title for providing feedback
   ///

@@ -463,9 +463,31 @@
     "@requestedBadges": {
         "description": "Section header for badges that have been requested by the user"
     },
+    "badgesTabEarned": "In jouw bezit ({count})",
+    "@badgesTabEarned": {
+        "description": "Tab label on the badges overview for the edubadges the user has earned, with the number of badges",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "badgesTabRequested": "Aangevraagd ({count})",
+    "@badgesTabRequested": {
+        "description": "Tab label on the badges overview for the edubadges the user has requested, with the number of badges",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "noEdubadgesYet": "Je hebt nog geen edubadges",
     "@noEdubadgesYet": {
         "description": "Message shown when user has no edubadges in their collection"
+    },
+    "noRequestedBadges": "Je hebt nog geen edubadges aangevraagd",
+    "@noRequestedBadges": {
+        "description": "Message shown on the requested tab when the user has not requested any edubadges"
     },
     "giveFeedback": "Feedback geven",
     "@giveFeedback": {

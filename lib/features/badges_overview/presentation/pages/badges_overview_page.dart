@@ -26,12 +26,16 @@ class BadgesOverviewPage extends ConsumerStatefulWidget {
   ConsumerState<BadgesOverviewPage> createState() => _BadgesOverviewPageState();
 }
 
-class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
-  final ScrollController _scrollController = ScrollController();
+class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController = TabController(
+    length: 2,
+    vsync: this,
+  );
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -60,55 +64,37 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
     );
   }
 
-  Widget _buildDesktopHeaderSliver({
+  Widget _buildDesktopHeader({
     required AppLocalizations l10n,
     required TextTheme textTheme,
     required ColorScheme colorScheme,
   }) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 8, 0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.badgesOverviewTitle, style: textTheme.titleLarge),
-                  const SizedBox(height: 4),
-                  Text(
-                    l10n.badgesOverviewSubtitle,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 8, 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.badgesOverviewTitle, style: textTheme.titleLarge),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.badgesOverviewSubtitle,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            _buildFeedbackButton(
-              context: context,
-              l10n: l10n,
-              colorScheme: colorScheme,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionHeaderSliver({
-    required String title,
-    required TextTheme textTheme,
-    EdgeInsetsGeometry padding = const EdgeInsets.fromLTRB(16, 0, 16, 16),
-  }) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: padding,
-        child: Semantics(
-          header: true,
-          child: Text(title, style: textTheme.titleMedium),
-        ),
+          ),
+          _buildFeedbackButton(
+            context: context,
+            l10n: l10n,
+            colorScheme: colorScheme,
+          ),
+        ],
       ),
     );
   }
@@ -143,7 +129,6 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
     required String keyPrefix,
     required void Function(BadgeInstanceEntity badge) onActivate,
     bool showClaimedGalleryOnOpen = false,
-    double focusOrderOffset = 0,
   }) {
     Widget buildItem(BadgeInstanceEntity badge, int index) {
       final navigationEntityId = scope == BadgeDetailsScope.enrollment
@@ -151,7 +136,7 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
           : badge.entityId;
       void activate() => onActivate(badge);
       return FocusTraversalOrder(
-        order: NumericFocusOrder(focusOrderOffset + index),
+        order: NumericFocusOrder(index.toDouble()),
         child: KeyboardActivatable(
           key: ValueKey('${keyPrefix}_${badge.entityId}'),
           wrapWithSemantics: false,
@@ -207,7 +192,7 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
     context.push(RoutePath.badgeDetailsLocation(scope: scope, id: entityId));
   }
 
-  List<Widget> _buildContentSlivers({
+  Widget _buildClaimBannerSliver({
     required BuildContext context,
     required BadgesOverviewState state,
     required AppLocalizations l10n,
@@ -215,199 +200,248 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
     required TextTheme textTheme,
     required bool isGridLayout,
   }) {
-    final slivers = <Widget>[];
+    final firstBadge = state.unclaimedBadges.first;
+    final remainingCount = state.unclaimedBadges.length;
 
-    if (isGridLayout) {
-      slivers.add(
-        _buildDesktopHeaderSliver(
-          l10n: l10n,
-          textTheme: textTheme,
-          colorScheme: colorScheme,
-        ),
-      );
-    }
-
-    if (state.unclaimedCount > 0) {
-      final firstBadge = state.unclaimedBadges.first;
-      final remainingCount = state.unclaimedBadges.length;
-
-      void onClaimBannerTap() {
-        if (isGridLayout) {
-          DesktopBadgeClaimDialog.show(
-            context: context,
-            badgeId: firstBadge.id.toString(),
-            remainingCount: remainingCount,
-          );
-        } else {
-          context.push(
-            RoutePath.badgeClaimPath(
-              id: firstBadge.id.toString(),
-              remainingCount: remainingCount,
-            ),
-          );
-        }
-      }
-
-      final claimBannerLabel = l10n.newBadgeReady(state.unclaimedCount);
-
-      slivers.add(
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: 16,
-              right: 16,
-              top: isGridLayout ? 24 : 16,
-            ),
-            child: MergeSemantics(
-              child: InkWell(
-                onTap: onClaimBannerTap,
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: colorScheme.primary,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      ExcludeSemantics(
-                        child: SvgPicture.asset(
-                          Assets.iconParty,
-                          colorFilter: ColorFilter.mode(
-                            colorScheme.onPrimary,
-                            BlendMode.srcIn,
-                          ),
-                          width: 24,
-                          height: 24,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          claimBannerLabel,
-                          style: textTheme.labelMedium?.copyWith(
-                            color: colorScheme.onPrimary,
-                          ),
-                        ),
-                      ),
-                      ExcludeSemantics(
-                        child: SvgPicture.asset(
-                          Assets.iconChevron,
-                          colorFilter: ColorFilter.mode(
-                            colorScheme.onPrimary,
-                            BlendMode.srcIn,
-                          ),
-                          width: 12,
-                          height: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    if (state.claimedBadges.isNotEmpty) {
+    void onClaimBannerTap() {
       if (isGridLayout) {
-        slivers.add(
-          _buildSectionHeaderSliver(
-            title: l10n.tabBadges,
-            textTheme: textTheme,
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-          ),
+        DesktopBadgeClaimDialog.show(
+          context: context,
+          badgeId: firstBadge.id.toString(),
+          remainingCount: remainingCount,
         );
       } else {
-        slivers.add(const SliverToBoxAdapter(child: SizedBox(height: 16)));
+        context.push(
+          RoutePath.badgeClaimPath(
+            id: firstBadge.id.toString(),
+            remainingCount: remainingCount,
+          ),
+        );
       }
-      slivers.add(
-        _buildBadgeSliver(
-          badges: state.claimedBadges,
-          isGridLayout: isGridLayout,
-          scope: BadgeDetailsScope.claimed,
-          keyPrefix: 'claimed_badge',
-          showClaimedGalleryOnOpen: true,
-          onActivate: (badge) {
-            _openBadgeDetails(
-              context: context,
-              scope: BadgeDetailsScope.claimed,
-              entityId: badge.entityId,
-            );
-          },
-        ),
-      );
     }
 
-    if (state.requestedBadges.isNotEmpty) {
-      if (state.claimedBadges.isNotEmpty || state.unclaimedCount > 0) {
-        slivers.add(const SliverToBoxAdapter(child: SizedBox(height: 24)));
-      }
-      slivers.add(
-        _buildSectionHeaderSliver(
-          title: l10n.requestedBadges,
-          textTheme: textTheme,
-        ),
-      );
-      slivers.add(
-        _buildBadgeSliver(
-          badges: state.requestedBadges,
-          isGridLayout: isGridLayout,
-          scope: BadgeDetailsScope.enrollment,
-          keyPrefix: 'requested_badge',
-          focusOrderOffset: state.claimedBadges.length.toDouble(),
-          onActivate: (badge) {
-            _openBadgeDetails(
-              context: context,
-              scope: BadgeDetailsScope.enrollment,
-              entityId: badge.badgeclass.entityId,
-            );
-          },
-        ),
-      );
-    }
-
-    if (state.claimedBadges.isEmpty && state.requestedBadges.isEmpty) {
-      slivers.add(
-        SliverFillRemaining(
-          hasScrollBody: false,
-          child: Center(
-            child: MergeSemantics(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+        child: MergeSemantics(
+          child: InkWell(
+            onTap: onClaimBannerTap,
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: colorScheme.primary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
                 children: [
                   ExcludeSemantics(
                     child: SvgPicture.asset(
-                      Assets.iconBackpack,
+                      Assets.iconParty,
                       colorFilter: ColorFilter.mode(
-                        colorScheme.primary,
+                        colorScheme.onPrimary,
                         BlendMode.srcIn,
                       ),
-                      width: 48,
-                      height: 48,
+                      width: 24,
+                      height: 24,
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Text(l10n.noEdubadgesYet, style: textTheme.bodyMedium),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n.newBadgeReady(state.unclaimedCount),
+                      style: textTheme.labelMedium?.copyWith(
+                        color: colorScheme.onPrimary,
+                      ),
+                    ),
+                  ),
+                  ExcludeSemantics(
+                    child: SvgPicture.asset(
+                      Assets.iconChevron,
+                      colorFilter: ColorFilter.mode(
+                        colorScheme.onPrimary,
+                        BlendMode.srcIn,
+                      ),
+                      width: 12,
+                      height: 12,
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
         ),
-      );
-    }
+      ),
+    );
+  }
 
-    return slivers;
+  Widget _buildEmptyStateSliver({
+    required String message,
+    required ColorScheme colorScheme,
+    required TextTheme textTheme,
+  }) {
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Center(
+        child: MergeSemantics(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ExcludeSemantics(
+                child: SvgPicture.asset(
+                  Assets.iconBackpack,
+                  colorFilter: ColorFilter.mode(
+                    colorScheme.primary,
+                    BlendMode.srcIn,
+                  ),
+                  width: 48,
+                  height: 48,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(message, style: textTheme.bodyMedium),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabBody({
+    required List<BadgeInstanceEntity> badges,
+    required BadgeDetailsScope scope,
+    required String keyPrefix,
+    required String emptyMessage,
+    required bool isGridLayout,
+    required ColorScheme colorScheme,
+    required TextTheme textTheme,
+    required void Function(BadgeInstanceEntity badge) onActivate,
+    Widget? leadingSliver,
+    bool showClaimedGalleryOnOpen = false,
+  }) {
+    return RefreshIndicator(
+      backgroundColor: colorScheme.surfaceContainer,
+      onRefresh: () async {
+        await ref.read(badgesOverviewProvider.notifier).refresh();
+      },
+      child: FocusTraversalGroup(
+        policy: OrderedTraversalPolicy(),
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            ?leadingSliver,
+            if (badges.isEmpty)
+              _buildEmptyStateSliver(
+                message: emptyMessage,
+                colorScheme: colorScheme,
+                textTheme: textTheme,
+              )
+            else ...[
+              const SliverToBoxAdapter(child: SizedBox(height: 16)),
+              _buildBadgeSliver(
+                badges: badges,
+                isGridLayout: isGridLayout,
+                scope: scope,
+                keyPrefix: keyPrefix,
+                showClaimedGalleryOnOpen: showClaimedGalleryOnOpen,
+                onActivate: onActivate,
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 16)),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabbedContent({
+    required BuildContext context,
+    required BadgesOverviewState state,
+    required AppLocalizations l10n,
+    required ColorScheme colorScheme,
+    required TextTheme textTheme,
+    required bool isGridLayout,
+  }) {
+    return Column(
+      children: [
+        if (isGridLayout)
+          _buildDesktopHeader(
+            l10n: l10n,
+            textTheme: textTheme,
+            colorScheme: colorScheme,
+          ),
+        TabBar(
+          controller: _tabController,
+          tabs: [
+            Tab(
+              height: 48,
+              text: l10n.badgesTabEarned(state.claimedBadges.length),
+            ),
+            Tab(
+              height: 48,
+              text: l10n.badgesTabRequested(state.requestedBadges.length),
+            ),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildTabBody(
+                badges: state.claimedBadges,
+                scope: BadgeDetailsScope.claimed,
+                keyPrefix: 'claimed_badge',
+                emptyMessage: l10n.noEdubadgesYet,
+                isGridLayout: isGridLayout,
+                colorScheme: colorScheme,
+                textTheme: textTheme,
+                showClaimedGalleryOnOpen: true,
+                leadingSliver: state.unclaimedCount > 0
+                    ? _buildClaimBannerSliver(
+                        context: context,
+                        state: state,
+                        l10n: l10n,
+                        colorScheme: colorScheme,
+                        textTheme: textTheme,
+                        isGridLayout: isGridLayout,
+                      )
+                    : null,
+                onActivate: (badge) {
+                  _openBadgeDetails(
+                    context: context,
+                    scope: BadgeDetailsScope.claimed,
+                    entityId: badge.entityId,
+                  );
+                },
+              ),
+              _buildTabBody(
+                badges: state.requestedBadges,
+                scope: BadgeDetailsScope.enrollment,
+                keyPrefix: 'requested_badge',
+                emptyMessage: l10n.noRequestedBadges,
+                isGridLayout: isGridLayout,
+                colorScheme: colorScheme,
+                textTheme: textTheme,
+                onActivate: (badge) {
+                  _openBadgeDetails(
+                    context: context,
+                    scope: BadgeDetailsScope.enrollment,
+                    entityId: badge.badgeclass.entityId,
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final badgesAsync = ref.watch(badgesOverviewProvider);
     final BadgesOverviewState? badgesState = badgesAsync.value;
-    final bool isBadgesLoading =
-        badgesAsync.isLoading && !badgesAsync.hasValue;
+    final bool isBadgesLoading = badgesAsync.isLoading && !badgesAsync.hasValue;
     final Object? badgesError = badgesAsync.error;
     final StackTrace? badgesStackTrace = badgesAsync.stackTrace;
     final l10n = AppLocalizations.of(context);
@@ -451,66 +485,35 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage> {
                     ),
                   ],
                 ),
-          body: FocusTraversalGroup(
-            policy: OrderedTraversalPolicy(),
-            child: Builder(
-              builder: (BuildContext context) {
-                if (isBadgesLoading) {
-                  return CustomScrollView(
-                    controller: _scrollController,
-                    slivers: [
-                      SliverFillRemaining(
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            semanticsLabel: AppLocalizations.of(
-                              context,
-                            ).semanticsLoading,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                }
-                if (badgesError != null && badgesState == null) {
-                  return CustomScrollView(
-                    controller: _scrollController,
-                    slivers: [
-                      SliverFillRemaining(
-                        child: Center(
-                          child: ErrorMessageWidget(
-                            error: badgesError,
-                            stackTrace: badgesStackTrace,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                }
-                if (badgesState == null) {
-                  return const SizedBox.shrink();
-                }
-                final slivers = _buildContentSlivers(
-                  context: context,
-                  state: badgesState,
-                  l10n: l10n,
-                  colorScheme: colorScheme,
-                  textTheme: textTheme,
-                  isGridLayout: isGridLayout,
-                );
-
-                return RefreshIndicator(
-                  backgroundColor: colorScheme.surfaceContainer,
-                  onRefresh: () async {
-                    await ref.read(badgesOverviewProvider.notifier).refresh();
-                  },
-                  child: CustomScrollView(
-                    controller: _scrollController,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    slivers: slivers,
+          body: Builder(
+            builder: (BuildContext context) {
+              if (isBadgesLoading) {
+                return Center(
+                  child: CircularProgressIndicator(
+                    semanticsLabel: l10n.semanticsLoading,
                   ),
                 );
-              },
-            ),
+              }
+              if (badgesError != null && badgesState == null) {
+                return Center(
+                  child: ErrorMessageWidget(
+                    error: badgesError,
+                    stackTrace: badgesStackTrace,
+                  ),
+                );
+              }
+              if (badgesState == null) {
+                return const SizedBox.shrink();
+              }
+              return _buildTabbedContent(
+                context: context,
+                state: badgesState,
+                l10n: l10n,
+                colorScheme: colorScheme,
+                textTheme: textTheme,
+                isGridLayout: isGridLayout,
+              );
+            },
           ),
         );
       },

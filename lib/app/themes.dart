@@ -16,6 +16,7 @@ class AppThemes {
       textTheme: _textTheme,
       appBarTheme: _appBarTheme,
       switchTheme: _switchTheme,
+      tabBarTheme: _tabBarTheme,
       // High-contrast focus indicator for keyboard/screen reader (EU accessibility)
       focusColor: AppColors.primary,
     );
@@ -30,6 +31,7 @@ class AppThemes {
       textTheme: _textTheme,
       appBarTheme: _appBarTheme,
       switchTheme: _switchTheme,
+      tabBarTheme: _tabBarTheme,
       focusColor: AppColors.onSurface,
     );
   }
@@ -43,15 +45,15 @@ class AppThemes {
 
   static const PageTransitionsTheme _webPageTransitionsTheme =
       PageTransitionsTheme(
-    builders: <TargetPlatform, PageTransitionsBuilder>{
-      TargetPlatform.android: _InstantPageTransitionsBuilder(),
-      TargetPlatform.iOS: _InstantPageTransitionsBuilder(),
-      TargetPlatform.macOS: _InstantPageTransitionsBuilder(),
-      TargetPlatform.linux: _InstantPageTransitionsBuilder(),
-      TargetPlatform.windows: _InstantPageTransitionsBuilder(),
-      TargetPlatform.fuchsia: _InstantPageTransitionsBuilder(),
-    },
-  );
+        builders: <TargetPlatform, PageTransitionsBuilder>{
+          TargetPlatform.android: _InstantPageTransitionsBuilder(),
+          TargetPlatform.iOS: _InstantPageTransitionsBuilder(),
+          TargetPlatform.macOS: _InstantPageTransitionsBuilder(),
+          TargetPlatform.linux: _InstantPageTransitionsBuilder(),
+          TargetPlatform.windows: _InstantPageTransitionsBuilder(),
+          TargetPlatform.fuchsia: _InstantPageTransitionsBuilder(),
+        },
+      );
 
   static SystemUiOverlayStyle get systemUiOverlayStyle {
     return const SystemUiOverlayStyle(
@@ -248,6 +250,22 @@ class AppThemes {
       ),
       backgroundColor: AppColors.surface,
       surfaceTintColor: AppColors.surface,
+    );
+  }
+
+  /// Labels inherit [TextTheme.titleSmall] (Nunito Bold 14/20) from Material 3.
+  static TabBarThemeData get _tabBarTheme {
+    return const TabBarThemeData(
+      labelColor: AppColors.primary,
+      unselectedLabelColor: AppColors.onSurfaceVariant,
+      // Pill-shaped indicator hugging the label, inset 2px on either side.
+      indicatorSize: TabBarIndicatorSize.label,
+      indicator: UnderlineTabIndicator(
+        borderSide: BorderSide(width: 3, color: AppColors.primary),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(100)),
+        insets: EdgeInsets.symmetric(horizontal: 2),
+      ),
+      dividerColor: AppColors.outlineVariant,
     );
   }
 
