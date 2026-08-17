@@ -12,15 +12,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Edubadges';
 
   @override
-  String get loginCardButton => 'Go to my edubadges';
+  String get loginCardButton => 'Go to your backpack';
 
   @override
   String get loginCardText =>
-      'My Badges is the place to receive and collect edubadges. An eduID is required to create and use \"My Badges.\" Creating an eduID takes less than 30 seconds.';
+      'Your backpack is the place where you can receive, manage, and share your edubadges.\n\nTo sign in to your backpack, you need an eduID. Click the button below and sign in with your eduID.\n\nDon\'t have an eduID yet? You can easily create one.';
 
   @override
   String get loginSubtitle =>
-      'Edubadges are digital certificates that demonstrate the knowledge or skills someone has acquired, within or outside formal education.';
+      'Edubadges are digital certificates that demonstrate the knowledge and skills someone has acquired, within or outside formal education.';
 
   @override
   String get loginTitle => 'Never stop learning';
@@ -228,7 +228,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountDescription =>
-      'You can delete your edubadges account if you wish. Be aware that after this, all your edubadges can no longer be validated.\n\nDeleting your edubadges account does not mean that your eduID will also be deleted.\n\nTo complete the process of deleting your edubadges account, you must close your browser after your account has been deleted.';
+      'You can delete your edubadges account if you wish.\n\nPlease note that deleting your account will also permanently remove all the edubadges you have earned. Any edubadges you have previously shared can no longer be verified.\n\nDeleting your account is permanent and cannot be undone.';
 
   @override
   String get deleteMyAccount => 'Delete my account';

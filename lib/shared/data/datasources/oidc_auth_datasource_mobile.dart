@@ -1,3 +1,4 @@
+import 'package:edubadges/core/auth/oidc_error_classifier.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/shared/data/datasources/secure_token_storage.dart';
@@ -8,14 +9,10 @@ final EnvironmentConfig config = EnvironmentConfig.instance;
 final String issuer = config.openIdUrl;
 final String clientId = config.openIdClientId;
 
-// Redirect URIs must match what is registered on SurfConext per client:
-// - prod (`edubadges.mobile`): only accepts the reverse-DNS scheme, since the
-//   SP Dashboard rejects `edubadges://` as "not a proper URL".
-// - test (`edubadges.mobile.test`): has the legacy `edubadges://` scheme
-//   registered.
-final String redirectUri = clientId == 'edubadges.mobile'
-    ? 'mobile.edubadges:/oauth/callback'
-    : 'edubadges://oauth/callback';
+// Registered on both SurfConext clients. The single slash is the RFC 8252 form
+// for a private-use scheme (no authority); the SP Dashboard rejects the legacy
+// `edubadges://` as "not a proper URL".
+const String redirectUri = 'mobile.edubadges:/oauth/callback';
 
 class OidcAuthDataSource {
   final FlutterAppAuth _appAuth = const FlutterAppAuth();
@@ -104,7 +101,10 @@ class OidcAuthDataSource {
     );
     await _tokenStorage.write(oauth2token);
     await _fresh?.setToken(oauth2token);
-    await _tokenStorage.writeExpiration(expirationDateTime);
+    await _tokenStorage.writeExpiration(
+      expirationDateTime,
+      accessToken: accessToken,
+    );
   }
 
   Future<void> refreshTokenIfExpired() async {
@@ -140,8 +140,7 @@ class OidcAuthDataSource {
   Future<void> _refreshTokenIfPossible() async {
     final token = await _tokenStorage.read();
     if (token?.refreshToken == null) {
-      logger.w('Auth: No refresh token, logging out');
-      await logout();
+      logger.w('Auth: No refresh token available');
       return;
     }
     try {
@@ -184,9 +183,15 @@ class OidcAuthDataSource {
         ),
       );
       if (result.accessToken != null) {
-        logger.i('Auth: Token refresh successful');
-        final String? refreshToken =
-            result.refreshToken ?? token.refreshToken;
+        logger.i(
+          'Auth: Token refresh successful '
+          '(server returned refresh_token: ${result.refreshToken != null}, '
+          'expires: ${result.accessTokenExpirationDateTime})',
+        );
+        // SurfConext only returns `refresh_token` when rotation is enabled.
+        // Storing null on the responses that omit it would strand the session
+        // at the next expiry, so fall back to the token we just used.
+        final String? refreshToken = result.refreshToken ?? token.refreshToken;
         final newToken = OAuth2Token(
           accessToken: result.accessToken!,
           refreshToken: refreshToken,
@@ -200,12 +205,15 @@ class OidcAuthDataSource {
         return newToken;
       } else {
         logger.e('Auth: Token refresh failed - no access token received');
-        await logout();
         throw Exception('Token refresh failed');
       }
     } catch (e) {
-      logger.e('Auth: Token refresh failed', error: e);
-      await logout();
+      if (isPermanentAuthFailure(e)) {
+        logger.e('Auth: Refresh token rejected, clearing session', error: e);
+        await logout();
+      } else {
+        logger.w('Auth: Token refresh failed, keeping session', error: e);
+      }
       rethrow;
     }
   }

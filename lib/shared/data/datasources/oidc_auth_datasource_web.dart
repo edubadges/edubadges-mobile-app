@@ -153,7 +153,10 @@ class OidcAuthDataSource {
     );
 
     await _tokenStorage.write(token);
-    await _tokenStorage.writeExpiration(_expirationFrom(data['expires_in']));
+    await _tokenStorage.writeExpiration(
+      _expirationFrom(data['expires_in']),
+      accessToken: accessToken,
+    );
     await _fresh?.setToken(token);
   }
 
@@ -250,8 +253,15 @@ class OidcAuthDataSource {
       }
       return newToken;
     } catch (e) {
-      logger.e('Auth(web): token refresh failed', error: e);
-      await logout();
+      if (_isPermanentAuthFailure(e)) {
+        logger.e(
+          'Auth(web): refresh token rejected, clearing session',
+          error: e,
+        );
+        await logout();
+      } else {
+        logger.w('Auth(web): token refresh failed, keeping session', error: e);
+      }
       rethrow;
     }
   }
@@ -269,6 +279,27 @@ class OidcAuthDataSource {
 
   SecureTokenStorage get tokenStorage {
     return _tokenStorage;
+  }
+
+  /// Whether [error] means the stored grant can never succeed again.
+  ///
+  /// The token endpoint rejects a dead grant with an OAuth error code; offline
+  /// browsers, timeouts and 5xx responses are transient, and clearing tokens
+  /// for those logs the user out whenever a refresh runs at a bad moment.
+  static bool _isPermanentAuthFailure(Object error) {
+    if (error is! DioException) {
+      return false;
+    }
+    final int? statusCode = error.response?.statusCode;
+    if (statusCode != 400 && statusCode != 401) {
+      return false;
+    }
+    final dynamic data = error.response?.data;
+    final String? code = data is Map ? data['error'] as String? : null;
+    return code == 'invalid_grant' ||
+        code == 'invalid_client' ||
+        code == 'unauthorized_client' ||
+        code == 'invalid_scope';
   }
 
   Future<void> _clearPkce() async {

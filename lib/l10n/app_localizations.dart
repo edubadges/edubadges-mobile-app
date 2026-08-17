@@ -107,19 +107,19 @@ abstract class AppLocalizations {
   /// Button text on the login card to navigate to the user's edubadges
   ///
   /// In en, this message translates to:
-  /// **'Go to my edubadges'**
+  /// **'Go to your backpack'**
   String get loginCardButton;
 
   /// Explanatory text on the login card describing the app and eduID requirement
   ///
   /// In en, this message translates to:
-  /// **'My Badges is the place to receive and collect edubadges. An eduID is required to create and use \"My Badges.\" Creating an eduID takes less than 30 seconds.'**
+  /// **'Your backpack is the place where you can receive, manage, and share your edubadges.\n\nTo sign in to your backpack, you need an eduID. Click the button below and sign in with your eduID.\n\nDon\'t have an eduID yet? You can easily create one.'**
   String get loginCardText;
 
   /// Subtitle on the login page explaining what edubadges are
   ///
   /// In en, this message translates to:
-  /// **'Edubadges are digital certificates that demonstrate the knowledge or skills someone has acquired, within or outside formal education.'**
+  /// **'Edubadges are digital certificates that demonstrate the knowledge and skills someone has acquired, within or outside formal education.'**
   String get loginSubtitle;
 
   /// Main title displayed on the login page
@@ -497,7 +497,7 @@ abstract class AppLocalizations {
   /// Detailed description explaining the consequences of deleting an edubadges account
   ///
   /// In en, this message translates to:
-  /// **'You can delete your edubadges account if you wish. Be aware that after this, all your edubadges can no longer be validated.\n\nDeleting your edubadges account does not mean that your eduID will also be deleted.\n\nTo complete the process of deleting your edubadges account, you must close your browser after your account has been deleted.'**
+  /// **'You can delete your edubadges account if you wish.\n\nPlease note that deleting your account will also permanently remove all the edubadges you have earned. Any edubadges you have previously shared can no longer be verified.\n\nDeleting your account is permanent and cannot be undone.'**
   String get deleteAccountDescription;
 
   /// Button text to confirm account deletion
