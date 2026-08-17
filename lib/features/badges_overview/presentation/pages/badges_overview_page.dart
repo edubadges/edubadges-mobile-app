@@ -1,9 +1,11 @@
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/app_modal.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/badges_overview/domain/entities/badges_overview_state.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
@@ -15,6 +17,7 @@ import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
 import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -104,13 +107,14 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
     required BadgeDetailsScope scope,
     required String navigationEntityId,
     required VoidCallback onActivate,
+    required bool useGridTile,
     bool showClaimedGalleryOnOpen = false,
   }) {
     final badgeClass = badge.badgeclass as BadgeClassModel;
     return BadgeCard(
       instance: badge,
       badgeClass: badgeClass,
-      style: BadgeCardStyle.small,
+      style: useGridTile ? BadgeCardStyle.grid : BadgeCardStyle.small,
       showClaimedGalleryOnOpen: showClaimedGalleryOnOpen,
       badgeNavigationScope: scope == BadgeDetailsScope.enrollment
           ? scope
@@ -122,9 +126,20 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
     );
   }
 
+  /// Columns available to the badge grid, which is web only. Unlike the list,
+  /// the grid spans the full content width, so only its own padding comes off.
+  int _resolveGridColumns(double contentWidth) {
+    if (!PlatformInfo.isWeb) return 0;
+    return LayoutConstants.badgeGridColumnCount(
+      contentWidth - LayoutConstants.badgeGridPadding * 2,
+      maxColumns: LayoutConstants.badgesOverviewGridMaxColumns,
+    );
+  }
+
+  /// [gridColumns] of 0 renders the single-column list of compact cards.
   Widget _buildBadgeSliver({
     required List<BadgeInstanceEntity> badges,
-    required bool isGridLayout,
+    required int gridColumns,
     required BadgeDetailsScope scope,
     required String keyPrefix,
     required void Function(BadgeInstanceEntity badge) onActivate,
@@ -147,26 +162,40 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
             scope: scope,
             navigationEntityId: navigationEntityId,
             onActivate: activate,
+            useGridTile: gridColumns > 0,
             showClaimedGalleryOnOpen: showClaimedGalleryOnOpen,
           ),
         ),
       );
     }
 
-    if (isGridLayout) {
+    if (gridColumns > 0) {
       return SliverPadding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        sliver: SliverGrid(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: LayoutConstants.badgesOverviewGridCrossAxisCount,
-            crossAxisSpacing: LayoutConstants.badgesOverviewGridSpacing,
-            mainAxisSpacing: 8,
-            mainAxisExtent: LayoutConstants.badgesOverviewGridMainAxisExtent,
-          ),
-          delegate: SliverChildBuilderDelegate(
-            (context, index) => buildItem(badges[index], index),
-            childCount: badges.length,
-          ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: LayoutConstants.badgeGridPadding,
+        ),
+        sliver: SliverLayoutBuilder(
+          builder: (BuildContext context, SliverConstraints constraints) {
+            final double tileWidth = LayoutConstants.badgeGridTileWidth(
+              constraints.crossAxisExtent,
+              gridColumns,
+            );
+            return SliverGrid(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: gridColumns,
+                crossAxisSpacing: LayoutConstants.badgeGridSpacing,
+                mainAxisSpacing: LayoutConstants.badgeGridSpacing,
+                mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
+                  tileWidth,
+                  hasChips: true,
+                ),
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => buildItem(badges[index], index),
+                childCount: badges.length,
+              ),
+            );
+          },
         ),
       );
     }
@@ -198,13 +227,13 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
     required AppLocalizations l10n,
     required ColorScheme colorScheme,
     required TextTheme textTheme,
-    required bool isGridLayout,
+    required bool isDesktopLayout,
   }) {
     final firstBadge = state.unclaimedBadges.first;
     final remainingCount = state.unclaimedBadges.length;
 
     void onClaimBannerTap() {
-      if (isGridLayout) {
+      if (isDesktopLayout) {
         DesktopBadgeClaimDialog.show(
           context: context,
           badgeId: firstBadge.id.toString(),
@@ -312,7 +341,7 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
     required BadgeDetailsScope scope,
     required String keyPrefix,
     required String emptyMessage,
-    required bool isGridLayout,
+    required int gridColumns,
     required ColorScheme colorScheme,
     required TextTheme textTheme,
     required void Function(BadgeInstanceEntity badge) onActivate,
@@ -340,7 +369,7 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
               const SliverToBoxAdapter(child: SizedBox(height: 16)),
               _buildBadgeSliver(
                 badges: badges,
-                isGridLayout: isGridLayout,
+                gridColumns: gridColumns,
                 scope: scope,
                 keyPrefix: keyPrefix,
                 showClaimedGalleryOnOpen: showClaimedGalleryOnOpen,
@@ -360,11 +389,20 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
     required AppLocalizations l10n,
     required ColorScheme colorScheme,
     required TextTheme textTheme,
-    required bool isGridLayout,
+    required bool isDesktopLayout,
+    required int gridColumns,
   }) {
+    // The grid spans the full width like the design; only the list of compact
+    // cards is capped, so the rows do not stretch across a wide window.
+    final double tabBodyMaxWidth = gridColumns > 0
+        ? double.infinity
+        : isDesktopLayout
+        ? LayoutConstants.badgesOverviewDesktopMaxWidth
+        : MaxWidthWrapper.defaultMaxWidth;
+
     return Column(
       children: [
-        if (isGridLayout)
+        if (isDesktopLayout)
           _buildDesktopHeader(
             l10n: l10n,
             textTheme: textTheme,
@@ -387,48 +425,54 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
           child: TabBarView(
             controller: _tabController,
             children: [
-              _buildTabBody(
-                badges: state.claimedBadges,
-                scope: BadgeDetailsScope.claimed,
-                keyPrefix: 'claimed_badge',
-                emptyMessage: l10n.noEdubadgesYet,
-                isGridLayout: isGridLayout,
-                colorScheme: colorScheme,
-                textTheme: textTheme,
-                showClaimedGalleryOnOpen: true,
-                leadingSliver: state.unclaimedCount > 0
-                    ? _buildClaimBannerSliver(
-                        context: context,
-                        state: state,
-                        l10n: l10n,
-                        colorScheme: colorScheme,
-                        textTheme: textTheme,
-                        isGridLayout: isGridLayout,
-                      )
-                    : null,
-                onActivate: (badge) {
-                  _openBadgeDetails(
-                    context: context,
-                    scope: BadgeDetailsScope.claimed,
-                    entityId: badge.entityId,
-                  );
-                },
+              MaxWidthWrapper(
+                maxWidth: tabBodyMaxWidth,
+                child: _buildTabBody(
+                  badges: state.claimedBadges,
+                  scope: BadgeDetailsScope.claimed,
+                  keyPrefix: 'claimed_badge',
+                  emptyMessage: l10n.noEdubadgesYet,
+                  gridColumns: gridColumns,
+                  colorScheme: colorScheme,
+                  textTheme: textTheme,
+                  showClaimedGalleryOnOpen: true,
+                  leadingSliver: state.unclaimedCount > 0
+                      ? _buildClaimBannerSliver(
+                          context: context,
+                          state: state,
+                          l10n: l10n,
+                          colorScheme: colorScheme,
+                          textTheme: textTheme,
+                          isDesktopLayout: isDesktopLayout,
+                        )
+                      : null,
+                  onActivate: (badge) {
+                    _openBadgeDetails(
+                      context: context,
+                      scope: BadgeDetailsScope.claimed,
+                      entityId: badge.entityId,
+                    );
+                  },
+                ),
               ),
-              _buildTabBody(
-                badges: state.requestedBadges,
-                scope: BadgeDetailsScope.enrollment,
-                keyPrefix: 'requested_badge',
-                emptyMessage: l10n.noRequestedBadges,
-                isGridLayout: isGridLayout,
-                colorScheme: colorScheme,
-                textTheme: textTheme,
-                onActivate: (badge) {
-                  _openBadgeDetails(
-                    context: context,
-                    scope: BadgeDetailsScope.enrollment,
-                    entityId: badge.badgeclass.entityId,
-                  );
-                },
+              MaxWidthWrapper(
+                maxWidth: tabBodyMaxWidth,
+                child: _buildTabBody(
+                  badges: state.requestedBadges,
+                  scope: BadgeDetailsScope.enrollment,
+                  keyPrefix: 'requested_badge',
+                  emptyMessage: l10n.noRequestedBadges,
+                  gridColumns: gridColumns,
+                  colorScheme: colorScheme,
+                  textTheme: textTheme,
+                  onActivate: (badge) {
+                    _openBadgeDetails(
+                      context: context,
+                      scope: BadgeDetailsScope.enrollment,
+                      entityId: badge.badgeclass.entityId,
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -463,11 +507,12 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        final bool isGridLayout =
+        final bool isDesktopLayout =
             constraints.maxWidth >= LayoutConstants.badgesOverviewGridMinWidth;
+        final int gridColumns = _resolveGridColumns(constraints.maxWidth);
 
         return Scaffold(
-          appBar: isGridLayout
+          appBar: isDesktopLayout
               ? null
               : AppBar(
                   title: SvgPicture.asset(
@@ -511,7 +556,8 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
                 l10n: l10n,
                 colorScheme: colorScheme,
                 textTheme: textTheme,
-                isGridLayout: isGridLayout,
+                isDesktopLayout: isDesktopLayout,
+                gridColumns: gridColumns,
               );
             },
           ),

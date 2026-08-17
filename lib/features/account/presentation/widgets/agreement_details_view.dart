@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/actionable_content_layout.dart';
@@ -194,6 +195,7 @@ class _AgreementDetailsViewState extends ConsumerState<AgreementDetailsView> {
         error: markdownAsyncValue.hasError,
         content: content,
         actions: actions,
+        backFallbackLocation: RoutePath.account,
       );
     }
 

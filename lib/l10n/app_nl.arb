@@ -1231,6 +1231,8 @@
     "semanticsImageNotSupported": "Afbeelding niet beschikbaar",
     "semanticsBadgePublic": "Badge is openbaar. Tik om zichtbaarheid te wijzigen.",
     "semanticsBadgePrivate": "Badge is privé. Tik om zichtbaarheid te wijzigen.",
+    "semanticsBadgeVisibilityPublic": "Badge is openbaar",
+    "semanticsBadgeVisibilityPrivate": "Badge is privé",
     "semanticsLogout": "Uitloggen",
     "semanticsCopyLink": "Link kopiëren",
     "semanticsError": "Fout",

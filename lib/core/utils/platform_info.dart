@@ -40,8 +40,4 @@ class PlatformInfo {
   }
 
   static bool get useCupertinoDialog => isIOS;
-
-  /// Whether in-app back buttons should be shown. On web the browser's own
-  /// back navigation is used instead, so in-app back buttons are hidden.
-  static bool get showInAppBackButton => !isWeb;
 }

@@ -1064,6 +1064,12 @@ class AppLocalizationsNl extends AppLocalizations {
       'Badge is privé. Tik om zichtbaarheid te wijzigen.';
 
   @override
+  String get semanticsBadgeVisibilityPublic => 'Badge is openbaar';
+
+  @override
+  String get semanticsBadgeVisibilityPrivate => 'Badge is privé';
+
+  @override
   String get semanticsLogout => 'Uitloggen';
 
   @override

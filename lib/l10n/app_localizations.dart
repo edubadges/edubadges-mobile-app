@@ -1874,6 +1874,18 @@ abstract class AppLocalizations {
   /// **'Badge is private. Tap to change visibility.'**
   String get semanticsBadgePrivate;
 
+  /// Accessibility label for the visibility indicator on a public badge
+  ///
+  /// In en, this message translates to:
+  /// **'Badge is public'**
+  String get semanticsBadgeVisibilityPublic;
+
+  /// Accessibility label for the visibility indicator on a private badge
+  ///
+  /// In en, this message translates to:
+  /// **'Badge is private'**
+  String get semanticsBadgeVisibilityPrivate;
+
   /// Accessibility label for logout button
   ///
   /// In en, this message translates to:
