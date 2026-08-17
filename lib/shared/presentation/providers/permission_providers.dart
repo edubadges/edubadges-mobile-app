@@ -1,4 +1,5 @@
 import 'package:edubadges/shared/data/datasources/notification_permission_local_datasource.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -16,6 +17,9 @@ final notificationPermissionPromptDeclinedProvider =
 
 final shouldShowNotificationPermissionPromptProvider =
     FutureProvider.autoDispose<bool>((ref) async {
+  if (kIsWeb) {
+    return false;
+  }
   final hasDeclined = await ref.watch(
     notificationPermissionPromptDeclinedProvider.future,
   );

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 
 /// Interceptor for retrying failed requests
@@ -46,16 +44,11 @@ class RetryInterceptor extends Interceptor {
       return false;
     }
 
-    // Retry on connection errors
+    // Retry on connection errors and timeouts
     if (err.type == DioExceptionType.connectionError ||
         err.type == DioExceptionType.connectionTimeout ||
         err.type == DioExceptionType.receiveTimeout ||
         err.type == DioExceptionType.sendTimeout) {
-      return true;
-    }
-
-    // Retry on socket exceptions
-    if (err.error is SocketException) {
       return true;
     }
 

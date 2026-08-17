@@ -37,13 +37,33 @@
     "@tabAccount": {
         "description": "Navigation tab label for the account section"
     },
+    "accountSubtitle": "Beheer je gegevens en instellingen",
+    "@accountSubtitle": {
+        "description": "Page subtitle for the account screen on desktop"
+    },
     "tabBadges": "Edubadges",
     "@tabBadges": {
         "description": "Navigation tab label for the edubadges section"
     },
+    "badgesOverviewTitle": "Mijn edubadges",
+    "@badgesOverviewTitle": {
+        "description": "Page title for the badges overview screen on desktop"
+    },
+    "badgesOverviewSubtitle": "Overzicht van je behaalde en aangevraagde edubadges",
+    "@badgesOverviewSubtitle": {
+        "description": "Page subtitle for the badges overview screen on desktop"
+    },
     "tabCatalog": "Catalogus",
     "@tabCatalog": {
         "description": "Navigation tab label for the catalog section"
+    },
+    "catalogSubtitle": "Ontdek beschikbare edubadges per instelling",
+    "@catalogSubtitle": {
+        "description": "Page subtitle for the catalog screen on desktop"
+    },
+    "catalogSearchPlaceholder": "Zoek op naam of instelling...",
+    "@catalogSearchPlaceholder": {
+        "description": "Placeholder text for the catalog search input field"
     },
     "tabCollections": "Collecties",
     "@tabCollections": {

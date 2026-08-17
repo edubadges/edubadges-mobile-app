@@ -31,8 +31,17 @@ import 'package:go_router/go_router.dart';
 
 class BadgePrivacyPage extends ConsumerStatefulWidget {
   final String badgeId;
+  final VoidCallback? onBack;
+  final void Function(String badgeClassId)? onNavigateToSuccess;
+  final VoidCallback? onNavigateToMain;
 
-  const BadgePrivacyPage({super.key, required this.badgeId});
+  const BadgePrivacyPage({
+    super.key,
+    required this.badgeId,
+    this.onBack,
+    this.onNavigateToSuccess,
+    this.onNavigateToMain,
+  });
 
   @override
   ConsumerState<BadgePrivacyPage> createState() => _BadgePrivacyPageState();
@@ -76,7 +85,11 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
               (_) {
                 if (mounted) {
                   ref.read(badgesOverviewProvider.notifier).refresh();
-                  context.go(RoutePath.main);
+                  if (widget.onNavigateToMain != null) {
+                    widget.onNavigateToMain!();
+                  } else {
+                    context.go(RoutePath.main);
+                  }
                 }
               },
             );
@@ -154,11 +167,15 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
         (_) {
           if (mounted) {
             ref.read(badgesOverviewProvider.notifier).refresh();
-            context.go(
-              RoutePath.badgeClaimSuccessPath(
-                id: badge.badgeclass.entityId,
-              ),
-            );
+            if (widget.onNavigateToSuccess != null) {
+              widget.onNavigateToSuccess!(badge.badgeclass.entityId);
+            } else {
+              context.go(
+                RoutePath.badgeClaimSuccessPath(
+                  id: badge.badgeclass.entityId,
+                ),
+              );
+            }
           }
         },
       );
@@ -206,6 +223,7 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
     return ActionableContentLayout(
       title: currentTitle,
       error: markdownAsyncValue.hasError,
+      onBack: widget.onBack,
       content: markdownAsyncValue.when(
         data: (String data) {
           return MarkdownBody(

@@ -122,9 +122,17 @@ class BadgesOverviewNotifier extends AsyncNotifier<BadgesOverviewState> {
       // Ensure family-based detail caches are refreshed after overview updates.
       ref.invalidate(directAwardDetailProvider);
     } catch (error, stackTrace) {
-      if (!silent || !state.hasValue) {
-        state = AsyncError(error, stackTrace);
+      final AsyncValue<BadgesOverviewState> previous = state;
+      final AsyncError<BadgesOverviewState> errorState =
+          AsyncError<BadgesOverviewState>(error, stackTrace);
+      if (!silent || !previous.hasValue) {
+        state = errorState;
+      } else {
+        // Retain prior badges so background refresh failures stay soft.
+        // ignore: invalid_use_of_internal_member
+        state = errorState.copyWithPrevious(previous);
       }
     }
   }
+
 }

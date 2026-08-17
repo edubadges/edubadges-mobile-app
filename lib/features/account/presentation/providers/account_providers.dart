@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
 import 'package:edubadges/core/network/network_providers.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/features/account/data/datasources/account_datasource.dart';
 import 'package:edubadges/features/account/data/datasources/account_remote_datasource.dart';
 import 'package:edubadges/features/account/data/repositories/account_repository_impl.dart';
@@ -64,6 +65,9 @@ final notificationEnabledProvider =
 class NotificationEnabledNotifier extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
+    if (PlatformInfo.isWeb) {
+      return false;
+    }
     final active = await ref
         .read(deviceRegistrationServiceProvider)
         .getNotificationActive();
@@ -73,6 +77,9 @@ class NotificationEnabledNotifier extends AsyncNotifier<bool> {
 
   /// Updates the toggle and sends the new [active] value to the backend.
   Future<void> setEnabled(bool enabled) async {
+    if (PlatformInfo.isWeb) {
+      return;
+    }
     final PermissionStatus notification = await Permission.notification.request();
 
     if (notification == PermissionStatus.granted ||
