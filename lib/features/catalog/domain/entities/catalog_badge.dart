@@ -31,9 +31,6 @@ class CatalogBadge extends Equatable {
   final String? institutionImageDutch;
   final String? institutionImageEnglish;
   final String? institutionType;
-  
-  final int selfRequestedAssertionsCount;
-  final int directAwardedAssertionsCount;
 
   const CatalogBadge({
     required this.createdAt,
@@ -62,8 +59,6 @@ class CatalogBadge extends Equatable {
     this.institutionImageDutch,
     this.institutionImageEnglish,
     this.institutionType,
-    required this.selfRequestedAssertionsCount,
-    required this.directAwardedAssertionsCount,
   });
 
   @override
@@ -94,7 +89,5 @@ class CatalogBadge extends Equatable {
         institutionImageDutch,
         institutionImageEnglish,
         institutionType,
-        selfRequestedAssertionsCount,
-        directAwardedAssertionsCount,
       ];
 }

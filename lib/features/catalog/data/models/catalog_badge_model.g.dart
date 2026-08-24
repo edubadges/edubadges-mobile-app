@@ -90,14 +90,6 @@ CatalogBadgeModel _$CatalogBadgeModelFromJson(
         (v) => v as String?,
       ),
       institutionType: $checkedConvert('institution_type', (v) => v as String?),
-      selfRequestedAssertionsCount: $checkedConvert(
-        'self_requested_assertions_count',
-        (v) => (v as num).toInt(),
-      ),
-      directAwardedAssertionsCount: $checkedConvert(
-        'direct_awarded_assertions_count',
-        (v) => (v as num).toInt(),
-      ),
     );
     return val;
   },
@@ -125,8 +117,6 @@ CatalogBadgeModel _$CatalogBadgeModelFromJson(
     'institutionImageDutch': 'institution_image_dutch',
     'institutionImageEnglish': 'institution_image_english',
     'institutionType': 'institution_type',
-    'selfRequestedAssertionsCount': 'self_requested_assertions_count',
-    'directAwardedAssertionsCount': 'direct_awarded_assertions_count',
   },
 );
 
@@ -157,8 +147,6 @@ Map<String, dynamic> _$CatalogBadgeModelToJson(CatalogBadgeModel instance) =>
       'institution_image_dutch': ?instance.institutionImageDutch,
       'institution_image_english': ?instance.institutionImageEnglish,
       'institution_type': ?instance.institutionType,
-      'self_requested_assertions_count': instance.selfRequestedAssertionsCount,
-      'direct_awarded_assertions_count': instance.directAwardedAssertionsCount,
       'badge_class_type': CatalogBadgeModel._badgeClassTypeToJson(
         instance.badgeClassType,
       ),
