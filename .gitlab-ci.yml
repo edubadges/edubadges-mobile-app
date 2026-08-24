@@ -1,13 +1,53 @@
-image: docker:20.10
-services:
-  - docker:20.10-dind
-
-variables:
-  FLUTTER_VERSION: "3.38.5"
-  FLUTTER_CHANNEL: "stable"
+# Edubadges CI.
+#
+# Mobile releases are built by Bitrise and Xcode Cloud. This pipeline covers
+# static analysis and the web release: one container image per flavor, pushed to
+# this project's container registry, plus a tarball for anyone who would rather
+# serve the files with their own nginx.
+#
+# Branch to flavor to hostname:
+#
+#   develop     -> dev   -> backpack-demo.edubadges.nl
+#   test        -> tst   -> backpack-test.edubadges.nl
+#   acceptance  -> acc   -> backpack-acc.edubadges.nl
+#   main        -> prod  -> backpack.edubadges.nl        (manual)
 
 stages:
   - qa
+  - release
+
+variables:
+  # pubspec.lock advertises `flutter >=3.38.4`, but the real constraint is Dart
+  # >=3.11.1 (accessibility_radar), which first ships in Flutter 3.41.3.
+  # Flutter 3.38.5 bundles Dart 3.10.4 and cannot resolve dependencies at all.
+  FLUTTER_VERSION: "3.41.3"
+  FLUTTER_CHANNEL: "stable"
+  WEB_IMAGE: "$CI_REGISTRY_IMAGE/web"
+
+# Installs the pinned Flutter SDK from Google's release tarball. The same
+# version the Dockerfile uses, so CI and the image cannot drift.
+.flutter:
+  image: debian:bookworm-slim
+  before_script:
+    - apt-get update
+    - apt-get install -y --no-install-recommends ca-certificates curl git unzip xz-utils python3
+    - curl -fsSL --http1.1 --retry 5 --retry-delay 5 --retry-all-errors -o /tmp/flutter.tar.xz "https://storage.googleapis.com/flutter_infra_release/releases/${FLUTTER_CHANNEL}/linux/flutter_linux_${FLUTTER_VERSION}-${FLUTTER_CHANNEL}.tar.xz"
+    - tar -xf /tmp/flutter.tar.xz -C /opt
+    - export PATH="/opt/flutter/bin:$PATH"
+    - git config --global --add safe.directory /opt/flutter
+    - flutter config --no-analytics
+    - flutter --version
+    - flutter pub get
+
+analyze:
+  extends: .flutter
+  stage: qa
+  script:
+    - flutter analyze
+    - flutter test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH =~ /^(develop|test|acceptance|main)$/
 
 quality:
   image:
@@ -22,7 +62,6 @@ quality:
     - tar xf "flutter_linux_${FLUTTER_VERSION}-${FLUTTER_CHANNEL}.tar.xz" -C /opt
     - export PATH="$PATH:/opt/flutter/bin"
     - git config --global --add safe.directory /opt/flutter
-    - 'git config --global url."https://${GITLAB_USERNAME}:${GITLAB_PAT}@gitlab.com/".insteadOf git@gitlab.com:'
     - flutter config --no-analytics
     - flutter --version
   script:
@@ -35,6 +74,76 @@ quality:
     key: "${CI_JOB_NAME}"
     paths:
       - .sonar/cache
-  only:
-    - merge_requests
-    - develop
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+# Builds the image, pushes it, then lifts the compiled site back out of that
+# same image to produce the tarball. Doing it this way means the tarball and the
+# image are byte-identical builds rather than two separate compilations.
+.release:
+  stage: release
+  image: docker:27
+  services:
+    - docker:27-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - docker login -u gitlab-ci-token -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
+  script:
+    - APP_VERSION=$(grep '^version:' pubspec.yaml | head -1 | cut -d' ' -f2 | cut -d'+' -f1)
+    - TAG="${APP_FLAVOR}-${APP_VERSION}-${CI_COMMIT_SHORT_SHA}"
+    - echo "Building ${WEB_IMAGE}:${TAG}"
+    - docker build
+        --build-arg APP_FLAVOR="$APP_FLAVOR"
+        --build-arg FLUTTER_VERSION="$FLUTTER_VERSION"
+        --build-arg FLUTTER_CHANNEL="$FLUTTER_CHANNEL"
+        -t "${WEB_IMAGE}:${TAG}"
+        -t "${WEB_IMAGE}:${APP_FLAVOR}-latest"
+        .
+    - docker push "${WEB_IMAGE}:${TAG}"
+    - docker push "${WEB_IMAGE}:${APP_FLAVOR}-latest"
+    # Tarball for the "we already run our own nginx" deployment path.
+    - CONTAINER=$(docker create "${WEB_IMAGE}:${TAG}")
+    - mkdir -p dist
+    - docker cp "${CONTAINER}:/usr/share/nginx/html" dist/web
+    - docker cp "${CONTAINER}:/etc/nginx/conf.d/default.conf" dist/nginx.conf
+    - docker rm "$CONTAINER"
+    - tar -czf "edubadges-web-${TAG}.tar.gz" -C dist web nginx.conf
+    - echo "Published ${WEB_IMAGE}:${TAG}"
+  artifacts:
+    name: "edubadges-web-${APP_FLAVOR}"
+    paths:
+      - edubadges-web-*.tar.gz
+    expire_in: 90 days
+
+release:dev:
+  extends: .release
+  variables:
+    APP_FLAVOR: dev
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+release:tst:
+  extends: .release
+  variables:
+    APP_FLAVOR: tst
+  rules:
+    - if: $CI_COMMIT_BRANCH == "test"
+
+release:acc:
+  extends: .release
+  variables:
+    APP_FLAVOR: acc
+  rules:
+    - if: $CI_COMMIT_BRANCH == "acceptance"
+
+# Production is never automatic: a person has to press play.
+release:prod:
+  extends: .release
+  variables:
+    APP_FLAVOR: prod
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+      allow_failure: false

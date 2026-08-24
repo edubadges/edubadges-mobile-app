@@ -17,7 +17,7 @@ workflows:
         - build_gradle_path: "$BITRISE_SOURCE_DIR/android/$MODULE/build.gradle.kts"
     - flutter-installer@1:
         inputs:
-        - version: stable
+        - version: 3.41.3
         - is_update: 'false'
     - flutter-analyze@0:
         inputs:
@@ -106,7 +106,7 @@ workflows:
         - build_gradle_path: "$BITRISE_SOURCE_DIR/android/$MODULE/build.gradle.kts"
     - flutter-installer@1:
         inputs:
-        - version: 3.35.7
+        - version: 3.41.3
         - is_update: 'false'
     - flutter-analyze@0:
         inputs:
@@ -185,7 +185,7 @@ workflows:
         - build_gradle_path: "$BITRISE_SOURCE_DIR/android/$MODULE/build.gradle.kts"
     - flutter-installer@1:
         inputs:
-        - version: 3.35.7
+        - version: 3.41.3
         - is_update: 'false'
     - flutter-analyze@0:
         inputs:
