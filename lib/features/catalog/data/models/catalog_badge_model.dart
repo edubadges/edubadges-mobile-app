@@ -34,8 +34,6 @@ class CatalogBadgeModel extends CatalogBadge {
     super.institutionImageDutch,
     super.institutionImageEnglish,
     super.institutionType,
-    required super.selfRequestedAssertionsCount,
-    required super.directAwardedAssertionsCount,
   });
 
   factory CatalogBadgeModel.fromJson(Map<String, dynamic> json) =>

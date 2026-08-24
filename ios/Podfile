@@ -58,15 +58,21 @@ post_install do |installer|
     end
   end
 
-  # Flutter generates FlutterGeneratedPluginSwiftPackage with iOS 13.0 by default.
-  # Firebase SPM plugins require iOS 15.0+, so align the generated package manifest.
+  # Flutter regenerates FlutterGeneratedPluginSwiftPackage using its own hardcoded
+  # minimum iOS version, which is lower than the 15.0 the Firebase SPM plugins
+  # require. SPM rejects a dependency whose deployment target is higher than the
+  # top-level package's, so raise the generated manifest to match this Podfile.
+  # Matched by regex rather than a literal so a change to Flutter's default does
+  # not silently turn this into a no-op.
   package_swift = File.expand_path(
     'Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift',
     __dir__,
   )
   if File.exist?(package_swift)
     contents = File.read(package_swift)
-    updated_contents = contents.gsub('.iOS("13.0")', '.iOS("15.0")')
+    updated_contents = contents.gsub(/\.iOS\("(\d+)(?:\.(\d+))?"\)/) do
+      Gem::Version.new("#{$1}.#{$2 || 0}") < Gem::Version.new('15.0') ? '.iOS("15.0")' : $&
+    end
     File.write(package_swift, updated_contents) if contents != updated_contents
   end
 end
