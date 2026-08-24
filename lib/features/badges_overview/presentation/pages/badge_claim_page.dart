@@ -6,6 +6,7 @@ import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
+import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
@@ -23,11 +24,17 @@ import 'package:intl/intl.dart';
 class BadgeClaimPage extends ConsumerStatefulWidget {
   final String badgeId;
   final int remainingCount;
+  final VoidCallback? onClose;
+  final void Function(String badgeId)? onNavigateToPrivacy;
+  final void Function(String badgeClassId)? onNavigateToSuccess;
 
   const BadgeClaimPage({
     super.key,
     required this.badgeId,
     required this.remainingCount,
+    this.onClose,
+    this.onNavigateToPrivacy,
+    this.onNavigateToSuccess,
   });
 
   @override
@@ -60,8 +67,14 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
     final needsPrivacyPage =
         detailAsync.hasError || detail == null || !detail.userHasAcceptedTerms;
     if (needsPrivacyPage) {
-      if (context.mounted) {
-        unawaited(context.push(RoutePath.badgePrivacyPath(id: widget.badgeId)));
+      if (widget.onNavigateToPrivacy != null) {
+        widget.onNavigateToPrivacy!(widget.badgeId);
+      } else {
+        if (context.mounted) {
+          unawaited(
+            context.push(RoutePath.badgePrivacyPath(id: widget.badgeId)),
+          );
+        }
       }
       return;
     }
@@ -82,11 +95,13 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         (_) {
           if (mounted) {
             ref.read(badgesOverviewProvider.notifier).refresh();
-            context.go(
-              RoutePath.badgeClaimSuccessPath(
-                id: badge.badgeclass.entityId,
-              ),
-            );
+            if (widget.onNavigateToSuccess != null) {
+              widget.onNavigateToSuccess!(badge.badgeclass.entityId);
+            } else {
+              context.go(
+                RoutePath.badgeClaimSuccessPath(id: badge.badgeclass.entityId),
+              );
+            }
           }
         },
       );
@@ -132,7 +147,11 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
               (_) {
                 if (mounted) {
                   ref.read(badgesOverviewProvider.notifier).refresh();
-                  Navigator.of(context).pop();
+                  if (widget.onClose != null) {
+                    widget.onClose!();
+                  } else if (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();
+                  }
                 }
               },
             );
@@ -165,13 +184,15 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.close, color: colorScheme.primary),
-            onPressed: () {
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                context.go(RoutePath.main);
-              }
-            },
+            onPressed:
+                widget.onClose ??
+                () {
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    context.go(RoutePath.main);
+                  }
+                },
             tooltip: l10n.semanticsClose,
           ),
         ],
@@ -328,7 +349,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         : null;
 
     final screenWidth = MediaQuery.of(context).size.width;
-    final imageSize = screenWidth * 180 / 393;
+    final imageSize = (screenWidth * 180 / 393).clamp(0.0, 200.0);
 
     return MergeSemantics(
       child: Column(
@@ -336,8 +357,8 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         children: [
           if (badgeImageUrl != null)
             ExcludeSemantics(
-              child: Image.network(
-                badgeImageUrl,
+              child: AppNetworkImage(
+                imageUrl: badgeImageUrl,
                 height: imageSize,
                 width: imageSize,
                 semanticLabel: l10n.semanticsBadgeImage,
@@ -405,8 +426,8 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
               children: [
                 if (institutionImageUrl != null)
                   ExcludeSemantics(
-                    child: Image.network(
-                      institutionImageUrl,
+                    child: AppNetworkImage(
+                      imageUrl: institutionImageUrl,
                       height: 25,
                       width: 25,
                       semanticLabel: l10n.semanticsInstitutionLogo,

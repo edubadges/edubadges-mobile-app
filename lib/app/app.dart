@@ -3,6 +3,7 @@ import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +19,11 @@ class _AppState extends ConsumerState<App> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _handleInitialNotification());
+    if (!kIsWeb) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _handleInitialNotification(),
+      );
+    }
   }
 
   Future<void> _handleInitialNotification() async {
@@ -34,10 +39,9 @@ class _AppState extends ConsumerState<App> {
 
     return MaterialApp.router(
       title: 'Edubadges',
-      theme: AppThemes.lightTheme,
-      highContrastTheme: AppThemes.highContrastTheme,
+      theme: AppThemes.themeForPlatform(AppThemes.lightTheme),
+      highContrastTheme: AppThemes.themeForPlatform(AppThemes.highContrastTheme),
       routerConfig: router,
-      // Use to check if semantics are setup correctly for a page
       showSemanticsDebugger: false,
       localizationsDelegates: const [
         AppLocalizations.delegate,

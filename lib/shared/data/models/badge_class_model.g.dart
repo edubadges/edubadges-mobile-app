@@ -40,11 +40,12 @@ BadgeClassModel _$BadgeClassModelFromJson(Map<String, dynamic> json) =>
           ),
           selfEnrollmentEnabled: $checkedConvert(
             'self_enrollment_enabled',
-            (v) => v as bool? ?? false,
+            (v) => v == null ? false : BadgeClassModel._parseBoolOrFalse(v),
+            readValue: BadgeClassModel._readSelfEnrollmentEnabled,
           ),
           userMayEnroll: $checkedConvert(
             'user_may_enroll',
-            (v) => v as bool? ?? false,
+            (v) => v == null ? false : BadgeClassModel._parseBoolOrFalse(v),
           ),
           stackable: $checkedConvert('stackable', (v) => v as bool?),
           qualityAssuranceName: $checkedConvert(
@@ -106,8 +107,6 @@ Map<String, dynamic> _$BadgeClassModelToJson(BadgeClassModel instance) =>
       'formal': ?instance.formal,
       'assessment_id_verified': ?instance.assessmentIdVerified,
       'assessment_supervised': ?instance.assessmentSupervised,
-      'self_enrollment_enabled': instance.selfEnrollmentEnabled,
-      'user_may_enroll': instance.userMayEnroll,
       'stackable': ?instance.stackable,
       'quality_assurance_name': ?instance.qualityAssuranceName,
       'quality_assurance_url': ?instance.qualityAssuranceUrl,
@@ -122,6 +121,8 @@ Map<String, dynamic> _$BadgeClassModelToJson(BadgeClassModel instance) =>
       'assessment_type': ?BadgeClassModel._assessmentTypeToJson(
         instance.assessmentType,
       ),
+      'self_enrollment_enabled': instance.selfEnrollmentEnabled,
+      'user_may_enroll': instance.userMayEnroll,
       'eqf_nlqf_level_verified': instance.eqfNlqfLevelVerified,
       'badgeclassextension_set': ?BadgeClassModel._extensionsToJson(
         instance.badgeclassextensionSet,

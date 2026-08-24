@@ -53,6 +53,7 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Semantics(
             header: true,
@@ -100,7 +101,7 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
           TextField(
             controller: _searchController,
             decoration: InputDecoration(
-              hintText: l10n.searchPlaceholder,
+              hintText: l10n.catalogSearchPlaceholder,
               labelText: l10n.search,
               prefixIcon: const ExcludeSemantics(child: Icon(Icons.search)),
               suffixIcon: _searchController.text.isNotEmpty

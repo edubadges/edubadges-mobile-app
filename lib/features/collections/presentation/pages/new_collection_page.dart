@@ -1,6 +1,7 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -112,12 +113,15 @@ class NewCollectionPage extends StatelessWidget {
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
         centerTitle: false,
-        titleSpacing: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
-          onPressed: () => context.pop(),
-          tooltip: AppLocalizations.of(context).semanticsBack,
-        ),
+        titleSpacing: PlatformInfo.showInAppBackButton ? 0 : 16,
+        automaticallyImplyLeading: false,
+        leading: PlatformInfo.showInAppBackButton
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back, color: AppColors.primary),
+                onPressed: () => context.pop(),
+                tooltip: AppLocalizations.of(context).semanticsBack,
+              )
+            : null,
         title: Text(
           name,
           style: theme.textTheme.titleLarge?.copyWith(
