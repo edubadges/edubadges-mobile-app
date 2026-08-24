@@ -5,3 +5,6 @@ ASSET_PREFIX=prod
 BUNDLE_NAME=Edubadges
 BUNDLE_DISPLAY_NAME=Edubadges
 BASE_URL=https://api.edubadges.nl
+
+// APNs environment. Debug builds talk to the development APNs servers.
+APS_ENVIRONMENT=development
