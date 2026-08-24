@@ -7,8 +7,18 @@ set -e
 cd $CI_PRIMARY_REPOSITORY_PATH # change working directory to the root of your cloned repo.
 
 # Install Flutter using git.
-git clone https://github.com/flutter/flutter.git --depth 1 -b stable $HOME/flutter
+#
+# Pin the exact version the team develops against. Tracking the `stable` branch
+# means every run silently picks up whatever Flutter released most recently, so
+# an SDK change breaks the build with no commit on our side. That is what broke
+# this pipeline: a newer stable made PreviewThemeData abstract, which fails the
+# Dart compile in lib/core/widgets/preview_app.dart.
+#
+# Bump this deliberately, together with a local `flutter upgrade`.
+FLUTTER_VERSION="3.41.3"
+git clone https://github.com/flutter/flutter.git --depth 1 -b "$FLUTTER_VERSION" $HOME/flutter
 export PATH="$PATH:$HOME/flutter/bin"
+flutter --version
 
 # Install Flutter artifacts for iOS (--ios), or macOS (--macos) platforms.
 flutter precache --ios
