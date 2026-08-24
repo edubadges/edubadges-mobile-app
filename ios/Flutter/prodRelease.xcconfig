@@ -1,7 +1,12 @@
-#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release-prod.xcconfig"
 #include "Generated.xcconfig"
 
 ASSET_PREFIX=prod
 BUNDLE_NAME=Edubadges
 BUNDLE_DISPLAY_NAME=Edubadges
 BASE_URL=https://api.edubadges.nl
+
+// APNs environment. Archives are signed with a distribution profile, which
+// carries aps-environment=production; requesting "development" here makes Xcode
+// demand a development certificate and fails the archive.
+APS_ENVIRONMENT=production
