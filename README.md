@@ -4,6 +4,7 @@
 This application is built to run on the following platforms:
 *   🍎 iOS
 *   🤖 Android
+*   🌐 Web
 
 ## ⚙️ Installation
 1.  **Clone the repository:**
@@ -35,6 +36,32 @@ This application is built to run on the following platforms:
     # Replace 'dev' with 'tst', 'prod', or 'acc' as needed
     flutter run --flavor <flavor_name>
     ```
+
+4.  **Run on web:**
+    Flavors use `--dart-define` instead of `--flavor` on web:
+
+    ```bash
+    flutter run -d chrome --dart-define=APP_FLAVOR=dev
+    ```
+
+5.  **Local dev for web:**
+
+    ```bash
+    flutter run -d chrome --web-port=8080 --dart-define=APP_FLAVOR=dev
+    ```
+
+6.  **Build for web:**
+
+    ```bash
+    flutter build web \
+      --release \
+      --dart-define=APP_FLAVOR=tst \
+      --wasm
+    ```
+
+    Use `--source-maps` for staging builds when debugging. Omit it for production.
+
+    Deploy the `build/web` output to static hosting with SPA path fallback (see `web/nginx.conf`).
 
 ## 🛠️ Tech Stack
 *   **Framework:** Flutter & Dart

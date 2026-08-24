@@ -1,4 +1,5 @@
 import 'package:edubadges/app/colors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -32,6 +33,25 @@ class AppThemes {
       focusColor: AppColors.onSurface,
     );
   }
+
+  static ThemeData themeForPlatform(ThemeData theme) {
+    if (!kIsWeb) {
+      return theme;
+    }
+    return theme.copyWith(pageTransitionsTheme: _webPageTransitionsTheme);
+  }
+
+  static const PageTransitionsTheme _webPageTransitionsTheme =
+      PageTransitionsTheme(
+    builders: <TargetPlatform, PageTransitionsBuilder>{
+      TargetPlatform.android: _InstantPageTransitionsBuilder(),
+      TargetPlatform.iOS: _InstantPageTransitionsBuilder(),
+      TargetPlatform.macOS: _InstantPageTransitionsBuilder(),
+      TargetPlatform.linux: _InstantPageTransitionsBuilder(),
+      TargetPlatform.windows: _InstantPageTransitionsBuilder(),
+      TargetPlatform.fuchsia: _InstantPageTransitionsBuilder(),
+    },
+  );
 
   static SystemUiOverlayStyle get systemUiOverlayStyle {
     return const SystemUiOverlayStyle(
@@ -342,4 +362,19 @@ extension CustomTextStyles on TextTheme {
     letterSpacing: 0.0,
     fontWeight: FontWeight.w600,
   );
+}
+
+class _InstantPageTransitionsBuilder extends PageTransitionsBuilder {
+  const _InstantPageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return child;
+  }
 }

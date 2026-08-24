@@ -21,6 +21,10 @@ final catalogProvider = AsyncNotifierProvider<CatalogNotifier, CatalogState>(
 );
 
 class CatalogNotifier extends AsyncNotifier<CatalogState> {
+  bool _isLoadingMore = false;
+
+  bool get isLoadingMore => _isLoadingMore;
+
   @override
   Future<CatalogState> build() async {
     return _loadCatalogBadges(page: 1);
@@ -54,50 +58,95 @@ class CatalogNotifier extends AsyncNotifier<CatalogState> {
     });
   }
 
+  /// Whether [a] and [b] describe the same catalog request, so results fetched
+  /// for [a] may still be appended to [b].
+  bool _isSameQuery(CatalogState a, CatalogState b) {
+    return a.isSearching == b.isSearching &&
+        a.searchTerm == b.searchTerm &&
+        a.selectedInstitutionType == b.selectedInstitutionType &&
+        a.selectedInstitutionId == b.selectedInstitutionId &&
+        a.currentPage == b.currentPage;
+  }
+
+  /// Keeps already loaded badges visible and exposes [error] through the state
+  /// itself; falls back to a plain error when there is nothing to preserve.
+  void _emitFailure(Object error, StackTrace stackTrace) {
+    final currentState = state.value;
+    if (currentState == null) {
+      state = AsyncError(error, stackTrace);
+      return;
+    }
+    state = AsyncData(
+      currentState.copyWith(failure: (error: error, stackTrace: stackTrace)),
+    );
+  }
+
   Future<void> loadMore() async {
+    if (_isLoadingMore) return;
+
     final currentState = state.value;
     if (currentState == null || !currentState.hasMore) return;
 
-    final repository = ref.read(catalogRepositoryProvider);
-    final nextPage = currentState.currentPage + 1;
+    _isLoadingMore = true;
+    try {
+      final repository = ref.read(catalogRepositoryProvider);
+      final nextPage = currentState.currentPage + 1;
 
-    if (currentState.isSearching) {
-      final result = await repository.getCatalogBadges(
-        search: currentState.searchTerm,
-        institutionType: currentState.selectedInstitutionType,
-        institutionId: currentState.selectedInstitutionId,
-        page: nextPage,
-      );
-
-      result.fold((failure) => throw failure, (response) {
-        state = AsyncData(
-          currentState.copyWith(
-            badges: [...currentState.badges, ...response.results],
-            hasMore: response.hasMore,
-            currentPage: nextPage,
-            totalCount: response.count,
-          ),
+      if (currentState.isSearching) {
+        final result = await repository.getCatalogBadges(
+          search: currentState.searchTerm,
+          institutionType: currentState.selectedInstitutionType,
+          institutionId: currentState.selectedInstitutionId,
+          page: nextPage,
         );
-      });
-    } else {
-      final result = await repository.getCatalogBadges(
-        page: nextPage,
-        institutionType: currentState.selectedInstitutionType,
-        institutionId: currentState.selectedInstitutionId,
-      );
 
-      result.fold((failure) => throw failure, (response) {
-        state = AsyncData(
-          currentState.copyWith(
-            badges: [...currentState.badges, ...response.results],
-            catalogBadges: [...currentState.catalogBadges, ...response.results],
-            hasMore: response.hasMore,
-            currentPage: nextPage,
-            catalogPage: nextPage,
-            catalogHasMore: response.hasMore,
-          ),
+        final latestState = state.value;
+        if (latestState == null || !_isSameQuery(latestState, currentState)) {
+          return;
+        }
+
+        result.fold((failure) => throw failure, (response) {
+          state = AsyncData(
+            latestState.copyWith(
+              badges: [...latestState.badges, ...response.results],
+              hasMore: response.hasMore,
+              currentPage: nextPage,
+              totalCount: response.count,
+            ),
+          );
+        });
+      } else {
+        final result = await repository.getCatalogBadges(
+          page: nextPage,
+          institutionType: currentState.selectedInstitutionType,
+          institutionId: currentState.selectedInstitutionId,
         );
-      });
+
+        final latestState = state.value;
+        if (latestState == null || !_isSameQuery(latestState, currentState)) {
+          return;
+        }
+
+        result.fold((failure) => throw failure, (response) {
+          state = AsyncData(
+            latestState.copyWith(
+              badges: [...latestState.badges, ...response.results],
+              catalogBadges: [
+                ...latestState.catalogBadges,
+                ...response.results,
+              ],
+              hasMore: response.hasMore,
+              currentPage: nextPage,
+              catalogPage: nextPage,
+              catalogHasMore: response.hasMore,
+            ),
+          );
+        });
+      }
+    } catch (error, stackTrace) {
+      _emitFailure(error, stackTrace);
+    } finally {
+      _isLoadingMore = false;
     }
   }
 
@@ -144,9 +193,8 @@ class CatalogNotifier extends AsyncNotifier<CatalogState> {
         state = AsyncData(newState);
       }
     } catch (error, stackTrace) {
-      if (!silent || !state.hasValue) {
-        state = AsyncError(error, stackTrace);
-      }
+      // A non-silent refresh already cleared the data, so this reports plainly.
+      _emitFailure(error, stackTrace);
     }
   }
 
@@ -185,7 +233,7 @@ class CatalogNotifier extends AsyncNotifier<CatalogState> {
         },
       );
     } catch (error, stackTrace) {
-      state = AsyncError(error, stackTrace);
+      _emitFailure(error, stackTrace);
     }
   }
 
@@ -249,7 +297,7 @@ class CatalogNotifier extends AsyncNotifier<CatalogState> {
         );
       }
     } catch (error, stackTrace) {
-      state = AsyncError(error, stackTrace);
+      _emitFailure(error, stackTrace);
     }
   }
 
@@ -310,7 +358,7 @@ class CatalogNotifier extends AsyncNotifier<CatalogState> {
         );
       }
     } catch (error, stackTrace) {
-      state = AsyncError(error, stackTrace);
+      _emitFailure(error, stackTrace);
     }
   }
 

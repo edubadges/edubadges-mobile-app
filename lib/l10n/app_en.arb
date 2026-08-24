@@ -37,13 +37,33 @@
     "@tabAccount": {
         "description": "Navigation tab label for the account section"
     },
+    "accountSubtitle": "Manage your data and settings",
+    "@accountSubtitle": {
+        "description": "Page subtitle for the account screen on desktop"
+    },
     "tabBadges": "Edubadges",
     "@tabBadges": {
         "description": "Navigation tab label for the edubadges section"
     },
+    "badgesOverviewTitle": "My Edubadges",
+    "@badgesOverviewTitle": {
+        "description": "Page title for the badges overview screen on desktop"
+    },
+    "badgesOverviewSubtitle": "Overview of your earned and requested edubadges",
+    "@badgesOverviewSubtitle": {
+        "description": "Page subtitle for the badges overview screen on desktop"
+    },
     "tabCatalog": "Catalog",
     "@tabCatalog": {
         "description": "Navigation tab label for the catalog section"
+    },
+    "catalogSubtitle": "Discover available edubadges per institution",
+    "@catalogSubtitle": {
+        "description": "Page subtitle for the catalog screen on desktop"
+    },
+    "catalogSearchPlaceholder": "Search by name or institution...",
+    "@catalogSearchPlaceholder": {
+        "description": "Placeholder text for the catalog search input field"
     },
     "tabCollections": "Collections",
     "@tabCollections": {

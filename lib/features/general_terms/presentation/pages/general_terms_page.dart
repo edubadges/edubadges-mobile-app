@@ -100,6 +100,7 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
         automaticallyImplyLeading: false,
       ),
       body: MaxWidthWrapper(
+        scrollController: _scrollController,
         child: Stack(
           children: [
             markdownAsync.when(

@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/app_text_field.dart';
 import 'package:edubadges/core/widgets/base_form_bottom_sheet.dart';
 import 'package:edubadges/flavors.dart';
@@ -36,7 +35,7 @@ class _FeedbackBottomSheetState extends ConsumerState<FeedbackBottomSheet> {
     final navigator = Navigator.of(context);
 
     final packageInfo = await PackageInfo.fromPlatform();
-    final platform = Platform.isIOS ? 'iOS' : 'Android';
+    final platform = PlatformInfo.platformDisplayName;
     final version = '${packageInfo.version} (${packageInfo.buildNumber})';
     final language = appLanguage.displayName;
 

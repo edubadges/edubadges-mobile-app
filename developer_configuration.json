@@ -8,7 +8,7 @@
   "platforms": {
     "ios": true,
     "android": true,
-    "web": false,
+    "web": true,
     "macos": false,
     "windows": false,
     "linux": false
