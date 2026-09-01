@@ -17,10 +17,11 @@ import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
-import 'package:edubadges/features/badges_overview/domain/entities/direct_award_detail_entity.dart';
+import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/badges_overview/utils/badge_terms_agreement_utils.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/providers/markdown_fetcher.dart';
 import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
@@ -139,17 +140,14 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
         );
         if (acceptFailure != null) {
           if (mounted) {
-            showAppSnackBar(
-              context,
-              _getErrorMessage(acceptFailure, l10n),
-            );
+            showAppSnackBar(context, _getErrorMessage(acceptFailure, l10n));
             setState(() {
               _isClaiming = false;
             });
           }
           return;
         }
-        ref.invalidate(directAwardDetailProvider(badge.entityId));
+        ref.invalidate(badgeDetailsProvider(badge.badgeclass.entityId));
         unawaited(ref.read(profileProvider.notifier).refresh());
       }
       final Either<Failure, void> claimResult = await ref
@@ -171,9 +169,7 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
               widget.onNavigateToSuccess!(badge.badgeclass.entityId);
             } else {
               context.go(
-                RoutePath.badgeClaimSuccessPath(
-                  id: badge.badgeclass.entityId,
-                ),
+                RoutePath.badgeClaimSuccessPath(id: badge.badgeclass.entityId),
               );
             }
           }
@@ -386,33 +382,34 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
             );
           }
 
-          final detailAsync = ref.watch(
-            directAwardDetailProvider(badge.entityId),
+          final badgeClassAsync = ref.watch(
+            badgeDetailsProvider(badge.badgeclass.entityId),
           );
 
-          return detailAsync.when(
-            data: (DirectAwardDetailEntity detail) {
+          return badgeClassAsync.when(
+            data: (BadgeClassModel badgeClass) {
               final List<TermsAgreementEntity> profileAgreements =
-                  profileAsync
-                      .whenOrNull(data: (ProfileEntity? p) => p?.termsagreementSet) ??
+                  profileAsync.whenOrNull(
+                    data: (ProfileEntity? p) => p?.termsagreementSet,
+                  ) ??
                   [];
               final AgreementRouteModel? agreementModel =
-                  resolveBadgePrivacyAgreement(
-                requiredTerms: detail.requiredTerms,
-                badge: badge,
-                profileAgreements: profileAgreements,
-                languageCode: langCode,
-              );
+                  resolveBadgeTermsAgreement(
+                    requiredTerms: badgeClass.requiredTerms,
+                    badgeClass: badgeClass,
+                    profileAgreements: profileAgreements,
+                    languageCode: langCode,
+                  );
               if (agreementModel == null) {
                 return Scaffold(
                   body: Center(
                     child: InfoStateView(
                       assetPath: Assets.iconInfo,
                       description: l10n.somethingWentWrong,
-                      debugContext: buildDirectAwardTermsDebugContext(
+                      debugContext: buildBadgeClassTermsDebugContext(
                         routeBadgeId: widget.badgeId,
-                        badge: badge,
-                        requiredTerms: detail.requiredTerms,
+                        badgeClass: badgeClass,
+                        requiredTerms: badgeClass.requiredTerms,
                         profileAgreements: profileAgreements,
                       ),
                     ),
@@ -422,7 +419,7 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
               return _buildPrivacyContent(
                 badge: badge,
                 agreementModel: agreementModel,
-                userHasAcceptedTerms: detail.userHasAcceptedTerms,
+                userHasAcceptedTerms: badgeClass.userHasAcceptedTerms,
                 l10n: l10n,
                 theme: theme,
                 colorScheme: colorScheme,

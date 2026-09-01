@@ -520,6 +520,10 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                 );
               }
 
+              final horizontalPadding = isLargeScreen
+                  ? 0.0
+                  : LayoutConstants.sidebarListLayoutPadding;
+
               return SidebarListLayout(
                 sidebar: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -542,33 +546,22 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                   return await ref.read(collectionsProvider.notifier).refresh();
                 },
                 slivers: [
-                  if (!isLargeScreen) ...[
-                    SliverToBoxAdapter(
-                      child: _buildCollectionDescription(
-                        context,
-                        foundCollection.description,
-                      ),
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
                     ),
-                    SliverToBoxAdapter(
-                      child: _buildVisibilitySection(
-                        context,
-                        ref,
-                        foundCollection,
-                        badges,
-                        _publicNotifier,
-                      ),
-                    ),
-                  ],
-                  ...badges.map(
-                    (badge) => SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: BadgeCard(
-                          instance: badge,
-                          badgeClass: badge.badgeclass as BadgeClassModel,
-                          style: BadgeCardStyle.large,
-                        ),
-                      ),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final badge = badges[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 16),
+                          child: BadgeCard(
+                            instance: badge,
+                            badgeClass: badge.badgeclass as BadgeClassModel,
+                            style: BadgeCardStyle.large,
+                          ),
+                        );
+                      }, childCount: badges.length),
                     ),
                   ),
                 ],

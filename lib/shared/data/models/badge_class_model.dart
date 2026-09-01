@@ -1,4 +1,6 @@
 import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/features/account/data/models/profile_model.dart';
+import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/shared/data/models/badge_alignment_model.dart';
 import 'package:edubadges/shared/data/models/badge_class_extension_model.dart';
 import 'package:edubadges/shared/data/models/issuer_model.dart';
@@ -38,6 +40,10 @@ class BadgeClassModel extends BadgeClassEntity {
     super.selfEnrollmentEnabled,
     @JsonKey(fromJson: _parseBoolOrFalse, defaultValue: false)
     super.userMayEnroll,
+    @JsonKey(fromJson: _parseBoolOrFalse, defaultValue: false)
+    super.userHasAcceptedTerms,
+    @JsonKey(fromJson: _requiredTermsFromJson, toJson: _requiredTermsToJson)
+    super.requiredTerms,
     super.stackable,
     super.qualityAssuranceName,
     super.qualityAssuranceUrl,
@@ -92,6 +98,14 @@ class BadgeClassModel extends BadgeClassEntity {
   @override
   @JsonKey(fromJson: _parseBoolOrFalse, defaultValue: false)
   bool get userMayEnroll => super.userMayEnroll;
+
+  @override
+  @JsonKey(fromJson: _parseBoolOrFalse, defaultValue: false)
+  bool get userHasAcceptedTerms => super.userHasAcceptedTerms;
+
+  @override
+  @JsonKey(fromJson: _requiredTermsFromJson, toJson: _requiredTermsToJson)
+  TermsEntity? get requiredTerms => super.requiredTerms;
 
   @override
   @JsonKey(fromJson: _parseBoolOrFalse, defaultValue: false)
@@ -195,4 +209,14 @@ class BadgeClassModel extends BadgeClassEntity {
     }
     return false;
   }
+
+  static TermsEntity? _requiredTermsFromJson(Object? value) {
+    if (value is! Map<String, dynamic>) {
+      return null;
+    }
+    return TermsModel.fromJson(value);
+  }
+
+  static Map<String, dynamic>? _requiredTermsToJson(TermsEntity? terms) =>
+      terms == null ? null : (terms as TermsModel).toJson();
 }

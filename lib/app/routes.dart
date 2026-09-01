@@ -12,6 +12,7 @@ import 'package:edubadges/features/badge_details/data/models/badge_details_route
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/badge_details/presentation/pages/badge_details_page.dart'
     deferred as badge_details;
+import 'package:edubadges/features/badge_details/presentation/pages/badge_enrollment_terms_page.dart';
 import 'package:edubadges/features/badge_details/presentation/pages/quality_assurance_page.dart'
     deferred as quality_assurance;
 import 'package:edubadges/features/badges_overview/presentation/pages/badge_claim_page.dart'
@@ -355,6 +356,17 @@ final appRouter = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final badgeId = state.pathParameters['id'] ?? '';
           return BadgePrivacyPage(badgeId: badgeId);
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.badgeEnrollmentTerms,
+        name: 'badge-enrollment-terms',
+        builder: (context, state) {
+          final badgeClassEntityId = state.pathParameters['id'] ?? '';
+          return BadgeEnrollmentTermsPage(
+            badgeClassEntityId: badgeClassEntityId,
+          );
         },
       ),
 
