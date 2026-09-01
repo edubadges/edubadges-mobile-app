@@ -9,8 +9,11 @@ import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
+import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
+import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
+import 'package:edubadges/features/badges_overview/utils/badge_terms_agreement_utils.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
@@ -341,6 +344,21 @@ class BadgeCard extends ConsumerWidget {
         icon: null,
         onTap: () async {
           try {
+            final langCode = ref.read(appLanguageProvider).code;
+            final List<TermsAgreementEntity> profileAgreements =
+                ref.read(profileProvider).value?.termsagreementSet ?? [];
+            if (shouldPromptForBadgeTerms(
+              badgeClass: badgeClass,
+              profileAgreements: profileAgreements,
+              languageCode: langCode,
+            )) {
+              if (context.mounted) {
+                await context.push(
+                  RoutePath.badgeEnrollmentTermsPath(id: badgeClass.entityId),
+                );
+              }
+              return;
+            }
             final enrolled = await ref.read(enrollBadgeProvider)(
               badgeClass.entityId,
             );
