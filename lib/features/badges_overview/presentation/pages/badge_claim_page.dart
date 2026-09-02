@@ -14,6 +14,7 @@ import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
+import 'package:edubadges/features/badges_overview/presentation/widgets/private_email_claim_dialog.dart';
 import 'package:edubadges/features/badges_overview/utils/badge_terms_agreement_utils.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
@@ -93,6 +94,30 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
     }
 
     setState(() => _isClaiming = true);
+
+    final shouldClaim = await confirmPrivateEmailAwardIfNeeded(
+      context: context,
+      ref: ref,
+      badge: badge,
+      onBeforePrompt: () {
+        if (mounted) {
+          setState(() => _isClaiming = false);
+        }
+      },
+    );
+    if (!shouldClaim) {
+      if (mounted) {
+        setState(() => _isClaiming = false);
+      }
+      return;
+    }
+
+    if (!mounted) {
+      return;
+    }
+    if (!_isClaiming) {
+      setState(() => _isClaiming = true);
+    }
 
     try {
       final repository = ref.read(badgesOverviewRepositoryProvider);

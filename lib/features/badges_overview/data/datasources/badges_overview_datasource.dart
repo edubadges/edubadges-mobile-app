@@ -7,6 +7,7 @@ import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 abstract class BadgesOverviewDataSource {
   Future<List<BadgeInstanceModel>> getBadgeInstances();
   Future<List<BadgeInstanceModel>> getDirectAwards();
+  Future<BadgeInstanceModel> getDirectAward(String entityId);
   Future<List<BadgeInstanceModel>> getEnrollments();
   Future<void> claimBadge(String entityId);
   Future<void> declineBadge(String entityId);
@@ -65,20 +66,7 @@ class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
           );
         }
 
-        // Transform direct award response to match BadgeInstanceModel structure
-        final transformedJson = Map<String, dynamic>.from(json);
-
-        if (!transformedJson.containsKey('issued_on') &&
-            transformedJson.containsKey('created_at')) {
-          transformedJson['issued_on'] = transformedJson['created_at'];
-        }
-
-        transformedJson['award_type'] ??= 'direct';
-        transformedJson['acceptance'] ??= 'Unaccepted';
-        transformedJson['public'] ??= false;
-        transformedJson['revoked'] ??= false;
-
-        return BadgeInstanceModel.fromJson(transformedJson);
+        return _directAwardFromJson(json);
       }).toList();
     } catch (e, stackTrace) {
       logger.e(
@@ -93,6 +81,53 @@ class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
         stackTrace: stackTrace,
       );
     }
+  }
+
+  @override
+  Future<BadgeInstanceModel> getDirectAward(String entityId) async {
+    final response = await apiClient.get<Map<String, dynamic>>(
+      '/direct-awards/$entityId',
+    );
+    final data = response.data;
+    if (data == null) {
+      throw const ParsingException(
+        message: 'No data received for direct award',
+        code: ErrorCodes.parsingError,
+      );
+    }
+
+    try {
+      return _directAwardFromJson(data);
+    } catch (e, stackTrace) {
+      logger.e(
+        'Failed to parse direct award',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      throw ParsingException(
+        message: 'Failed to parse direct award: $e',
+        code: ErrorCodes.parsingError,
+        originalError: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  BadgeInstanceModel _directAwardFromJson(Map<String, dynamic> json) {
+    final transformedJson = Map<String, dynamic>.from(json);
+
+    if (!transformedJson.containsKey('issued_on') &&
+        transformedJson.containsKey('created_at')) {
+      transformedJson['issued_on'] = transformedJson['created_at'];
+    }
+
+    transformedJson['award_type'] ??= 'direct';
+    transformedJson['acceptance'] ??=
+        transformedJson['status'] as String? ?? 'Unaccepted';
+    transformedJson['public'] ??= false;
+    transformedJson['revoked'] ??= false;
+
+    return BadgeInstanceModel.fromJson(transformedJson);
   }
 
   @override
@@ -134,7 +169,8 @@ class BadgesOverviewDataSourceImpl implements BadgesOverviewDataSource {
         transformedJson['created_at'] = json['created_at'];
         transformedJson['issued_on'] = json['issued_on'];
         transformedJson['award_type'] = 'requested';
-        transformedJson['acceptance'] = json['acceptance'] as String? ??
+        transformedJson['acceptance'] =
+            json['acceptance'] as String? ??
             (json['denied'] == true ? 'Rejected' : 'Unaccepted');
         transformedJson['public'] = false;
         transformedJson['revoked'] = false;

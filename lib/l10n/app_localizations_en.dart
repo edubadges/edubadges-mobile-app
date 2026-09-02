@@ -555,6 +555,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'You are about to decline this edubadge. This action is final and cannot be undone.';
 
   @override
+  String get claimPrivateEmailTitle => 'Claim and add to your backpack';
+
+  @override
+  String get claimPrivateEmailDescription =>
+      'After this edubadge is claimed, it will be added to your backpack and you can make the edubadge public and share it.';
+
+  @override
+  String claimPrivateEmailNameNote(String name) {
+    return 'Note: this is the name that will appear on the edubadge: $name. If this is not correct, contact the institution.';
+  }
+
+  @override
   String badgesRemainingToClaim(num count) {
     final intl.NumberFormat countNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);
