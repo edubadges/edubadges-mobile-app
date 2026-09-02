@@ -663,6 +663,23 @@
     "@declineBadgeConfirmation": {
         "description": "Warning message shown when user is about to decline a badge"
     },
+    "claimPrivateEmailTitle": "Claim and add to your backpack",
+    "@claimPrivateEmailTitle": {
+        "description": "Title for the confirmation dialog when a badge was awarded to a private email address"
+    },
+    "claimPrivateEmailDescription": "After this edubadge is claimed, it will be added to your backpack and you can make the edubadge public and share it.",
+    "@claimPrivateEmailDescription": {
+        "description": "Explanation shown before claiming a badge awarded to a private email address"
+    },
+    "claimPrivateEmailNameNote": "Note: this is the name that will appear on the edubadge: {name}. If this is not correct, contact the institution.",
+    "@claimPrivateEmailNameNote": {
+        "description": "Warning that the recipient name will be written on the claimed edubadge",
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
     "badgesRemainingToClaim": "{count, plural, =0{No more edu-badges to claim} =1{Still 1 edu-badge to claim} other{Still {count} edu-badges to claim}}",
     "@badgesRemainingToClaim": {
         "description": "Message showing how many edubadges remain to be claimed",

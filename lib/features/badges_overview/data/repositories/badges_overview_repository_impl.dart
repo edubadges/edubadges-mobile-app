@@ -27,6 +27,16 @@ class BadgesOverviewRepositoryImpl implements BadgesOverviewRepository {
   }
 
   @override
+  Future<Either<Failure, BadgeInstanceEntity>> getDirectAward(
+    String entityId,
+  ) async {
+    return repositoryGuard<BadgeInstanceEntity>(
+      () => badgesOverviewDataSource.getDirectAward(entityId),
+      logMessage: 'Failed to fetch direct award',
+    );
+  }
+
+  @override
   Future<Either<Failure, List<BadgeInstanceEntity>>> getEnrollments() async {
     return repositoryGuard<List<BadgeInstanceEntity>>(
       () => badgesOverviewDataSource.getEnrollments(),
@@ -36,23 +46,17 @@ class BadgesOverviewRepositoryImpl implements BadgesOverviewRepository {
 
   @override
   Future<Either<Failure, void>> claimBadge(String entityId) async {
-    return repositoryGuard<void>(
-      () async {
-        await badgesOverviewDataSource.claimBadge(entityId);
-        return;
-      },
-      logMessage: 'Failed to claim badge',
-    );
+    return repositoryGuard<void>(() async {
+      await badgesOverviewDataSource.claimBadge(entityId);
+      return;
+    }, logMessage: 'Failed to claim badge');
   }
 
   @override
   Future<Either<Failure, void>> declineBadge(String entityId) async {
-    return repositoryGuard<void>(
-      () async {
-        await badgesOverviewDataSource.declineBadge(entityId);
-        return;
-      },
-      logMessage: 'Failed to decline badge',
-    );
+    return repositoryGuard<void>(() async {
+      await badgesOverviewDataSource.declineBadge(entityId);
+      return;
+    }, logMessage: 'Failed to decline badge');
   }
 }

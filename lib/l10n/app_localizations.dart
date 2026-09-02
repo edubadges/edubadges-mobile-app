@@ -1046,6 +1046,24 @@ abstract class AppLocalizations {
   /// **'You are about to decline this edubadge. This action is final and cannot be undone.'**
   String get declineBadgeConfirmation;
 
+  /// Title for the confirmation dialog when a badge was awarded to a private email address
+  ///
+  /// In en, this message translates to:
+  /// **'Claim and add to your backpack'**
+  String get claimPrivateEmailTitle;
+
+  /// Explanation shown before claiming a badge awarded to a private email address
+  ///
+  /// In en, this message translates to:
+  /// **'After this edubadge is claimed, it will be added to your backpack and you can make the edubadge public and share it.'**
+  String get claimPrivateEmailDescription;
+
+  /// Warning that the recipient name will be written on the claimed edubadge
+  ///
+  /// In en, this message translates to:
+  /// **'Note: this is the name that will appear on the edubadge: {name}. If this is not correct, contact the institution.'**
+  String claimPrivateEmailNameNote(String name);
+
   /// Message showing how many edubadges remain to be claimed
   ///
   /// In en, this message translates to:

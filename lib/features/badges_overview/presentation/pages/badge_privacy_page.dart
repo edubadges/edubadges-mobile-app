@@ -19,6 +19,7 @@ import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
+import 'package:edubadges/features/badges_overview/presentation/widgets/private_email_claim_dialog.dart';
 import 'package:edubadges/features/badges_overview/utils/badge_terms_agreement_utils.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
@@ -129,6 +130,43 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
     setState(() {
       _isClaiming = true;
     });
+    final shouldClaim = await confirmPrivateEmailAwardIfNeeded(
+      context: context,
+      ref: ref,
+      badge: badge,
+      onBeforePrompt: () {
+        if (mounted) {
+          setState(() {
+            _isClaiming = false;
+          });
+        }
+      },
+    );
+    final bool proceed = shouldClaim.fold((Failure failure) {
+      if (mounted) {
+        showAppSnackBar(context, _getErrorMessage(failure, l10n));
+        setState(() {
+          _isClaiming = false;
+        });
+      }
+      return false;
+    }, (bool confirmed) => confirmed);
+    if (!proceed) {
+      if (mounted) {
+        setState(() {
+          _isClaiming = false;
+        });
+      }
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+    if (!_isClaiming) {
+      setState(() {
+        _isClaiming = true;
+      });
+    }
     try {
       if (!userHasAcceptedTerms) {
         final Either<Failure, void> acceptResult = await ref
