@@ -4,14 +4,17 @@ import 'package:collection/collection.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/errors/failures.dart';
+import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
+import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
+import 'package:edubadges/features/badges_overview/utils/badge_terms_agreement_utils.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
@@ -63,12 +66,19 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
 
     final l10n = AppLocalizations.of(context);
 
-    // On error or terms not accepted, go to privacy page
+    // On error, missing badge data, or unresolved required terms, go to privacy.
     final badgeClass = badgeClassAsync.whenOrNull(data: (d) => d);
+    final langCode = ref.read(appLanguageProvider).code;
+    final profileAgreements =
+        ref.read(profileProvider).value?.termsagreementSet ?? [];
     final needsPrivacyPage =
         badgeClassAsync.hasError ||
         badgeClass == null ||
-        !badgeClass.userHasAcceptedTerms;
+        shouldPromptForBadgeTerms(
+          badgeClass: badgeClass,
+          profileAgreements: profileAgreements,
+          languageCode: langCode,
+        );
     if (needsPrivacyPage) {
       if (widget.onNavigateToPrivacy != null) {
         widget.onNavigateToPrivacy!(widget.badgeId);

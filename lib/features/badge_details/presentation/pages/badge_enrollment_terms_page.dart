@@ -63,6 +63,13 @@ class _BadgeEnrollmentTermsPageState
       _isSubmitting = true;
     });
     try {
+      if (!badgeClass.userMayEnroll) {
+        showAppSnackBar(context, l10n.somethingWentWrong);
+        setState(() {
+          _isSubmitting = false;
+        });
+        return;
+      }
       if (!badgeClass.userHasAcceptedTerms) {
         final Either<Failure, void> acceptResult = await ref
             .read(accountRepositoryProvider)
@@ -179,7 +186,10 @@ class _BadgeEnrollmentTermsPageState
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: _isSubmitting
+            onPressed:
+                _isSubmitting ||
+                    markdownAsyncValue.isLoading ||
+                    markdownAsyncValue.hasError
                 ? null
                 : () => _handleAccept(
                     badgeClass: badgeClass,
