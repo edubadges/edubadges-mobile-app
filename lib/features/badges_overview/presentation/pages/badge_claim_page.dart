@@ -105,7 +105,14 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         }
       },
     );
-    if (!shouldClaim) {
+    final bool proceed = shouldClaim.fold((failure) {
+      if (mounted) {
+        showAppSnackBar(context, _getErrorMessage(failure, l10n));
+        setState(() => _isClaiming = false);
+      }
+      return false;
+    }, (confirmed) => confirmed);
+    if (!proceed) {
       if (mounted) {
         setState(() => _isClaiming = false);
       }

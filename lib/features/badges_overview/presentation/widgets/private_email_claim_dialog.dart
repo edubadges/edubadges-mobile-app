@@ -1,3 +1,5 @@
+import 'package:dartz/dartz.dart';
+import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -5,31 +7,41 @@ import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-Future<bool> confirmPrivateEmailAwardIfNeeded({
+Future<Either<Failure, bool>> confirmPrivateEmailAwardIfNeeded({
   required BuildContext context,
   required WidgetRef ref,
   required BadgeInstanceEntity badge,
   VoidCallback? onBeforePrompt,
 }) async {
-  BadgeInstanceEntity resolved = badge;
+  var resolved = badge;
   if (!badge.hasRecipientDetails) {
     final result = await ref
         .read(badgesOverviewRepositoryProvider)
         .getDirectAward(badge.entityId);
-    resolved = result.fold((_) => badge, (detail) => detail);
+    final Failure? failure = result.fold((Failure left) => left, (
+      BadgeInstanceEntity detail,
+    ) {
+      resolved = detail;
+      return null;
+    });
+    if (failure != null) {
+      return Left(failure);
+    }
   }
 
   if (!resolved.shouldConfirmPrivateEmailName) {
-    return true;
+    return const Right(true);
   }
 
   onBeforePrompt?.call();
 
   if (!context.mounted) {
-    return false;
+    return const Right(false);
   }
 
-  return showPrivateEmailClaimDialog(context, resolved.recipientFullName!);
+  return Right(
+    await showPrivateEmailClaimDialog(context, resolved.recipientFullName!),
+  );
 }
 
 Future<bool> showPrivateEmailClaimDialog(

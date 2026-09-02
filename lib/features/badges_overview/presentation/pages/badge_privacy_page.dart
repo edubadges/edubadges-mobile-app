@@ -142,7 +142,16 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
         }
       },
     );
-    if (!shouldClaim) {
+    final bool proceed = shouldClaim.fold((Failure failure) {
+      if (mounted) {
+        showAppSnackBar(context, _getErrorMessage(failure, l10n));
+        setState(() {
+          _isClaiming = false;
+        });
+      }
+      return false;
+    }, (bool confirmed) => confirmed);
+    if (!proceed) {
       if (mounted) {
         setState(() {
           _isClaiming = false;

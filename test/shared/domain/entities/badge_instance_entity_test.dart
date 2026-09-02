@@ -76,5 +76,33 @@ void main() {
       expect(award.isAwardedToPrivateEmail, isTrue);
       expect(award.shouldConfirmPrivateEmailName, isFalse);
     });
+
+    test('hasRecipientDetails is false when only an email is present', () {
+      expect(
+        _award(recipientEmail: 'henk@example.com').hasRecipientDetails,
+        isFalse,
+      );
+    });
+
+    test('hasRecipientDetails is true for an EPPN award', () {
+      expect(
+        _award(eppn: 'henk@university-example.org').hasRecipientDetails,
+        isTrue,
+      );
+    });
+
+    test(
+      'hasRecipientDetails is true when email and both names are present',
+      () {
+        expect(
+          _award(
+            recipientEmail: 'henk@example.com',
+            recipientFirstName: 'Henk',
+            recipientSurname: 'de Vries',
+          ).hasRecipientDetails,
+          isTrue,
+        );
+      },
+    );
   });
 }

@@ -65,9 +65,9 @@ class BadgeInstanceEntity extends Equatable {
 
   bool get hasRecipientDetails =>
       _hasText(eppn) ||
-      _hasText(recipientEmail) ||
-      _hasText(recipientFirstName) ||
-      _hasText(recipientSurname);
+      (_hasText(recipientEmail) &&
+          _hasText(recipientFirstName) &&
+          _hasText(recipientSurname));
 
   String? get recipientFullName {
     final parts = <String>[
