@@ -463,9 +463,31 @@
     "@requestedBadges": {
         "description": "Section header for badges that have been requested by the user"
     },
+    "badgesTabEarned": "Earned ({count})",
+    "@badgesTabEarned": {
+        "description": "Tab label on the badges overview for the edubadges the user has earned, with the number of badges",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "badgesTabRequested": "Requested ({count})",
+    "@badgesTabRequested": {
+        "description": "Tab label on the badges overview for the edubadges the user has requested, with the number of badges",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "noEdubadgesYet": "You don't have any edubadges yet",
     "@noEdubadgesYet": {
         "description": "Message shown when user has no edubadges in their collection"
+    },
+    "noRequestedBadges": "You haven't requested any edubadges yet",
+    "@noRequestedBadges": {
+        "description": "Message shown on the requested tab when the user has not requested any edubadges"
     },
     "giveFeedback": "Give feedback",
     "@giveFeedback": {
@@ -1252,6 +1274,14 @@
     "semanticsBadgePrivate": "Badge is private. Tap to change visibility.",
     "@semanticsBadgePrivate": {
         "description": "Accessibility label for private badge visibility control"
+    },
+    "semanticsBadgeVisibilityPublic": "Badge is public",
+    "@semanticsBadgeVisibilityPublic": {
+        "description": "Accessibility label for the visibility indicator on a public badge"
+    },
+    "semanticsBadgeVisibilityPrivate": "Badge is private",
+    "@semanticsBadgeVisibilityPrivate": {
+        "description": "Accessibility label for the visibility indicator on a private badge"
     },
     "semanticsLogout": "Log out",
     "@semanticsLogout": {

@@ -243,6 +243,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         ],
       ),
       body: MaxWidthWrapper(
+        enableScrollbar: false,
         child: badgesAsync.when(
           data: (state) {
             if (state.unclaimedBadges.isEmpty) {

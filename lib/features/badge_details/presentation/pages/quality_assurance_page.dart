@@ -1,7 +1,7 @@
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/route_path.dart';
-import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/utils/string.dart';
+import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badge_details/domain/entities/badge_details_query.dart';
@@ -56,10 +56,8 @@ class _QualityAssurancePageState extends ConsumerState<QualityAssurancePage> {
     return parts.join('\n\n');
   }
 
-  static Future<void> _launchExternalUrl(String url) => launchUrlString(
-        url,
-        mode: LaunchMode.externalApplication,
-      );
+  static Future<void> _launchExternalUrl(String url) =>
+      launchUrlString(url, mode: LaunchMode.externalApplication);
 
   void _close() {
     if (widget.onClose != null) {
@@ -88,15 +86,7 @@ class _QualityAssurancePageState extends ConsumerState<QualityAssurancePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leading: PlatformInfo.showInAppBackButton && !widget.isDialog
-            ? IconButton(
-                onPressed: _close,
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              )
-            : null,
+        leading: widget.isDialog ? null : AppBackButton(onPressed: _close),
         title: Text(l10n.qualityAssurance),
         backgroundColor: colorScheme.surfaceContainer,
         surfaceTintColor: colorScheme.surfaceContainer,
@@ -131,10 +121,7 @@ class _QualityAssurancePageState extends ConsumerState<QualityAssurancePage> {
 
             return SingleChildScrollView(
               controller: _scrollController,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 16,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: FocusableSection(
                 child: MarkdownBody(
                   data: filterBadMarkdown(content),

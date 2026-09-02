@@ -46,3 +46,7 @@ app.*.map.json
 /android/app/release
 .cursor/
 .vscode/settings.json
+
+# Web release artifacts produced by CI and by local packaging runs.
+/dist/
+edubadges-web-*.tar.gz

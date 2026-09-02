@@ -398,7 +398,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get requestedBadges => 'Requested badges';
 
   @override
+  String badgesTabEarned(int count) {
+    return 'Earned ($count)';
+  }
+
+  @override
+  String badgesTabRequested(int count) {
+    return 'Requested ($count)';
+  }
+
+  @override
   String get noEdubadgesYet => 'You don\'t have any edubadges yet';
+
+  @override
+  String get noRequestedBadges => 'You haven\'t requested any edubadges yet';
 
   @override
   String get giveFeedback => 'Give feedback';
@@ -1055,6 +1068,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get semanticsBadgePrivate =>
       'Badge is private. Tap to change visibility.';
+
+  @override
+  String get semanticsBadgeVisibilityPublic => 'Badge is public';
+
+  @override
+  String get semanticsBadgeVisibilityPrivate => 'Badge is private';
 
   @override
   String get semanticsLogout => 'Log out';
