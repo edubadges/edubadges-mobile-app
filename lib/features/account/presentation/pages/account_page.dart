@@ -12,6 +12,7 @@ import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_modal.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/page_header.dart';
 import 'package:edubadges/core/widgets/sidebar_list_layout.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
@@ -746,41 +747,47 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                   ],
                 ),
               Expanded(
-                child: profileAsync.when(
-                  data: (profile) {
-                    if (profile == null) {
-                      return Center(child: Text(l10n.noProfileData));
-                    }
+                child: MaxWidthWrapper(
+                  scrollController: _scrollController,
+                  maxWidth: useSidebarLayout
+                      ? double.infinity
+                      : MaxWidthWrapper.defaultMaxWidth,
+                  child: profileAsync.when(
+                    data: (profile) {
+                      if (profile == null) {
+                        return Center(child: Text(l10n.noProfileData));
+                      }
 
-                    return _buildAccountContent(
-                      context: context,
-                      ref: ref,
-                      profile: profile,
-                      useSidebarLayout: useSidebarLayout,
-                    );
-                  },
-                  loading: () => Center(
-                    child: CircularProgressIndicator(
-                      semanticsLabel: l10n.semanticsLoading,
+                      return _buildAccountContent(
+                        context: context,
+                        ref: ref,
+                        profile: profile,
+                        useSidebarLayout: useSidebarLayout,
+                      );
+                    },
+                    loading: () => Center(
+                      child: CircularProgressIndicator(
+                        semanticsLabel: l10n.semanticsLoading,
+                      ),
                     ),
-                  ),
-                  error: (error, stack) => Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          l10n.somethingWentWrong,
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            color: colorScheme.error,
+                    error: (error, stack) => Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            l10n.somethingWentWrong,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: colorScheme.error,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () =>
-                              ref.read(profileProvider.notifier).refresh(),
-                          child: Text(l10n.retry),
-                        ),
-                      ],
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () =>
+                                ref.read(profileProvider.notifier).refresh(),
+                            child: Text(l10n.retry),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

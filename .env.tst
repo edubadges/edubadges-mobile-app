@@ -1,3 +1,10 @@
+# Configuration for the 'tst' flavor.
+#
+# WARNING: this file is bundled as a Flutter asset (see pubspec.yaml) and is
+# publicly downloadable on web at /assets/.env.tst. Everything in here must
+# be safe to publish. Never add a client secret, API key or token to these files
+# - the OpenID client is a public PKCE client and has no secret by design.
+
 ENABLE_CRASHLYTICS=true
 ENABLE_ANALYTICS=false
 

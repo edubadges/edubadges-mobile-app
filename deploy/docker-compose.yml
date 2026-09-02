@@ -1,0 +1,46 @@
+# Minimal way to run the Edubadges web app on a single host.
+#
+#   docker compose -f deploy/docker-compose.yml up -d
+#
+# Point your existing reverse proxy (the one that terminates TLS) at
+# http://127.0.0.1:8080 and you are done. The container serves static files
+# only: no database, no volumes, no secrets, nothing written to disk.
+#
+# Pulling requires a one-time login with the read-only deploy token you were
+# given:  docker login registry.gitlab.com
+
+services:
+  edubadges-web:
+    # Pin a real version tag in production rather than a moving one, so that a
+    # restart can never quietly change which build is running. `acc-latest`
+    # exists for convenience, not for production use.
+    image: registry.gitlab.com/coffeeit/surf/surf-flutter/web:acc-latest
+    container_name: edubadges-web
+    restart: unless-stopped
+
+    # Bound to loopback: this speaks plain HTTP and must not be reachable from
+    # the internet without TLS in front of it.
+    ports:
+      - "127.0.0.1:8080:8080"
+
+    # The image already runs as an unprivileged user and never writes to disk.
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
+    security_opt:
+      - no-new-privileges:true
+
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"

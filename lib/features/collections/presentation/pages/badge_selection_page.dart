@@ -1,8 +1,8 @@
 import 'package:collection/collection.dart';
-import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/error_message.dart';
 import 'package:edubadges/core/utils/platform_info.dart';
+import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
@@ -85,7 +85,8 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
     }
 
     if (widget.id != null) {
-      final badgeInstanceIds = await _mergedBadgeInstanceIdsForExistingCollection();
+      final badgeInstanceIds =
+          await _mergedBadgeInstanceIdsForExistingCollection();
       final result = await ref
           .read(collectionsProvider.notifier)
           .patchCollection(
@@ -132,13 +133,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
       appBar: AppBar(
         backgroundColor: colorScheme.surfaceContainer,
         automaticallyImplyLeading: false,
-        leading: PlatformInfo.showInAppBackButton
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back, color: AppColors.primary),
-                onPressed: () => context.pop(),
-                tooltip: l10n.semanticsBack,
-              )
-            : null,
+        leading: const AppBackButton(fallbackLocation: RoutePath.collections),
         title: Text(
           l10n.addEdubadges,
           style: theme.textTheme.titleLarge?.copyWith(
@@ -160,9 +155,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
   ) {
     final Widget badgeList = badgesAsync.when(
       data: (badgesState) {
-        final badges = [
-          ...badgesState.claimedBadges,
-        ];
+        final badges = [...badgesState.claimedBadges];
 
         if (badges.isEmpty) {
           return Center(
@@ -181,9 +174,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
           itemCount: badges.length,
           itemBuilder: (context, index) {
             final badge = badges[index];
-            final isSelected = _selectedBadgeIds.contains(
-              badge.entityId,
-            );
+            final isSelected = _selectedBadgeIds.contains(badge.entityId);
 
             return Padding(
               padding: const EdgeInsets.only(bottom: 8),
@@ -205,9 +196,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
       },
       loading: () => Center(
         child: CircularProgressIndicator(
-          semanticsLabel: AppLocalizations.of(
-            context,
-          ).semanticsLoading,
+          semanticsLabel: AppLocalizations.of(context).semanticsLoading,
         ),
       ),
       error: (error, stackTrace) => Center(
@@ -238,9 +227,7 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,
           padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: Text(
           l10n.add,

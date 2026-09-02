@@ -1,7 +1,9 @@
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
+import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/page_header.dart';
 import 'package:edubadges/core/widgets/sidebar_list_layout.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
@@ -71,6 +73,36 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
     );
   }
 
+  /// Columns available to the badge grid, which is web only. In sidebar layout
+  /// the filters and the layout padding come off the width first.
+  int _resolveGridColumns({
+    required double contentWidth,
+    required bool useSidebarLayout,
+  }) {
+    if (!PlatformInfo.isWeb) return 0;
+    return LayoutConstants.badgeGridColumnCount(
+      _gridWidth(
+        contentWidth: contentWidth,
+        useSidebarLayout: useSidebarLayout,
+      ),
+      maxColumns: LayoutConstants.catalogGridMaxColumns,
+    );
+  }
+
+  double _gridWidth({
+    required double contentWidth,
+    required bool useSidebarLayout,
+  }) {
+    if (useSidebarLayout) {
+      return contentWidth -
+          LayoutConstants.sidebarListLayoutPadding * 2 -
+          LayoutConstants.sidebarListLayoutSidebarWidth -
+          LayoutConstants.sidebarListLayoutColumnGap;
+    }
+    return contentWidth - LayoutConstants.sidebarListLayoutPadding * 2;
+  }
+
+  /// [gridColumns] of 0 renders the single-column list of compact cards.
   List<Widget> _buildBadgeListSlivers({
     required BuildContext context,
     required CatalogState state,
@@ -78,6 +110,7 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
     required ColorScheme colorScheme,
     required TextTheme textTheme,
     required bool useSidebarLayout,
+    required int gridColumns,
   }) {
     final displayBadges = state.displayBadges;
     final horizontalPadding = useSidebarLayout
@@ -116,31 +149,66 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
       ];
     }
 
-    return [
-      SliverPadding(
-        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-        sliver: SliverList(
-          delegate: SliverChildBuilderDelegate((context, index) {
-            if (index < displayBadges.length) {
-              return _buildBadgeListItem(
+    final EdgeInsets padding = EdgeInsets.symmetric(
+      horizontal: horizontalPadding,
+    );
+    final Widget loadingSliver = SliverToBoxAdapter(
+      child: state.hasMore
+          ? Padding(
+              padding: const EdgeInsets.all(16),
+              child: Center(
+                child: CircularProgressIndicator(
+                  semanticsLabel: l10n.semanticsLoading,
+                ),
+              ),
+            )
+          : const SizedBox.shrink(),
+    );
+
+    if (gridColumns > 0) {
+      return [
+        SliverPadding(
+          padding: padding,
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: gridColumns,
+              crossAxisSpacing: LayoutConstants.badgeGridSpacing,
+              mainAxisSpacing: LayoutConstants.badgeGridSpacing,
+              // The catalog card carries no chips, so its height never depends
+              // on how wide the tiles end up.
+              mainAxisExtent: LayoutConstants.badgeGridTileHeightWithoutChips,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => _buildBadgeListItem(
                 context: context,
                 badge: displayBadges[index],
                 index: index,
-              );
-            } else if (state.hasMore) {
-              return Padding(
-                padding: const EdgeInsets.all(16),
-                child: Center(
-                  child: CircularProgressIndicator(
-                    semanticsLabel: l10n.semanticsLoading,
-                  ),
-                ),
-              );
-            }
-            return null;
-          }, childCount: displayBadges.length + (state.hasMore ? 1 : 0)),
+                useGridTile: true,
+              ),
+              childCount: displayBadges.length,
+            ),
+          ),
+        ),
+        loadingSliver,
+      ];
+    }
+
+    return [
+      SliverPadding(
+        padding: padding,
+        sliver: SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) => _buildBadgeListItem(
+              context: context,
+              badge: displayBadges[index],
+              index: index,
+              useGridTile: false,
+            ),
+            childCount: displayBadges.length,
+          ),
         ),
       ),
+      loadingSliver,
     ];
   }
 
@@ -148,6 +216,7 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
     required BuildContext context,
     required CatalogBadge badge,
     required int index,
+    required bool useGridTile,
   }) {
     void openBadgeDetails() {
       context.push(
@@ -158,19 +227,25 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: FocusTraversalOrder(
-        order: NumericFocusOrder(index.toDouble()),
-        child: KeyboardActivatable(
-          key: ValueKey('catalog_badge_${badge.entityId}'),
-          wrapWithSemantics: false,
-          includeOuterTapTarget: false,
-          onActivate: openBadgeDetails,
-          child: CatalogBadgeCard(badge: badge, onTap: openBadgeDetails),
+    final Widget item = FocusTraversalOrder(
+      order: NumericFocusOrder(index.toDouble()),
+      child: KeyboardActivatable(
+        key: ValueKey('catalog_badge_${badge.entityId}'),
+        wrapWithSemantics: false,
+        includeOuterTapTarget: false,
+        onActivate: openBadgeDetails,
+        child: CatalogBadgeCard(
+          badge: badge,
+          onTap: openBadgeDetails,
+          useGridTile: useGridTile,
         ),
       ),
     );
+
+    if (useGridTile) {
+      return item;
+    }
+    return Padding(padding: const EdgeInsets.only(bottom: 8), child: item);
   }
 
   Widget _buildCatalogContent({
@@ -180,6 +255,7 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
     required ColorScheme colorScheme,
     required TextTheme textTheme,
     required bool useSidebarLayout,
+    required int gridColumns,
   }) {
     return SidebarListLayout(
       sidebar: _buildFilters(),
@@ -193,6 +269,7 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
         colorScheme: colorScheme,
         textTheme: textTheme,
         useSidebarLayout: useSidebarLayout,
+        gridColumns: gridColumns,
       ),
     );
   }
@@ -225,6 +302,10 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
       builder: (BuildContext context, BoxConstraints constraints) {
         final bool useSidebarLayout =
             constraints.maxWidth >= LayoutConstants.sidebarListLayoutMinWidth;
+        final int gridColumns = _resolveGridColumns(
+          contentWidth: constraints.maxWidth,
+          useSidebarLayout: useSidebarLayout,
+        );
 
         return Scaffold(
           appBar: useSidebarLayout
@@ -239,40 +320,47 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
                   subtitle: l10n.catalogSubtitle,
                 ),
               Expanded(
-                child: GestureDetector(
-                  excludeFromSemantics: true,
-                  onTap: () {
-                    FocusScope.of(context).unfocus();
-                  },
-                  child: Builder(
-                    builder: (BuildContext context) {
-                      if (isCatalogLoading) {
-                        return Center(
-                          child: CircularProgressIndicator(
-                            semanticsLabel: l10n.semanticsLoading,
-                          ),
-                        );
-                      }
-                      if (catalogError != null && catalogState == null) {
-                        return Center(
-                          child: ErrorMessageWidget(
-                            error: catalogError,
-                            stackTrace: catalogStackTrace,
-                          ),
-                        );
-                      }
-                      if (catalogState == null) {
-                        return const SizedBox.shrink();
-                      }
-                      return _buildCatalogContent(
-                        context: context,
-                        state: catalogState,
-                        l10n: l10n,
-                        colorScheme: colorScheme,
-                        textTheme: textTheme,
-                        useSidebarLayout: useSidebarLayout,
-                      );
+                child: MaxWidthWrapper(
+                  scrollController: _scrollController,
+                  maxWidth: useSidebarLayout || gridColumns > 0
+                      ? double.infinity
+                      : MaxWidthWrapper.defaultMaxWidth,
+                  child: GestureDetector(
+                    excludeFromSemantics: true,
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
                     },
+                    child: Builder(
+                      builder: (BuildContext context) {
+                        if (isCatalogLoading) {
+                          return Center(
+                            child: CircularProgressIndicator(
+                              semanticsLabel: l10n.semanticsLoading,
+                            ),
+                          );
+                        }
+                        if (catalogError != null && catalogState == null) {
+                          return Center(
+                            child: ErrorMessageWidget(
+                              error: catalogError,
+                              stackTrace: catalogStackTrace,
+                            ),
+                          );
+                        }
+                        if (catalogState == null) {
+                          return const SizedBox.shrink();
+                        }
+                        return _buildCatalogContent(
+                          context: context,
+                          state: catalogState,
+                          l10n: l10n,
+                          colorScheme: colorScheme,
+                          textTheme: textTheme,
+                          useSidebarLayout: useSidebarLayout,
+                          gridColumns: gridColumns,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

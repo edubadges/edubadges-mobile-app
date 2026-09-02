@@ -95,6 +95,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         centerTitle: true,
       ),
       body: MaxWidthWrapper(
+        enableScrollbar: false,
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(24.0),

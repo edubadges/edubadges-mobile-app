@@ -1058,6 +1058,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Badge is private. Tap to change visibility.';
 
   @override
+  String get semanticsBadgeVisibilityPublic => 'Badge is public';
+
+  @override
+  String get semanticsBadgeVisibilityPrivate => 'Badge is private';
+
+  @override
   String get semanticsLogout => 'Log out';
 
   @override
