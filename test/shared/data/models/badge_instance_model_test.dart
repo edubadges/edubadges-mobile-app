@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('BadgeInstanceModel recipient fields', () {
     test('parses recipient info from a direct award detail payload', () {
-      final model = BadgeInstanceModel.fromJson({
+      final model = BadgeInstanceModel.fromJson(const {
         'id': 9596,
         'created_at': '2026-01-16T10:56:44.293475+01:00',
         'entity_id': 'y8uStIzMQ--JY59DIKnvWw',
@@ -38,7 +38,7 @@ void main() {
     test(
       'keeps recipient fields optional when the list payload omits them',
       () {
-        final model = BadgeInstanceModel.fromJson({
+        final model = BadgeInstanceModel.fromJson(const {
           'id': 9606,
           'created_at': '2026-01-23T16:19:08.699037+01:00',
           'entity_id': 'Lgnh9njyStmGiI_w8396Xg',

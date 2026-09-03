@@ -135,8 +135,8 @@ class RoutePath {
       queryParameters: {
         'titleLong': titleLong,
         'textUrlLong': textUrlLong,
-        if (titleShort != null) 'titleShort': titleShort,
-        if (textUrlShort != null) 'textUrlShort': textUrlShort,
+        'titleShort': ?titleShort,
+        'textUrlShort': ?textUrlShort,
       },
     ).toString();
   }
