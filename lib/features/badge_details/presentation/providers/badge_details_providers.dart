@@ -101,6 +101,15 @@ final enrollBadgeProvider =
     Provider<Future<bool> Function(String badgeclassSlug)>((ref) {
       return (String badgeclassSlug) async {
         final repository = ref.read(badgeDetailsRepositoryProvider);
+        final eligibility = await repository.getBadgeDetails(badgeclassSlug);
+        final bool mayEnroll = eligibility.fold(
+          (_) => false,
+          (BadgeClassModel badgeClass) => badgeClass.userMayEnroll,
+        );
+        if (!mayEnroll) {
+          return false;
+        }
+
         final result = await repository.enroll(badgeclassSlug);
 
         return result.fold((failure) => false, (_) {

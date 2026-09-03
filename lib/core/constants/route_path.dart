@@ -9,6 +9,7 @@ class RoutePath {
   static const String collection = '/collection/:id';
   static const String newCollection = '/new-collection';
   static const String newCollectionBadgeSelection = '/new-collection/badges';
+
   /// Claimed badge (instance id). Carousel on by default; use `?gallery=false` for single-badge layout.
   static const String badgeDetailsClaimed = '/details/:id';
 
@@ -35,6 +36,7 @@ class RoutePath {
   static const String agreementDetails = '/agreement/:id';
   static const String badgeClaim = '/badge-claim/:id';
   static const String badgePrivacy = '/badge-privacy/:id';
+  static const String badgeEnrollmentTerms = '/badge-enrollment-terms/:id';
   static const String badgeClaimSuccess = '/badge-claim-success';
 
   /// List of all main navigation routes
@@ -115,7 +117,8 @@ class RoutePath {
       path: '/collection/${Uri.encodeComponent(id)}',
       queryParameters: {
         'title': title,
-        if (description != null && description.isNotEmpty) 'description': description,
+        if (description != null && description.isNotEmpty)
+          'description': description,
       },
     ).toString();
   }
@@ -132,8 +135,8 @@ class RoutePath {
       queryParameters: {
         'titleLong': titleLong,
         'textUrlLong': textUrlLong,
-        if (titleShort != null) 'titleShort': titleShort,
-        if (textUrlShort != null) 'textUrlShort': textUrlShort,
+        'titleShort': ?titleShort,
+        'textUrlShort': ?textUrlShort,
       },
     ).toString();
   }
@@ -149,27 +152,26 @@ class RoutePath {
   }
 
   static String badgePrivacyPath({required String id}) {
+    return Uri(path: '/badge-privacy/${Uri.encodeComponent(id)}').toString();
+  }
+
+  static String badgeEnrollmentTermsPath({required String id}) {
     return Uri(
-      path: '/badge-privacy/${Uri.encodeComponent(id)}',
+      path: '/badge-enrollment-terms/${Uri.encodeComponent(id)}',
     ).toString();
   }
 
   static String badgeClaimSuccessPath({required String id}) {
-    return Uri(
-      path: badgeClaimSuccess,
-      queryParameters: {'id': id},
-    ).toString();
+    return Uri(path: badgeClaimSuccess, queryParameters: {'id': id}).toString();
   }
 
-  static String newCollectionPath({
-    required String name,
-    String? description,
-  }) {
+  static String newCollectionPath({required String name, String? description}) {
     return Uri(
       path: newCollection,
       queryParameters: {
         'name': name,
-        if (description != null && description.isNotEmpty) 'description': description,
+        if (description != null && description.isNotEmpty)
+          'description': description,
       },
     ).toString();
   }
@@ -185,7 +187,8 @@ class RoutePath {
       queryParameters: {
         if (id != null && id.isNotEmpty) 'id': id,
         'name': name,
-        if (description != null && description.isNotEmpty) 'description': description,
+        if (description != null && description.isNotEmpty)
+          'description': description,
       },
     ).toString();
   }

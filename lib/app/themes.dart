@@ -16,6 +16,7 @@ class AppThemes {
       textTheme: _textTheme,
       appBarTheme: _appBarTheme,
       switchTheme: _switchTheme,
+      tabBarTheme: _tabBarTheme,
       // High-contrast focus indicator for keyboard/screen reader (EU accessibility)
       focusColor: AppColors.primary,
     );
@@ -30,6 +31,7 @@ class AppThemes {
       textTheme: _textTheme,
       appBarTheme: _appBarTheme,
       switchTheme: _switchTheme,
+      tabBarTheme: _tabBarTheme,
       focusColor: AppColors.onSurface,
     );
   }
@@ -43,15 +45,15 @@ class AppThemes {
 
   static const PageTransitionsTheme _webPageTransitionsTheme =
       PageTransitionsTheme(
-    builders: <TargetPlatform, PageTransitionsBuilder>{
-      TargetPlatform.android: _InstantPageTransitionsBuilder(),
-      TargetPlatform.iOS: _InstantPageTransitionsBuilder(),
-      TargetPlatform.macOS: _InstantPageTransitionsBuilder(),
-      TargetPlatform.linux: _InstantPageTransitionsBuilder(),
-      TargetPlatform.windows: _InstantPageTransitionsBuilder(),
-      TargetPlatform.fuchsia: _InstantPageTransitionsBuilder(),
-    },
-  );
+        builders: <TargetPlatform, PageTransitionsBuilder>{
+          TargetPlatform.android: _InstantPageTransitionsBuilder(),
+          TargetPlatform.iOS: _InstantPageTransitionsBuilder(),
+          TargetPlatform.macOS: _InstantPageTransitionsBuilder(),
+          TargetPlatform.linux: _InstantPageTransitionsBuilder(),
+          TargetPlatform.windows: _InstantPageTransitionsBuilder(),
+          TargetPlatform.fuchsia: _InstantPageTransitionsBuilder(),
+        },
+      );
 
   static SystemUiOverlayStyle get systemUiOverlayStyle {
     return const SystemUiOverlayStyle(
@@ -98,6 +100,7 @@ class AppThemes {
       surfaceDim: AppColors.surfaceDim,
       surfaceBright: AppColors.surfaceBright,
       surfaceContainer: AppColors.surfaceContainer,
+      surfaceContainerHighest: AppColors.surfaceContainerHighest,
       outline: AppColors.outline,
       outlineVariant: AppColors.outlineVariant,
       shadow: AppColors.shadow,
@@ -251,19 +254,48 @@ class AppThemes {
     );
   }
 
+  /// Labels inherit [TextTheme.titleSmall] (Nunito Bold 14/20) from Material 3.
+  static TabBarThemeData get _tabBarTheme {
+    return const TabBarThemeData(
+      labelColor: AppColors.primary,
+      unselectedLabelColor: AppColors.onSurfaceVariant,
+      // Pill-shaped indicator hugging the label, inset 2px on either side.
+      indicatorSize: TabBarIndicatorSize.label,
+      indicator: UnderlineTabIndicator(
+        borderSide: BorderSide(width: 3, color: AppColors.primary),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(100)),
+        insets: EdgeInsets.symmetric(horizontal: 2),
+      ),
+      dividerColor: AppColors.outlineVariant,
+    );
+  }
+
   static SwitchThemeData get _switchTheme {
     return SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
           return AppColors.surfaceContainer;
         }
-        return AppColors.onSurfaceVariant;
+        return AppColors.tertiary;
       }),
       trackColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
           return AppColors.primary;
         }
-        return null;
+        return AppColors.surfaceContainerHighest;
+      }),
+      trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return Colors.transparent;
+        }
+        return AppColors.tertiary;
+      }),
+      trackOutlineWidth: const WidgetStatePropertyAll(2),
+      thumbIcon: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return const Icon(Icons.check, size: 16, color: AppColors.primary);
+        }
+        return const Icon(Icons.close, size: 16, color: AppColors.onTertiary);
       }),
     );
   }

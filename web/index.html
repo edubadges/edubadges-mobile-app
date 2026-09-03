@@ -76,26 +76,7 @@
     <p id="loading-splash-text">Loading Edubadges…</p>
   </div>
 
-  <script>
-    (function () {
-      var languages = navigator.languages || [navigator.language || 'en'];
-      var isDutch = languages.some(function (language) {
-        return language && language.toLowerCase().startsWith('nl');
-      });
-      document.documentElement.lang = isDutch ? 'nl' : 'en';
-      var element = document.getElementById('loading-splash-text');
-      if (element) {
-        element.textContent = isDutch ? 'Edubadges laden…' : 'Loading Edubadges…';
-      }
-    })();
-
-    window.addEventListener('flutter-first-frame', function () {
-      var splash = document.getElementById('loading-splash');
-      if (splash) {
-        splash.remove();
-      }
-    });
-  </script>
+  <script src="splash.js"></script>
 
   <!--
     You can customize the "flutter_bootstrap.js" script.

@@ -32,7 +32,7 @@ Future<void> _setWideViewport(WidgetTester tester) async {
 Widget _buildTestApp({
   required Widget child,
   ScrollController? scrollController,
-  bool enableWebScrollbar = true,
+  bool enableScrollbar = true,
 }) {
   return MaterialApp(
     home: MediaQuery(
@@ -40,7 +40,7 @@ Widget _buildTestApp({
       child: Scaffold(
         body: MaxWidthWrapper(
           maxWidth: _maxWidth,
-          enableWebScrollbar: enableWebScrollbar,
+          enableScrollbar: enableScrollbar,
           scrollController: scrollController,
           child: child,
         ),
@@ -243,4 +243,22 @@ void main() {
       });
     },
   );
+
+  testWidgets('enableScrollbar false omits outer Scrollbar', (
+    WidgetTester tester,
+  ) async {
+    await _withMacOsPlatform(tester, () async {
+      await _setWideViewport(tester);
+      await tester.pumpWidget(
+        _buildTestApp(
+          enableScrollbar: false,
+          child: const Center(child: Text('Static')),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(Scrollbar), findsNothing);
+      expect(find.text('Static'), findsOneWidget);
+    });
+  });
 }

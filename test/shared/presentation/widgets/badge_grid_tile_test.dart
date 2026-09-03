@@ -1,0 +1,271 @@
+import 'package:edubadges/app/themes.dart';
+import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/layout_constants.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_grid_tile.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+const List<BadgeInfoChipData> _chips = <BadgeInfoChipData>[
+  BadgeInfoChipData(icon: Assets.iconTimeInvestment, label: '480 uur'),
+  BadgeInfoChipData(icon: Assets.iconCollections, label: '8,0'),
+  BadgeInfoChipData(icon: Assets.iconDate, label: '22 aug, 2025'),
+];
+
+const String _longName =
+    'Desk Research | Advanced Beginner Desk Research for Applied Sciences '
+    'and Related Disciplines';
+
+/// Content width the badges overview grid gets for a given browser width. The
+/// grid spans the full content width, so only the navigation drawer and its own
+/// padding come off.
+double _overviewGridWidth(double browserWidth) {
+  const double navigationDrawerWidth = 304;
+  return browserWidth -
+      navigationDrawerWidth -
+      LayoutConstants.badgeGridPadding * 2;
+}
+
+/// Web resolves the host desktop platform, which changes theme metrics such as
+/// tap target size and visual density.
+Future<void> _withDesktopPlatform(Future<void> Function() runTest) async {
+  debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+  try {
+    await runTest();
+  } finally {
+    debugDefaultTargetPlatformOverride = null;
+  }
+}
+
+Future<void> _pumpGrid(
+  WidgetTester tester, {
+  required double gridWidth,
+  required int columns,
+  String name = 'English Grammar B1+',
+  List<BadgeInfoChipData> chips = _chips,
+}) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: AppThemes.lightTheme,
+      home: Scaffold(
+        body: Center(
+          child: SizedBox(
+            width: gridWidth,
+            height: 800,
+            child: CustomScrollView(
+              slivers: [
+                SliverGrid(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: columns,
+                    crossAxisSpacing: LayoutConstants.badgeGridSpacing,
+                    mainAxisSpacing: LayoutConstants.badgeGridSpacing,
+                    mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
+                      LayoutConstants.badgeGridTileWidth(gridWidth, columns),
+                      hasChips: chips.isNotEmpty,
+                    ),
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) => BadgeGridTile(
+                      name: name,
+                      institutionName:
+                          'Kennis & Informatie van Hogeschool Rotterdam',
+                      // Real badges carry a logo, which makes the institution
+                      // row taller than its text alone.
+                      institutionImageUrl: 'https://example.org/logo.png',
+                      chips: chips,
+                      isPublic: index.isEven,
+                      visibilityLabel: 'Badge is public',
+                      onTap: () {},
+                    ),
+                    childCount: 6,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+/// The default test font is a uniform-width placeholder, which measures chips
+/// and names very differently from production and hides real wrapping bugs.
+Future<void> _loadAppFonts() async {
+  const Map<String, List<String>> families = <String, List<String>>{
+    'Nunito': <String>[
+      'assets/fonts/Nunito-Regular.ttf',
+      'assets/fonts/Nunito-Bold.ttf',
+    ],
+    'SourceSans3': <String>[
+      'assets/fonts/SourceSans3-Regular.ttf',
+      'assets/fonts/SourceSans3-SemiBold.ttf',
+    ],
+  };
+  for (final MapEntry<String, List<String>> family in families.entries) {
+    final FontLoader loader = FontLoader(family.key);
+    for (final String path in family.value) {
+      loader.addFont(rootBundle.load(path));
+    }
+    await loader.load();
+  }
+}
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(_loadAppFonts);
+
+  for (final double browserWidth in <double>[840, 1024, 1440, 1728]) {
+    testWidgets('lays out without overflow at ${browserWidth.toInt()}px', (
+      WidgetTester tester,
+    ) async {
+      await _withDesktopPlatform(() async {
+        tester.view.physicalSize = Size(browserWidth, 900);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        final double gridWidth = _overviewGridWidth(browserWidth);
+        final int columns = LayoutConstants.badgeGridColumnCount(
+          gridWidth,
+          maxColumns: LayoutConstants.badgesOverviewGridMaxColumns,
+        );
+        expect(columns, greaterThanOrEqualTo(2));
+
+        await _pumpGrid(tester, gridWidth: gridWidth, columns: columns);
+
+        expect(tester.takeException(), isNull);
+
+        final List<Rect> firstRow = tester
+            .widgetList<BadgeGridTile>(find.byType(BadgeGridTile))
+            .take(columns)
+            .map((BadgeGridTile tile) => tester.getRect(find.byWidget(tile)))
+            .toList();
+        expect(firstRow.map((Rect rect) => rect.top).toSet().length, 1);
+        expect(
+          firstRow.last.height,
+          LayoutConstants.badgeGridTileHeightFor(
+            firstRow.last.width,
+            hasChips: true,
+          ),
+        );
+
+        // Chips outside the clipped region are invisible but still report a
+        // rect inside the tile, so assert against the visible region itself:
+        // a tile too short for the wrapped chips drops information silently.
+        final Rect chipRegion = tester.getRect(find.byType(OverflowBox).first);
+        for (final BadgeInfoChipData chip in _chips) {
+          final Rect chipRect = tester.getRect(find.text(chip.label).first);
+          expect(
+            chipRect.bottom,
+            lessThanOrEqualTo(chipRegion.bottom),
+            reason: 'chip "${chip.label}" is clipped at $columns columns',
+          );
+        }
+      });
+    });
+  }
+
+  test('the grid widens the tiles as the window grows', () {
+    int columns(double browserWidth) => LayoutConstants.badgeGridColumnCount(
+      _overviewGridWidth(browserWidth),
+      maxColumns: LayoutConstants.badgesOverviewGridMaxColumns,
+    );
+    double tileWidth(double browserWidth) => LayoutConstants.badgeGridTileWidth(
+      _overviewGridWidth(browserWidth),
+      columns(browserWidth),
+    );
+
+    expect(columns(840), 2);
+    expect(columns(1024), 2);
+    expect(columns(1440), 3);
+    expect(columns(1728), 3);
+
+    // The design draws the tiles at 437 in a 1728 frame; a 304 drawer instead
+    // of the 320 in the design leaves a little more room.
+    expect(tileWidth(1728), closeTo(453, 1));
+    expect(tileWidth(1440), greaterThan(tileWidth(1024)));
+  });
+
+  testWidgets('a long name stays inside the tile', (WidgetTester tester) async {
+    await _withDesktopPlatform(() async {
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await _pumpGrid(
+        tester,
+        gridWidth: _overviewGridWidth(1440),
+        columns: 3,
+        name: _longName,
+      );
+
+      expect(tester.takeException(), isNull);
+
+      final Rect tile = tester.getRect(find.byType(BadgeGridTile).first);
+      final Rect text = tester.getRect(find.text(_longName).first);
+      expect(text.bottom, lessThanOrEqualTo(tile.bottom));
+    });
+  });
+
+  testWidgets('the chipless catalog tile fits its shorter height exactly', (
+    WidgetTester tester,
+  ) async {
+    await _withDesktopPlatform(() async {
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await _pumpGrid(
+        tester,
+        gridWidth: 768,
+        columns: LayoutConstants.catalogGridMaxColumns,
+        chips: const <BadgeInfoChipData>[],
+      );
+
+      // The border is drawn in front of the tile rather than inset into it, so
+      // the content gets the full height minus padding and nothing overflows.
+      expect(tester.takeException(), isNull);
+
+      final Rect tile = tester.getRect(find.byType(BadgeGridTile).first);
+      expect(tile.height, LayoutConstants.badgeGridTileHeightWithoutChips);
+
+      final Rect institution = tester.getRect(
+        find.text('Kennis & Informatie van Hogeschool Rotterdam').first,
+      );
+      expect(institution.bottom, lessThanOrEqualTo(tile.bottom - 16));
+    });
+  });
+
+  testWidgets('wrapping chips are clipped rather than overflowing', (
+    WidgetTester tester,
+  ) async {
+    await _withDesktopPlatform(() async {
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await _pumpGrid(
+        tester,
+        gridWidth: _overviewGridWidth(1440),
+        columns: 3,
+        chips: const <BadgeInfoChipData>[
+          ..._chips,
+          BadgeInfoChipData(
+            icon: Assets.iconDate,
+            label: 'Verloopt 1 jan, 2030',
+          ),
+          BadgeInfoChipData(icon: Assets.iconType, label: 'Micro-credential'),
+        ],
+      );
+
+      expect(tester.takeException(), isNull);
+    });
+  });
+}

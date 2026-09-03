@@ -1,0 +1,28 @@
+# Keep the build context small and deterministic. Anything the web build needs
+# must NOT be listed here: pubspec.*, lib/, web/, assets/, .env.*, tool/,
+# deploy/, l10n.yaml, build.yaml and analysis_options.yaml are all required.
+
+.git
+.github
+.gitlab
+.idea
+.vscode
+.cursor
+.dart_tool
+.flutter-plugins-dependencies
+build/
+coverage/
+.firebase
+
+# Native platforms are not part of a web build.
+android/
+ios/
+
+# Not needed to compile.
+test/
+docs/
+designer_assets/
+bitrise.yaml
+sonar-project.properties
+
+**/.DS_Store

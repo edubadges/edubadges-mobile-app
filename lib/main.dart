@@ -49,21 +49,7 @@ void main() async {
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }
 
-  if (appFlavor == null) {
-    const flutterAppFlavor = String.fromEnvironment('FLUTTER_APP_FLAVOR');
-    const appFlavorEnv = String.fromEnvironment('APP_FLAVOR');
-    if (flutterAppFlavor.isNotEmpty) {
-      appFlavor = flutterAppFlavor;
-    } else if (appFlavorEnv.isNotEmpty) {
-      appFlavor = appFlavorEnv;
-    } else {
-      appFlavor = 'dev';
-    }
-  }
-
-  F.appFlavor = Flavor.values.firstWhere(
-    (element) => element.name == appFlavor,
-  );
+  F.appFlavor = _resolveFlavor();
 
   logger.i('App flavor: ${F.appFlavor.name}');
 
@@ -132,6 +118,64 @@ void main() async {
   }
 
   runApp(UncontrolledProviderScope(container: container, child: const App()));
+}
+
+/// Resolves the build flavor, failing loudly instead of silently guessing.
+///
+/// Mobile builds get `FLUTTER_APP_FLAVOR` for free from `flutter build --flavor`.
+/// Web has no `--flavor`, so it must be passed explicitly with
+/// `--dart-define=APP_FLAVOR=<flavor>`. Without this guard a web deployment that
+/// forgot the define would silently ship a dev-pointed app against the wrong
+/// backend and the wrong SurfConext issuer.
+Flavor _resolveFlavor() {
+  const flutterAppFlavor = String.fromEnvironment('FLUTTER_APP_FLAVOR');
+  const appFlavorEnv = String.fromEnvironment('APP_FLAVOR');
+
+  final name = switch (appFlavor) {
+    final String preset when preset.isNotEmpty => preset,
+    _ when flutterAppFlavor.isNotEmpty => flutterAppFlavor,
+    _ when appFlavorEnv.isNotEmpty => appFlavorEnv,
+    _ => null,
+  };
+
+  final expected = Flavor.values.map((flavor) => flavor.name).join(', ');
+
+  if (name == null) {
+    if (kIsWeb) {
+      throw _flavorError(
+        'No build flavor defined. Web builds must pass '
+        '--dart-define=APP_FLAVOR=<flavor>, one of: $expected.',
+      );
+    }
+    appFlavor = Flavor.dev.name;
+    return Flavor.dev;
+  }
+
+  final match = Flavor.values.where((flavor) => flavor.name == name);
+  if (match.isEmpty) {
+    throw _flavorError(
+      'Unknown build flavor "$name". Expected one of: $expected.',
+    );
+  }
+
+  appFlavor = name;
+  return match.first;
+}
+
+/// Prints [message] before returning the error to throw.
+///
+/// A release web build minifies exception type names, so an uncaught
+/// [StateError] surfaces in the browser console as an opaque object and the
+/// user just sees the splash screen forever. Printing the text first means the
+/// reason is always readable, which matters because this only ever fires on a
+/// misconfigured deployment.
+///
+/// [debugPrint] rather than [logger]: the logger uses the default
+/// `DevelopmentFilter`, which drops everything in a release build - exactly the
+/// build where this message is needed.
+StateError _flavorError(String message) {
+  debugPrint('Edubadges startup failed: $message');
+  return StateError(message);
 }
 
 Future<void> _syncBadgeCountOnStartup(ProviderContainer container) async {

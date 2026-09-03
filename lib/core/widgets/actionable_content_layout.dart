@@ -1,9 +1,7 @@
-import 'package:edubadges/app/colors.dart';
-import 'package:edubadges/core/utils/platform_info.dart';
+import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
-import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class ActionableContentLayout extends StatefulWidget {
   final String title;
@@ -11,6 +9,10 @@ class ActionableContentLayout extends StatefulWidget {
   final List<Widget> actions;
   final bool showBackButton, error;
   final VoidCallback? onBack;
+
+  /// Where to navigate when the page was opened directly and has nothing to
+  /// pop back to.
+  final String backFallbackLocation;
 
   const ActionableContentLayout({
     super.key,
@@ -20,10 +22,12 @@ class ActionableContentLayout extends StatefulWidget {
     this.showBackButton = true,
     this.error = false,
     this.onBack,
+    this.backFallbackLocation = RoutePath.main,
   });
 
   @override
-  State<ActionableContentLayout> createState() => _ActionableContentLayoutState();
+  State<ActionableContentLayout> createState() =>
+      _ActionableContentLayoutState();
 }
 
 class _ActionableContentLayoutState extends State<ActionableContentLayout> {
@@ -40,10 +44,6 @@ class _ActionableContentLayoutState extends State<ActionableContentLayout> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    // On web the browser's back navigation is used, so hide in-app back buttons.
-    final bool showBack = widget.showBackButton &&
-        (widget.onBack != null || PlatformInfo.showInAppBackButton);
-
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
@@ -57,15 +57,14 @@ class _ActionableContentLayoutState extends State<ActionableContentLayout> {
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
-        leading: showBack
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back, color: AppColors.primary),
-                onPressed: widget.onBack ?? () => context.pop(),
-                tooltip: AppLocalizations.of(context).semanticsBack,
+        leading: widget.showBackButton
+            ? AppBackButton(
+                onPressed: widget.onBack,
+                fallbackLocation: widget.backFallbackLocation,
               )
             : null,
         backgroundColor: colorScheme.surface,
-        actions: showBack ? [const SizedBox(width: 56)] : null,
+        actions: widget.showBackButton ? [const SizedBox(width: 56)] : null,
       ),
       body: MaxWidthWrapper(
         scrollController: _scrollController,

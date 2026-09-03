@@ -41,7 +41,10 @@ class SidebarListLayout extends StatelessWidget {
           children: [
             SizedBox(
               width: sidebarWidth,
-              child: SingleChildScrollView(child: sidebar),
+              child: SingleChildScrollView(
+                primary: false,
+                child: sidebar,
+              ),
             ),
             SizedBox(width: columnGap),
             Expanded(
