@@ -370,29 +370,25 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           );
         }
 
-        return SizedBox(
-          height: _badgeCardHeight,
-          child: FlexiPageView.builder(
-            controller: _pageController,
-            itemCount: badges.claimedBadges.length,
-            onPageChanged: _onPageChanged,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                child: ExcludeSemantics(
-                  excluding: _currentIndex != index,
-                  child: BadgeCard(
-                    instance: badges.claimedBadges[index],
-                    badgeClass:
-                        badges.claimedBadges[index].badgeclass
-                            as BadgeClassModel,
-                    style: BadgeCardStyle.large,
-                    onTapDisabled: true,
-                  ),
+        return FlexiPageView.builder(
+          controller: _pageController,
+          itemCount: badges.claimedBadges.length,
+          onPageChanged: _onPageChanged,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: ExcludeSemantics(
+                excluding: _currentIndex != index,
+                child: BadgeCard(
+                  instance: badges.claimedBadges[index],
+                  badgeClass:
+                      badges.claimedBadges[index].badgeclass as BadgeClassModel,
+                  style: BadgeCardStyle.large,
+                  onTapDisabled: true,
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         );
       },
       loading: () => SizedBox(
