@@ -129,14 +129,30 @@ Whether you use the image or the tarball, the config that ships with it:
 
 If you serve the files some other way, those rules still apply.
 
+Every item above was verified on 3 September 2026 against a local run of the
+`acc` build under this exact configuration: routing and deep links, `/health`,
+`.wasm` and `.mjs` content types, cache headers, the rendered CSP, `robots.txt`,
+and the pruning of the other flavors' `.env` files. The app booted, made no
+third-party requests, and reached the eduID login screen.
+
 **What you still need to provide:** TLS with a valid certificate, an HTTP→HTTPS
 redirect, and the `/health` check wired into your load balancer.
 
 ## 5. What we need from you
 
-* **DNS and TLS.** `backpack.edubadges.nl` does not exist yet. `backpack-acc`,
-  `backpack-test` and `backpack-demo` resolve, but nothing is listening on 443
-  and no certificate covers those names.
+* **DNS and TLS.** Checked 3 September 2026 — further along than it looks:
+  * `backpack-acc`, `backpack-test` and `backpack-demo` all resolve, and a
+    GEANT-issued certificate valid until **14 March 2027 already covers all
+    three** (it is the `test.edubadges.nl` certificate; they are listed as
+    SANs). No new certificate is needed for these three.
+  * `backpack-demo` already answers on 443 — but with a placeholder, not this
+    app. Every path returns the same 773-byte document, `/health` and
+    `/flutter_bootstrap.js` included. That vhost needs repointing at the app.
+  * `backpack-acc` and `backpack-test` resolve but refuse connections on 443;
+    nothing is listening there yet.
+  * `backpack.edubadges.nl` (production) **does not exist** — no DNS record,
+    and it is not on that certificate. This is the only hostname that needs
+    both DNS and a certificate.
 * **SurfConext registration** — see §6. This is historically the item that
   blocks go-live, so please start it first.
 * **API CORS** — see §6.
@@ -166,8 +182,17 @@ need to be **added** to them:
 | Token-endpoint CORS | Allow origin `https://<hostname>` |
 
 Add one redirect URI per hostname, so `edubadges.mobile.test` ends up with
-`backpack-acc`, `backpack-test` and `backpack-demo`, plus
-`http://localhost:8080/` for development.
+`backpack-acc`, `backpack-test` and `backpack-demo`.
+
+`http://localhost:8080/` is **already registered** on `edubadges.mobile.test`, so
+development logins work today — a local build completes the flow as far as the
+eduID login screen. None of the three backpack hostnames is registered yet, so
+those are what remain.
+
+While you have that client open, one piece of housekeeping:
+`https://dev.edubadges.preprod.aws.coffeeit.nl/` is still a registered redirect
+URI on it. It points at the AWS deployment this setup replaces, and a registered
+redirect URI on infrastructure that is being decommissioned is worth removing.
 
 The redirect URI is read from the address bar. A different value will not work
 without a code change. `offline_access` is required for users to stay signed in.
@@ -245,9 +270,11 @@ Please rehearse it once before go-live.
 **Your side**
 
 - [ ] `backpack.edubadges.nl` created in DNS
-- [ ] TLS certificates covering all four hostnames
+- [ ] TLS certificate covering `backpack.edubadges.nl` (the other three
+      hostnames are already covered — see §5)
 - [ ] HTTP redirects to HTTPS
 - [ ] Reverse proxy forwards to the app on port 8080
+- [ ] `backpack-demo` repointed from its placeholder page to the app
 - [ ] `/health` wired into the load balancer
 - [ ] SurfConext redirect URIs and token-endpoint CORS added to both clients
 - [ ] API CORS live for all four origins
@@ -260,7 +287,10 @@ Please rehearse it once before go-live.
 - [ ] `https://<hostname>/` loads
 - [ ] A deep link such as `https://<hostname>/collections` returns 200 on a hard
       reload, not 404
-- [ ] `https://<hostname>/health` returns 200
+- [ ] `https://<hostname>/health` returns 200 **with the body `ok`** — check the
+      body, not just the status. The placeholder currently on `backpack-demo`
+      returns 200 for every path, so a status-only check passes with no app
+      deployed at all
 - [ ] A full login completes
 - [ ] A page that loads data works after login
 - [ ] Rollback has been rehearsed once

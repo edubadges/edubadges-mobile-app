@@ -37,22 +37,42 @@ history — see the pre-publication checklist below before enabling it.
 ## Before the mirror goes public
 
 - [x] **Licence.** `LICENSE` is Apache-2.0, copyright SURF.
-- [ ] **Restrict the Firebase browser API keys.** The `AIza…` values in
+- [x] **Restrict the Firebase Android and iOS API keys.** The `AIza…` values in
       `lib/firebase/firebase_options_*.dart`, the four `google-services.json`
       and the four `GoogleService-Info.plist` are client identifiers rather than
-      secrets, and Google publishes them in every web app. But unrestricted,
-      anyone can use the production key to burn quota against `edubadges-prod`.
-      Add application restrictions and an API allowlist in the Google Cloud
-      console, and enable Firebase App Check.
-- [ ] **Confirm ownership of `lib/core/network/`.** That code was written to
+      secrets, and Google publishes them in every Firebase mobile app. But
+      unrestricted, anyone can use the production key to burn quota against
+      `edubadges-prod`. In each of the four projects:
+
+      * **Application restrictions.** Android keys → package
+        `nl.surf.edubadges` plus the signing-certificate SHA-1; iOS keys →
+        bundle ID `nl.surf.edubadges`. All four flavors share one
+        `applicationId`, so the package name is the same in every project and
+        only the certificate differs by channel (Play app-signing cert for
+        prod, upload keystore for the App Distribution builds).
+      * **API allowlist** — only the four APIs this app actually uses:
+        `firebaseinstallations.googleapis.com`, `fcmregistrations.googleapis.com`,
+        `firebase.googleapis.com` and `logging.googleapis.com`. The app pulls in
+        only `firebase_core`, `firebase_crashlytics` and `firebase_messaging`,
+        so Auth, Firestore, Storage and Remote Config are deliberately absent.
+        Never add the Generative Language API to a publicly readable key.
+      * **Firebase App Check** (Play Integrity / App Attest). Key restrictions
+        are a first layer only — Android application restrictions are not
+        enforced uniformly across APIs, so App Check is the real mitigation.
+
+      There is no *browser* key to restrict. Firebase is not initialised on web
+      (`main.dart` guards it behind `!kIsWeb`) and the generated options throw
+      `UnsupportedError` for web, so the compiled bundle contains no `AIza…`
+      value at all — confirmed by grepping `build/web` after a release build.
+- [x] **Confirm ownership of `lib/core/network/`.** That code was written to
       replace CoffeeIT's proprietary `aroma_error` and `aroma_networking`
       packages. Confirm it is not derived from them before publishing it under
       an open licence.
-- [ ] **Review CoffeeIT-internal references.** `sonar-project.properties` names
+- [x] **Review CoffeeIT-internal references.** `sonar-project.properties` names
       an internal SonarQube host; `bitrise.yaml` describes the internal mobile
       pipeline; `developer_configuration.json` is internal scaffolding metadata.
       None of it is secret, but decide whether it should be public.
-- [ ] **Check `.vscode/launch.json`** (committed) for local paths.
+- [x] **Check `.vscode/launch.json`** (committed) for local paths.
 - [x] **Security contact.** `SECURITY.md` points at support@edubadges.nl. If
       SURF would rather route these through their own coordinated vulnerability
       disclosure process, update that file.
