@@ -30,6 +30,10 @@ class BadgeInstanceModel extends BadgeInstanceEntity {
     super.includeEvidence,
     @JsonKey(fromJson: _evidencesFromJson, toJson: _evidencesToJson)
     super.evidences,
+    super.eppn,
+    super.recipientEmail,
+    super.recipientFirstName,
+    super.recipientSurname,
   });
 
   factory BadgeInstanceModel.fromJson(Map<String, dynamic> json) =>

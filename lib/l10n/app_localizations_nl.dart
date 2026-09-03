@@ -399,7 +399,20 @@ class AppLocalizationsNl extends AppLocalizations {
   String get requestedBadges => 'Aangevraagde edubadges';
 
   @override
+  String badgesTabEarned(int count) {
+    return 'In jouw bezit ($count)';
+  }
+
+  @override
+  String badgesTabRequested(int count) {
+    return 'Aangevraagd ($count)';
+  }
+
+  @override
   String get noEdubadgesYet => 'Je hebt nog geen edubadges';
+
+  @override
+  String get noRequestedBadges => 'Je hebt nog geen edubadges aangevraagd';
 
   @override
   String get giveFeedback => 'Feedback geven';
@@ -553,6 +566,18 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get declineBadgeConfirmation =>
       'Je staat op het punt deze edubadge te weigeren. Deze actie is definitief en kan niet worden teruggedraaid.';
+
+  @override
+  String get claimPrivateEmailTitle => 'Claim en voeg toe aan je backpack';
+
+  @override
+  String get claimPrivateEmailDescription =>
+      'Nadat deze edubadge is geclaimed, wordt deze toegevoegd aan je backpack en kan je de edubadge openbaar maken en delen.';
+
+  @override
+  String claimPrivateEmailNameNote(String name) {
+    return 'Let op: dit is de naam die in de edubadge komt te staan: $name. Als dit niet klopt, neem contact op met de instelling.';
+  }
 
   @override
   String badgesRemainingToClaim(num count) {
@@ -1049,6 +1074,12 @@ class AppLocalizationsNl extends AppLocalizations {
   @override
   String get semanticsBadgePrivate =>
       'Badge is privé. Tik om zichtbaarheid te wijzigen.';
+
+  @override
+  String get semanticsBadgeVisibilityPublic => 'Badge is openbaar';
+
+  @override
+  String get semanticsBadgeVisibilityPrivate => 'Badge is privé';
 
   @override
   String get semanticsLogout => 'Uitloggen';

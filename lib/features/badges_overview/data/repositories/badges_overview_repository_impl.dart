@@ -1,9 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/errors/repository_guard.dart';
-import 'package:edubadges/core/network/errors/exceptions.dart';
 import 'package:edubadges/features/badges_overview/data/datasources/badges_overview_datasource.dart';
-import 'package:edubadges/features/badges_overview/domain/entities/direct_award_detail_entity.dart';
 import 'package:edubadges/features/badges_overview/domain/repositories/badges_overview_repository.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 
@@ -29,22 +27,12 @@ class BadgesOverviewRepositoryImpl implements BadgesOverviewRepository {
   }
 
   @override
-  Future<Either<Failure, DirectAwardDetailEntity>> getDirectAwardByEntityId(
+  Future<Either<Failure, BadgeInstanceEntity>> getDirectAward(
     String entityId,
   ) async {
-    return repositoryGuard<DirectAwardDetailEntity>(
-      () async {
-        final model =
-            await badgesOverviewDataSource.getDirectAwardByEntityId(entityId);
-        if (model == null) {
-          throw const ServerException(
-            message: 'Direct award not found',
-            statusCode: 404,
-          );
-        }
-        return model;
-      },
-      logMessage: 'Failed to fetch direct award by entity id',
+    return repositoryGuard<BadgeInstanceEntity>(
+      () => badgesOverviewDataSource.getDirectAward(entityId),
+      logMessage: 'Failed to fetch direct award',
     );
   }
 
@@ -58,23 +46,17 @@ class BadgesOverviewRepositoryImpl implements BadgesOverviewRepository {
 
   @override
   Future<Either<Failure, void>> claimBadge(String entityId) async {
-    return repositoryGuard<void>(
-      () async {
-        await badgesOverviewDataSource.claimBadge(entityId);
-        return;
-      },
-      logMessage: 'Failed to claim badge',
-    );
+    return repositoryGuard<void>(() async {
+      await badgesOverviewDataSource.claimBadge(entityId);
+      return;
+    }, logMessage: 'Failed to claim badge');
   }
 
   @override
   Future<Either<Failure, void>> declineBadge(String entityId) async {
-    return repositoryGuard<void>(
-      () async {
-        await badgesOverviewDataSource.declineBadge(entityId);
-        return;
-      },
-      logMessage: 'Failed to decline badge',
-    );
+    return repositoryGuard<void>(() async {
+      await badgesOverviewDataSource.declineBadge(entityId);
+      return;
+    }, logMessage: 'Failed to decline badge');
   }
 }

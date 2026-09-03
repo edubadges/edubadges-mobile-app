@@ -55,6 +55,7 @@ class NotificationPermissionPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: colorScheme.surfaceContainer,
       body: MaxWidthWrapper(
+        enableScrollbar: false,
         child: SafeArea(
           bottom: PlatformInfo.isAndroid,
           child: Padding(

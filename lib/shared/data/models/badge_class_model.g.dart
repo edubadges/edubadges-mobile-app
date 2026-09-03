@@ -47,6 +47,14 @@ BadgeClassModel _$BadgeClassModelFromJson(Map<String, dynamic> json) =>
             'user_may_enroll',
             (v) => v == null ? false : BadgeClassModel._parseBoolOrFalse(v),
           ),
+          userHasAcceptedTerms: $checkedConvert(
+            'user_has_accepted_terms',
+            (v) => v == null ? false : BadgeClassModel._parseBoolOrFalse(v),
+          ),
+          requiredTerms: $checkedConvert(
+            'required_terms',
+            (v) => BadgeClassModel._requiredTermsFromJson(v),
+          ),
           stackable: $checkedConvert('stackable', (v) => v as bool?),
           qualityAssuranceName: $checkedConvert(
             'quality_assurance_name',
@@ -88,6 +96,8 @@ BadgeClassModel _$BadgeClassModelFromJson(Map<String, dynamic> json) =>
         'assessmentSupervised': 'assessment_supervised',
         'selfEnrollmentEnabled': 'self_enrollment_enabled',
         'userMayEnroll': 'user_may_enroll',
+        'userHasAcceptedTerms': 'user_has_accepted_terms',
+        'requiredTerms': 'required_terms',
         'qualityAssuranceName': 'quality_assurance_name',
         'qualityAssuranceUrl': 'quality_assurance_url',
         'qualityAssuranceDescription': 'quality_assurance_description',
@@ -123,6 +133,10 @@ Map<String, dynamic> _$BadgeClassModelToJson(BadgeClassModel instance) =>
       ),
       'self_enrollment_enabled': instance.selfEnrollmentEnabled,
       'user_may_enroll': instance.userMayEnroll,
+      'user_has_accepted_terms': instance.userHasAcceptedTerms,
+      'required_terms': ?BadgeClassModel._requiredTermsToJson(
+        instance.requiredTerms,
+      ),
       'eqf_nlqf_level_verified': instance.eqfNlqfLevelVerified,
       'badgeclassextension_set': ?BadgeClassModel._extensionsToJson(
         instance.badgeclassextensionSet,

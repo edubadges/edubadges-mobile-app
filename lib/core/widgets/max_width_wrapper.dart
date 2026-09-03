@@ -1,4 +1,3 @@
-import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -10,8 +9,8 @@ class MaxWidthWrapper extends StatefulWidget {
   final bool captureOutsideScrolling;
   final ScrollController? scrollController;
 
-  /// When non-null, overrides [PlatformInfo.isWeb] for scrollbar rendering.
-  final bool? enableWebScrollbar;
+  /// When false, skips the outer [Scrollbar] (for static, non-scrolling pages).
+  final bool enableScrollbar;
 
   const MaxWidthWrapper({
     super.key,
@@ -19,7 +18,7 @@ class MaxWidthWrapper extends StatefulWidget {
     this.maxWidth = defaultMaxWidth,
     this.captureOutsideScrolling = true,
     this.scrollController,
-    this.enableWebScrollbar,
+    this.enableScrollbar = true,
   });
 
   @override
@@ -27,11 +26,9 @@ class MaxWidthWrapper extends StatefulWidget {
 }
 
 class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
-  ScrollController? _ownedScrollController;
-  ScrollController? _discoveredScrollController;
-  ScrollPosition? _activeScrollPosition;
-  bool _isScrollbarReady = false;
-  bool _didInitializeScrollState = false;
+  late ScrollController _scrollController;
+  late bool _ownsController;
+  bool _scrollbarVisible = false;
 
   static const Set<TargetPlatform> _scrollInheritPlatforms = <TargetPlatform>{
     TargetPlatform.android,
@@ -42,132 +39,65 @@ class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
     TargetPlatform.windows,
   };
 
-  bool get _useWebScrollbar =>
-      widget.enableWebScrollbar ?? PlatformInfo.isWeb;
+  static const double _scrollbarTrackWidth = 18;
+
+  @override
+  void initState() {
+    super.initState();
+    _attachController(widget.scrollController);
+  }
 
   @override
   void didUpdateWidget(covariant MaxWidthWrapper oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.scrollController != widget.scrollController) {
-      _discoveredScrollController = null;
-      _activeScrollPosition = null;
-      _isScrollbarReady = false;
-      _didInitializeScrollState = false;
+      if (_ownsController) {
+        _scrollController.dispose();
+      }
+      _attachController(widget.scrollController);
+      _scrollbarVisible = false;
     }
   }
 
   @override
   void dispose() {
-    _ownedScrollController?.dispose();
+    if (_ownsController) {
+      _scrollController.dispose();
+    }
     super.dispose();
   }
 
-  ScrollController _resolveScrollController(BuildContext context) {
-    if (widget.scrollController != null) {
-      return widget.scrollController!;
-    }
-    if (_discoveredScrollController != null) {
-      return _discoveredScrollController!;
-    }
-    final ScrollController? inheritedController =
-        PrimaryScrollController.maybeOf(context);
-    if (inheritedController != null) {
-      return inheritedController;
-    }
-    return _ownedScrollController ??= ScrollController();
-  }
-
-  void _linkScrollPosition({
-    ScrollPosition? position,
-    ScrollController? controller,
-  }) {
-    final ScrollPosition? resolvedPosition =
-        position ?? (controller?.hasClients == true ? controller!.position : null);
-    if (resolvedPosition != null && resolvedPosition.hasContentDimensions) {
-      _activeScrollPosition = resolvedPosition;
-    }
-    if (widget.scrollController == null && controller != null) {
-      _discoveredScrollController = controller;
-    }
-    if (!_didInitializeScrollState &&
-        _activeScrollPosition != null &&
-        _activeScrollPosition!.hasContentDimensions) {
-      _didInitializeScrollState = true;
-      if (_useWebScrollbar) {
-        _isScrollbarReady = true;
-      }
-      setState(() {});
+  void _attachController(ScrollController? external) {
+    if (external != null) {
+      _scrollController = external;
+      _ownsController = false;
+    } else {
+      _scrollController = ScrollController();
+      _ownsController = true;
     }
   }
 
-  bool _handleScrollNotification(ScrollNotification notification) {
-    if (notification.depth != 0) {
-      return false;
+  void _syncScrollbarVisibility() {
+    final bool shouldShow =
+        widget.enableScrollbar && _scrollController.hasClients;
+    if (shouldShow == _scrollbarVisible) {
+      return;
     }
-    final BuildContext? notificationContext = notification.context;
-    if (notificationContext == null) {
-      return false;
-    }
-    final ScrollableState? scrollableState =
-        notificationContext.findAncestorStateOfType<ScrollableState>();
-    _linkScrollPosition(
-      position: scrollableState?.position,
-      controller: scrollableState?.widget.controller,
-    );
-    return false;
+    setState(() {
+      _scrollbarVisible = shouldShow;
+    });
   }
 
   bool _handleScrollMetricsNotification(ScrollMetricsNotification notification) {
-    final ScrollableState? scrollableState =
-        notification.context.findAncestorStateOfType<ScrollableState>();
-    _linkScrollPosition(
-      position: scrollableState?.position,
-      controller: scrollableState?.widget.controller ?? widget.scrollController,
-    );
+    _syncScrollbarVisibility();
     return false;
   }
 
-  ScrollController? _scrollbarController(ScrollController fallback) {
-    if (widget.scrollController != null) {
-      return widget.scrollController;
+  bool _handleScrollNotification(ScrollNotification notification) {
+    if (notification.depth == 0) {
+      _syncScrollbarVisibility();
     }
-    if (_discoveredScrollController != null) {
-      return _discoveredScrollController;
-    }
-    if (fallback.hasClients) {
-      return fallback;
-    }
-    return null;
-  }
-
-  bool _shouldShowWebScrollbar(ScrollController scrollController) {
-    final ScrollController? controller = _scrollbarController(scrollController);
-    return _useWebScrollbar &&
-        _isScrollbarReady &&
-        controller != null &&
-        controller.hasClients;
-  }
-
-  static const double _scrollbarTrackWidth = 18;
-
-  ScrollPosition? _resolveScrollPosition(ScrollController scrollController) {
-    final ScrollPosition? cached = _activeScrollPosition;
-    if (cached != null) {
-      if (cached.hasContentDimensions &&
-          scrollController.hasClients &&
-          identical(cached, scrollController.position)) {
-        return cached;
-      }
-      _activeScrollPosition = null;
-    }
-    if (scrollController.hasClients) {
-      final ScrollPosition position = scrollController.position;
-      if (position.hasContentDimensions) {
-        _activeScrollPosition = position;
-        return position;
-      }
-    }
-    return null;
+    return false;
   }
 
   bool _isOutsideContentArea({
@@ -178,7 +108,7 @@ class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
   }) {
     if (localX < horizontalMargin ||
         localX > horizontalMargin + effectiveWidth) {
-      if (_useWebScrollbar &&
+      if (widget.enableScrollbar &&
           localX > viewportWidth - _scrollbarTrackWidth) {
         return false;
       }
@@ -210,9 +140,19 @@ class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
     position.pointerScroll(delta);
   }
 
+  ScrollPosition? _resolveScrollPosition() {
+    if (!_scrollController.hasClients) {
+      return null;
+    }
+    final ScrollPosition position = _scrollController.position;
+    if (!position.hasContentDimensions) {
+      return null;
+    }
+    return position;
+  }
+
   void _handleMarginPointerScroll({
     required PointerScrollEvent pointerSignal,
-    required ScrollController scrollController,
     required double horizontalMargin,
     required double effectiveWidth,
     required double viewportWidth,
@@ -225,7 +165,7 @@ class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
     )) {
       return;
     }
-    final ScrollPosition? position = _resolveScrollPosition(scrollController);
+    final ScrollPosition? position = _resolveScrollPosition();
     if (position == null) {
       return;
     }
@@ -238,7 +178,6 @@ class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
 
   void _handleMarginPanZoomUpdate({
     required PointerPanZoomUpdateEvent event,
-    required ScrollController scrollController,
     required double horizontalMargin,
     required double effectiveWidth,
     required double viewportWidth,
@@ -251,7 +190,7 @@ class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
     )) {
       return;
     }
-    final ScrollPosition? position = _resolveScrollPosition(scrollController);
+    final ScrollPosition? position = _resolveScrollPosition();
     if (position == null) {
       return;
     }
@@ -262,7 +201,6 @@ class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
   }
 
   Widget _buildMarginScrollCapture({
-    required ScrollController scrollController,
     required double horizontalMargin,
     required double effectiveWidth,
     required double viewportWidth,
@@ -275,7 +213,6 @@ class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
         }
         _handleMarginPointerScroll(
           pointerSignal: pointerSignal,
-          scrollController: scrollController,
           horizontalMargin: horizontalMargin,
           effectiveWidth: effectiveWidth,
           viewportWidth: viewportWidth,
@@ -284,7 +221,6 @@ class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
       onPointerPanZoomUpdate: (PointerPanZoomUpdateEvent event) {
         _handleMarginPanZoomUpdate(
           event: event,
-          scrollController: scrollController,
           horizontalMargin: horizontalMargin,
           effectiveWidth: effectiveWidth,
           viewportWidth: viewportWidth,
@@ -294,68 +230,38 @@ class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
     );
   }
 
-  Widget _wrapCenterChild({
-    required BuildContext context,
-    required ScrollController scrollController,
-    required Widget child,
+  Widget _buildConstrainedContent({
+    required double effectiveWidth,
   }) {
-    if (widget.scrollController != null) {
-      return child;
-    }
-    if (PrimaryScrollController.maybeOf(context) != null) {
-      return child;
-    }
     return PrimaryScrollController(
-      controller: scrollController,
+      controller: _scrollController,
       automaticallyInheritForPlatforms: _scrollInheritPlatforms,
-      child: child,
-    );
-  }
-
-  Widget _wrapWithScrollNotifications(Widget child) {
-    return NotificationListener<ScrollMetricsNotification>(
-      onNotification: _handleScrollMetricsNotification,
-      child: NotificationListener<ScrollNotification>(
-        onNotification: _handleScrollNotification,
-        child: child,
+      child: ScrollConfiguration(
+        behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+        child: Center(
+          child: SizedBox(
+            width: effectiveWidth,
+            child: widget.child,
+          ),
+        ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (layoutContext, constraints) {
+    final Widget content = LayoutBuilder(
+      builder: (BuildContext layoutContext, BoxConstraints constraints) {
         final double effectiveWidth = constraints.maxWidth > widget.maxWidth
             ? widget.maxWidth
             : constraints.maxWidth;
         final double horizontalMargin =
             (constraints.maxWidth - effectiveWidth) / 2;
-        final ScrollController scrollController = _resolveScrollController(
-          layoutContext,
-        );
-        final ScrollController? scrollbarController =
-            _scrollbarController(scrollController);
 
-        final Widget centerChild = _wrapCenterChild(
-          context: layoutContext,
-          scrollController: scrollController,
-          child: widget.child,
-        );
-
-        if (!widget.captureOutsideScrolling) {
-          return _wrapWithScrollNotifications(
-            Center(
-              child: SizedBox(
-                width: effectiveWidth,
-                child: centerChild,
-              ),
-            ),
-          );
-        }
-
-        Widget content = horizontalMargin > 0
-            ? SizedBox(
+        final Widget constrained = !widget.captureOutsideScrolling ||
+                horizontalMargin <= 0
+            ? _buildConstrainedContent(effectiveWidth: effectiveWidth)
+            : SizedBox(
                 width: constraints.maxWidth,
                 height: constraints.maxHeight.isFinite
                     ? constraints.maxHeight
@@ -365,58 +271,37 @@ class _MaxWidthWrapperState extends State<MaxWidthWrapper> {
                   children: [
                     Positioned.fill(
                       child: _buildMarginScrollCapture(
-                        scrollController: scrollController,
                         horizontalMargin: horizontalMargin,
                         effectiveWidth: effectiveWidth,
                         viewportWidth: constraints.maxWidth,
                       ),
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SizedBox(width: horizontalMargin),
-                        SizedBox(
-                          width: effectiveWidth,
-                          child: centerChild,
-                        ),
-                        SizedBox(width: horizontalMargin),
-                      ],
-                    ),
+                    _buildConstrainedContent(effectiveWidth: effectiveWidth),
                   ],
                 ),
-              )
-            : centerChild;
+              );
 
-        content = _wrapWithScrollNotifications(content);
-
-        if (_shouldShowWebScrollbar(scrollController) &&
-            scrollbarController != null) {
-          content = Scrollbar(
-            controller: scrollbarController,
-            thumbVisibility: true,
-            interactive: true,
-            child: ScrollConfiguration(
-              behavior: const _NoScrollbarScrollBehavior(),
-              child: content,
-            ),
-          );
-        }
-
-        return content;
+        return NotificationListener<ScrollMetricsNotification>(
+          onNotification: _handleScrollMetricsNotification,
+          child: NotificationListener<ScrollNotification>(
+            onNotification: _handleScrollNotification,
+            child: constrained,
+          ),
+        );
       },
     );
-  }
-}
 
-class _NoScrollbarScrollBehavior extends ScrollBehavior {
-  const _NoScrollbarScrollBehavior();
+    if (!widget.enableScrollbar ||
+        !_scrollbarVisible ||
+        !_scrollController.hasClients) {
+      return content;
+    }
 
-  @override
-  Widget buildScrollbar(
-    BuildContext context,
-    Widget child,
-    ScrollableDetails details,
-  ) {
-    return child;
+    return Scrollbar(
+      controller: _scrollController,
+      thumbVisibility: true,
+      interactive: true,
+      child: content,
+    );
   }
 }

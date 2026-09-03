@@ -35,6 +35,10 @@ class BadgeInstanceEntity extends Equatable {
   final bool includeGradeAchieved;
   final bool includeEvidence;
   final List<BadgeEvidenceEntity>? evidences;
+  final String? eppn;
+  final String? recipientEmail;
+  final String? recipientFirstName;
+  final String? recipientSurname;
 
   const BadgeInstanceEntity({
     required this.id,
@@ -53,7 +57,38 @@ class BadgeInstanceEntity extends Equatable {
     this.includeGradeAchieved = false,
     this.includeEvidence = false,
     this.evidences,
+    this.eppn,
+    this.recipientEmail,
+    this.recipientFirstName,
+    this.recipientSurname,
   });
+
+  bool get hasRecipientDetails =>
+      _hasText(eppn) ||
+      (_hasText(recipientEmail) &&
+          _hasText(recipientFirstName) &&
+          _hasText(recipientSurname));
+
+  String? get recipientFullName {
+    final parts = <String>[
+      if (_hasText(recipientFirstName)) recipientFirstName!.trim(),
+      if (_hasText(recipientSurname)) recipientSurname!.trim(),
+    ];
+    if (parts.isEmpty) {
+      return null;
+    }
+    return parts.join(' ');
+  }
+
+  /// Direct awards without an EPPN were issued to a private e-mail address.
+  bool get isAwardedToPrivateEmail =>
+      !_hasText(eppn) && _hasText(recipientEmail);
+
+  bool get shouldConfirmPrivateEmailName =>
+      isAwardedToPrivateEmail && recipientFullName != null;
+
+  static bool _hasText(String? value) =>
+      value != null && value.trim().isNotEmpty;
 
   @override
   List<Object?> get props => [
@@ -73,5 +108,9 @@ class BadgeInstanceEntity extends Equatable {
     includeGradeAchieved,
     includeEvidence,
     evidences,
+    eppn,
+    recipientEmail,
+    recipientFirstName,
+    recipientSurname,
   ];
 }

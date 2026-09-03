@@ -4,15 +4,20 @@ import 'package:collection/collection.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/errors/failures.dart';
+import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
-import 'package:edubadges/features/badges_overview/domain/entities/direct_award_detail_entity.dart';
+import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
+import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
+import 'package:edubadges/features/badges_overview/presentation/widgets/private_email_claim_dialog.dart';
+import 'package:edubadges/features/badges_overview/utils/badge_terms_agreement_utils.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
@@ -56,16 +61,25 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
 
   Future<void> _handleClaim(
     BadgeInstanceEntity badge,
-    AsyncValue<DirectAwardDetailEntity> detailAsync,
+    AsyncValue<BadgeClassModel> badgeClassAsync,
   ) async {
     if (_isClaiming || _isDeclining) return;
 
     final l10n = AppLocalizations.of(context);
 
-    // On error or terms not accepted, go to privacy page
-    final detail = detailAsync.whenOrNull(data: (d) => d);
+    // On error, missing badge data, or unresolved required terms, go to privacy.
+    final badgeClass = badgeClassAsync.whenOrNull(data: (d) => d);
+    final langCode = ref.read(appLanguageProvider).code;
+    final profileAgreements =
+        ref.read(profileProvider).value?.termsagreementSet ?? [];
     final needsPrivacyPage =
-        detailAsync.hasError || detail == null || !detail.userHasAcceptedTerms;
+        badgeClassAsync.hasError ||
+        badgeClass == null ||
+        shouldPromptForBadgeTerms(
+          badgeClass: badgeClass,
+          profileAgreements: profileAgreements,
+          languageCode: langCode,
+        );
     if (needsPrivacyPage) {
       if (widget.onNavigateToPrivacy != null) {
         widget.onNavigateToPrivacy!(widget.badgeId);
@@ -80,6 +94,37 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
     }
 
     setState(() => _isClaiming = true);
+
+    final shouldClaim = await confirmPrivateEmailAwardIfNeeded(
+      context: context,
+      ref: ref,
+      badge: badge,
+      onBeforePrompt: () {
+        if (mounted) {
+          setState(() => _isClaiming = false);
+        }
+      },
+    );
+    final bool proceed = shouldClaim.fold((failure) {
+      if (mounted) {
+        showAppSnackBar(context, _getErrorMessage(failure, l10n));
+        setState(() => _isClaiming = false);
+      }
+      return false;
+    }, (confirmed) => confirmed);
+    if (!proceed) {
+      if (mounted) {
+        setState(() => _isClaiming = false);
+      }
+      return;
+    }
+
+    if (!mounted) {
+      return;
+    }
+    if (!_isClaiming) {
+      setState(() => _isClaiming = true);
+    }
 
     try {
       final repository = ref.read(badgesOverviewRepositoryProvider);
@@ -198,6 +243,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
         ],
       ),
       body: MaxWidthWrapper(
+        enableScrollbar: false,
         child: badgesAsync.when(
           data: (state) {
             if (state.unclaimedBadges.isEmpty) {
@@ -228,11 +274,13 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
               );
             }
 
-            final detailAsync = ref.watch(
-              directAwardDetailProvider(badge.entityId),
+            final badgeClassAsync = ref.watch(
+              badgeDetailsProvider(badge.badgeclass.entityId),
             );
-            final isClaimButtonReady = !detailAsync.isLoading && !_isClaiming;
-            final isClaimButtonLoading = detailAsync.isLoading || _isClaiming;
+            final isClaimButtonReady =
+                !badgeClassAsync.isLoading && !_isClaiming;
+            final isClaimButtonLoading =
+                badgeClassAsync.isLoading || _isClaiming;
 
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -268,7 +316,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
                           text: l10n.claimEdubadge,
                           isLoading: isClaimButtonLoading,
                           onPressed: isClaimButtonReady && !_isDeclining
-                              ? () => _handleClaim(badge, detailAsync)
+                              ? () => _handleClaim(badge, badgeClassAsync)
                               : null,
                         ),
                         const SizedBox(height: 8),
