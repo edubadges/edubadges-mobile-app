@@ -410,6 +410,12 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
           ),
         TabBar(
           controller: _tabController,
+          // Phone keeps equal-width tabs. On the web grid the design hugs
+          // each label and pins the group to the start instead of centering.
+          isScrollable: isDesktopLayout,
+          tabAlignment: isDesktopLayout
+              ? TabAlignment.start
+              : TabAlignment.fill,
           tabs: [
             Tab(
               height: 48,

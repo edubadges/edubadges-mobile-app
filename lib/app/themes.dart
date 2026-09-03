@@ -100,6 +100,7 @@ class AppThemes {
       surfaceDim: AppColors.surfaceDim,
       surfaceBright: AppColors.surfaceBright,
       surfaceContainer: AppColors.surfaceContainer,
+      surfaceContainerHighest: AppColors.surfaceContainerHighest,
       outline: AppColors.outline,
       outlineVariant: AppColors.outlineVariant,
       shadow: AppColors.shadow,
@@ -275,13 +276,26 @@ class AppThemes {
         if (states.contains(WidgetState.selected)) {
           return AppColors.surfaceContainer;
         }
-        return AppColors.onSurfaceVariant;
+        return AppColors.tertiary;
       }),
       trackColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
           return AppColors.primary;
         }
-        return null;
+        return AppColors.surfaceContainerHighest;
+      }),
+      trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return Colors.transparent;
+        }
+        return AppColors.tertiary;
+      }),
+      trackOutlineWidth: const WidgetStatePropertyAll(2),
+      thumbIcon: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return const Icon(Icons.check, size: 16, color: AppColors.primary);
+        }
+        return const Icon(Icons.close, size: 16, color: AppColors.onTertiary);
       }),
     );
   }

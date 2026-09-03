@@ -306,6 +306,7 @@ class BadgeCard extends ConsumerWidget {
       enabled: !onTapDisabled,
       onActivate: onTapDisabled ? null : () => _openDetails(context),
       child: Container(
+        width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
@@ -401,5 +402,4 @@ class BadgeCard extends ConsumerWidget {
       ),
     );
   }
-
 }
