@@ -1,50 +1,51 @@
 name: Build and Deploy Flutter Web
 
 on:
-  push:
-    branches:
-      - acceptance
-      - develop
-      - main
-      - test
+    push:
+        branches:
+            - acceptance
+            - develop
+            - main
+            - test
 
 jobs:
-  build:
-    name: Build web — ${{ github.ref_name }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    build:
+        name: Build web — ${{ github.ref_name }}
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
 
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: "3.41.6"
-          channel: "stable"
+            - uses: subosito/flutter-action@135fb8ff74bb7ab08a4fe2bcdc3a7ac80923ecff
+              with:
+                  flutter-version: "3.41.6"
+                  channel: "stable"
 
-      - name: Dependencies
-        run: flutter pub get
+            - name: Dependencies
+              run: flutter pub get
 
-      - name: Build web
-        run: flutter build web --release
+            - name: Build web
+              run: flutter build web --release
 
-      - name: Create tarball
-        run: tar -czf web-${{ github.ref_name }}.tar.gz -C build/web .
+            - name: Create tarball
+              run: tar -czf web-${{ github.ref_name }}.tar.gz -C build/web .
 
-      - name: Upload to target repo
-        run: |
-          mkdir -p dist
-          mv web-${{ github.ref_name }}.tar.gz \
-            dist/web-${{ github.ref_name }}.tar.gz
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git clone https://${{ secrets.DEPLOY_TOKEN }}@github.com/
-            edubadges/edubadges-backpack-web.git --depth 1 deploy-repo
-          cp -r dist/* deploy-repo/
-          cd deploy-repo
-          git add -A
-          if git diff --staged --quiet; then
-            echo "Nothing to commit"
-            exit 0
-          fi
-          git commit \
-            -m "Build from ${{ github.ref_name }} @ ${{ github.sha }}"
-          git push
+            - name: Upload to target repo
+              run: |
+                  mkdir -p dist/${{ github.ref_name }}
+                  TAG="web-${{ github.ref_name }}"
+                  mv $TAG.tar.gz dist/${{ github.ref_name }}/web.tar.gz
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  CLONE_URL="https://${{ secrets.DEPLOY_TOKEN }}@github.com"
+                  CLONE_URL+="/edubadges/edubadges-backpack-web.git"
+                  git clone "$CLONE_URL" --depth 1 deploy-repo
+                  mkdir -p deploy-repo/dist/${{ github.ref_name }}
+                  cp -r dist/* deploy-repo/dist/
+                  cd deploy-repo
+                  git add -A
+                  if git diff --staged --quiet; then
+                    echo "Nothing to commit"
+                    exit 0
+                  fi
+                  git commit -m "Build ${{ github.ref_name }} ${{ github.sha }}"
+                  git push
