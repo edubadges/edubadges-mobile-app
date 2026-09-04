@@ -34,8 +34,9 @@ jobs:
                   mkdir -p dist/${{ github.ref_name }}
                   TAG="web-${{ github.ref_name }}"
                   mv $TAG.tar.gz dist/${{ github.ref_name }}/web.tar.gz
-                  git config user.name "github-actions[bot]"
-                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git config --global user.name "github-actions[bot]"
+                  ADDR="github-actions[bot]@users.noreply.github.com"
+                  git config --global user.email "$ADDR"
                   CLONE_URL="https://${{ secrets.DEPLOY_TOKEN }}@github.com"
                   CLONE_URL+="/edubadges/edubadges-backpack-web.git"
                   git clone "$CLONE_URL" --depth 1 deploy-repo
