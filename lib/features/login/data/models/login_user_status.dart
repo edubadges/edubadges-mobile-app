@@ -1,40 +1,59 @@
 import 'package:edubadges/features/login/data/models/login_terms_agreement.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'login_user_status.g.dart';
 
 sealed class LoginUserAuthStatus {
   const LoginUserAuthStatus();
 }
 
 // Case 1: Redirect to eduID to link account
+@JsonSerializable()
 class LoginLinkAccountRequired extends LoginUserAuthStatus {
-  const LoginLinkAccountRequired();
+  @JsonKey(defaultValue: 'link-account')
+  final String status;
 
-  factory LoginLinkAccountRequired.fromJson(Map<String, dynamic> _) =>
-      const LoginLinkAccountRequired();
+  const LoginLinkAccountRequired({this.status = 'link-account'});
 
-  Map<String, dynamic> toJson() => {'status': 'link-account'};
+  factory LoginLinkAccountRequired.fromJson(Map<String, dynamic> json) =>
+      _$LoginLinkAccountRequiredFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LoginLinkAccountRequiredToJson(this);
 }
 
 // Case 2: Redirect to eduID to revalidate name
+@JsonSerializable()
 class LoginRevalidateNameRequired extends LoginUserAuthStatus {
-  const LoginRevalidateNameRequired();
+  @JsonKey(defaultValue: 'revalidate-name')
+  final String status;
 
-  factory LoginRevalidateNameRequired.fromJson(Map<String, dynamic> _) =>
-      const LoginRevalidateNameRequired();
+  const LoginRevalidateNameRequired({this.status = 'revalidate-name'});
 
-  Map<String, dynamic> toJson() => {'status': 'revalidate-name'};
+  factory LoginRevalidateNameRequired.fromJson(Map<String, dynamic> json) =>
+      _$LoginRevalidateNameRequiredFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LoginRevalidateNameRequiredToJson(this);
 }
 
 // Case 3: Show terms & conditions screen (terms_agreed == false)
+@JsonSerializable(fieldRename: FieldRename.snake)
 class LoginTermsAgreementRequired extends LoginUserAuthStatus {
+  @JsonKey(defaultValue: '')
   final String email;
+  @JsonKey(defaultValue: '')
   final String firstName;
+  @JsonKey(defaultValue: '')
   final String lastName;
+  @JsonKey(defaultValue: '')
   final String validatedName;
+  @JsonKey(defaultValue: <String>[])
   final List<String> schacHomes;
+  @JsonKey(defaultValue: false)
   final bool termsAgreed;
+  @JsonKey(defaultValue: <LoginTermsAgreement>[])
   final List<LoginTermsAgreement> termsAgreementSet;
 
-  LoginTermsAgreementRequired({
+  const LoginTermsAgreementRequired({
     required this.email,
     required this.firstName,
     required this.lastName,
@@ -44,43 +63,31 @@ class LoginTermsAgreementRequired extends LoginUserAuthStatus {
     required this.termsAgreementSet,
   });
 
-  factory LoginTermsAgreementRequired.fromJson(Map<String, dynamic> json) {
-    return LoginTermsAgreementRequired(
-      email: json['email'] as String? ?? '',
-      firstName: json['first_name'] as String? ?? '',
-      lastName: json['last_name'] as String? ?? '',
-      validatedName: json['validated_name'] as String? ?? '',
-      schacHomes: (json['schac_homes'] as List<dynamic>?)?.cast<String>() ?? [],
-      termsAgreed: json['terms_agreed'] as bool? ?? false,
-      termsAgreementSet: (json['termsagreement_set'] as List<dynamic>?)
-          ?.map((e) => LoginTermsAgreement.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-          [],
-    );
-  }
+  factory LoginTermsAgreementRequired.fromJson(Map<String, dynamic> json) =>
+      _$LoginTermsAgreementRequiredFromJson(json);
 
-  Map<String, dynamic> toJson() => {
-    'email': email,
-    'first_name': firstName,
-    'last_name': lastName,
-    'validated_name': validatedName,
-    'schac_homes': schacHomes,
-    'terms_agreed': termsAgreed,
-    'termsagreement_set': termsAgreementSet.map((e) => e.toJson()).toList(),
-  };
+  Map<String, dynamic> toJson() => _$LoginTermsAgreementRequiredToJson(this);
 }
 
 // Case 4: User is fully authenticated & terms accepted → proceed
+@JsonSerializable(fieldRename: FieldRename.snake)
 class LoginUser extends LoginUserAuthStatus {
+  @JsonKey(defaultValue: '')
   final String email;
+  @JsonKey(defaultValue: '')
   final String firstName;
+  @JsonKey(defaultValue: '')
   final String lastName;
+  @JsonKey(defaultValue: '')
   final String validatedName;
+  @JsonKey(defaultValue: <String>[])
   final List<String> schacHomes;
+  @JsonKey(defaultValue: true)
   final bool termsAgreed;
+  @JsonKey(defaultValue: <LoginTermsAgreement>[])
   final List<LoginTermsAgreement> termsAgreementSet;
 
-  LoginUser({
+  const LoginUser({
     required this.email,
     required this.firstName,
     required this.lastName,
@@ -90,30 +97,10 @@ class LoginUser extends LoginUserAuthStatus {
     required this.termsAgreementSet,
   });
 
-  factory LoginUser.fromJson(Map<String, dynamic> json) {
-    return LoginUser(
-      email: json['email'] as String? ?? '',
-      firstName: json['first_name'] as String? ?? '',
-      lastName: json['last_name'] as String? ?? '',
-      validatedName: json['validated_name'] as String? ?? '',
-      schacHomes: (json['schac_homes'] as List<dynamic>?)?.cast<String>() ?? [],
-      termsAgreed: json['terms_agreed'] as bool? ?? true,
-      termsAgreementSet: (json['termsagreement_set'] as List<dynamic>?)
-          ?.map((e) => LoginTermsAgreement.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-          [],
-    );
-  }
+  factory LoginUser.fromJson(Map<String, dynamic> json) =>
+      _$LoginUserFromJson(json);
 
-  Map<String, dynamic> toJson() => {
-    'email': email,
-    'first_name': firstName,
-    'last_name': lastName,
-    'validated_name': validatedName,
-    'schac_homes': schacHomes,
-    'terms_agreed': termsAgreed,
-    'termsagreement_set': termsAgreementSet.map((e) => e.toJson()).toList(),
-  };
+  Map<String, dynamic> toJson() => _$LoginUserToJson(this);
 }
 
 LoginUserAuthStatus parseUserAuthStatus(Map<String, dynamic> json) {

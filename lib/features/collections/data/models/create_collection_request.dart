@@ -1,5 +1,11 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'create_collection_request.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class CreateCollectionRequest {
   final String name;
+  @JsonKey(toJson: _descriptionToJson)
   final String? description;
   final bool public;
   final List<String> badgeInstances;
@@ -11,13 +17,11 @@ class CreateCollectionRequest {
     required this.badgeInstances,
   });
 
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      if (description != null && description!.isNotEmpty)
-        'description': description,
-      'public': public,
-      'badge_instances': badgeInstances,
-    };
-  }
+  factory CreateCollectionRequest.fromJson(Map<String, dynamic> json) =>
+      _$CreateCollectionRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CreateCollectionRequestToJson(this);
+
+  static String? _descriptionToJson(String? value) =>
+      (value == null || value.isEmpty) ? null : value;
 }

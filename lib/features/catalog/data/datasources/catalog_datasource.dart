@@ -31,9 +31,9 @@ class CatalogDataSourceImpl implements CatalogDataSource {
       '/catalog',
       queryParameters: {
         'page': page,
-        if (search != null) 'name': search,
+        'name': ?search,
         if (institutionType != null) 'institution_type': institutionType.name,
-        if (institutionId != null) 'institution': institutionId,
+        'institution': ?institutionId,
       },
     );
 

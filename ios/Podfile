@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '18.0'
+platform :ios, '15.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -50,10 +50,29 @@ post_install do |installer|
     flutter_additional_ios_build_settings(target)
 
     target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
         '$(inherited)',
         'PERMISSION_NOTIFICATIONS=1',
       ]
     end
+  end
+
+  # Flutter regenerates FlutterGeneratedPluginSwiftPackage using its own hardcoded
+  # minimum iOS version, which is lower than the 15.0 the Firebase SPM plugins
+  # require. SPM rejects a dependency whose deployment target is higher than the
+  # top-level package's, so raise the generated manifest to match this Podfile.
+  # Matched by regex rather than a literal so a change to Flutter's default does
+  # not silently turn this into a no-op.
+  package_swift = File.expand_path(
+    'Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift',
+    __dir__,
+  )
+  if File.exist?(package_swift)
+    contents = File.read(package_swift)
+    updated_contents = contents.gsub(/\.iOS\("(\d+)(?:\.(\d+))?"\)/) do
+      Gem::Version.new("#{$1}.#{$2 || 0}") < Gem::Version.new('15.0') ? '.iOS("15.0")' : $&
+    end
+    File.write(package_swift, updated_contents) if contents != updated_contents
   end
 end

@@ -1,7 +1,10 @@
-#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug-acc.xcconfig"
 #include "Generated.xcconfig"
 
 ASSET_PREFIX=acc
 BUNDLE_NAME=Edubadges Acc
 BUNDLE_DISPLAY_NAME=Edubadges Acc
 BASE_URL=https://api-demo.edubadges.nl
+
+// APNs environment. Debug builds talk to the development APNs servers.
+APS_ENVIRONMENT=development

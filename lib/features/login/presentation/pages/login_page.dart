@@ -1,14 +1,12 @@
 import 'dart:async';
 
 import 'package:edubadges/core/constants/assets.dart';
-import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -97,6 +95,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         centerTitle: true,
       ),
       body: MaxWidthWrapper(
+        enableScrollbar: false,
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -189,12 +188,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     await ref
                                         .read(authProvider.notifier)
                                         .login();
-
-                                    if (context.mounted) {
-                                      context.go(
-                                        RoutePath.notificationPermission,
-                                      );
-                                    }
                                   },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: colorScheme.primary,

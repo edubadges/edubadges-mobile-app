@@ -1,5 +1,9 @@
 import 'package:edubadges/shared/domain/entities/badge_alignment_entity.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'badge_alignment_model.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class BadgeAlignmentModel {
   final String? targetName;
   final String? targetUrl;
@@ -15,15 +19,8 @@ class BadgeAlignmentModel {
     this.targetCode,
   });
 
-  factory BadgeAlignmentModel.fromJson(Map<String, dynamic> json) {
-    return BadgeAlignmentModel(
-      targetName: json['target_name'] as String?,
-      targetUrl: json['target_url'] as String?,
-      targetDescription: json['target_description'] as String?,
-      targetFramework: json['target_framework'] as String?,
-      targetCode: json['target_code'] as String?,
-    );
-  }
+  factory BadgeAlignmentModel.fromJson(Map<String, dynamic> json) =>
+      _$BadgeAlignmentModelFromJson(json);
 
   factory BadgeAlignmentModel.fromEntity(BadgeAlignmentEntity entity) {
     return BadgeAlignmentModel(
@@ -35,15 +32,7 @@ class BadgeAlignmentModel {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      if (targetName != null) 'target_name': targetName,
-      if (targetUrl != null) 'target_url': targetUrl,
-      if (targetDescription != null) 'target_description': targetDescription,
-      if (targetFramework != null) 'target_framework': targetFramework,
-      if (targetCode != null) 'target_code': targetCode,
-    };
-  }
+  Map<String, dynamic> toJson() => _$BadgeAlignmentModelToJson(this);
 
   BadgeAlignmentEntity toEntity() {
     return BadgeAlignmentEntity(

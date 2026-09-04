@@ -1,6 +1,7 @@
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/string.dart';
+import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badge_details/domain/entities/badge_details_query.dart';
@@ -15,15 +16,33 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-class QualityAssurancePage extends ConsumerWidget {
+class QualityAssurancePage extends ConsumerStatefulWidget {
   final String badgeId;
   final BadgeDetailsScope scope;
+  final bool isDialog;
+  final VoidCallback? onClose;
 
   const QualityAssurancePage({
     super.key,
     required this.badgeId,
     required this.scope,
+    this.isDialog = false,
+    this.onClose,
   });
+
+  @override
+  ConsumerState<QualityAssurancePage> createState() =>
+      _QualityAssurancePageState();
+}
+
+class _QualityAssurancePageState extends ConsumerState<QualityAssurancePage> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   String? _composeQualityAssurance(BadgeClassEntity bc) {
     final name = bc.qualityAssuranceName;
@@ -37,13 +56,28 @@ class QualityAssurancePage extends ConsumerWidget {
     return parts.join('\n\n');
   }
 
+  static Future<void> _launchExternalUrl(String url) =>
+      launchUrlString(url, mode: LaunchMode.externalApplication);
+
+  void _close() {
+    if (widget.onClose != null) {
+      widget.onClose!();
+    } else if (widget.isDialog) {
+      Navigator.of(context).pop();
+    } else if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go(RoutePath.catalog);
+    }
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final badgeDetailsAsync = ref.watch(
       badgeDetailsModelProvider(
-        BadgeDetailsQuery(scope: scope, entityId: badgeId),
+        BadgeDetailsQuery(scope: widget.scope, entityId: widget.badgeId),
       ),
     );
     final qualityAssuranceUrl =
@@ -51,37 +85,28 @@ class QualityAssurancePage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go(RoutePath.catalog);
-            }
-          },
-          icon: Icon(
-            Icons.arrow_back,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
+        automaticallyImplyLeading: false,
+        leading: widget.isDialog ? null : AppBackButton(onPressed: _close),
         title: Text(l10n.qualityAssurance),
         backgroundColor: colorScheme.surfaceContainer,
         surfaceTintColor: colorScheme.surfaceContainer,
         actions: [
+          if (widget.isDialog)
+            IconButton(
+              onPressed: _close,
+              icon: Icon(Icons.close, color: colorScheme.primary),
+              tooltip: l10n.semanticsClose,
+            ),
           if (qualityAssuranceUrl != null && qualityAssuranceUrl.isNotEmpty)
             IconButton(
-              onPressed: () async {
-                await launchUrlString(
-                  qualityAssuranceUrl,
-                  mode: LaunchMode.externalApplication,
-                );
-              },
+              onPressed: () => _launchExternalUrl(qualityAssuranceUrl),
               icon: Icon(Icons.launch, color: colorScheme.onSurface),
             ),
         ],
       ),
       backgroundColor: colorScheme.surfaceContainer,
       body: MaxWidthWrapper(
+        scrollController: _scrollController,
         child: badgeDetailsAsync.when(
           data: (details) {
             final badgeClass = details?.badgeClass;
@@ -94,17 +119,17 @@ class QualityAssurancePage extends ConsumerWidget {
               return const Center(child: ErrorMessageWidget());
             }
 
-            return Scrollbar(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 16,
-                ),
-                child: FocusableSection(
-                  child: MarkdownBody(
-                    data: filterBadMarkdown(content),
-                    styleSheet: AppThemes.markdownStyleSheet(context),
-                  ),
+            return SingleChildScrollView(
+              controller: _scrollController,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: FocusableSection(
+                child: MarkdownBody(
+                  data: filterBadMarkdown(content),
+                  styleSheet: AppThemes.markdownStyleSheet(context),
+                  onTapLink: (text, href, title) {
+                    if (href == null) return;
+                    _launchExternalUrl(href);
+                  },
                 ),
               ),
             );
@@ -114,7 +139,9 @@ class QualityAssurancePage extends ConsumerWidget {
               semanticsLabel: l10n.semanticsLoading,
             ),
           ),
-          error: (error, stack) => const Center(child: ErrorMessageWidget()),
+          error: (error, stackTrace) => Center(
+            child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
+          ),
         ),
       ),
     );

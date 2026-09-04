@@ -1,13 +1,26 @@
 import 'dart:async';
 
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/layout_constants.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/presentation/providers/app_badge_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+
+class _NavigationDestinationData {
+  const _NavigationDestinationData({
+    required this.iconPath,
+    required this.label,
+  });
+
+  final String iconPath;
+  final String label;
+}
 
 class MainPage extends ConsumerStatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -37,7 +50,11 @@ class _MainPageState extends ConsumerState<MainPage>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      unawaited(_refreshReturnCaches(widget.navigationShell.currentIndex));
+      unawaited(
+        _refreshAndSyncBadgeCount(
+          targetIndex: widget.navigationShell.currentIndex,
+        ),
+      );
     }
   }
 
@@ -50,40 +67,129 @@ class _MainPageState extends ConsumerState<MainPage>
 
     final returningToOverview = previousIndex != 0 && index == 0;
     if (returningToOverview) {
-      unawaited(_refreshReturnCaches(index));
+      unawaited(
+        _refreshAndSyncBadgeCount(
+          targetIndex: index,
+          onlyWhenOverviewTab: true,
+        ),
+      );
     }
   }
 
-  Future<void> _refreshReturnCaches(int targetIndex) async {
+  Future<void> _refreshAndSyncBadgeCount({
+    required int targetIndex,
+    bool onlyWhenOverviewTab = false,
+  }) async {
     if (_isRefreshingOnReturn) return;
-    if (targetIndex != 0) return;
-
-    final badgesAsync = ref.read(badgesOverviewProvider);
-    if (!badgesAsync.hasValue) return;
+    if (onlyWhenOverviewTab && targetIndex != 0) return;
 
     _isRefreshingOnReturn = true;
     try {
-      await ref.read(badgesOverviewProvider.notifier).refresh();
+      final badgesAsync = ref.read(badgesOverviewProvider);
+      if (badgesAsync.hasValue) {
+        await ref.read(badgesOverviewProvider.notifier).refresh();
+      }
+
+      final badgesState = await ref.read(badgesOverviewProvider.future);
+      await ref
+          .read(appBadgeServiceProvider)
+          .syncUnclaimedCount(badgesState.unclaimedCount);
     } finally {
       _isRefreshingOnReturn = false;
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    ref.watch(profileProvider);
-    final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    final pillColor = colorScheme.primary.withValues(alpha: .15);
-
-    return Scaffold(
-      body: SafeArea(
-        child: widget.navigationShell,
+  List<_NavigationDestinationData> _navigationDestinations(
+    AppLocalizations l10n,
+  ) {
+    return <_NavigationDestinationData>[
+      _NavigationDestinationData(
+        iconPath: Assets.iconBackpack,
+        label: l10n.tabBadges,
       ),
+      _NavigationDestinationData(
+        iconPath: Assets.iconCollections,
+        label: l10n.tabCollections,
+      ),
+      _NavigationDestinationData(
+        iconPath: Assets.iconCatalog,
+        label: l10n.tabCatalog,
+      ),
+      _NavigationDestinationData(
+        iconPath: Assets.iconAccount,
+        label: l10n.tabAccount,
+      ),
+    ];
+  }
+
+  Widget _buildNavIcon({
+    required String iconPath,
+    required bool isSelected,
+    required ColorScheme colorScheme,
+  }) {
+    return ExcludeSemantics(
+      child: SvgPicture.asset(
+        iconPath,
+        width: 25,
+        height: 25,
+        colorFilter: ColorFilter.mode(
+          isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+          BlendMode.srcIn,
+        ),
+      ),
+    );
+  }
+
+  NavigationDestination _buildNavigationBarDestination({
+    required _NavigationDestinationData destination,
+    required ColorScheme colorScheme,
+  }) {
+    return NavigationDestination(
+      label: destination.label,
+      tooltip: destination.label,
+      icon: _buildNavIcon(
+        iconPath: destination.iconPath,
+        isSelected: false,
+        colorScheme: colorScheme,
+      ),
+      selectedIcon: _buildNavIcon(
+        iconPath: destination.iconPath,
+        isSelected: true,
+        colorScheme: colorScheme,
+      ),
+    );
+  }
+
+  NavigationDrawerDestination _buildNavigationDrawerDestination({
+    required _NavigationDestinationData destination,
+    required ColorScheme colorScheme,
+  }) {
+    return NavigationDrawerDestination(
+      icon: _buildNavIcon(
+        iconPath: destination.iconPath,
+        isSelected: false,
+        colorScheme: colorScheme,
+      ),
+      selectedIcon: _buildNavIcon(
+        iconPath: destination.iconPath,
+        isSelected: true,
+        colorScheme: colorScheme,
+      ),
+      label: Text(destination.label),
+    );
+  }
+
+  Widget _buildCompactScaffold({
+    required ThemeData theme,
+    required ColorScheme colorScheme,
+    required Color pillColor,
+    required List<_NavigationDestinationData> destinations,
+  }) {
+    final int currentIndex = widget.navigationShell.currentIndex;
+    return Scaffold(
+      body: SafeArea(child: widget.navigationShell),
       bottomNavigationBar: NavigationBar(
-        selectedIndex: widget.navigationShell.currentIndex,
+        selectedIndex: currentIndex,
         onDestinationSelected: _onTap,
         backgroundColor: colorScheme.surfaceContainer,
         elevation: 8,
@@ -101,66 +207,131 @@ class _MainPageState extends ConsumerState<MainPage>
             color: colorScheme.onSurfaceVariant,
           );
         }),
-        destinations: [
-          _buildItem(
-            index: 0,
-            currentIndex: widget.navigationShell.currentIndex,
-            iconPath: Assets.iconBackpack,
-            label: l10n.tabBadges,
+        destinations: List<NavigationDestination>.generate(
+          destinations.length,
+          (int index) => _buildNavigationBarDestination(
+            destination: destinations[index],
             colorScheme: colorScheme,
           ),
-          _buildItem(
-            index: 1,
-            currentIndex: widget.navigationShell.currentIndex,
-            iconPath: Assets.iconCollections,
-            label: l10n.tabCollections,
-            colorScheme: colorScheme,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDrawerHeader({
+    required AppLocalizations l10n,
+    required ColorScheme colorScheme,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.fromLTRB(28, 16, 28, 16),
+          child: SvgPicture.asset(
+            Assets.imageLogo,
+            width: 131,
+            height: 32,
+            semanticsLabel: l10n.appName,
           ),
-          _buildItem(
-            index: 2,
-            currentIndex: widget.navigationShell.currentIndex,
-            iconPath: Assets.iconCatalog,
-            label: l10n.tabCatalog,
-            colorScheme: colorScheme,
+        ),
+        Divider(height: 1, thickness: 1, color: colorScheme.outlineVariant),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+
+  Widget _buildExpandedScaffold({
+    required AppLocalizations l10n,
+    required ThemeData theme,
+    required ColorScheme colorScheme,
+    required Color pillColor,
+    required List<_NavigationDestinationData> destinations,
+  }) {
+    final int currentIndex = widget.navigationShell.currentIndex;
+    return Scaffold(
+      body: Row(
+        children: <Widget>[
+          SafeArea(
+            bottom: !PlatformInfo.isWeb,
+            child: NavigationDrawerTheme(
+              data: NavigationDrawerThemeData(
+                labelTextStyle: WidgetStateProperty.resolveWith((
+                  Set<WidgetState> states,
+                ) {
+                  if (states.contains(WidgetState.selected)) {
+                    return theme.textTheme.labelLarge?.copyWith(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                    );
+                  }
+                  return theme.textTheme.labelLarge?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  );
+                }),
+              ),
+              child: NavigationDrawer(
+                selectedIndex: currentIndex,
+                onDestinationSelected: _onTap,
+                backgroundColor: colorScheme.surfaceContainer,
+                indicatorColor: pillColor,
+                elevation: 0,
+                header: _buildDrawerHeader(l10n: l10n, colorScheme: colorScheme),
+                children: destinations
+                    .map(
+                      (_NavigationDestinationData destination) =>
+                          _buildNavigationDrawerDestination(
+                            destination: destination,
+                            colorScheme: colorScheme,
+                          ),
+                    )
+                    .toList(),
+              ),
+            ),
           ),
-          _buildItem(
-            index: 3,
-            currentIndex: widget.navigationShell.currentIndex,
-            iconPath: Assets.iconAccount,
-            label: l10n.tabAccount,
-            colorScheme: colorScheme,
+          Expanded(
+            child: SafeArea(
+              // On web there is no system inset; the bottom inset otherwise
+              // renders as a background-coloured strip under the side view.
+              bottom: !PlatformInfo.isWeb,
+              child: widget.navigationShell,
+            ),
           ),
         ],
       ),
     );
   }
 
-  NavigationDestination _buildItem({
-    required int index,
-    required int currentIndex,
-    required String iconPath,
-    required String label,
-    required ColorScheme colorScheme,
-  }) {
-    final bool isSelected = index == currentIndex;
+  @override
+  Widget build(BuildContext context) {
+    // Intentionally watch profile resolution so the shell rebuilds once
+    // auth-dependent navigation state is available.
+    ref.watch(profileProvider.select((asyncValue) => asyncValue.hasValue));
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final pillColor = colorScheme.primary.withValues(alpha: .15);
+    final destinations = _navigationDestinations(l10n);
 
-    return NavigationDestination(
-      label: label,
-      tooltip: label,
-      icon: Padding(
-        padding: const EdgeInsets.only(top: 0.0, bottom: 0.0),
-        child: ExcludeSemantics(
-          child: SvgPicture.asset(
-            iconPath,
-            width: 25,
-            height: 25,
-            colorFilter: ColorFilter.mode(
-              isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
-              BlendMode.srcIn,
-            ),
-          ),
-        ),
-      ),
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final bool useNavigationDrawer =
+            constraints.maxWidth >= LayoutConstants.navigationDrawerMinWidth;
+        if (useNavigationDrawer) {
+          return _buildExpandedScaffold(
+            l10n: l10n,
+            theme: theme,
+            colorScheme: colorScheme,
+            pillColor: pillColor,
+            destinations: destinations,
+          );
+        }
+        return _buildCompactScaffold(
+          theme: theme,
+          colorScheme: colorScheme,
+          pillColor: pillColor,
+          destinations: destinations,
+        );
+      },
     );
   }
 }

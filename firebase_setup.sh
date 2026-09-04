@@ -7,7 +7,7 @@ fi
 case $1 in
   dev)
     flutterfire configure \
-      --platforms=android,ios \
+      --platforms=android,ios,web \
       --project=edubadges-dev \
       --out=lib/firebase/firebase_options_develop.dart \
       --ios-bundle-id=nl.surf.edubadges \
@@ -18,7 +18,7 @@ case $1 in
 
   tst)
     flutterfire configure \
-      --platforms=android,ios \
+      --platforms=android,ios,web \
       --project=edubadges-tst \
       --out=lib/firebase/firebase_options_tst.dart \
       --ios-bundle-id=nl.surf.edubadges \
@@ -29,7 +29,7 @@ case $1 in
 
   acc)
     flutterfire configure \
-      --platforms=android,ios \
+      --platforms=android,ios,web \
       --project=edubadges-acc \
       --out=lib/firebase/firebase_options_acceptance.dart \
       --ios-bundle-id=nl.surf.edubadges \
@@ -40,7 +40,7 @@ case $1 in
 
   prod)
     flutterfire configure \
-      --platforms=android,ios \
+      --platforms=android,ios,web \
       --project=edubadges-prod \
       --out=lib/firebase/firebase_options_production.dart \
       --ios-bundle-id=nl.surf.edubadges \

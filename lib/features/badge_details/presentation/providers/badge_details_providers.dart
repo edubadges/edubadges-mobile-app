@@ -38,7 +38,8 @@ final badgeDetailsModelProvider = FutureProvider.autoDispose
       final badgesListAsync = ref.watch(badgesListProvider);
       final overview = badgesListAsync.value;
 
-      final bool badgeRequested = overview?.requestedBadges.firstWhereOrNull(
+      final bool badgeRequested =
+          overview?.requestedBadges.firstWhereOrNull(
             (element) =>
                 element.badgeclass.entityId == query.entityId ||
                 element.entityId == query.entityId,
@@ -63,8 +64,7 @@ final badgeDetailsModelProvider = FutureProvider.autoDispose
 
           final BadgeInstanceEntity? badgeInstance = overview?.claimedBadges
               .firstWhereOrNull(
-                (element) =>
-                    element.badgeclass.entityId == query.entityId,
+                (element) => element.badgeclass.entityId == query.entityId,
               );
 
           return result.fold(
@@ -78,24 +78,22 @@ final badgeDetailsModelProvider = FutureProvider.autoDispose
       }
     });
 
-final badgeByIdProvider = Provider.autoDispose.family<BadgeInstanceEntity?, String>((
-  ref,
-  badgeId,
-) {
-  final badgesAsync = ref.watch(badgesOverviewProvider);
+final badgeByIdProvider = Provider.autoDispose
+    .family<BadgeInstanceEntity?, String>((ref, badgeId) {
+      final badgesAsync = ref.watch(badgesOverviewProvider);
 
-  return badgesAsync.whenOrNull(
-    data: (badges) {
-      try {
-        return badges.claimedBadges.firstWhere(
-          (badge) => badge.entityId == badgeId,
-        );
-      } catch (e) {
-        return null;
-      }
-    },
-  );
-});
+      return badgesAsync.whenOrNull(
+        data: (badges) {
+          try {
+            return badges.claimedBadges.firstWhere(
+              (badge) => badge.entityId == badgeId,
+            );
+          } catch (e) {
+            return null;
+          }
+        },
+      );
+    });
 
 final badgesListProvider = badgesOverviewProvider;
 
@@ -103,6 +101,15 @@ final enrollBadgeProvider =
     Provider<Future<bool> Function(String badgeclassSlug)>((ref) {
       return (String badgeclassSlug) async {
         final repository = ref.read(badgeDetailsRepositoryProvider);
+        final eligibility = await repository.getBadgeDetails(badgeclassSlug);
+        final bool mayEnroll = eligibility.fold(
+          (_) => false,
+          (BadgeClassModel badgeClass) => badgeClass.userMayEnroll,
+        );
+        if (!mayEnroll) {
+          return false;
+        }
+
         final result = await repository.enroll(badgeclassSlug);
 
         return result.fold((failure) => false, (_) {
@@ -137,11 +144,16 @@ final updateBadgeVisibilityProvider =
           includeGradeAchieved: includeGradeAchieved,
         );
 
-        return result.fold((failure) => false, (_) {
-          ref.read(collectionsProvider.notifier).refresh();
-          ref.invalidate(badgeDetailsProvider(entityId));
-          ref.read(badgesOverviewProvider.notifier).refresh();
-          return true;
+        return await result.fold<Future<bool>>((_) async => false, (_) async {
+          try {
+            await ref.read(badgesOverviewProvider.notifier).refresh();
+            await ref.read(collectionsProvider.notifier).refresh();
+            ref.invalidate(badgeDetailsProvider(entityId));
+            ref.invalidate(badgeDetailsModelProvider, asReload: true);
+            return true;
+          } catch (_) {
+            return false;
+          }
         });
       };
     });

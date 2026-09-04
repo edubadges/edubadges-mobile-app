@@ -1,12 +1,17 @@
+import 'package:collection/collection.dart';
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
+import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
+import 'package:edubadges/core/widgets/app_back_button.dart';
+import 'package:edubadges/core/widgets/app_modal.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/debug_error_log_button.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
-import 'package:edubadges/core/widgets/max_width_wrapper.dart';
+import 'package:edubadges/core/widgets/sidebar_list_layout.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
@@ -22,10 +27,47 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class CollectionPage extends ConsumerWidget {
+class CollectionPage extends ConsumerStatefulWidget {
   final CollectionRouteModel collection;
 
   const CollectionPage({super.key, required this.collection});
+
+  @override
+  ConsumerState<CollectionPage> createState() => _CollectionPageState();
+}
+
+class _CollectionPageState extends ConsumerState<CollectionPage> {
+  final ScrollController _scrollController = ScrollController();
+  late final ValueNotifier<bool> _publicNotifier;
+
+  CollectionRouteModel get collection => widget.collection;
+
+  @override
+  void initState() {
+    super.initState();
+    _publicNotifier = ValueNotifier<bool>(false);
+  }
+
+  @override
+  void dispose() {
+    _publicNotifier.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  /// Called from `build`, so the notifier is only updated after the current
+  /// frame and never while the widget tree is being built.
+  void _syncPublicNotifier(bool isPublic) {
+    if (_publicNotifier.value == isPublic) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _publicNotifier.value = isPublic;
+    });
+  }
 
   Widget _buildVisibilitySection(
     BuildContext context,
@@ -294,7 +336,7 @@ class CollectionPage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -329,133 +371,136 @@ class CollectionPage extends ConsumerWidget {
       error: (error, stackTrace) => collection.title,
     );
 
-    return Scaffold(
-      backgroundColor: colorScheme.surface,
-      appBar: AppBar(
-        centerTitle: false,
-        titleSpacing: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
-          onPressed: () => context.pop(),
-          tooltip: l10n.semanticsBack,
-        ),
-        title: Text(
-          collectionTitle,
-          style: theme.textTheme.titleLarge?.copyWith(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        backgroundColor: AppColors.surface,
-        actions: [
-          IconButton(
-            onPressed: () {
-              collectionsAsync.when(
-                data: (collections) async {
-                  try {
-                    final foundCollection = collections.firstWhere(
-                      (c) => c.entityId == collection.id,
-                    );
-                    await showModalBottomSheet<void>(
-                      context: context,
-                      isDismissible: true,
-                      enableDrag: true,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (context) => EditCollectionBottomSheet(
-                        collection: foundCollection,
-                      ),
-                    );
-                  } catch (e) {
-                    if (context.mounted && context.canPop()) {
-                      context.pop();
-                    }
-                  }
-                },
-                loading: () {},
-                error: (error, stackTrace) {},
-              );
-            },
-            icon: const SvgIcon(
-              assetPath: Assets.iconEdit,
-              size: 24,
-              color: AppColors.primary,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final bool isLargeScreen =
+            constraints.maxWidth >= LayoutConstants.sidebarListLayoutMinWidth;
+
+        return Scaffold(
+          backgroundColor: colorScheme.surface,
+          appBar: AppBar(
+            centerTitle: false,
+            titleSpacing: 0,
+            automaticallyImplyLeading: false,
+            leading: const AppBackButton(
+              fallbackLocation: RoutePath.collections,
             ),
-            tooltip: l10n.editCollection,
-          ),
-          IconButton(
-            onPressed: () {
-              AdaptiveDialog.show(
-                context: context,
-                config: AdaptiveDialogConfig(
-                  title: l10n.areYouSure,
-                  description: l10n.deleteCollectionConfirmation,
-                  firstButtonText: l10n.cancel,
-                  secondButtonText: l10n.delete,
-                  isDestructiveAction: true,
-                  onFirstButtonPressed: () {
-                    context.pop();
-                  },
-                  onSecondButtonPressed: () async {
-                    context.pop();
-                    final collectionsAsync = ref.read(collectionsProvider);
-                    final List<CollectionsEntity> collections =
-                        await collectionsAsync.when(
-                          data: (collections) => Future.value(collections),
-                          loading: () => ref.read(collectionsProvider.future),
-                          error: (error, stackTrace) =>
-                              Future.error(error, stackTrace),
+            title: Text(
+              collectionTitle,
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: colorScheme.onSurface,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            backgroundColor: AppColors.surface,
+            actions: [
+              IconButton(
+                onPressed: () {
+                  collectionsAsync.when(
+                    data: (collections) async {
+                      try {
+                        final foundCollection = collections.firstWhere(
+                          (c) => c.entityId == collection.id,
                         );
-
-                    if (collections.isEmpty) {
-                      if (context.mounted && context.canPop()) {
-                        context.pop();
-                      }
-                      return;
-                    }
-
-                    final foundCollection = collections.firstWhere(
-                      (c) => c.entityId == collection.id,
-                      orElse: () {
+                        await showAppFormModal<void>(
+                          context,
+                          builder: (context) => EditCollectionBottomSheet(
+                            collection: foundCollection,
+                          ),
+                        );
+                      } catch (e) {
                         if (context.mounted && context.canPop()) {
                           context.pop();
                         }
-                        throw StateError('Collection not found');
-                      },
-                    );
-
-                    final success = await ref
-                        .read(collectionsProvider.notifier)
-                        .deleteCollection(foundCollection.entityId);
-
-                    if (success && context.mounted && context.canPop()) {
-                      context.pop();
-                    }
-                  },
+                      }
+                    },
+                    loading: () {},
+                    error: (error, stackTrace) {},
+                  );
+                },
+                icon: const SvgIcon(
+                  assetPath: Assets.iconEdit,
+                  size: 24,
+                  color: AppColors.primary,
                 ),
-              );
-            },
-            icon: const SvgIcon(
-              assetPath: Assets.iconDelete,
-              size: 24,
-              color: AppColors.primary,
-            ),
-            tooltip: l10n.delete,
+                tooltip: l10n.editCollection,
+              ),
+              IconButton(
+                onPressed: () {
+                  AdaptiveDialog.show(
+                    context: context,
+                    config: AdaptiveDialogConfig(
+                      title: l10n.areYouSure,
+                      description: l10n.deleteCollectionConfirmation,
+                      firstButtonText: l10n.cancel,
+                      secondButtonText: l10n.delete,
+                      isDestructiveAction: true,
+                      onFirstButtonPressed: () {
+                        context.pop();
+                      },
+                      onSecondButtonPressed: () async {
+                        context.pop();
+                        final collectionsAsync = ref.read(collectionsProvider);
+                        final List<CollectionsEntity> collections =
+                            await collectionsAsync.when(
+                              data: (collections) => Future.value(collections),
+                              loading: () =>
+                                  ref.read(collectionsProvider.future),
+                              error: (error, stackTrace) =>
+                                  Future.error(error, stackTrace),
+                            );
+
+                        if (collections.isEmpty) {
+                          if (context.mounted && context.canPop()) {
+                            context.pop();
+                          }
+                          return;
+                        }
+
+                        final foundCollection = collections.firstWhereOrNull(
+                          (c) => c.entityId == collection.id,
+                        );
+
+                        if (foundCollection == null) {
+                          if (context.mounted && context.canPop()) {
+                            context.pop();
+                          }
+                          return;
+                        }
+
+                        final success = await ref
+                            .read(collectionsProvider.notifier)
+                            .deleteCollection(foundCollection.entityId);
+
+                        if (success && context.mounted && context.canPop()) {
+                          context.pop();
+                        }
+                      },
+                    ),
+                  );
+                },
+                icon: const SvgIcon(
+                  assetPath: Assets.iconDelete,
+                  size: 24,
+                  color: AppColors.primary,
+                ),
+                tooltip: l10n.delete,
+              ),
+            ],
           ),
-        ],
-      ),
-      body: MaxWidthWrapper(
-        child: collectionsAsync.when(
-          data: (collections) {
-            try {
-              final foundCollection = collections.firstWhere(
+          body: collectionsAsync.when(
+            data: (collections) {
+              final foundCollection = collections.firstWhereOrNull(
                 (c) => c.entityId == collection.id,
               );
 
+              if (foundCollection == null) {
+                return const ErrorMessageWidget();
+              }
+
+              _syncPublicNotifier(foundCollection.public);
+
               final badges = foundCollection.badgeInstances ?? [];
-              final publicNotifier = ValueNotifier<bool>(
-                foundCollection.public,
-              );
 
               if (badges.isEmpty) {
                 return Padding(
@@ -468,62 +513,82 @@ class CollectionPage extends ConsumerWidget {
                 );
               }
 
-              return ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  _buildCollectionDescription(
-                    context,
-                    foundCollection.description,
-                  ),
-                  _buildVisibilitySection(
-                    context,
-                    ref,
-                    foundCollection,
-                    badges,
-                    publicNotifier,
-                  ),
-                  ...badges.map(
-                    (badge) => Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: BadgeCard(
-                        instance: badge,
-                        badgeClass: badge.badgeclass as BadgeClassModel,
-                        style: BadgeCardStyle.large,
-                      ),
+              final horizontalPadding = isLargeScreen
+                  ? 0.0
+                  : LayoutConstants.sidebarListLayoutPadding;
+
+              return SidebarListLayout(
+                sidebar: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildCollectionDescription(
+                      context,
+                      foundCollection.description,
+                    ),
+                    _buildVisibilitySection(
+                      context,
+                      ref,
+                      foundCollection,
+                      badges,
+                      _publicNotifier,
+                    ),
+                  ],
+                ),
+                scrollController: _scrollController,
+                onRefresh: () async {
+                  return await ref.read(collectionsProvider.notifier).refresh();
+                },
+                slivers: [
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
+                    ),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final badge = badges[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 16),
+                          child: BadgeCard(
+                            instance: badge,
+                            badgeClass: badge.badgeclass as BadgeClassModel,
+                            style: BadgeCardStyle.large,
+                          ),
+                        );
+                      }, childCount: badges.length),
                     ),
                   ),
                 ],
+                useSidebarLayout: isLargeScreen,
               );
-            } catch (e) {
-              return const ErrorMessageWidget();
-            }
-          },
-          loading: () => Center(
-            child: CircularProgressIndicator(
-              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+            },
+            loading: () => Center(
+              child: CircularProgressIndicator(
+                semanticsLabel: AppLocalizations.of(context).semanticsLoading,
+              ),
             ),
-          ),
 
-          error: (error, stackTrace) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  l10n.errorLoadingCollection,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: colorScheme.error,
+            error: (error, stackTrace) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    l10n.errorLoadingCollection,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: colorScheme.error,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => context.pop(),
-                  child: Text(l10n.goBack),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => context.pop(),
+                    child: Text(l10n.goBack),
+                  ),
+                  DebugErrorLogButton(error: error, stackTrace: stackTrace),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

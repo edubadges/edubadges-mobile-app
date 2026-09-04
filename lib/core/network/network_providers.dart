@@ -1,13 +1,15 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/network/api_client.dart';
+import 'package:edubadges/core/network/interceptors/general_terms_interceptor.dart';
 import 'package:edubadges/core/network/network_config.dart';
 import 'package:edubadges/core/network/network_info.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
+import 'package:edubadges/features/general_terms/presentation/navigation/general_terms_navigation.dart';
 import 'package:edubadges/shared/data/datasources/oidc_auth_datasource.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -35,19 +37,29 @@ final dioProvider = Provider<Dio>((ref) {
   final language = ref.watch(appLanguageProvider);
 
   final dio = config.createDio();
-  dio.options.headers['x-requested-with'] = 'mobile';
+  dio.options.headers['x-requested-with'] = PlatformInfo.requestedWithHeaderValue;
 
   dio.interceptors.insert(0, InterceptorsWrapper(
     onRequest: (options, handler) async {
-      final packageInfo = await ref.read(packageInfoProvider.future);
-      options.headers['x-platform'] = Platform.isIOS ? 'ios' : 'android';
-      options.headers['x-app-version'] = packageInfo.version;
-      options.headers['x-language'] = language.code;
+      // Web browsers preflight custom headers; the API only allows a fixed CORS
+      // header list (no x-platform / x-app-version / x-language).
+      if (!kIsWeb) {
+        final packageInfo = await ref.read(packageInfoProvider.future);
+        options.headers['x-platform'] = PlatformInfo.platformHeaderValue;
+        options.headers['x-app-version'] = packageInfo.version;
+        options.headers['x-language'] = language.code;
+      }
       handler.next(options);
     },
   ));
 
   oidcAuth.setFresh(config.fresh);
+
+  dio.interceptors.add(
+    GeneralTermsInterceptor(
+      onTermsRequired: () => navigateToGeneralTermsIfNeeded(dio),
+    ),
+  );
 
   return dio;
 });

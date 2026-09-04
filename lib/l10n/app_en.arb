@@ -1,19 +1,19 @@
 {
     "@@locale": "en",
-    "@@last_modified": "2026-01-12T10:13:17+01:00",
+    "@@last_modified": "2026-07-22T11:46:54+02:00",
     "appName": "Edubadges",
     "@appName": {
         "description": "The name of the application displayed throughout the app"
     },
-    "loginCardButton": "Go to my edubadges",
+    "loginCardButton": "Go to your backpack",
     "@loginCardButton": {
         "description": "Button text on the login card to navigate to the user's edubadges"
     },
-    "loginCardText": "My Badges is the place to receive and collect edubadges. An eduID is required to create and use \"My Badges.\" Creating an eduID takes less than 30 seconds.",
+    "loginCardText": "Your backpack is the place where you can receive, manage, and share your edubadges.\n\nTo sign in to your backpack, you need an eduID. Click the button below and sign in with your eduID.\n\nDon't have an eduID yet? You can easily create one.",
     "@loginCardText": {
         "description": "Explanatory text on the login card describing the app and eduID requirement"
     },
-    "loginSubtitle": "Edubadges are digital certificates that demonstrate the knowledge or skills someone has acquired, within or outside formal education.",
+    "loginSubtitle": "Edubadges are digital certificates that demonstrate the knowledge and skills someone has acquired, within or outside formal education.",
     "@loginSubtitle": {
         "description": "Subtitle on the login page explaining what edubadges are"
     },
@@ -29,21 +29,41 @@
     "@generalAgreementButtonReadMore": {
         "description": "Button text to expand and read more of the agreement text"
     },
-    "generalAgreementButtonRead": "Read",
-    "@generalAgreementButtonRead": {
-        "description": "Button text to read the full agreement"
+    "generalAgreementButtonAgree": "I agree",
+    "@generalAgreementButtonAgree": {
+        "description": "Button text to accept the general terms after reading them"
     },
     "tabAccount": "Account",
     "@tabAccount": {
         "description": "Navigation tab label for the account section"
     },
+    "accountSubtitle": "Manage your data and settings",
+    "@accountSubtitle": {
+        "description": "Page subtitle for the account screen on desktop"
+    },
     "tabBadges": "Edubadges",
     "@tabBadges": {
         "description": "Navigation tab label for the edubadges section"
     },
+    "badgesOverviewTitle": "My Edubadges",
+    "@badgesOverviewTitle": {
+        "description": "Page title for the badges overview screen on desktop"
+    },
+    "badgesOverviewSubtitle": "Overview of your earned and requested edubadges",
+    "@badgesOverviewSubtitle": {
+        "description": "Page subtitle for the badges overview screen on desktop"
+    },
     "tabCatalog": "Catalog",
     "@tabCatalog": {
         "description": "Navigation tab label for the catalog section"
+    },
+    "catalogSubtitle": "Discover available edubadges per institution",
+    "@catalogSubtitle": {
+        "description": "Page subtitle for the catalog screen on desktop"
+    },
+    "catalogSearchPlaceholder": "Search by name or institution...",
+    "@catalogSearchPlaceholder": {
+        "description": "Placeholder text for the catalog search input field"
     },
     "tabCollections": "Collections",
     "@tabCollections": {
@@ -252,7 +272,7 @@
     "@deleteAccount": {
         "description": "Section header or button text for account deletion"
     },
-    "deleteAccountDescription": "You can delete your edubadges account if you wish. Be aware that after this, all your edubadges can no longer be validated.\n\nDeleting your edubadges account does not mean that your eduID will also be deleted.\n\nTo complete the process of deleting your edubadges account, you must close your browser after your account has been deleted.",
+    "deleteAccountDescription": "You can delete your edubadges account if you wish.\n\nPlease note that deleting your account will also permanently remove all the edubadges you have earned. Any edubadges you have previously shared can no longer be verified.\n\nDeleting your account is permanent and cannot be undone.",
     "@deleteAccountDescription": {
         "description": "Detailed description explaining the consequences of deleting an edubadges account"
     },
@@ -443,9 +463,31 @@
     "@requestedBadges": {
         "description": "Section header for badges that have been requested by the user"
     },
+    "badgesTabEarned": "Earned ({count})",
+    "@badgesTabEarned": {
+        "description": "Tab label on the badges overview for the edubadges the user has earned, with the number of badges",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "badgesTabRequested": "Requested ({count})",
+    "@badgesTabRequested": {
+        "description": "Tab label on the badges overview for the edubadges the user has requested, with the number of badges",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "noEdubadgesYet": "You don't have any edubadges yet",
     "@noEdubadgesYet": {
         "description": "Message shown when user has no edubadges in their collection"
+    },
+    "noRequestedBadges": "You haven't requested any edubadges yet",
+    "@noRequestedBadges": {
+        "description": "Message shown on the requested tab when the user has not requested any edubadges"
     },
     "giveFeedback": "Give feedback",
     "@giveFeedback": {
@@ -642,6 +684,23 @@
     "declineBadgeConfirmation": "You are about to decline this edubadge. This action is final and cannot be undone.",
     "@declineBadgeConfirmation": {
         "description": "Warning message shown when user is about to decline a badge"
+    },
+    "claimPrivateEmailTitle": "Claim and add to your backpack",
+    "@claimPrivateEmailTitle": {
+        "description": "Title for the confirmation dialog when a badge was awarded to a private email address"
+    },
+    "claimPrivateEmailDescription": "After this edubadge is claimed, it will be added to your backpack and you can make the edubadge public and share it.",
+    "@claimPrivateEmailDescription": {
+        "description": "Explanation shown before claiming a badge awarded to a private email address"
+    },
+    "claimPrivateEmailNameNote": "Note: this is the name that will appear on the edubadge: {name}. If this is not correct, contact the institution.",
+    "@claimPrivateEmailNameNote": {
+        "description": "Warning that the recipient name will be written on the claimed edubadge",
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
     },
     "badgesRemainingToClaim": "{count, plural, =0{No more edu-badges to claim} =1{Still 1 edu-badge to claim} other{Still {count} edu-badges to claim}}",
     "@badgesRemainingToClaim": {
@@ -1215,6 +1274,14 @@
     "semanticsBadgePrivate": "Badge is private. Tap to change visibility.",
     "@semanticsBadgePrivate": {
         "description": "Accessibility label for private badge visibility control"
+    },
+    "semanticsBadgeVisibilityPublic": "Badge is public",
+    "@semanticsBadgeVisibilityPublic": {
+        "description": "Accessibility label for the visibility indicator on a public badge"
+    },
+    "semanticsBadgeVisibilityPrivate": "Badge is private",
+    "@semanticsBadgeVisibilityPrivate": {
+        "description": "Accessibility label for the visibility indicator on a private badge"
     },
     "semanticsLogout": "Log out",
     "@semanticsLogout": {

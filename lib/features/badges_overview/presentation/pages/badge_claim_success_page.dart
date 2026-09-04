@@ -7,19 +7,30 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
+import 'package:edubadges/features/badge_details/domain/entities/badge_details_query.dart';
+import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
+import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/features/badge_details/presentation/widgets/badge_visibility_card.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
+import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class BadgeClaimSuccessPage extends ConsumerStatefulWidget {
-  final String badgeId;
+  final String badgeClassId;
+  final VoidCallback? onGoToOverview;
+  final void Function(String nextBadgeId, int count)? onClaimNextBadge;
 
-  const BadgeClaimSuccessPage({super.key, required this.badgeId});
+  const BadgeClaimSuccessPage({
+    super.key,
+    required this.badgeClassId,
+    this.onGoToOverview,
+    this.onClaimNextBadge,
+  });
 
   @override
   ConsumerState<BadgeClaimSuccessPage> createState() =>
@@ -33,6 +44,32 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
   late Animation<double> _scaleAnimation;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _opacityAnimation;
+
+  BadgeInstanceEntity? _latestClaimedBadgeForClass(
+    List<BadgeInstanceEntity> claimedBadges,
+  ) {
+    final classMatchedClaimedBadges = claimedBadges
+        .where((b) => b.badgeclass.entityId == widget.badgeClassId)
+        .toList();
+
+    if (classMatchedClaimedBadges.isEmpty) return null;
+
+    BadgeInstanceEntity latest = classMatchedClaimedBadges.first;
+    for (final badge in classMatchedClaimedBadges.skip(1)) {
+      if (badge.createdAt.isAfter(latest.createdAt)) {
+        latest = badge;
+      }
+    }
+    return latest;
+  }
+
+  BadgeInstanceEntity? _firstUnclaimedBadgeForClass(
+    List<BadgeInstanceEntity> unclaimedBadges,
+  ) {
+    return unclaimedBadges.firstWhereOrNull(
+      (b) => b.badgeclass.entityId == widget.badgeClassId,
+    );
+  }
 
   @override
   void initState() {
@@ -97,7 +134,7 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
             opacity: _opacityAnimation,
             child: IconButton(
               icon: const Icon(Icons.close, color: AppColors.primary),
-              onPressed: () => context.go(RoutePath.main),
+              onPressed: widget.onGoToOverview ?? () => context.go(RoutePath.main),
               tooltip: AppLocalizations.of(context).semanticsClose,
             ),
           ),
@@ -106,20 +143,29 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
       body: MaxWidthWrapper(
         child: badgesState.when(
           data: (state) {
-            // Check claimed badges first, but also check unclaimed badges
-            // in case the state hasn't been updated yet from the claim page
+            final latestClassMatchedClaimedBadge = _latestClaimedBadgeForClass(
+              state.claimedBadges,
+            );
+            final matchedUnclaimedByClass = _firstUnclaimedBadgeForClass(
+              state.unclaimedBadges,
+            );
+
+            final refreshedClaimedBadgeDetails =
+                latestClassMatchedClaimedBadge == null
+                ? null
+                : ref.watch(
+                    badgeDetailsModelProvider(
+                      BadgeDetailsQuery(
+                        scope: BadgeDetailsScope.claimed,
+                        entityId: latestClassMatchedClaimedBadge.entityId,
+                      ),
+                    ),
+                  );
+
             final claimedBadge =
-                state.claimedBadges.firstWhereOrNull(
-                  (b) =>
-                      b.entityId == widget.badgeId ||
-                      b.id.toString() == widget.badgeId,
-                ) ??
-                state.unclaimedBadges.firstWhereOrNull(
-                  (b) =>
-                      b.entityId == widget.badgeId ||
-                      b.id.toString() == widget.badgeId,
-                ) ??
-                state.claimedBadges.firstOrNull;
+                refreshedClaimedBadgeDetails?.asData?.value?.badgeInstance ??
+                latestClassMatchedClaimedBadge ??
+                matchedUnclaimedByClass;
 
             if (claimedBadge == null) {
               return Center(
@@ -188,6 +234,8 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
           error: (err, stack) => InfoStateView(
             title: l10n.badgeClaimErrorTitle,
             description: l10n.badgeClaimErrorSubtitle,
+            error: err,
+            stackTrace: stack,
           ),
         ),
       ),
@@ -214,12 +262,13 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
               .id
               .toString();
           if (nextBadgeId != null) {
-            context.pushReplacement(
-              RoutePath.badgeClaimPath(
-                id: nextBadgeId,
-                remainingCount: count,
-              ),
-            );
+            if (widget.onClaimNextBadge != null) {
+              widget.onClaimNextBadge!(nextBadgeId, count);
+            } else {
+              context.pushReplacement(
+                RoutePath.badgeClaimPath(id: nextBadgeId, remainingCount: count),
+              );
+            }
           }
         },
         child: Text(
@@ -233,7 +282,7 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
       );
     } else {
       return TextButton(
-        onPressed: () => context.go(RoutePath.main),
+        onPressed: widget.onGoToOverview ?? () => context.go(RoutePath.main),
         child: Text(
           l10n.goToOverview,
           style: theme.textTheme.bodyLarge?.copyWith(

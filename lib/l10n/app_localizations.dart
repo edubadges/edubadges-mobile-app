@@ -107,19 +107,19 @@ abstract class AppLocalizations {
   /// Button text on the login card to navigate to the user's edubadges
   ///
   /// In en, this message translates to:
-  /// **'Go to my edubadges'**
+  /// **'Go to your backpack'**
   String get loginCardButton;
 
   /// Explanatory text on the login card describing the app and eduID requirement
   ///
   /// In en, this message translates to:
-  /// **'My Badges is the place to receive and collect edubadges. An eduID is required to create and use \"My Badges.\" Creating an eduID takes less than 30 seconds.'**
+  /// **'Your backpack is the place where you can receive, manage, and share your edubadges.\n\nTo sign in to your backpack, you need an eduID. Click the button below and sign in with your eduID.\n\nDon\'t have an eduID yet? You can easily create one.'**
   String get loginCardText;
 
   /// Subtitle on the login page explaining what edubadges are
   ///
   /// In en, this message translates to:
-  /// **'Edubadges are digital certificates that demonstrate the knowledge or skills someone has acquired, within or outside formal education.'**
+  /// **'Edubadges are digital certificates that demonstrate the knowledge and skills someone has acquired, within or outside formal education.'**
   String get loginSubtitle;
 
   /// Main title displayed on the login page
@@ -140,11 +140,11 @@ abstract class AppLocalizations {
   /// **'Read more'**
   String get generalAgreementButtonReadMore;
 
-  /// Button text to read the full agreement
+  /// Button text to accept the general terms after reading them
   ///
   /// In en, this message translates to:
-  /// **'Read'**
-  String get generalAgreementButtonRead;
+  /// **'I agree'**
+  String get generalAgreementButtonAgree;
 
   /// Navigation tab label for the account section
   ///
@@ -152,17 +152,47 @@ abstract class AppLocalizations {
   /// **'Account'**
   String get tabAccount;
 
+  /// Page subtitle for the account screen on desktop
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your data and settings'**
+  String get accountSubtitle;
+
   /// Navigation tab label for the edubadges section
   ///
   /// In en, this message translates to:
   /// **'Edubadges'**
   String get tabBadges;
 
+  /// Page title for the badges overview screen on desktop
+  ///
+  /// In en, this message translates to:
+  /// **'My Edubadges'**
+  String get badgesOverviewTitle;
+
+  /// Page subtitle for the badges overview screen on desktop
+  ///
+  /// In en, this message translates to:
+  /// **'Overview of your earned and requested edubadges'**
+  String get badgesOverviewSubtitle;
+
   /// Navigation tab label for the catalog section
   ///
   /// In en, this message translates to:
   /// **'Catalog'**
   String get tabCatalog;
+
+  /// Page subtitle for the catalog screen on desktop
+  ///
+  /// In en, this message translates to:
+  /// **'Discover available edubadges per institution'**
+  String get catalogSubtitle;
+
+  /// Placeholder text for the catalog search input field
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name or institution...'**
+  String get catalogSearchPlaceholder;
 
   /// Navigation tab label for the collections section
   ///
@@ -467,7 +497,7 @@ abstract class AppLocalizations {
   /// Detailed description explaining the consequences of deleting an edubadges account
   ///
   /// In en, this message translates to:
-  /// **'You can delete your edubadges account if you wish. Be aware that after this, all your edubadges can no longer be validated.\n\nDeleting your edubadges account does not mean that your eduID will also be deleted.\n\nTo complete the process of deleting your edubadges account, you must close your browser after your account has been deleted.'**
+  /// **'You can delete your edubadges account if you wish.\n\nPlease note that deleting your account will also permanently remove all the edubadges you have earned. Any edubadges you have previously shared can no longer be verified.\n\nDeleting your account is permanent and cannot be undone.'**
   String get deleteAccountDescription;
 
   /// Button text to confirm account deletion
@@ -716,11 +746,29 @@ abstract class AppLocalizations {
   /// **'Requested badges'**
   String get requestedBadges;
 
+  /// Tab label on the badges overview for the edubadges the user has earned, with the number of badges
+  ///
+  /// In en, this message translates to:
+  /// **'Earned ({count})'**
+  String badgesTabEarned(int count);
+
+  /// Tab label on the badges overview for the edubadges the user has requested, with the number of badges
+  ///
+  /// In en, this message translates to:
+  /// **'Requested ({count})'**
+  String badgesTabRequested(int count);
+
   /// Message shown when user has no edubadges in their collection
   ///
   /// In en, this message translates to:
   /// **'You don\'t have any edubadges yet'**
   String get noEdubadgesYet;
+
+  /// Message shown on the requested tab when the user has not requested any edubadges
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t requested any edubadges yet'**
+  String get noRequestedBadges;
 
   /// Button text or title for providing feedback
   ///
@@ -1015,6 +1063,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You are about to decline this edubadge. This action is final and cannot be undone.'**
   String get declineBadgeConfirmation;
+
+  /// Title for the confirmation dialog when a badge was awarded to a private email address
+  ///
+  /// In en, this message translates to:
+  /// **'Claim and add to your backpack'**
+  String get claimPrivateEmailTitle;
+
+  /// Explanation shown before claiming a badge awarded to a private email address
+  ///
+  /// In en, this message translates to:
+  /// **'After this edubadge is claimed, it will be added to your backpack and you can make the edubadge public and share it.'**
+  String get claimPrivateEmailDescription;
+
+  /// Warning that the recipient name will be written on the claimed edubadge
+  ///
+  /// In en, this message translates to:
+  /// **'Note: this is the name that will appear on the edubadge: {name}. If this is not correct, contact the institution.'**
+  String claimPrivateEmailNameNote(String name);
 
   /// Message showing how many edubadges remain to be claimed
   ///
@@ -1825,6 +1891,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Badge is private. Tap to change visibility.'**
   String get semanticsBadgePrivate;
+
+  /// Accessibility label for the visibility indicator on a public badge
+  ///
+  /// In en, this message translates to:
+  /// **'Badge is public'**
+  String get semanticsBadgeVisibilityPublic;
+
+  /// Accessibility label for the visibility indicator on a private badge
+  ///
+  /// In en, this message translates to:
+  /// **'Badge is private'**
+  String get semanticsBadgeVisibilityPrivate;
 
   /// Accessibility label for logout button
   ///

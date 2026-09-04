@@ -1,56 +1,37 @@
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'collections_model.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class CollectionsModel extends CollectionsEntity {
   const CollectionsModel({
-    required super.id,
+    @JsonKey(fromJson: _stringFromDynamic) required super.id,
+    @JsonKey(fromJson: _stringFromDynamic, includeToJson: false)
     required super.entityId,
     required super.name,
     super.description,
+    @JsonKey(name: 'badge_instances', fromJson: _badgeInstanceIdsFromJson)
     required super.badgeInstanceIds,
     super.badgeInstances,
-    super.public = false,
+    @JsonKey(defaultValue: false) super.public = false,
   });
 
-  factory CollectionsModel.fromJson(Map<String, dynamic> json) {
-    final badgeIds = json['badge_instances'] as List<dynamic>? ?? [];
+  factory CollectionsModel.fromJson(Map<String, dynamic> json) =>
+      _$CollectionsModelFromJson(json);
 
-    final badgeInstanceIds = badgeIds.map((item) {
-      if (item is String) {
-        return item;
-      } else if (item is int) {
-        return item.toString();
-      } else if (item is Map<String, dynamic> &&
-          item.containsKey('entity_id')) {
-        return item['entity_id'] as String;
-      } else if (item is Map<String, dynamic> && item.containsKey('id')) {
-        final id = item['id'];
-        return id is int ? id.toString() : id as String;
-      } else {
-        throw FormatException('Invalid badge instance ID format: $item');
-      }
-    }).toList();
+  @override
+  @JsonKey(fromJson: _stringFromDynamic)
+  String get id => super.id;
 
-    final idValue = json['id'];
-    final id = idValue == null
-        ? ''
-        : (idValue is int ? idValue.toString() : idValue as String);
-    final entityIdValue = json['entity_id'];
-    final entityId = entityIdValue == null
-        ? ''
-        : (entityIdValue is int
-              ? entityIdValue.toString()
-              : entityIdValue as String);
+  @override
+  @JsonKey(fromJson: _stringFromDynamic, includeToJson: false)
+  String get entityId => super.entityId;
 
-    return CollectionsModel(
-      id: id,
-      entityId: entityId,
-      name: json['name'] as String,
-      description: json['description'] as String?,
-      badgeInstanceIds: badgeInstanceIds,
-      public: json['public'] as bool? ?? false,
-    );
-  }
+  @override
+  @JsonKey(name: 'badge_instances', fromJson: _badgeInstanceIdsFromJson)
+  List<String> get badgeInstanceIds => super.badgeInstanceIds;
 
   @override
   CollectionsModel copyWith({
@@ -73,13 +54,30 @@ class CollectionsModel extends CollectionsEntity {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      if (description != null) 'description': description,
-      'badge_instances': badgeInstanceIds,
-      'public': public,
-    };
+  Map<String, dynamic> toJson() => _$CollectionsModelToJson(this);
+
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  List<BadgeInstanceEntity>? get badgeInstances => super.badgeInstances;
+
+  static String _stringFromDynamic(dynamic value) {
+    if (value == null) return '';
+    if (value is int) return value.toString();
+    return value as String;
+  }
+
+  static List<String> _badgeInstanceIdsFromJson(List<dynamic>? badgeIds) {
+    final source = badgeIds ?? <dynamic>[];
+    return source.map((item) {
+      if (item is String) return item;
+      if (item is int) return item.toString();
+      if (item is Map<String, dynamic> && item.containsKey('entity_id')) {
+        return _stringFromDynamic(item['entity_id']);
+      }
+      if (item is Map<String, dynamic> && item.containsKey('id')) {
+        return _stringFromDynamic(item['id']);
+      }
+      throw FormatException('Invalid badge instance ID format: $item');
+    }).toList();
   }
 }

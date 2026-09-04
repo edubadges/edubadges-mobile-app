@@ -1,3 +1,4 @@
+import 'package:edubadges/core/widgets/debug_error_log_button.dart';
 import 'package:edubadges/core/widgets/preview_app.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,16 @@ import 'package:flutter/material.dart';
 ///
 /// Use `InfoStateView` for error messages with custom messages.
 class ErrorMessageWidget extends StatelessWidget {
-  const ErrorMessageWidget({super.key});
+  final Object? error;
+  final StackTrace? stackTrace;
+  final String? debugContext;
+
+  const ErrorMessageWidget({
+    super.key,
+    this.error,
+    this.stackTrace,
+    this.debugContext,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +49,11 @@ class ErrorMessageWidget extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          DebugErrorLogButton(
+            error: error,
+            stackTrace: stackTrace,
+            debugContext: debugContext,
           ),
         ],
       ),

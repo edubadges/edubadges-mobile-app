@@ -12,15 +12,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Edubadges';
 
   @override
-  String get loginCardButton => 'Go to my edubadges';
+  String get loginCardButton => 'Go to your backpack';
 
   @override
   String get loginCardText =>
-      'My Badges is the place to receive and collect edubadges. An eduID is required to create and use \"My Badges.\" Creating an eduID takes less than 30 seconds.';
+      'Your backpack is the place where you can receive, manage, and share your edubadges.\n\nTo sign in to your backpack, you need an eduID. Click the button below and sign in with your eduID.\n\nDon\'t have an eduID yet? You can easily create one.';
 
   @override
   String get loginSubtitle =>
-      'Edubadges are digital certificates that demonstrate the knowledge or skills someone has acquired, within or outside formal education.';
+      'Edubadges are digital certificates that demonstrate the knowledge and skills someone has acquired, within or outside formal education.';
 
   @override
   String get loginTitle => 'Never stop learning';
@@ -32,16 +32,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalAgreementButtonReadMore => 'Read more';
 
   @override
-  String get generalAgreementButtonRead => 'Read';
+  String get generalAgreementButtonAgree => 'I agree';
 
   @override
   String get tabAccount => 'Account';
 
   @override
+  String get accountSubtitle => 'Manage your data and settings';
+
+  @override
   String get tabBadges => 'Edubadges';
 
   @override
+  String get badgesOverviewTitle => 'My Edubadges';
+
+  @override
+  String get badgesOverviewSubtitle =>
+      'Overview of your earned and requested edubadges';
+
+  @override
   String get tabCatalog => 'Catalog';
+
+  @override
+  String get catalogSubtitle => 'Discover available edubadges per institution';
+
+  @override
+  String get catalogSearchPlaceholder => 'Search by name or institution...';
 
   @override
   String get tabCollections => 'Collections';
@@ -212,7 +228,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAccountDescription =>
-      'You can delete your edubadges account if you wish. Be aware that after this, all your edubadges can no longer be validated.\n\nDeleting your edubadges account does not mean that your eduID will also be deleted.\n\nTo complete the process of deleting your edubadges account, you must close your browser after your account has been deleted.';
+      'You can delete your edubadges account if you wish.\n\nPlease note that deleting your account will also permanently remove all the edubadges you have earned. Any edubadges you have previously shared can no longer be verified.\n\nDeleting your account is permanent and cannot be undone.';
 
   @override
   String get deleteMyAccount => 'Delete my account';
@@ -382,7 +398,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get requestedBadges => 'Requested badges';
 
   @override
+  String badgesTabEarned(int count) {
+    return 'Earned ($count)';
+  }
+
+  @override
+  String badgesTabRequested(int count) {
+    return 'Requested ($count)';
+  }
+
+  @override
   String get noEdubadgesYet => 'You don\'t have any edubadges yet';
+
+  @override
+  String get noRequestedBadges => 'You haven\'t requested any edubadges yet';
 
   @override
   String get giveFeedback => 'Give feedback';
@@ -537,6 +566,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get declineBadgeConfirmation =>
       'You are about to decline this edubadge. This action is final and cannot be undone.';
+
+  @override
+  String get claimPrivateEmailTitle => 'Claim and add to your backpack';
+
+  @override
+  String get claimPrivateEmailDescription =>
+      'After this edubadge is claimed, it will be added to your backpack and you can make the edubadge public and share it.';
+
+  @override
+  String claimPrivateEmailNameNote(String name) {
+    return 'Note: this is the name that will appear on the edubadge: $name. If this is not correct, contact the institution.';
+  }
 
   @override
   String badgesRemainingToClaim(num count) {
@@ -1027,6 +1068,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get semanticsBadgePrivate =>
       'Badge is private. Tap to change visibility.';
+
+  @override
+  String get semanticsBadgeVisibilityPublic => 'Badge is public';
+
+  @override
+  String get semanticsBadgeVisibilityPrivate => 'Badge is private';
 
   @override
   String get semanticsLogout => 'Log out';

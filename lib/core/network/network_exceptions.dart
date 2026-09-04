@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:edubadges/core/network/errors/error_codes.dart';
 import 'package:edubadges/core/network/errors/exceptions.dart';
+import 'package:edubadges/features/general_terms/domain/general_terms_constants.dart';
 
 /// Utility class to convert Dio exceptions to custom exceptions
 class NetworkExceptionHandler {
@@ -13,15 +13,6 @@ class NetworkExceptionHandler {
   static AppException handleError(dynamic error, [StackTrace? stackTrace]) {
     if (error is DioException) {
       return _handleDioException(error, stackTrace);
-    }
-
-    if (error is SocketException) {
-      return NetworkException(
-        message: 'No internet connection',
-        code: ErrorCodes.noInternetConnection,
-        originalError: error,
-        stackTrace: stackTrace,
-      );
     }
 
     if (error is AppException) {
@@ -64,14 +55,6 @@ class NetworkExceptionHandler {
 
       case DioExceptionType.connectionError:
       case DioExceptionType.unknown:
-        if (error.error is SocketException) {
-          return NetworkException(
-            message: 'No internet connection',
-            code: ErrorCodes.noInternetConnection,
-            originalError: error,
-            stackTrace: stackTrace,
-          );
-        }
         return NetworkException(
           message: 'Network error occurred',
           code: ErrorCodes.networkError,
@@ -163,6 +146,14 @@ class NetworkExceptionHandler {
         );
 
       case 403:
+        if (GeneralTermsConstants.isNotAcceptedResponse(response)) {
+          return GeneralTermsNotAcceptedException(
+            message: GeneralTermsConstants.notAcceptedDetail,
+            code: code ?? ErrorCodes.forbidden,
+            originalError: error,
+            stackTrace: stackTrace,
+          );
+        }
         return ForbiddenException(
           message: message,
           code: code ?? ErrorCodes.forbidden,

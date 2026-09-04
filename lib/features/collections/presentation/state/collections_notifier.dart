@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/network/network_providers.dart';
+import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/collections/data/models/collections_model.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
@@ -11,30 +12,39 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
   @override
   Future<List<CollectionsEntity>> build() async {
-    final badgesState = await ref.read(badgesOverviewProvider.future);
-    final badgeInstances = [
-      ...badgesState.claimedBadges,
-      ...badgesState.unclaimedBadges,
-      ...badgesState.requestedBadges,
-    ];
+    try {
+      final badgesState = await ref.read(badgesOverviewProvider.future);
+      final badgeInstances = [
+        ...badgesState.claimedBadges,
+        ...badgesState.unclaimedBadges,
+        ...badgesState.requestedBadges,
+      ];
 
-    final apiClient = ref.read(apiClientProvider);
-    final response = await apiClient.get<List<dynamic>>('/badge-collections');
+      final apiClient = ref.read(apiClientProvider);
+      final response = await apiClient.get<List<dynamic>>('/badge-collections');
 
-    final collectionsJson = response.data ?? [];
-    final collections = collectionsJson
-        .map((json) => CollectionsModel.fromJson(json as Map<String, dynamic>))
-        .toList();
-
-    final badgeMap = {for (var badge in badgeInstances) badge.entityId: badge};
-
-    return collections.map((collection) {
-      final matchedBadges = collection.badgeInstanceIds
-          .map((id) => badgeMap[id])
-          .whereType<BadgeInstanceEntity>()
+      final collectionsJson = response.data ?? [];
+      final collections = collectionsJson
+          .map((json) => CollectionsModel.fromJson(json as Map<String, dynamic>))
           .toList();
-      return collection.copyWith(badgeInstances: matchedBadges);
-    }).toList();
+
+      final badgeMap = {for (var badge in badgeInstances) badge.entityId: badge};
+
+      return collections.map((collection) {
+        final matchedBadges = collection.badgeInstanceIds
+            .map((id) => badgeMap[id])
+            .whereType<BadgeInstanceEntity>()
+            .toList();
+        return collection.copyWith(badgeInstances: matchedBadges);
+      }).toList();
+    } catch (error, stackTrace) {
+      logger.e(
+        'Failed to build collections state',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
   }
 
   Future<void> refresh({bool silent = true}) async {
@@ -72,6 +82,11 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
 
       state = AsyncData(collectionsWithBadges);
     } catch (error, stackTrace) {
+      logger.e(
+        'Failed to refresh collections',
+        error: error,
+        stackTrace: stackTrace,
+      );
       if (!silent || !state.hasValue) {
         state = AsyncError(error, stackTrace);
       }

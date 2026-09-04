@@ -9,6 +9,7 @@ class RoutePath {
   static const String collection = '/collection/:id';
   static const String newCollection = '/new-collection';
   static const String newCollectionBadgeSelection = '/new-collection/badges';
+
   /// Claimed badge (instance id). Carousel on by default; use `?gallery=false` for single-badge layout.
   static const String badgeDetailsClaimed = '/details/:id';
 
@@ -18,14 +19,24 @@ class RoutePath {
   /// Catalog / shared class (badge class id).
   static const String badgePublic = '/public/:id';
 
-  /// Quality assurance details page for a specific badge scope and id.
-  static const String badgeQualityAssurance = '/quality-assurance/:scope/:id';
+  /// Quality assurance details nested under badge detail routes.
+  static const String badgeQualityAssuranceClaimed =
+      '/details/:id/quality-assurance';
+  static const String badgeQualityAssuranceEnrollment =
+      '/enrollment/:id/quality-assurance';
+  static const String badgeQualityAssurancePublic =
+      '/public/:id/quality-assurance';
+
+  /// Legacy quality assurance path; redirects to the nested canonical routes.
+  static const String badgeQualityAssuranceLegacy =
+      '/quality-assurance/:scope/:id';
   static const String catalog = '/catalog';
   static const String account = '/account';
   static const String notificationPermission = '/notification-permission';
   static const String agreementDetails = '/agreement/:id';
   static const String badgeClaim = '/badge-claim/:id';
   static const String badgePrivacy = '/badge-privacy/:id';
+  static const String badgeEnrollmentTerms = '/badge-enrollment-terms/:id';
   static const String badgeClaimSuccess = '/badge-claim-success';
 
   /// List of all main navigation routes
@@ -33,6 +44,26 @@ class RoutePath {
 
   /// List of routes that don't require authentication
   static const List<String> publicRoutes = [login];
+
+  /// Returns true when [path] can be accessed without logging in.
+  static bool isPublicPath(String path) {
+    if (publicRoutes.contains(path)) {
+      return true;
+    }
+    if (path.startsWith('/public/')) {
+      return true;
+    }
+    if (path.startsWith('/enrollment/')) {
+      return true;
+    }
+    // Legacy quality assurance URLs redirect to the canonical routes, so their
+    // anonymous scopes must stay reachable without logging in.
+    if (path.startsWith('/quality-assurance/public/') ||
+        path.startsWith('/quality-assurance/enrollment/')) {
+      return true;
+    }
+    return false;
+  }
 
   /// List of routes that should redirect logged-in users to their home page.
   static const List<String> redirectRoutesForLoggedInUsers = [login];
@@ -66,7 +97,15 @@ class RoutePath {
     required BadgeDetailsScope scope,
     required String id,
   }) {
-    return '/quality-assurance/${scope.name}/${Uri.encodeComponent(id)}';
+    final encoded = Uri.encodeComponent(id);
+    switch (scope) {
+      case BadgeDetailsScope.claimed:
+        return '/details/$encoded/quality-assurance';
+      case BadgeDetailsScope.enrollment:
+        return '/enrollment/$encoded/quality-assurance';
+      case BadgeDetailsScope.public:
+        return '/public/$encoded/quality-assurance';
+    }
   }
 
   static String collectionPath({
@@ -78,7 +117,8 @@ class RoutePath {
       path: '/collection/${Uri.encodeComponent(id)}',
       queryParameters: {
         'title': title,
-        if (description != null && description.isNotEmpty) 'description': description,
+        if (description != null && description.isNotEmpty)
+          'description': description,
       },
     ).toString();
   }
@@ -95,8 +135,8 @@ class RoutePath {
       queryParameters: {
         'titleLong': titleLong,
         'textUrlLong': textUrlLong,
-        if (titleShort != null) 'titleShort': titleShort,
-        if (textUrlShort != null) 'textUrlShort': textUrlShort,
+        'titleShort': ?titleShort,
+        'textUrlShort': ?textUrlShort,
       },
     ).toString();
   }
@@ -112,27 +152,26 @@ class RoutePath {
   }
 
   static String badgePrivacyPath({required String id}) {
+    return Uri(path: '/badge-privacy/${Uri.encodeComponent(id)}').toString();
+  }
+
+  static String badgeEnrollmentTermsPath({required String id}) {
     return Uri(
-      path: '/badge-privacy/${Uri.encodeComponent(id)}',
+      path: '/badge-enrollment-terms/${Uri.encodeComponent(id)}',
     ).toString();
   }
 
   static String badgeClaimSuccessPath({required String id}) {
-    return Uri(
-      path: badgeClaimSuccess,
-      queryParameters: {'id': id},
-    ).toString();
+    return Uri(path: badgeClaimSuccess, queryParameters: {'id': id}).toString();
   }
 
-  static String newCollectionPath({
-    required String name,
-    String? description,
-  }) {
+  static String newCollectionPath({required String name, String? description}) {
     return Uri(
       path: newCollection,
       queryParameters: {
         'name': name,
-        if (description != null && description.isNotEmpty) 'description': description,
+        if (description != null && description.isNotEmpty)
+          'description': description,
       },
     ).toString();
   }
@@ -148,7 +187,8 @@ class RoutePath {
       queryParameters: {
         if (id != null && id.isNotEmpty) 'id': id,
         'name': name,
-        if (description != null && description.isNotEmpty) 'description': description,
+        if (description != null && description.isNotEmpty)
+          'description': description,
       },
     ).toString();
   }

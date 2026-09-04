@@ -1,4 +1,5 @@
 import 'package:edubadges/app/colors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -15,6 +16,7 @@ class AppThemes {
       textTheme: _textTheme,
       appBarTheme: _appBarTheme,
       switchTheme: _switchTheme,
+      tabBarTheme: _tabBarTheme,
       // High-contrast focus indicator for keyboard/screen reader (EU accessibility)
       focusColor: AppColors.primary,
     );
@@ -29,9 +31,29 @@ class AppThemes {
       textTheme: _textTheme,
       appBarTheme: _appBarTheme,
       switchTheme: _switchTheme,
+      tabBarTheme: _tabBarTheme,
       focusColor: AppColors.onSurface,
     );
   }
+
+  static ThemeData themeForPlatform(ThemeData theme) {
+    if (!kIsWeb) {
+      return theme;
+    }
+    return theme.copyWith(pageTransitionsTheme: _webPageTransitionsTheme);
+  }
+
+  static const PageTransitionsTheme _webPageTransitionsTheme =
+      PageTransitionsTheme(
+        builders: <TargetPlatform, PageTransitionsBuilder>{
+          TargetPlatform.android: _InstantPageTransitionsBuilder(),
+          TargetPlatform.iOS: _InstantPageTransitionsBuilder(),
+          TargetPlatform.macOS: _InstantPageTransitionsBuilder(),
+          TargetPlatform.linux: _InstantPageTransitionsBuilder(),
+          TargetPlatform.windows: _InstantPageTransitionsBuilder(),
+          TargetPlatform.fuchsia: _InstantPageTransitionsBuilder(),
+        },
+      );
 
   static SystemUiOverlayStyle get systemUiOverlayStyle {
     return const SystemUiOverlayStyle(
@@ -78,6 +100,7 @@ class AppThemes {
       surfaceDim: AppColors.surfaceDim,
       surfaceBright: AppColors.surfaceBright,
       surfaceContainer: AppColors.surfaceContainer,
+      surfaceContainerHighest: AppColors.surfaceContainerHighest,
       outline: AppColors.outline,
       outlineVariant: AppColors.outlineVariant,
       shadow: AppColors.shadow,
@@ -231,19 +254,48 @@ class AppThemes {
     );
   }
 
+  /// Labels inherit [TextTheme.titleSmall] (Nunito Bold 14/20) from Material 3.
+  static TabBarThemeData get _tabBarTheme {
+    return const TabBarThemeData(
+      labelColor: AppColors.primary,
+      unselectedLabelColor: AppColors.onSurfaceVariant,
+      // Pill-shaped indicator hugging the label, inset 2px on either side.
+      indicatorSize: TabBarIndicatorSize.label,
+      indicator: UnderlineTabIndicator(
+        borderSide: BorderSide(width: 3, color: AppColors.primary),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(100)),
+        insets: EdgeInsets.symmetric(horizontal: 2),
+      ),
+      dividerColor: AppColors.outlineVariant,
+    );
+  }
+
   static SwitchThemeData get _switchTheme {
     return SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
           return AppColors.surfaceContainer;
         }
-        return AppColors.onSurfaceVariant;
+        return AppColors.tertiary;
       }),
       trackColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
           return AppColors.primary;
         }
-        return null;
+        return AppColors.surfaceContainerHighest;
+      }),
+      trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return Colors.transparent;
+        }
+        return AppColors.tertiary;
+      }),
+      trackOutlineWidth: const WidgetStatePropertyAll(2),
+      thumbIcon: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return const Icon(Icons.check, size: 16, color: AppColors.primary);
+        }
+        return const Icon(Icons.close, size: 16, color: AppColors.onTertiary);
       }),
     );
   }
@@ -254,12 +306,30 @@ class AppThemes {
     final colorScheme = theme.colorScheme;
 
     return MarkdownStyleSheet(
-      h1: textTheme.displayLarge?.copyWith(color: colorScheme.onSurface),
-      h2: textTheme.displayMedium?.copyWith(color: colorScheme.onSurface),
-      h3: textTheme.displaySmall?.copyWith(color: colorScheme.onSurface),
-      h4: textTheme.headlineMedium?.copyWith(color: colorScheme.onSurface),
-      h5: textTheme.headlineSmall?.copyWith(color: colorScheme.onSurface),
-      h6: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
+      h1: textTheme.headlineLarge?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 24,
+      ),
+      h2: textTheme.headlineMedium?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 21,
+      ),
+      h3: textTheme.headlineSmall?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 18,
+      ),
+      h4: textTheme.titleLarge?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 15,
+      ),
+      h5: textTheme.titleMedium?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 12.75,
+      ),
+      h6: textTheme.titleSmall?.copyWith(
+        color: colorScheme.onSurface,
+        fontSize: 10.5,
+      ),
       p: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
       code: textTheme.bodyMedium?.copyWith(
         fontFamily: 'monospace',
@@ -324,4 +394,19 @@ extension CustomTextStyles on TextTheme {
     letterSpacing: 0.0,
     fontWeight: FontWeight.w600,
   );
+}
+
+class _InstantPageTransitionsBuilder extends PageTransitionsBuilder {
+  const _InstantPageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return child;
+  }
 }
