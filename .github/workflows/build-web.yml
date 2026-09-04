@@ -1,0 +1,50 @@
+name: Build and Deploy Flutter Web
+
+on:
+  push:
+    branches:
+      - acceptance
+      - develop
+      - main
+      - test
+
+jobs:
+  build:
+    name: Build web — ${{ github.ref_name }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.41.6"
+          channel: "stable"
+
+      - name: Dependencies
+        run: flutter pub get
+
+      - name: Build web
+        run: flutter build web --release
+
+      - name: Create tarball
+        run: tar -czf web-${{ github.ref_name }}.tar.gz -C build/web .
+
+      - name: Upload to target repo
+        run: |
+          mkdir -p dist
+          mv web-${{ github.ref_name }}.tar.gz \
+            dist/web-${{ github.ref_name }}.tar.gz
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git clone https://${{ secrets.DEPLOY_TOKEN }}@github.com/
+            edubadges/edubadges-backpack-web.git --depth 1 deploy-repo
+          cp -r dist/* deploy-repo/
+          cd deploy-repo
+          git add -A
+          if git diff --staged --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
+          git commit \
+            -m "Build from ${{ github.ref_name }} @ ${{ github.sha }}"
+          git push
