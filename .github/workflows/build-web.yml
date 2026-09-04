@@ -13,9 +13,9 @@ jobs:
         name: Build web — ${{ github.ref_name }}
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+            - uses: actions/checkout@v4
 
-            - uses: subosito/flutter-action@135fb8ff74bb7ab08a4fe2bcdc3a7ac80923ecff
+            - uses: subosito/flutter-action@v2
               with:
                   flutter-version: "3.41.6"
                   channel: "stable"
