@@ -43,8 +43,7 @@ jobs:
 
             - name: Build web
               run: |
-                  ./tool/build_web.sh ${{ steps.flavor-map.outputs.flavor }} \
-                    --base-href "/backpack/"
+                  ./tool/build_web.sh ${{ steps.flavor-map.outputs.flavor }}
 
             - name: Create tarball
               run: tar -czf web-${{ github.ref_name }}.tar.gz -C build/web .
