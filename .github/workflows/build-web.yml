@@ -24,7 +24,7 @@ jobs:
               run: flutter pub get
 
             - name: Build web
-              run: flutter build web --release
+              run: flutter build web --release --base-href "/backpack/"
 
             - name: Create tarball
               run: tar -czf web-${{ github.ref_name }}.tar.gz -C build/web .
