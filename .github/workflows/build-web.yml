@@ -40,8 +40,6 @@ jobs:
                     echo "flavor=prod" >> $GITHUB_OUTPUT
                     ;;
                 esac
-              outputs:
-                flavor: ${{ steps.flavor-map.outputs.flavor }}
 
             - name: Build web
               run: ./tool/build_web.sh ${{ needs.flavor-map.outputs.flavor }} --base-href "/backpack"
