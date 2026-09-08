@@ -1,12 +1,7 @@
 name: Build and Deploy Flutter Web
 
 on:
-    push:
-        branches:
-            - acceptance
-            - develop
-            - main
-            - test
+    push
 
 jobs:
     build:
