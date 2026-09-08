@@ -15,8 +15,8 @@
   },
   "api": {
     "customApiUrlDev": "https://api-demo.edubadges.nl",
-    "customApiUrlTst": "https://api-demo.edubadges.nl",
-    "customApiUrlAcc": "https://api-demo.edubadges.nl",
+    "customApiUrlTst": "https://api-test.edubadges.nl",
+    "customApiUrlAcc": "https://api-acc.edubadges.nl",
     "customApiUrlProd": "https://api.edubadges.nl"
   },
   "firebase": {
