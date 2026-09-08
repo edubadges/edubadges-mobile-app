@@ -42,7 +42,9 @@ jobs:
                 esac
 
             - name: Build web
-              run: ./tool/build_web.sh ${{ needs.flavor-map.outputs.flavor }} --base-href "/backpack"
+              run: |
+                  ./tool/build_web.sh ${{ steps.flavor-map.outputs.flavor }} \
+                    --base-href "/backpack/"
 
             - name: Create tarball
               run: tar -czf web-${{ github.ref_name }}.tar.gz -C build/web .
