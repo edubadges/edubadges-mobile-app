@@ -55,7 +55,11 @@ server {
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-Frame-Options "DENY" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-    add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()" always;
+    # Only long-established features are listed here. `interest-cohort=()` used
+    # to be included, but Chromium rejected the whole header with a
+    # structured-header parse error and therefore applied none of it. That was
+    # the FLoC opt-out, and FLoC no longer exists, so it buys nothing.
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
     # Content-Security-Policy.
@@ -97,16 +101,24 @@ server {
     # no rule here beyond the static handler below.
 
     # --- Content types ------------------------------------------------------
-    # A wrong type on the wasm module disables streaming compilation, and .mjs
-    # served as octet-stream fails to load as an ES module. `default_type` only
-    # applies when mime.types has no mapping, so this is safe to state.
+    # Both of these are load-bearing. Chromium enforces strict MIME checking on
+    # module scripts, so `main.dart.mjs` served as application/octet-stream is
+    # refused outright and the app never starts. A wrong type on the wasm module
+    # disables streaming compilation.
+    #
+    # These use a `types` block rather than `default_type` deliberately.
+    # `default_type` is only a fallback for when the types hash has no entry for
+    # the extension, and it did not take effect on SURF's nginx - the response
+    # still carried the http-level application/octet-stream. A `types` block
+    # sets the mapping outright, which is deterministic. Replacing the map is
+    # safe here because each of these locations matches exactly one extension.
     location ~* \.wasm$ {
-        default_type application/wasm;
+        types { application/wasm wasm; }
         try_files $uri =404;
     }
 
     location ~* \.mjs$ {
-        default_type text/javascript;
+        types { text/javascript mjs; }
         try_files $uri =404;
     }
 
