@@ -54,21 +54,6 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
     );
   }
 
-  Widget _buildDesktopHeaderSliver({
-    required BuildContext context,
-    required AppLocalizations l10n,
-  }) {
-    return SliverToBoxAdapter(
-      child: PageHeader(
-        title: l10n.tabCollections,
-        actions: [
-          _buildAddButton(context: context, l10n: l10n),
-        ],
-        padding: const EdgeInsets.fromLTRB(16, 16, 8, 0),
-      ),
-    );
-  }
-
   Widget _buildCollectionCard({
     required BuildContext context,
     required CollectionsEntity collection,
@@ -215,99 +200,119 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
                     ),
                   ],
                 ),
-          body: MaxWidthWrapper(
-            scrollController: _scrollController,
-            maxWidth: isGridLayout
-                ? LayoutConstants.badgesOverviewDesktopMaxWidth
-                : MaxWidthWrapper.defaultMaxWidth,
-            child: RefreshIndicator(
-              backgroundColor: colorScheme.surfaceContainer,
-              onRefresh: () async {
-                await ref.read(collectionsProvider.notifier).refresh();
-              },
-              child: CustomScrollView(
-                controller: _scrollController,
-                physics: const AlwaysScrollableScrollPhysics(),
-                slivers: [
-                  if (isGridLayout)
-                    _buildDesktopHeaderSliver(context: context, l10n: l10n),
-                  ...collectionsAsync.when(
-                    data: (collections) {
-                      if (collections.isEmpty) {
-                        return [
-                          SliverFillRemaining(
-                            hasScrollBody: false,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SvgIcon(
-                                    assetPath: Assets.iconCollections,
-                                    size: 40,
-                                    color: colorScheme.primary,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    l10n.noCollectionsYet,
-                                    style: textTheme.bodyMedium?.copyWith(
-                                      color: colorScheme.onSurfaceVariant,
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (isGridLayout)
+                PageHeader(
+                  title: l10n.tabCollections,
+                  actions: [
+                    _buildAddButton(context: context, l10n: l10n),
+                  ],
+                  padding: const EdgeInsets.fromLTRB(16, 16, 8, 0),
+                ),
+              Expanded(
+                child: MaxWidthWrapper(
+                  scrollController: _scrollController,
+                  // The grid spans the full content pane like the design;
+                  // only the compact list is capped so rows do not stretch
+                  // across a wide window.
+                  maxWidth: isGridLayout
+                      ? double.infinity
+                      : MaxWidthWrapper.defaultMaxWidth,
+                  child: RefreshIndicator(
+                    backgroundColor: colorScheme.surfaceContainer,
+                    onRefresh: () async {
+                      await ref.read(collectionsProvider.notifier).refresh();
+                    },
+                    child: CustomScrollView(
+                      controller: _scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        ...collectionsAsync.when(
+                          data: (collections) {
+                            if (collections.isEmpty) {
+                              return [
+                                SliverFillRemaining(
+                                  hasScrollBody: false,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        SvgIcon(
+                                          assetPath: Assets.iconCollections,
+                                          size: 40,
+                                          color: colorScheme.primary,
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          l10n.noCollectionsYet,
+                                          style: textTheme.bodyMedium
+                                              ?.copyWith(
+                                                color: colorScheme
+                                                    .onSurfaceVariant,
+                                              ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
+                                ),
+                              ];
+                            }
+                            return [
+                              _buildCollectionSliver(
+                                collections: collections,
+                                isGridLayout: isGridLayout,
+                                colorScheme: colorScheme,
+                                textTheme: textTheme,
+                                l10n: l10n,
                               ),
-                            ),
-                          ),
-                        ];
-                      }
-                      return [
-                        _buildCollectionSliver(
-                          collections: collections,
-                          isGridLayout: isGridLayout,
-                          colorScheme: colorScheme,
-                          textTheme: textTheme,
-                          l10n: l10n,
-                        ),
-                      ];
-                    },
-                    loading: () => [
-                      SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            semanticsLabel: l10n.semanticsLoading,
-                          ),
-                        ),
-                      ),
-                    ],
-                    error: (error, stackTrace) => [
-                      SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                l10n.errorLoadingCollections,
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  color: colorScheme.error,
+                            ];
+                          },
+                          loading: () => [
+                            SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  semanticsLabel: l10n.semanticsLoading,
                                 ),
                               ),
-                              const SizedBox(height: 16),
-                              ElevatedButton(
-                                onPressed: () => ref
-                                    .read(collectionsProvider.notifier)
-                                    .refresh(),
-                                child: Text(l10n.retry),
+                            ),
+                          ],
+                          error: (error, stackTrace) => [
+                            SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      l10n.errorLoadingCollections,
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(
+                                            color: colorScheme.error,
+                                          ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    ElevatedButton(
+                                      onPressed: () => ref
+                                          .read(collectionsProvider.notifier)
+                                          .refresh(),
+                                      child: Text(l10n.retry),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         );
       },
