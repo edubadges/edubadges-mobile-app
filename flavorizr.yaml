@@ -19,12 +19,12 @@ flavors:
       applicationId: "nl.surf.edubadges"
       variables:
         BASE_URL:
-          value: "https://api-demo.edubadges.nl"
+          value: "https://api-test.edubadges.nl"
     ios:
       bundleId: "nl.surf.edubadges"
       variables:
         BASE_URL:
-          value: "https://api-demo.edubadges.nl"
+          value: "https://api-test.edubadges.nl"
   acc:
     app:
       name: "Edubadges Acc"
@@ -32,12 +32,12 @@ flavors:
       applicationId: "nl.surf.edubadges"
       variables:
         BASE_URL:
-          value: "https://api-demo.edubadges.nl"
+          value: "https://api-acc.edubadges.nl"
     ios:
       bundleId: "nl.surf.edubadges"
       variables:
         BASE_URL:
-          value: "https://api-demo.edubadges.nl"
+          value: "https://api-acc.edubadges.nl"
   prod:
     app:
       name: "Edubadges"
