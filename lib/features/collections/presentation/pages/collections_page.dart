@@ -193,12 +193,7 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
               : AppBar(
                   title: Text(l10n.tabCollections),
                   backgroundColor: AppColors.surface,
-                  actions: [
-                    _buildAddButton(
-                      context: context,
-                      l10n: l10n,
-                    ),
-                  ],
+                  actions: [_buildAddButton(context: context, l10n: l10n)],
                 ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -206,9 +201,7 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
               if (isGridLayout)
                 PageHeader(
                   title: l10n.tabCollections,
-                  actions: [
-                    _buildAddButton(context: context, l10n: l10n),
-                  ],
+                  actions: [_buildAddButton(context: context, l10n: l10n)],
                   padding: const EdgeInsets.fromLTRB(16, 16, 8, 0),
                 ),
               Expanded(
@@ -248,11 +241,9 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
                                         const SizedBox(height: 16),
                                         Text(
                                           l10n.noCollectionsYet,
-                                          style: textTheme.bodyMedium
-                                              ?.copyWith(
-                                                color: colorScheme
-                                                    .onSurfaceVariant,
-                                              ),
+                                          style: textTheme.bodyMedium?.copyWith(
+                                            color: colorScheme.onSurfaceVariant,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -290,9 +281,7 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
                                     Text(
                                       l10n.errorLoadingCollections,
                                       style: theme.textTheme.titleMedium
-                                          ?.copyWith(
-                                            color: colorScheme.error,
-                                          ),
+                                          ?.copyWith(color: colorScheme.error),
                                     ),
                                     const SizedBox(height: 16),
                                     ElevatedButton(
