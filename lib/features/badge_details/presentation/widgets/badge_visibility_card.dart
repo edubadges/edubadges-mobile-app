@@ -3,7 +3,9 @@ import 'package:edubadges/core/constants/branding.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/utils/color.dart';
 import 'package:edubadges/core/utils/links.dart';
+import 'package:edubadges/core/utils/url_safety.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
@@ -13,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class BadgeVisibilityCard extends ConsumerStatefulWidget {
   final EdgeInsets margin;
@@ -54,6 +55,26 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
     }
   }
 
+  /// Badges that come from a list response (catalog, backpack overview, claim
+  /// flow) carry no [BadgeInstanceEntity.linkedinUrl], since only the badge
+  /// instance detail endpoint returns it. Load the instance details for those,
+  /// so the share button shows up wherever the badge is public.
+  String? _resolveLinkedinUrl() {
+    final String? linkedinUrl = widget.badge.linkedinUrl;
+    if (linkedinUrl != null && linkedinUrl.isNotEmpty) {
+      return linkedinUrl;
+    }
+
+    if (!isPublic || !widget.showCopyLink) {
+      return null;
+    }
+
+    return ref
+        .watch(badgeInstanceProvider(widget.badge.entityId))
+        .value
+        ?.linkedinUrl;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -87,11 +108,10 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
       ),
     );
 
+    final String? linkedinUrl = _resolveLinkedinUrl();
     final bool hasCopyLinkOption = widget.showCopyLink && isPublic;
     final bool hasLinkedInOption =
-        widget.showCopyLink &&
-        (widget.badge.linkedinUrl?.isNotEmpty ?? false) &&
-        isPublic;
+        widget.showCopyLink && (linkedinUrl?.isNotEmpty ?? false) && isPublic;
     final bool hasShareOptions = hasCopyLinkOption || hasLinkedInOption;
 
     final Widget? shareButtons = hasShareOptions
@@ -131,10 +151,7 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                   color: linkedinBrandColor,
                   secondary: true,
                   onTap: () {
-                    launchUrlString(
-                      widget.badge.linkedinUrl!,
-                      mode: LaunchMode.externalApplication,
-                    );
+                    launchExternalUrl(linkedinUrl!);
                   },
                 ),
               ],
