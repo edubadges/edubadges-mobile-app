@@ -53,6 +53,9 @@ dev_dependencies:
   accessibility_radar: ^0.2.1
   build_runner: ^2.6.0
   json_serializable: ^6.13.2
+  # Transitive via flutter_markdown_plus; declared so the sanitizer tests can
+  # assert on what the real parser produces.
+  markdown: ^7.3.0
 
 flutter:
   generate: true

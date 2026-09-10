@@ -5,7 +5,9 @@ import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/markdown_sanitizer.dart';
 import 'package:edubadges/core/utils/string.dart';
+import 'package:edubadges/core/utils/url_safety.dart';
 import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
@@ -36,7 +38,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class BadgeDetailsPage extends ConsumerStatefulWidget {
   final BadgeDetailsRouteModel badge;
@@ -657,7 +658,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             title: l10n.aboutThisEdubadge,
             margin: _sectionMargin(useSidebarLayout),
             item: MarkdownBody(
-              data: filterBadMarkdown(details!.badgeClass.description!),
+              data: sanitizeMarkdown(details!.badgeClass.description!),
               styleSheet: AppThemes.markdownStyleSheet(context),
             ),
           ),
@@ -668,7 +669,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             title: l10n.learningOutcomes,
             margin: _sectionMargin(useSidebarLayout),
             item: MarkdownBody(
-              data: filterBadMarkdown(learningOutcome),
+              data: sanitizeMarkdown(learningOutcome),
               styleSheet: AppThemes.markdownStyleSheet(context),
             ),
           ),
@@ -679,7 +680,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             title: l10n.badgeCriteria,
             margin: _sectionMargin(useSidebarLayout),
             item: MarkdownBody(
-              data: filterBadMarkdown(criteriaText),
+              data: sanitizeMarkdown(criteriaText),
               styleSheet: AppThemes.markdownStyleSheet(context),
             ),
           ),
@@ -692,10 +693,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
             action: badgeClass.qualityAssuranceUrl != null
                 ? IconButton(
                     onPressed: () {
-                      launchUrlString(
-                        badgeClass.qualityAssuranceUrl!,
-                        mode: LaunchMode.externalApplication,
-                      );
+                      launchExternalUrl(badgeClass.qualityAssuranceUrl!);
                     },
                     icon: Icon(Icons.launch, color: colorScheme.onSurface),
                   )
@@ -706,7 +704,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                 _ClampedMarkdownPreview(
                   maxLines: _qualityAssurancePreviewMaxLines,
                   child: MarkdownBody(
-                    data: filterBadMarkdown(qualityAssuranceText),
+                    data: sanitizeMarkdown(qualityAssuranceText),
                     styleSheet: AppThemes.markdownStyleSheet(context),
                   ),
                 ),
@@ -994,7 +992,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
         Text(label, style: textTheme.titleSmall),
         InkWell(
           onTap: () {
-            launchUrlString(url, mode: LaunchMode.externalApplication);
+            launchExternalUrl(url);
           },
           child: Text(
             url,
