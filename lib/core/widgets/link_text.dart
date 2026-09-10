@@ -1,7 +1,6 @@
-import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/core/utils/url_safety.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class LinkText extends StatelessWidget {
   final String text;
@@ -70,21 +69,5 @@ class LinkText extends StatelessWidget {
     );
   }
 
-  Future<void> _launchUrl(String url) async {
-    try {
-      final uri = Uri.parse(url);
-
-      final launchMode = uri.scheme == 'mailto'
-          ? LaunchMode.platformDefault
-          : LaunchMode.externalApplication;
-
-      if (uri.scheme == 'mailto') {
-        await launchUrl(uri, mode: launchMode);
-      } else if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: launchMode);
-      }
-    } catch (e) {
-      logger.e('Error launching URL: $e');
-    }
-  }
+  Future<void> _launchUrl(String url) => launchExternalUrl(url);
 }

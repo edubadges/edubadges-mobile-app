@@ -1,6 +1,7 @@
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/route_path.dart';
-import 'package:edubadges/core/utils/string.dart';
+import 'package:edubadges/core/utils/markdown_sanitizer.dart';
+import 'package:edubadges/core/utils/url_safety.dart';
 import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
@@ -14,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class QualityAssurancePage extends ConsumerStatefulWidget {
   final String badgeId;
@@ -57,7 +57,7 @@ class _QualityAssurancePageState extends ConsumerState<QualityAssurancePage> {
   }
 
   static Future<void> _launchExternalUrl(String url) =>
-      launchUrlString(url, mode: LaunchMode.externalApplication);
+      launchExternalUrl(url);
 
   void _close() {
     if (widget.onClose != null) {
@@ -124,7 +124,7 @@ class _QualityAssurancePageState extends ConsumerState<QualityAssurancePage> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: FocusableSection(
                 child: MarkdownBody(
-                  data: filterBadMarkdown(content),
+                  data: sanitizeMarkdown(content),
                   styleSheet: AppThemes.markdownStyleSheet(context),
                   onTapLink: (text, href, title) {
                     if (href == null) return;
