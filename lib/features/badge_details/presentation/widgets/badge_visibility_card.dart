@@ -1,9 +1,11 @@
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/branding.dart';
+import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/utils/color.dart';
 import 'package:edubadges/core/utils/links.dart';
+import 'package:edubadges/core/utils/url_safety.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
-import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
+import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
@@ -13,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class BadgeVisibilityCard extends ConsumerStatefulWidget {
   final EdgeInsets margin;
@@ -24,8 +25,8 @@ class BadgeVisibilityCard extends ConsumerStatefulWidget {
     super.key,
     required this.badge,
     this.margin = const EdgeInsets.only(
-      left: 20,
-      right: 20,
+      left: LayoutConstants.sidebarListLayoutPadding,
+      right: LayoutConstants.sidebarListLayoutPadding,
       bottom: 8,
       top: 16,
     ),
@@ -54,91 +55,69 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
     }
   }
 
+  /// Badges that come from a list response (catalog, backpack overview, claim
+  /// flow) carry no [BadgeInstanceEntity.linkedinUrl], since only the badge
+  /// instance detail endpoint returns it. Load the instance details for those,
+  /// so the share button shows up wherever the badge is public.
+  String? _resolveLinkedinUrl() {
+    final String? linkedinUrl = widget.badge.linkedinUrl;
+    if (linkedinUrl != null && linkedinUrl.isNotEmpty) {
+      return linkedinUrl;
+    }
+
+    if (!isPublic || !widget.showCopyLink) {
+      return null;
+    }
+
+    return ref
+        .watch(badgeInstanceProvider(widget.badge.entityId))
+        .value
+        ?.linkedinUrl;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: colorScheme.outlineVariant),
-        color: colorScheme.surfaceContainer,
+    final Widget visibilityToggle = MergeSemantics(
+      child: Semantics(
+        label: isPublic
+            ? l10n.semanticsBadgePublic
+            : l10n.semanticsBadgePrivate,
+        child: Switch(
+          value: isPublic,
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          padding: EdgeInsets.zero,
+          onChanged: (bool state) async {
+            try {
+              await BadgeVisibilityDialog.show(
+                context: context,
+                ref: ref,
+                badgeInstance: widget.badge as BadgeInstanceModel,
+                isPublic: state,
+              );
+            } catch (e) {
+              if (context.mounted) {
+                showAppSnackBar(context, l10n.somethingWentWrong);
+              }
+            }
+          },
+        ),
       ),
-      margin: widget.margin,
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        spacing: 16,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    );
+
+    final String? linkedinUrl = _resolveLinkedinUrl();
+    final bool hasCopyLinkOption = widget.showCopyLink && isPublic;
+    final bool hasLinkedInOption =
+        widget.showCopyLink && (linkedinUrl?.isNotEmpty ?? false) && isPublic;
+    final bool hasShareOptions = hasCopyLinkOption || hasLinkedInOption;
+
+    final Widget? shareButtons = hasShareOptions
+        ? Column(
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Semantics(
-                      header: true,
-                      child: Text(
-                        l10n.badgeVisibleAndShareable,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      l10n.badgeVisibleAndShareableDescription,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              AnimatedIconSwitch(
-                value: isPublic,
-                width: 44,
-                height: 28,
-                activeColor: colorScheme.primary,
-                inactiveColor: colorScheme.surfaceContainerHighest,
-                activeThumbColor: Colors.white,
-                inactiveThumbColor: colorScheme.onSurfaceVariant,
-                withIcons: true,
-                iconOnThumb: true,
-                activeIcon: Icons.check,
-                inactiveIcon: Icons.close,
-                activeIconColor: colorScheme.primary,
-                inactiveIconColor: Colors.white,
-                activeIconSize: 16,
-                inactiveIconSize: 16,
-                borderRadius: 14,
-                semanticLabel: isPublic
-                    ? l10n.semanticsBadgePublic
-                    : l10n.semanticsBadgePrivate,
-                onChanged: (bool state) async {
-                  try {
-                    await BadgeVisibilityDialog.show(
-                      context: context,
-                      ref: ref,
-                      badgeInstance: widget.badge as BadgeInstanceModel,
-                      isPublic: state,
-                    );
-                  } catch (e) {
-                    if (context.mounted) {
-                      showAppSnackBar(context, l10n.somethingWentWrong);
-                    }
-                  }
-                },
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              if (widget.showCopyLink && isPublic)
+              if (hasCopyLinkOption)
                 WideButton(
                   text: l10n.copyLink,
                   icon: Icon(
@@ -160,9 +139,7 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                     }
                   },
                 ),
-              if (widget.showCopyLink &&
-                  widget.badge.linkedinUrl != null &&
-                  isPublic) ...[
+              if (hasLinkedInOption) ...[
                 const SizedBox(height: 8),
                 WideButton(
                   text: linkedinBrand,
@@ -174,17 +151,62 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                   color: linkedinBrandColor,
                   secondary: true,
                   onTap: () {
-                    launchUrlString(
-                      widget.badge.linkedinUrl!,
-                      mode: LaunchMode.externalApplication,
-                    );
+                    launchExternalUrl(linkedinUrl!);
                   },
                 ),
               ],
             ],
-          ),
-        ],
+          )
+        : null;
+
+    final Widget content = Column(
+      spacing: 16,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      l10n.badgeVisibleAndShareable,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    l10n.badgeVisibleAndShareableDescription,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            visibilityToggle,
+          ],
+        ),
+        ?shareButtons,
+      ],
+    );
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: colorScheme.outlineVariant),
+        color: colorScheme.surfaceContainer,
       ),
+      margin: widget.margin,
+      padding: const EdgeInsets.all(16),
+      child: content,
     );
   }
 }

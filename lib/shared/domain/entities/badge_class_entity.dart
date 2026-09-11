@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/shared/domain/entities/badge_alignment_entity.dart';
 import 'package:edubadges/shared/domain/entities/badge_class_extension_entity.dart';
 import 'package:edubadges/shared/domain/entities/issuer_entity.dart';
@@ -20,13 +21,15 @@ class BadgeClassEntity extends Equatable {
   final bool? assessmentSupervised;
   final bool selfEnrollmentEnabled;
   final bool userMayEnroll;
+  final bool userHasAcceptedTerms;
+  final TermsEntity? requiredTerms;
   final bool? stackable;
   final String? qualityAssuranceName;
   final String? qualityAssuranceUrl;
   final String? qualityAssuranceDescription;
   final String? criteriaText;
   final bool eqfNlqfLevelVerified;
-  
+
   final BadgeClassType badgeClassType;
   final List<BadgeClassExtensionEntity>? badgeclassextensionSet;
   final List<BadgeAlignmentEntity>? alignments;
@@ -46,6 +49,8 @@ class BadgeClassEntity extends Equatable {
     this.assessmentSupervised,
     this.selfEnrollmentEnabled = false,
     this.userMayEnroll = false,
+    this.userHasAcceptedTerms = false,
+    this.requiredTerms,
     this.stackable,
     this.qualityAssuranceName,
     this.qualityAssuranceUrl,
@@ -59,29 +64,31 @@ class BadgeClassEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        entityId,
-        image,
-        description,
-        formal,
-        participation,
-        assessmentType,
-        assessmentIdVerified,
-        assessmentSupervised,
-        qualityAssuranceName,
-        qualityAssuranceUrl,
-        qualityAssuranceDescription,
-        selfEnrollmentEnabled,
-        userMayEnroll,
-        stackable,
-        criteriaText,
-        eqfNlqfLevelVerified,
-        badgeClassType,
-        badgeclassextensionSet,
-        alignments,
-        issuer,
-      ];
+    id,
+    name,
+    entityId,
+    image,
+    description,
+    formal,
+    participation,
+    assessmentType,
+    assessmentIdVerified,
+    assessmentSupervised,
+    qualityAssuranceName,
+    qualityAssuranceUrl,
+    qualityAssuranceDescription,
+    selfEnrollmentEnabled,
+    userMayEnroll,
+    userHasAcceptedTerms,
+    requiredTerms,
+    stackable,
+    criteriaText,
+    eqfNlqfLevelVerified,
+    badgeClassType,
+    badgeclassextensionSet,
+    alignments,
+    issuer,
+  ];
 }
 
 extension BadgeClassExtensions on BadgeClassEntity {

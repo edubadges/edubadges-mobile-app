@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
-import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
+import 'package:edubadges/shared/domain/entities/badge_class_entity.dart';
 import 'package:edubadges/shared/domain/entities/institution_entity.dart'
     as badge_institution;
 
@@ -32,22 +32,22 @@ bool institutionsMatch(
   return agreementIds.any(badgeIds.contains);
 }
 
-String badgeTermsType(BadgeInstanceEntity badge) {
-  return badge.badgeclass.formal == true ? 'formal_badge' : 'informal_badge';
+String badgeTermsTypeFromClass(BadgeClassEntity badgeClass) {
+  return badgeClass.formal == true ? 'formal_badge' : 'informal_badge';
 }
 
 bool isBadgeTermsType(String termsType) {
   return termsType == 'formal_badge' || termsType == 'informal_badge';
 }
 
-TermsAgreementEntity? findTermsAgreementForBadge({
-  required BadgeInstanceEntity badge,
+TermsAgreementEntity? findTermsAgreementForBadgeClass({
+  required BadgeClassEntity badgeClass,
   required List<TermsAgreementEntity> agreements,
 }) {
   final Set<String> badgeIds = badgeInstitutionIds(
-    badge.badgeclass.issuer?.faculty?.institution,
+    badgeClass.issuer?.faculty?.institution,
   );
-  final String termsType = badgeTermsType(badge);
+  final String termsType = badgeTermsTypeFromClass(badgeClass);
   if (badgeIds.isNotEmpty) {
     final TermsAgreementEntity? typedMatch = agreements.firstWhereOrNull(
       (TermsAgreementEntity agreement) =>
@@ -67,8 +67,10 @@ TermsAgreementEntity? findTermsAgreementForBadge({
     }
   }
   final List<TermsAgreementEntity> typeMatches = agreements
-      .where((TermsAgreementEntity agreement) =>
-          agreement.terms.termsType == termsType)
+      .where(
+        (TermsAgreementEntity agreement) =>
+            agreement.terms.termsType == termsType,
+      )
       .toList();
   if (typeMatches.length == 1) {
     return typeMatches.first;
@@ -76,19 +78,20 @@ TermsAgreementEntity? findTermsAgreementForBadge({
   return null;
 }
 
-AgreementRouteModel? resolveBadgePrivacyAgreement({
+AgreementRouteModel? resolveBadgeTermsAgreement({
   required TermsEntity? requiredTerms,
-  required BadgeInstanceEntity badge,
+  required BadgeClassEntity badgeClass,
   required List<TermsAgreementEntity> profileAgreements,
   required String languageCode,
 }) {
   if (requiredTerms != null && requiredTerms.termsUrls.isNotEmpty) {
     return AgreementRouteModel.fromTermsEntity(requiredTerms, languageCode);
   }
-  final TermsAgreementEntity? matchingAgreement = findTermsAgreementForBadge(
-    badge: badge,
-    agreements: profileAgreements,
-  );
+  final TermsAgreementEntity? matchingAgreement =
+      findTermsAgreementForBadgeClass(
+        badgeClass: badgeClass,
+        agreements: profileAgreements,
+      );
   if (matchingAgreement == null) {
     return null;
   }
@@ -104,16 +107,35 @@ AgreementRouteModel? resolveBadgePrivacyAgreement({
   );
 }
 
-String buildTermsAgreementDebugContext({
+bool shouldPromptForBadgeTerms({
+  required BadgeClassEntity badgeClass,
+  required List<TermsAgreementEntity> profileAgreements,
+  required String languageCode,
+}) {
+  if (badgeClass.userHasAcceptedTerms) {
+    return false;
+  }
+  return resolveBadgeTermsAgreement(
+        requiredTerms: badgeClass.requiredTerms,
+        badgeClass: badgeClass,
+        profileAgreements: profileAgreements,
+        languageCode: languageCode,
+      ) !=
+      null;
+}
+
+String buildBadgeClassTermsDebugContext({
   required String routeBadgeId,
-  required BadgeInstanceEntity badge,
-  required List<TermsAgreementEntity> agreements,
+  required BadgeClassEntity badgeClass,
+  required TermsEntity? requiredTerms,
+  required List<TermsAgreementEntity> profileAgreements,
+  String extraLines = '',
 }) {
   final badge_institution.InstitutionEntity? institution =
-      badge.badgeclass.issuer?.faculty?.institution;
+      badgeClass.issuer?.faculty?.institution;
   final Set<String> badgeIds = badgeInstitutionIds(institution);
-  final String termsType = badgeTermsType(badge);
-  final String agreementSummary = agreements
+  final String termsType = badgeTermsTypeFromClass(badgeClass);
+  final String agreementSummary = profileAgreements
       .map(
         (TermsAgreementEntity agreement) =>
             '${agreement.terms.termsType}:'
@@ -121,30 +143,18 @@ String buildTermsAgreementDebugContext({
             ' alt=${agreement.terms.institution?.alternativeIdentifier}',
       )
       .join('; ');
-  return 'BadgePrivacy: no matching terms agreement\n'
+  final String extras = extraLines.isEmpty ? '' : '$extraLines\n';
+  return 'BadgeTerms: no matching terms agreement\n'
       'routeBadgeId=$routeBadgeId\n'
-      'matchedBadgeId=${badge.id}\n'
-      'matchedBadgeEntityId=${badge.entityId}\n'
+      '$extras'
+      'badgeClassEntityId=${badgeClass.entityId}\n'
       'badgeInstitutionIds=$badgeIds\n'
       'badgeTermsType=$termsType\n'
-      'badgeFormal=${badge.badgeclass.formal}\n'
-      'issuerPresent=${badge.badgeclass.issuer != null}\n'
-      'profileAgreements=[$agreementSummary]';
-}
-
-String buildDirectAwardTermsDebugContext({
-  required String routeBadgeId,
-  required BadgeInstanceEntity badge,
-  required TermsEntity? requiredTerms,
-  required List<TermsAgreementEntity> profileAgreements,
-}) {
-  final String baseContext = buildTermsAgreementDebugContext(
-    routeBadgeId: routeBadgeId,
-    badge: badge,
-    agreements: profileAgreements,
-  );
-  return '$baseContext\n'
+      'badgeFormal=${badgeClass.formal}\n'
+      'issuerPresent=${badgeClass.issuer != null}\n'
+      'userHasAcceptedTerms=${badgeClass.userHasAcceptedTerms}\n'
       'requiredTermsPresent=${requiredTerms != null}\n'
       'requiredTermsType=${requiredTerms?.termsType}\n'
-      'requiredTermsUrlCount=${requiredTerms?.termsUrls.length ?? 0}';
+      'requiredTermsUrlCount=${requiredTerms?.termsUrls.length ?? 0}\n'
+      'profileAgreements=[$agreementSummary]';
 }

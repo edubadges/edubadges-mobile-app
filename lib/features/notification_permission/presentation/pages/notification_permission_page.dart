@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/outlined_button.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
@@ -56,8 +55,9 @@ class NotificationPermissionPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: colorScheme.surfaceContainer,
       body: MaxWidthWrapper(
+        enableScrollbar: false,
         child: SafeArea(
-          bottom: Platform.isAndroid,
+          bottom: PlatformInfo.isAndroid,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 24.0),
             child: Column(

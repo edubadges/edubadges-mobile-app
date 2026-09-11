@@ -1,6 +1,7 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -113,11 +114,8 @@ class NewCollectionPage extends StatelessWidget {
       appBar: AppBar(
         centerTitle: false,
         titleSpacing: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
-          onPressed: () => context.pop(),
-          tooltip: AppLocalizations.of(context).semanticsBack,
-        ),
+        automaticallyImplyLeading: false,
+        leading: const AppBackButton(fallbackLocation: RoutePath.collections),
         title: Text(
           name,
           style: theme.textTheme.titleLarge?.copyWith(

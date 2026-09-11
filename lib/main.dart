@@ -3,11 +3,14 @@ import 'dart:async';
 import 'package:edubadges/app/app.dart';
 import 'package:edubadges/core/analytics/piwik_pro_analytics.dart';
 import 'package:edubadges/core/app_container.dart';
+import 'package:edubadges/core/auth/dev_auth_bootstrap.dart';
+import 'package:edubadges/core/auth/web_auth_bootstrap.dart';
 import 'package:edubadges/core/constants/env_keys.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/core/utils/url_strategy.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/firebase/firebase_options_acceptance.dart'
     as firebase_acc;
@@ -26,6 +29,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 String? appFlavor;
@@ -33,26 +37,19 @@ String? appFlavor;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await initializeDateFormatting();
+  configureAppUrlStrategy();
 
-  // Configure system UI for edge-to-edge display
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
-  if (appFlavor == null) {
-    const flutterAppFlavor = String.fromEnvironment('FLUTTER_APP_FLAVOR');
-    const appFlavorEnv = String.fromEnvironment('APP_FLAVOR');
-    if (flutterAppFlavor.isNotEmpty) {
-      appFlavor = flutterAppFlavor;
-    } else if (appFlavorEnv.isNotEmpty) {
-      appFlavor = appFlavorEnv;
-    } else {
-      appFlavor = 'dev';
-    }
+  if (kIsWeb) {
+    GoRouter.optionURLReflectsImperativeAPIs = true;
   }
 
-  F.appFlavor = Flavor.values.firstWhere(
-    (element) => element.name == appFlavor,
-  );
+  await initializeDateFormatting();
+
+  if (!kIsWeb) {
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  }
+
+  F.appFlavor = _resolveFlavor();
 
   logger.i('App flavor: ${F.appFlavor.name}');
 
@@ -69,8 +66,11 @@ void main() async {
     piwikProSiteId: dotenv.env[EnvKeys.piwikProSiteId] ?? '',
   );
 
-  // Initialize Firebase
-  await Firebase.initializeApp(options: _getFirebaseOptions());
+  if (!kIsWeb) {
+    await Firebase.initializeApp(options: _getFirebaseOptions());
+  } else {
+    logger.i('Skipping Firebase initialization on web until configured');
+  }
 
   final bool analyticsEnabled = EnvironmentConfig.instance.enableAnalytics;
   await PiwikProAnalytics.instance.initialize(
@@ -79,7 +79,6 @@ void main() async {
     enabled: analyticsEnabled,
   );
 
-  // Initialize Crashlytics (iOS/Android only)
   if (!kIsWeb) {
     final crashlyticsEnabled = EnvironmentConfig.instance.enableCrashlytics;
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
@@ -102,19 +101,81 @@ void main() async {
   Analytics Enabled: ${dotenv.env[EnvKeys.enableAnalytics] == 'true'}
   Crashlytics Enabled: ${dotenv.env[EnvKeys.enableCrashlytics] == 'true'}''');
 
-  // Initialize Networking
   final container = ProviderContainer();
   appProviderContainer = container;
   final apiClient = container.read(apiClientProvider);
   await apiClient.init();
-  unawaited(_syncBadgeCountOnStartup(container));
+  await applyDevAccessTokenIfDefined(container);
+  await completeWebLoginRedirect(container);
+  if (!kIsWeb) {
+    unawaited(_syncBadgeCountOnStartup(container));
+  }
 
-  // Navigate to main when a notification is tapped (background).
-  FirebaseMessaging.onMessageOpenedApp.listen((_) {
-    appGoRouter?.go(RoutePath.main);
-  });
+  if (!kIsWeb) {
+    FirebaseMessaging.onMessageOpenedApp.listen((_) {
+      appGoRouter?.go(RoutePath.main);
+    });
+  }
 
   runApp(UncontrolledProviderScope(container: container, child: const App()));
+}
+
+/// Resolves the build flavor, failing loudly instead of silently guessing.
+///
+/// Mobile builds get `FLUTTER_APP_FLAVOR` for free from `flutter build --flavor`.
+/// Web has no `--flavor`, so it must be passed explicitly with
+/// `--dart-define=APP_FLAVOR=<flavor>`. Without this guard a web deployment that
+/// forgot the define would silently ship a dev-pointed app against the wrong
+/// backend and the wrong SurfConext issuer.
+Flavor _resolveFlavor() {
+  const flutterAppFlavor = String.fromEnvironment('FLUTTER_APP_FLAVOR');
+  const appFlavorEnv = String.fromEnvironment('APP_FLAVOR');
+
+  final name = switch (appFlavor) {
+    final String preset when preset.isNotEmpty => preset,
+    _ when flutterAppFlavor.isNotEmpty => flutterAppFlavor,
+    _ when appFlavorEnv.isNotEmpty => appFlavorEnv,
+    _ => null,
+  };
+
+  final expected = Flavor.values.map((flavor) => flavor.name).join(', ');
+
+  if (name == null) {
+    if (kIsWeb) {
+      throw _flavorError(
+        'No build flavor defined. Web builds must pass '
+        '--dart-define=APP_FLAVOR=<flavor>, one of: $expected.',
+      );
+    }
+    appFlavor = Flavor.dev.name;
+    return Flavor.dev;
+  }
+
+  final match = Flavor.values.where((flavor) => flavor.name == name);
+  if (match.isEmpty) {
+    throw _flavorError(
+      'Unknown build flavor "$name". Expected one of: $expected.',
+    );
+  }
+
+  appFlavor = name;
+  return match.first;
+}
+
+/// Prints [message] before returning the error to throw.
+///
+/// A release web build minifies exception type names, so an uncaught
+/// [StateError] surfaces in the browser console as an opaque object and the
+/// user just sees the splash screen forever. Printing the text first means the
+/// reason is always readable, which matters because this only ever fires on a
+/// misconfigured deployment.
+///
+/// [debugPrint] rather than [logger]: the logger uses the default
+/// `DevelopmentFilter`, which drops everything in a release build - exactly the
+/// build where this message is needed.
+StateError _flavorError(String message) {
+  debugPrint('Edubadges startup failed: $message');
+  return StateError(message);
 }
 
 Future<void> _syncBadgeCountOnStartup(ProviderContainer container) async {

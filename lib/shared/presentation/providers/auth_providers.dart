@@ -1,3 +1,4 @@
+import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
@@ -5,7 +6,6 @@ import 'package:edubadges/features/catalog/presentation/providers/catalog_provid
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/features/general_terms/presentation/providers/general_terms_providers.dart';
 import 'package:edubadges/features/login/presentation/providers/login_providers.dart';
-import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/shared/data/datasources/notification_permission_local_datasource.dart';
 import 'package:edubadges/shared/presentation/providers/permission_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

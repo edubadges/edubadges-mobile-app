@@ -1,3 +1,6 @@
+import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/features/account/data/models/profile_model.dart';
+import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/shared/data/models/badge_alignment_model.dart';
 import 'package:edubadges/shared/data/models/badge_class_extension_model.dart';
 import 'package:edubadges/shared/data/models/issuer_model.dart';
@@ -29,8 +32,18 @@ class BadgeClassModel extends BadgeClassEntity {
     super.assessmentType,
     super.assessmentIdVerified,
     super.assessmentSupervised,
-    @JsonKey(defaultValue: false) super.selfEnrollmentEnabled,
-    @JsonKey(defaultValue: false) super.userMayEnroll,
+    @JsonKey(
+      readValue: _readSelfEnrollmentEnabled,
+      fromJson: _parseBoolOrFalse,
+      defaultValue: false,
+    )
+    super.selfEnrollmentEnabled,
+    @JsonKey(fromJson: _parseBoolOrFalse, defaultValue: false)
+    super.userMayEnroll,
+    @JsonKey(fromJson: _parseBoolOrFalse, defaultValue: false)
+    super.userHasAcceptedTerms,
+    @JsonKey(fromJson: _requiredTermsFromJson, toJson: _requiredTermsToJson)
+    super.requiredTerms,
     super.stackable,
     super.qualityAssuranceName,
     super.qualityAssuranceUrl,
@@ -49,8 +62,16 @@ class BadgeClassModel extends BadgeClassEntity {
     @JsonKey(fromJson: _issuerFromJson, toJson: _issuerToJson) super.issuer,
   });
 
-  factory BadgeClassModel.fromJson(Map<String, dynamic> json) =>
-      _$BadgeClassModelFromJson(json);
+  factory BadgeClassModel.fromJson(Map<String, dynamic> json) {
+    if (!_hasEnrollmentFlag(json)) {
+      logger.w(
+        'Badge class ${json['entity_id'] ?? json['id']}: '
+        'missing enrollment flags '
+        '(self_enrollment_enabled, enrollment_enabled)',
+      );
+    }
+    return _$BadgeClassModelFromJson(json);
+  }
 
   Map<String, dynamic> toJson() => _$BadgeClassModelToJson(this);
 
@@ -65,6 +86,26 @@ class BadgeClassModel extends BadgeClassEntity {
   @override
   @JsonKey(fromJson: _assessmentTypeFromJson, toJson: _assessmentTypeToJson)
   List<AssessmentType>? get assessmentType => super.assessmentType;
+
+  @override
+  @JsonKey(
+    readValue: _readSelfEnrollmentEnabled,
+    fromJson: _parseBoolOrFalse,
+    defaultValue: false,
+  )
+  bool get selfEnrollmentEnabled => super.selfEnrollmentEnabled;
+
+  @override
+  @JsonKey(fromJson: _parseBoolOrFalse, defaultValue: false)
+  bool get userMayEnroll => super.userMayEnroll;
+
+  @override
+  @JsonKey(fromJson: _parseBoolOrFalse, defaultValue: false)
+  bool get userHasAcceptedTerms => super.userHasAcceptedTerms;
+
+  @override
+  @JsonKey(fromJson: _requiredTermsFromJson, toJson: _requiredTermsToJson)
+  TermsEntity? get requiredTerms => super.requiredTerms;
 
   @override
   @JsonKey(fromJson: _parseBoolOrFalse, defaultValue: false)
@@ -143,6 +184,23 @@ class BadgeClassModel extends BadgeClassEntity {
   static Map<String, dynamic>? _issuerToJson(IssuerEntity? value) =>
       value == null ? null : (value as IssuerModel).toJson();
 
+  static bool _hasEnrollmentFlag(Map<String, dynamic> json) =>
+      json.containsKey('self_enrollment_enabled') ||
+      json.containsKey('enrollment_enabled');
+
+  static Object? _readSelfEnrollmentEnabled(
+    Map<dynamic, dynamic> json,
+    String key,
+  ) {
+    if (json.containsKey('self_enrollment_enabled')) {
+      return json['self_enrollment_enabled'];
+    }
+    if (json.containsKey('enrollment_enabled')) {
+      return json['enrollment_enabled'];
+    }
+    return json[key];
+  }
+
   static bool _parseBoolOrFalse(dynamic value) {
     if (value is bool) return value;
     if (value is String) {
@@ -151,4 +209,14 @@ class BadgeClassModel extends BadgeClassEntity {
     }
     return false;
   }
+
+  static TermsEntity? _requiredTermsFromJson(Object? value) {
+    if (value is! Map<String, dynamic>) {
+      return null;
+    }
+    return TermsModel.fromJson(value);
+  }
+
+  static Map<String, dynamic>? _requiredTermsToJson(TermsEntity? terms) =>
+      terms == null ? null : (terms as TermsModel).toJson();
 }

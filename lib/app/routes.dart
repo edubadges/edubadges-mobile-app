@@ -1,17 +1,24 @@
+import 'package:edubadges/app/router_refresh_listenable.dart';
 import 'package:edubadges/core/analytics/piwik_pro_analytics.dart';
 import 'package:edubadges/core/analytics/piwik_pro_route_observer.dart';
 import 'package:edubadges/core/app_container.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/app_language.dart';
+import 'package:edubadges/core/widgets/deferred_widget.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/presentation/pages/account_page.dart';
 import 'package:edubadges/features/account/presentation/pages/agreement_details_page.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
-import 'package:edubadges/features/badge_details/presentation/pages/badge_details_page.dart';
-import 'package:edubadges/features/badge_details/presentation/pages/quality_assurance_page.dart';
-import 'package:edubadges/features/badges_overview/presentation/pages/badge_claim_page.dart';
-import 'package:edubadges/features/badges_overview/presentation/pages/badge_claim_success_page.dart';
+import 'package:edubadges/features/badge_details/presentation/pages/badge_details_page.dart'
+    deferred as badge_details;
+import 'package:edubadges/features/badge_details/presentation/pages/badge_enrollment_terms_page.dart';
+import 'package:edubadges/features/badge_details/presentation/pages/quality_assurance_page.dart'
+    deferred as quality_assurance;
+import 'package:edubadges/features/badges_overview/presentation/pages/badge_claim_page.dart'
+    deferred as badge_claim;
+import 'package:edubadges/features/badges_overview/presentation/pages/badge_claim_success_page.dart'
+    deferred as badge_claim_success;
 import 'package:edubadges/features/badges_overview/presentation/pages/badge_privacy_page.dart';
 import 'package:edubadges/features/badges_overview/presentation/pages/badges_overview_page.dart';
 import 'package:edubadges/features/catalog/presentation/pages/catalog_page.dart';
@@ -21,7 +28,8 @@ import 'package:edubadges/features/collections/presentation/pages/collection_pag
 import 'package:edubadges/features/collections/presentation/pages/collections_page.dart';
 import 'package:edubadges/features/collections/presentation/pages/new_collection_page.dart';
 import 'package:edubadges/features/general_terms/domain/general_terms_url_resolver.dart';
-import 'package:edubadges/features/general_terms/presentation/pages/general_terms_page.dart';
+import 'package:edubadges/features/general_terms/presentation/pages/general_terms_page.dart'
+    deferred as general_terms;
 import 'package:edubadges/features/general_terms/presentation/providers/general_terms_providers.dart';
 import 'package:edubadges/features/login/data/models/login_user_status.dart';
 import 'package:edubadges/features/login/presentation/pages/login_page.dart';
@@ -30,26 +38,29 @@ import 'package:edubadges/features/main/main_page.dart';
 import 'package:edubadges/features/notification_permission/presentation/pages/notification_permission_page.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
 import 'package:edubadges/shared/presentation/providers/permission_providers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 final appRouter = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
-  final shouldShowNotificationPrompt = ref.watch(
-    shouldShowNotificationPermissionPromptProvider,
-  );
+  final refreshListenable = RouterRefreshListenable(ref);
+  ref.onDispose(refreshListenable.dispose);
 
   final router = GoRouter(
     initialLocation: RoutePath.login,
+    refreshListenable: refreshListenable,
     observers: <NavigatorObserver>[
       PiwikProRouteObserver(PiwikProAnalytics.instance),
     ],
     redirect: (context, state) {
-      final bool loggedIn = authState.asData?.value ?? false;
+      final bool loggedIn = ref.read(authProvider).asData?.value ?? false;
       final bool isGoingToLogin = state.uri.path == RoutePath.login;
+      final bool isPublicRoute = RoutePath.isPublicPath(state.uri.path);
 
-      if (!loggedIn && !isGoingToLogin) return RoutePath.login;
+      if (!loggedIn && !isGoingToLogin && !isPublicRoute) {
+        return RoutePath.login;
+      }
 
       // After login, decide where to go based on a priority system.
       if (loggedIn && isGoingToLogin) {
@@ -68,7 +79,12 @@ final appRouter = Provider<GoRouter>((ref) {
         }
 
         // Check if notification permissions need to be asked.
-        if (shouldShowNotificationPrompt.asData?.value == true) {
+        if (!kIsWeb &&
+            ref
+                    .read(shouldShowNotificationPermissionPromptProvider)
+                    .asData
+                    ?.value ==
+                true) {
           return RoutePath.notificationPermission;
         }
 
@@ -108,7 +124,10 @@ final appRouter = Provider<GoRouter>((ref) {
         },
         builder: (context, state) {
           final url = state.extra as String;
-          return GeneralTermsPage(url: url);
+          return DeferredWidget(
+            loadLibrary: general_terms.loadLibrary,
+            createWidget: () => general_terms.GeneralTermsPage(url: url),
+          );
         },
       ),
 
@@ -147,17 +166,84 @@ final appRouter = Provider<GoRouter>((ref) {
       ),
 
       GoRoute(
+        path: RoutePath.badgeQualityAssuranceLegacy,
+        name: 'badge-quality-assurance-legacy',
+        redirect: (context, state) {
+          final scopeName = state.pathParameters['scope'];
+          final id = state.pathParameters['id'];
+          if (scopeName == null || id == null || id.isEmpty) {
+            return RoutePath.main;
+          }
+          final BadgeDetailsScope? scope = BadgeDetailsScope.values
+              .where((value) => value.name == scopeName)
+              .firstOrNull;
+          if (scope == null) {
+            return RoutePath.main;
+          }
+          return RoutePath.badgeQualityAssurancePath(scope: scope, id: id);
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.badgeQualityAssuranceClaimed,
+        name: 'badge-quality-assurance-claimed',
+        builder: (context, state) {
+          final badgeId = state.pathParameters['id'] ?? '';
+          return DeferredWidget(
+            loadLibrary: quality_assurance.loadLibrary,
+            createWidget: () => quality_assurance.QualityAssurancePage(
+              badgeId: badgeId,
+              scope: BadgeDetailsScope.claimed,
+            ),
+          );
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.badgeQualityAssuranceEnrollment,
+        name: 'badge-quality-assurance-enrollment',
+        builder: (context, state) {
+          final badgeId = state.pathParameters['id'] ?? '';
+          return DeferredWidget(
+            loadLibrary: quality_assurance.loadLibrary,
+            createWidget: () => quality_assurance.QualityAssurancePage(
+              badgeId: badgeId,
+              scope: BadgeDetailsScope.enrollment,
+            ),
+          );
+        },
+      ),
+
+      GoRoute(
+        path: RoutePath.badgeQualityAssurancePublic,
+        name: 'badge-quality-assurance-public',
+        builder: (context, state) {
+          final badgeId = state.pathParameters['id'] ?? '';
+          return DeferredWidget(
+            loadLibrary: quality_assurance.loadLibrary,
+            createWidget: () => quality_assurance.QualityAssurancePage(
+              badgeId: badgeId,
+              scope: BadgeDetailsScope.public,
+            ),
+          );
+        },
+      ),
+
+      GoRoute(
         path: RoutePath.badgeDetailsClaimed,
         name: 'badge-details-claimed',
         builder: (context, state) {
           final id = state.pathParameters['id'] ?? '';
           final showClaimedGallery =
               state.uri.queryParameters['gallery'] != 'false';
-          return BadgeDetailsPage(
-            badge: BadgeDetailsRouteModel(
-              id: id,
-              scope: BadgeDetailsScope.claimed,
-              showClaimedGallery: showClaimedGallery,
+          return DeferredWidget(
+            loadLibrary: badge_details.loadLibrary,
+            createWidget: () => badge_details.BadgeDetailsPage(
+              badge: BadgeDetailsRouteModel(
+                id: id,
+                scope: BadgeDetailsScope.claimed,
+                showClaimedGallery: showClaimedGallery,
+              ),
             ),
           );
         },
@@ -168,10 +254,13 @@ final appRouter = Provider<GoRouter>((ref) {
         name: 'badge-details-enrollment',
         builder: (context, state) {
           final id = state.pathParameters['id'] ?? '';
-          return BadgeDetailsPage(
-            badge: BadgeDetailsRouteModel(
-              id: id,
-              scope: BadgeDetailsScope.enrollment,
+          return DeferredWidget(
+            loadLibrary: badge_details.loadLibrary,
+            createWidget: () => badge_details.BadgeDetailsPage(
+              badge: BadgeDetailsRouteModel(
+                id: id,
+                scope: BadgeDetailsScope.enrollment,
+              ),
             ),
           );
         },
@@ -182,10 +271,13 @@ final appRouter = Provider<GoRouter>((ref) {
         name: 'badge-details-public',
         builder: (context, state) {
           final id = state.pathParameters['id'] ?? '';
-          return BadgeDetailsPage(
-            badge: BadgeDetailsRouteModel(
-              id: id,
-              scope: BadgeDetailsScope.public,
+          return DeferredWidget(
+            loadLibrary: badge_details.loadLibrary,
+            createWidget: () => badge_details.BadgeDetailsPage(
+              badge: BadgeDetailsRouteModel(
+                id: id,
+                scope: BadgeDetailsScope.public,
+              ),
             ),
           );
         },
@@ -240,28 +332,6 @@ final appRouter = Provider<GoRouter>((ref) {
       ),
 
       GoRoute(
-        path: RoutePath.badgeQualityAssurance,
-        name: 'badge-quality-assurance',
-        builder: (context, state) {
-          final badgeId = state.pathParameters['id'] ?? '';
-          final scopeParam = state.pathParameters['scope'];
-          BadgeDetailsScope? scope;
-          for (final value in BadgeDetailsScope.values) {
-            if (value.name == scopeParam) {
-              scope = value;
-              break;
-            }
-          }
-
-          if (scope == null) {
-            return const CatalogPage();
-          }
-
-          return QualityAssurancePage(badgeId: badgeId, scope: scope);
-        },
-      ),
-
-      GoRoute(
         path: RoutePath.badgeClaim,
         name: 'badge-claim',
         builder: (context, state) {
@@ -270,9 +340,12 @@ final appRouter = Provider<GoRouter>((ref) {
               state.uri.queryParameters['remainingCount'] ?? '0';
           final remainingCount = int.tryParse(remainingCountStr) ?? 0;
 
-          return BadgeClaimPage(
-            badgeId: badgeId,
-            remainingCount: remainingCount,
+          return DeferredWidget(
+            loadLibrary: badge_claim.loadLibrary,
+            createWidget: () => badge_claim.BadgeClaimPage(
+              badgeId: badgeId,
+              remainingCount: remainingCount,
+            ),
           );
         },
       ),
@@ -287,19 +360,46 @@ final appRouter = Provider<GoRouter>((ref) {
       ),
 
       GoRoute(
+        path: RoutePath.badgeEnrollmentTerms,
+        name: 'badge-enrollment-terms',
+        builder: (context, state) {
+          final badgeClassEntityId = state.pathParameters['id'] ?? '';
+          return BadgeEnrollmentTermsPage(
+            badgeClassEntityId: badgeClassEntityId,
+          );
+        },
+      ),
+
+      GoRoute(
         path: RoutePath.badgeClaimSuccess,
         name: 'badge-claim-success',
         builder: (context, state) {
           final badgeClassId = state.uri.queryParameters['id'] ?? '';
-          return BadgeClaimSuccessPage(badgeClassId: badgeClassId);
+          return DeferredWidget(
+            loadLibrary: badge_claim_success.loadLibrary,
+            createWidget: () => badge_claim_success.BadgeClaimSuccessPage(
+              badgeClassId: badgeClassId,
+            ),
+          );
         },
       ),
 
       // Authenticated Shell with 4 Tabs
-      StatefulShellRoute.indexedStack(
+      StatefulShellRoute(
         builder: (context, state, navigationShell) {
           return MainPage(navigationShell: navigationShell);
         },
+        navigatorContainerBuilder:
+            (
+              BuildContext context,
+              StatefulNavigationShell navigationShell,
+              List<Widget> children,
+            ) {
+              return IndexedStack(
+                index: navigationShell.currentIndex,
+                children: children,
+              );
+            },
         branches: [
           // Branch 0: Badges Overview (default home)
           StatefulShellBranch(

@@ -31,6 +31,20 @@ final badgeDetailsProvider = FutureProvider.autoDispose
       return result.fold((failure) => throw failure, (badge) => badge);
     });
 
+/// Badge instance by its **instance** entity id.
+///
+/// The badge instance list (`/badge-instances`) is served with a trimmed
+/// serializer that omits instance-only fields such as `linkedin_url`; only the
+/// detail endpoint returns them. Use this to load those fields for a badge that
+/// was taken from a list response.
+final badgeInstanceProvider = FutureProvider.autoDispose
+    .family<BadgeInstanceModel, String>((ref, instanceEntityId) async {
+      final repository = ref.read(badgeDetailsRepositoryProvider);
+      final result = await repository.getBadgeInstance(instanceEntityId);
+
+      return result.fold((failure) => throw failure, (instance) => instance);
+    });
+
 final badgeDetailsModelProvider = FutureProvider.autoDispose
     .family<BadgeDetailsModel?, BadgeDetailsQuery>((ref, query) async {
       final repository = ref.read(badgeDetailsRepositoryProvider);
@@ -101,6 +115,15 @@ final enrollBadgeProvider =
     Provider<Future<bool> Function(String badgeclassSlug)>((ref) {
       return (String badgeclassSlug) async {
         final repository = ref.read(badgeDetailsRepositoryProvider);
+        final eligibility = await repository.getBadgeDetails(badgeclassSlug);
+        final bool mayEnroll = eligibility.fold(
+          (_) => false,
+          (BadgeClassModel badgeClass) => badgeClass.userMayEnroll,
+        );
+        if (!mayEnroll) {
+          return false;
+        }
+
         final result = await repository.enroll(badgeclassSlug);
 
         return result.fold((failure) => false, (_) {
@@ -140,6 +163,7 @@ final updateBadgeVisibilityProvider =
             await ref.read(badgesOverviewProvider.notifier).refresh();
             await ref.read(collectionsProvider.notifier).refresh();
             ref.invalidate(badgeDetailsProvider(entityId));
+            ref.invalidate(badgeInstanceProvider(entityId), asReload: true);
             ref.invalidate(badgeDetailsModelProvider, asReload: true);
             return true;
           } catch (_) {

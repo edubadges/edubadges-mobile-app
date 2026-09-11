@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:edubadges/core/network/errors/error_codes.dart';
@@ -14,15 +13,6 @@ class NetworkExceptionHandler {
   static AppException handleError(dynamic error, [StackTrace? stackTrace]) {
     if (error is DioException) {
       return _handleDioException(error, stackTrace);
-    }
-
-    if (error is SocketException) {
-      return NetworkException(
-        message: 'No internet connection',
-        code: ErrorCodes.noInternetConnection,
-        originalError: error,
-        stackTrace: stackTrace,
-      );
     }
 
     if (error is AppException) {
@@ -65,14 +55,6 @@ class NetworkExceptionHandler {
 
       case DioExceptionType.connectionError:
       case DioExceptionType.unknown:
-        if (error.error is SocketException) {
-          return NetworkException(
-            message: 'No internet connection',
-            code: ErrorCodes.noInternetConnection,
-            originalError: error,
-            stackTrace: stackTrace,
-          );
-        }
         return NetworkException(
           message: 'Network error occurred',
           code: ErrorCodes.networkError,

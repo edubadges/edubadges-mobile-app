@@ -43,8 +43,3 @@ String getLocalizedString(String? dutch, String? english, String langCode) {
 
   return preferred ?? fallback ?? 'Unknown';
 }
-
-String filterBadMarkdown(String md) {
-   // Remove lines that are just > with optional whitespace
-  return md.replaceAll(RegExp(r'^>\s*$', multiLine: true), '');
-}

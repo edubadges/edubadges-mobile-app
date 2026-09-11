@@ -1,0 +1,170 @@
+# Edubadges web app - nginx server block.
+#
+# DO NOT EDIT A RENDERED COPY. This is a template; its placeholder tokens are
+# filled in by tool/render_nginx_conf.sh from .env.<flavor>, so the Content-
+# Security-Policy always names the same API, SurfConext and analytics hosts the
+# app was actually built against.
+#
+#     tool/render_nginx_conf.sh acc > /etc/nginx/conf.d/default.conf
+#
+# Two things about how this is meant to run:
+#
+#   * TLS terminates upstream, on SURF's own load balancer or reverse proxy.
+#     This block speaks plain HTTP on 8080 and never redirects; the HTTP->HTTPS
+#     redirect belongs on the proxy in front.
+#   * The app must be served at the ROOT of its hostname. The SurfConext
+#     redirect URI is derived from the browser's origin, so serving it under a
+#     path such as /app/ breaks login.
+#
+# The map blocks below must live in nginx's `http` context. Inside the container
+# that is automatic (conf.d/*.conf is included from http). If you are pasting
+# this into an existing nginx, keep the maps at http level and the server block
+# in its usual place.
+
+# Flutter's output filenames are not content-hashed, so nothing may be cached
+# immutably. Everything gets a short TTL, and the files that decide which build
+# the browser runs are never cached at all.
+map $uri $edubadges_cache_control {
+    default                          "public, max-age=300";
+    "/"                              "no-cache";
+    "/index.html"                    "no-cache";
+    "/flutter_bootstrap.js"          "no-cache";
+    "/flutter_service_worker.js"     "no-cache";
+    "/version.json"                  "no-cache";
+}
+
+server {
+    listen 8080;
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Do not advertise the nginx version.
+    server_tokens off;
+
+    # --- Headers ------------------------------------------------------------
+    #
+    # Every add_header lives here at server level and nowhere else. nginx
+    # replaces the inherited add_header set as soon as a location declares one
+    # of its own, so a single add_header in a location below would silently drop
+    # all of these. Locations therefore use `default_type` and `return`, never
+    # add_header.
+
+    add_header Cache-Control $edubadges_cache_control always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    # Only long-established features are listed here. `interest-cohort=()` used
+    # to be included, but Chromium rejected the whole header with a
+    # structured-header parse error and therefore applied none of it. That was
+    # the FLoC opt-out, and FLoC no longer exists, so it buys nothing.
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    # Content-Security-Policy.
+    #
+    #   script-src   'wasm-unsafe-eval' is required to instantiate the
+    #                WebAssembly build. No 'unsafe-inline': index.html loads its
+    #                splash script from splash.js precisely so this can stay off,
+    #                which matters because the SurfConext refresh token is held
+    #                in localStorage and would be readable by injected script.
+    #   style-src    Flutter injects styles at runtime, so 'unsafe-inline' is
+    #                unavoidable here. It is far lower risk than script-src.
+    #   connect-src  the API and the SurfConext token endpoint (the PKCE code
+    #                exchange is an XHR from the browser), plus analytics.
+    #   img-src      https: is deliberately broad - badge images are served from
+    #                issuer-controlled hosts that are not known ahead of time.
+    #   worker-src   blob: is required by the skwasm renderer.
+    #
+    # Deliberately NOT allowed: https://fonts.gstatic.com. The Flutter engine
+    # tries to pull fallback fonts from there on startup. The app bundles the
+    # fonts it uses (Nunito, SourceSans3) and renders correctly without it, so
+    # the request is blocked and logged in the browser console - which keeps
+    # visitor traffic off a Google CDN. The trade-off is that a badge title in a
+    # script the bundled fonts do not cover may show placeholder glyphs. To
+    # accept the CDN instead, add https://fonts.gstatic.com to both connect-src
+    # and font-src below.
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'{{ANALYTICS_CSP}}; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' {{API_ORIGIN}} {{OIDC_ORIGIN}}{{ANALYTICS_CSP}}; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'" always;
+
+    # --- Health check -------------------------------------------------------
+    # For the load balancer. Cheap, unlogged, and independent of the app files.
+    location = /health {
+        access_log off;
+        default_type text/plain;
+        return 200 "ok";
+    }
+
+    # --- Crawlers -----------------------------------------------------------
+    # robots.txt is a real file written into the build output by
+    # tool/build_web.sh (disallow everything except on production), so it needs
+    # no rule here beyond the static handler below.
+
+    # --- Content types ------------------------------------------------------
+    # Both of these are load-bearing. Chromium enforces strict MIME checking on
+    # module scripts, so `main.dart.mjs` served as application/octet-stream is
+    # refused outright and the app never starts. A wrong type on the wasm module
+    # disables streaming compilation.
+    #
+    # These use a `types` block rather than `default_type` deliberately.
+    # `default_type` is only a fallback for when the types hash has no entry for
+    # the extension, and it did not take effect on SURF's nginx - the response
+    # still carried the http-level application/octet-stream. A `types` block
+    # sets the mapping outright, which is deterministic. Replacing the map is
+    # safe here because each of these locations matches exactly one extension.
+    location ~* \.wasm$ {
+        types { application/wasm wasm; }
+        try_files $uri =404;
+    }
+
+    location ~* \.mjs$ {
+        types { text/javascript mjs; }
+        try_files $uri =404;
+    }
+
+    # --- Static files -------------------------------------------------------
+    # Real files only; a miss here must 404 rather than fall through to the SPA
+    # handler, otherwise a mistyped asset path returns index.html with a 200.
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|otf|json|map|symbols)$ {
+        try_files $uri =404;
+    }
+
+    location /assets/ {
+        try_files $uri =404;
+    }
+
+    location /canvaskit/ {
+        try_files $uri =404;
+    }
+
+    location /icons/ {
+        try_files $uri =404;
+    }
+
+    # Note: there is deliberately no rule blocking /assets/.env*. The app fetches
+    # its own configuration from /assets/.env.{{FLAVOR}} at startup and will not
+    # boot without it. The build prunes the other three environments' files, and
+    # nothing in any .env file is secret - see the warning header in those files.
+
+    # --- Universal / app links ----------------------------------------------
+    # Only needed if this hostname is added to the iOS and Android app-link
+    # configuration. Today those point at edubadges.nl and demo.edubadges.nl,
+    # not at the backpack hosts, so this is off. To enable, copy the repository
+    # root's .well-known/ into the served directory and uncomment:
+    #
+    # location = /.well-known/apple-app-site-association {
+    #     default_type application/json;
+    #     try_files $uri =404;
+    # }
+    # location = /.well-known/assetlinks.json {
+    #     default_type application/json;
+    #     try_files $uri =404;
+    # }
+
+    # --- SPA fallback -------------------------------------------------------
+    # go_router uses real paths, so a deep link such as /collections or
+    # /details/<id> must return index.html on a hard reload instead of 404.
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

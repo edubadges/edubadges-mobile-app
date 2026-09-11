@@ -1,4 +1,5 @@
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/markdown_sanitizer.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
@@ -100,6 +101,7 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
         automaticallyImplyLeading: false,
       ),
       body: MaxWidthWrapper(
+        scrollController: _scrollController,
         child: Stack(
           children: [
             markdownAsync.when(
@@ -118,7 +120,7 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
                   padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
                   child: FocusableSection(
                     child: MarkdownBody(
-                      data: markdownContent,
+                      data: sanitizeMarkdown(markdownContent),
                       styleSheet: MarkdownStyleSheet.fromTheme(theme).copyWith(
                         p: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurface,

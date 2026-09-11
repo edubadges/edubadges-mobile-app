@@ -37,13 +37,33 @@
     "@tabAccount": {
         "description": "Navigation tab label for the account section"
     },
+    "accountSubtitle": "Beheer je gegevens en instellingen",
+    "@accountSubtitle": {
+        "description": "Page subtitle for the account screen on desktop"
+    },
     "tabBadges": "Edubadges",
     "@tabBadges": {
         "description": "Navigation tab label for the edubadges section"
     },
+    "badgesOverviewTitle": "Mijn edubadges",
+    "@badgesOverviewTitle": {
+        "description": "Page title for the badges overview screen on desktop"
+    },
+    "badgesOverviewSubtitle": "Overzicht van je behaalde en aangevraagde edubadges",
+    "@badgesOverviewSubtitle": {
+        "description": "Page subtitle for the badges overview screen on desktop"
+    },
     "tabCatalog": "Catalogus",
     "@tabCatalog": {
         "description": "Navigation tab label for the catalog section"
+    },
+    "catalogSubtitle": "Ontdek beschikbare edubadges per instelling",
+    "@catalogSubtitle": {
+        "description": "Page subtitle for the catalog screen on desktop"
+    },
+    "catalogSearchPlaceholder": "Zoek op naam of instelling...",
+    "@catalogSearchPlaceholder": {
+        "description": "Placeholder text for the catalog search input field"
     },
     "tabCollections": "Collecties",
     "@tabCollections": {
@@ -443,9 +463,31 @@
     "@requestedBadges": {
         "description": "Section header for badges that have been requested by the user"
     },
+    "badgesTabEarned": "In jouw bezit ({count})",
+    "@badgesTabEarned": {
+        "description": "Tab label on the badges overview for the edubadges the user has earned, with the number of badges",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "badgesTabRequested": "Aangevraagd ({count})",
+    "@badgesTabRequested": {
+        "description": "Tab label on the badges overview for the edubadges the user has requested, with the number of badges",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
     "noEdubadgesYet": "Je hebt nog geen edubadges",
     "@noEdubadgesYet": {
         "description": "Message shown when user has no edubadges in their collection"
+    },
+    "noRequestedBadges": "Je hebt nog geen edubadges aangevraagd",
+    "@noRequestedBadges": {
+        "description": "Message shown on the requested tab when the user has not requested any edubadges"
     },
     "giveFeedback": "Feedback geven",
     "@giveFeedback": {
@@ -642,6 +684,23 @@
     "declineBadgeConfirmation": "Je staat op het punt deze edubadge te weigeren. Deze actie is definitief en kan niet worden teruggedraaid.",
     "@declineBadgeConfirmation": {
         "description": "Warning message shown when user is about to decline a badge"
+    },
+    "claimPrivateEmailTitle": "Claim en voeg toe aan je backpack",
+    "@claimPrivateEmailTitle": {
+        "description": "Title for the confirmation dialog when a badge was awarded to a private email address"
+    },
+    "claimPrivateEmailDescription": "Nadat deze edubadge is geclaimed, wordt deze toegevoegd aan je backpack en kan je de edubadge openbaar maken en delen.",
+    "@claimPrivateEmailDescription": {
+        "description": "Explanation shown before claiming a badge awarded to a private email address"
+    },
+    "claimPrivateEmailNameNote": "Let op: dit is de naam die in de edubadge komt te staan: {name}. Als dit niet klopt, neem contact op met de instelling.",
+    "@claimPrivateEmailNameNote": {
+        "description": "Warning that the recipient name will be written on the claimed edubadge",
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
     },
     "badgesRemainingToClaim": "{count, plural, =0{Geen edubadges meer te claimen} =1{Nog 1 edubadge te claimen} other{Nog {count} edubadges te claimen}}",
     "@badgesRemainingToClaim": {
@@ -1189,6 +1248,8 @@
     "semanticsImageNotSupported": "Afbeelding niet beschikbaar",
     "semanticsBadgePublic": "Badge is openbaar. Tik om zichtbaarheid te wijzigen.",
     "semanticsBadgePrivate": "Badge is privé. Tik om zichtbaarheid te wijzigen.",
+    "semanticsBadgeVisibilityPublic": "Badge is openbaar",
+    "semanticsBadgeVisibilityPrivate": "Badge is privé",
     "semanticsLogout": "Uitloggen",
     "semanticsCopyLink": "Link kopiëren",
     "semanticsError": "Fout",
