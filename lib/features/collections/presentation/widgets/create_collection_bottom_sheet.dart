@@ -1,6 +1,6 @@
 import 'package:edubadges/core/constants/route_path.dart';
-import 'package:edubadges/core/widgets/app_text_field.dart';
 import 'package:edubadges/core/widgets/base_form_bottom_sheet.dart';
+import 'package:edubadges/features/collections/presentation/widgets/collection_form_fields.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -59,23 +59,9 @@ class _CreateCollectionBottomSheetState
       onSave: _handleSave,
       onCancel: _handleCancel,
       formFields: [
-        AppTextField(
-          label: l10n.collectionName,
-          placeholder: l10n.collectionNamePlaceholder,
-          controller: _nameController,
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return l10n.collectionNameRequired;
-            }
-            return null;
-          },
-        ),
-        const SizedBox(height: 24),
-        AppTextField(
-          label: l10n.collectionDescription,
-          placeholder: l10n.collectionDescriptionPlaceholder,
-          controller: _descriptionController,
-          maxLines: 4,
+        CollectionFormFields(
+          nameController: _nameController,
+          descriptionController: _descriptionController,
         ),
       ],
     );

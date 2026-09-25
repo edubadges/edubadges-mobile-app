@@ -698,11 +698,35 @@ abstract class AppLocalizations {
   /// **'Edit collection'**
   String get editCollection;
 
-  /// Description text for the edit collection screen
+  /// Section heading above the list of edubadges that can be selected for a collection
   ///
   /// In en, this message translates to:
-  /// **'Update your collection details'**
-  String get editCollectionDescription;
+  /// **'Badges in collection'**
+  String get badgesInCollection;
+
+  /// Helper text below the badges section heading on the collection form
+  ///
+  /// In en, this message translates to:
+  /// **'To create a collection you need to select at least one edubadge.'**
+  String get badgesInCollectionHelper;
+
+  /// Title of the dialog shown when leaving a screen with unsaved changes
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes?'**
+  String get saveChangesTitle;
+
+  /// Body of the dialog shown when leaving the edit collection screen with unsaved changes
+  ///
+  /// In en, this message translates to:
+  /// **'You have made changes to this collection. Do you want to save them before you leave this screen?'**
+  String get unsavedCollectionChangesDescription;
+
+  /// Dialog action that discards unsaved changes and leaves the screen
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t save'**
+  String get dontSave;
 
   /// Button text to continue to the next step
   ///

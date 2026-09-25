@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/features/badges_overview/domain/entities/badges_overview_state.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/collections/data/models/collections_model.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
@@ -14,11 +15,6 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
   Future<List<CollectionsEntity>> build() async {
     try {
       final badgesState = await ref.read(badgesOverviewProvider.future);
-      final badgeInstances = [
-        ...badgesState.claimedBadges,
-        ...badgesState.unclaimedBadges,
-        ...badgesState.requestedBadges,
-      ];
 
       final apiClient = ref.read(apiClientProvider);
       final response = await apiClient.get<List<dynamic>>('/badge-collections');
@@ -28,15 +24,11 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
           .map((json) => CollectionsModel.fromJson(json as Map<String, dynamic>))
           .toList();
 
-      final badgeMap = {for (var badge in badgeInstances) badge.entityId: badge};
+      final badgeMap = _badgeInstancesById(badgesState);
 
-      return collections.map((collection) {
-        final matchedBadges = collection.badgeInstanceIds
-            .map((id) => badgeMap[id])
-            .whereType<BadgeInstanceEntity>()
-            .toList();
-        return collection.copyWith(badgeInstances: matchedBadges);
-      }).toList();
+      return collections
+          .map((collection) => _withBadgeInstances(collection, badgeMap))
+          .toList();
     } catch (error, stackTrace) {
       logger.e(
         'Failed to build collections state',
@@ -53,11 +45,6 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
     }
     try {
       final badgesState = await ref.read(badgesOverviewProvider.future);
-      final badgeInstances = [
-        ...badgesState.claimedBadges,
-        ...badgesState.unclaimedBadges,
-        ...badgesState.requestedBadges,
-      ];
       final apiClient = ref.read(apiClientProvider);
       final response = await apiClient.get<List<dynamic>>('/badge-collections');
 
@@ -68,17 +55,11 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
           )
           .toList();
 
-      final badgeMap = {
-        for (var badge in badgeInstances) badge.entityId: badge,
-      };
+      final badgeMap = _badgeInstancesById(badgesState);
 
-      final collectionsWithBadges = collections.map((collection) {
-        final matchedBadges = collection.badgeInstanceIds
-            .map((id) => badgeMap[id])
-            .whereType<BadgeInstanceEntity>()
-            .toList();
-        return collection.copyWith(badgeInstances: matchedBadges);
-      }).toList();
+      final collectionsWithBadges = collections
+          .map((collection) => _withBadgeInstances(collection, badgeMap))
+          .toList();
 
       state = AsyncData(collectionsWithBadges);
     } catch (error, stackTrace) {
@@ -154,8 +135,15 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
     );
   }
 
-  /// Partial update via PATCH. Only non-null fields are sent; on success the
-  /// list is silently refreshed to match the server.
+  /// Partial update via PATCH. Only non-null fields are sent.
+  ///
+  /// On success the cached collection is updated straight away, including the
+  /// badge instances resolved from [badgeInstanceIds], so the detail and the
+  /// overview show the change without waiting for the network. The list is
+  /// then silently refreshed to match the server.
+  ///
+  /// A failure is only returned: every caller reports it itself, and the
+  /// collections that are already loaded stay on screen.
   Future<Either<Failure, void>> patchCollection({
     required String entityId,
     String? name,
@@ -172,16 +160,89 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
       badgeInstanceIds: badgeInstanceIds,
     );
 
-    return result.fold(
-      (failure) {
-        state = AsyncError(failure, StackTrace.current);
-        return Left(failure);
-      },
-      (_) {
-        refresh();
-        return const Right(null);
-      },
-    );
+    return result.fold((failure) => Left(failure), (_) {
+      _applyPatchLocally(
+        entityId: entityId,
+        name: name,
+        description: description,
+        public: public,
+        badgeInstanceIds: badgeInstanceIds,
+      );
+      refresh();
+      return const Right(null);
+    });
+  }
+
+  void _applyPatchLocally({
+    required String entityId,
+    String? name,
+    String? description,
+    bool? public,
+    List<String>? badgeInstanceIds,
+  }) {
+    final collections = state.value;
+    if (collections == null) {
+      return;
+    }
+
+    Map<String, BadgeInstanceEntity> badgeMap = const {};
+    if (badgeInstanceIds != null) {
+      // Badges already shown in a collection are a fallback for the (rare)
+      // case where the badges overview is not loaded.
+      badgeMap = {
+        for (final collection in collections)
+          for (final badge
+              in collection.badgeInstances ?? const <BadgeInstanceEntity>[])
+            badge.entityId: badge,
+      };
+      final badgesState = ref.read(badgesOverviewProvider).value;
+      if (badgesState != null) {
+        badgeMap.addAll(_badgeInstancesById(badgesState));
+      }
+    }
+
+    CollectionsEntity patch(CollectionsEntity collection) {
+      final updated = collection.copyWith(
+        name: name?.trim(),
+        description: description,
+        public: public,
+        badgeInstanceIds: badgeInstanceIds,
+      );
+      return badgeInstanceIds == null
+          ? updated
+          : _withBadgeInstances(updated, badgeMap);
+    }
+
+    state = AsyncData([
+      for (final collection in collections)
+        collection.entityId == entityId ? patch(collection) : collection,
+    ]);
+  }
+
+  static Map<String, BadgeInstanceEntity> _badgeInstancesById(
+    BadgesOverviewState badgesState,
+  ) {
+    return {
+      for (final badge in [
+        ...badgesState.claimedBadges,
+        ...badgesState.unclaimedBadges,
+        ...badgesState.requestedBadges,
+      ])
+        badge.entityId: badge,
+    };
+  }
+
+  /// Resolves [CollectionsEntity.badgeInstanceIds] against [badgeMap]; ids
+  /// without a known badge are left out.
+  static CollectionsEntity _withBadgeInstances(
+    CollectionsEntity collection,
+    Map<String, BadgeInstanceEntity> badgeMap,
+  ) {
+    final matchedBadges = collection.badgeInstanceIds
+        .map((id) => badgeMap[id])
+        .whereType<BadgeInstanceEntity>()
+        .toList();
+    return collection.copyWith(badgeInstances: matchedBadges);
   }
 
   Future<Either<Failure, void>> createCollection({
