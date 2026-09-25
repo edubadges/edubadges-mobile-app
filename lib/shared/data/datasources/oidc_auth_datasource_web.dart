@@ -47,7 +47,13 @@ class OidcAuthDataSource {
   /// This navigates the whole page away, so the returned future never
   /// completes; the flow resumes on the next app load via
   /// [completeLoginFromRedirect].
-  Future<void> login({bool addAcrValues = false}) async {
+  ///
+  /// With [replaceHistory] the current page is replaced in the browser history,
+  /// so Back from eduID does not land on a page that redirects straight back.
+  Future<void> login({
+    bool addAcrValues = false,
+    bool replaceHistory = false,
+  }) async {
     final String verifier = _generateRandomString(64);
     final String challenge = _codeChallenge(verifier);
     final String state = _generateRandomString(32);
@@ -75,7 +81,11 @@ class OidcAuthDataSource {
     ).replace(queryParameters: params).toString();
 
     logger.i('Auth(web): redirecting to authorization endpoint');
-    web.window.location.href = authUrl;
+    if (replaceHistory) {
+      web.window.location.replace(authUrl);
+    } else {
+      web.window.location.href = authUrl;
+    }
 
     // Suspend until the page unloads so callers don't continue the flow.
     await Completer<void>().future;
@@ -100,7 +110,9 @@ class OidcAuthDataSource {
 
     final String? verifier = await _pkceStorage.read(key: _verifierKey);
     final String? storedState = await _pkceStorage.read(key: _stateKey);
-    if (verifier == null || storedState == null || storedState != returnedState) {
+    if (verifier == null ||
+        storedState == null ||
+        storedState != returnedState) {
       logger.e('Auth(web): state mismatch or missing PKCE verifier');
       await _clearPkce();
       return false;

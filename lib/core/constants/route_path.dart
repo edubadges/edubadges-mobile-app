@@ -65,6 +65,15 @@ class RoutePath {
     return false;
   }
 
+  /// Where a logged-out visitor of [path] is sent, or null when [path] is
+  /// public.
+  ///
+  /// Every protected location goes to [login]. On web the login page then
+  /// starts the eduID login right away; public pages never get there.
+  static String? redirectForAnonymousVisitor(String path) {
+    return isPublicPath(path) ? null : login;
+  }
+
   /// List of routes that should redirect logged-in users to their home page.
   static const List<String> redirectRoutesForLoggedInUsers = [login];
 

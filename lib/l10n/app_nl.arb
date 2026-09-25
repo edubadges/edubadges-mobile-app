@@ -9,6 +9,10 @@
     "@loginCardButton": {
         "description": "Button text on the login card to navigate to the user's edubadges"
     },
+    "loginFailedMessage": "Het inloggen is geannuleerd of niet gelukt. Probeer het opnieuw.",
+    "@loginFailedMessage": {
+        "description": "Error shown on the web login page when the eduID login was cancelled or failed, above the button to try again"
+    },
     "loginCardText": "Je backpack is de plek waar je jouw edubadges kunt ontvangen, beheren en delen.\n\nOm in te loggen op je backpack heb je een eduID nodig. Klik op de onderstaande knop en log in met je eduID.\n\nHeb je nog geen eduID? Dan kun je eenvoudig een eduID aanmaken.",
     "@loginCardText": {
         "description": "Explanatory text on the login card describing the app and eduID requirement"

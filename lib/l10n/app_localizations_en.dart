@@ -15,6 +15,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginCardButton => 'Go to your backpack';
 
   @override
+  String get loginFailedMessage =>
+      'Signing in was cancelled or did not succeed. Please try again.';
+
+  @override
   String get loginCardText =>
       'Your backpack is the place where you can receive, manage, and share your edubadges.\n\nTo sign in to your backpack, you need an eduID. Click the button below and sign in with your eduID.\n\nDon\'t have an eduID yet? You can easily create one.';
 

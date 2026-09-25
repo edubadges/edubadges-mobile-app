@@ -15,6 +15,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get loginCardButton => 'Ga naar je backpack';
 
   @override
+  String get loginFailedMessage =>
+      'Het inloggen is geannuleerd of niet gelukt. Probeer het opnieuw.';
+
+  @override
   String get loginCardText =>
       'Je backpack is de plek waar je jouw edubadges kunt ontvangen, beheren en delen.\n\nOm in te loggen op je backpack heb je een eduID nodig. Klik op de onderstaande knop en log in met je eduID.\n\nHeb je nog geen eduID? Dan kun je eenvoudig een eduID aanmaken.';
 

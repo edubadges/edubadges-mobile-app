@@ -56,10 +56,9 @@ final appRouter = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final bool loggedIn = ref.read(authProvider).asData?.value ?? false;
       final bool isGoingToLogin = state.uri.path == RoutePath.login;
-      final bool isPublicRoute = RoutePath.isPublicPath(state.uri.path);
 
-      if (!loggedIn && !isGoingToLogin && !isPublicRoute) {
-        return RoutePath.login;
+      if (!loggedIn) {
+        return RoutePath.redirectForAnonymousVisitor(state.uri.path);
       }
 
       // After login, decide where to go based on a priority system.

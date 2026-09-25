@@ -5,6 +5,8 @@ import 'package:edubadges/features/badges_overview/presentation/providers/badges
 import 'package:edubadges/features/catalog/presentation/providers/catalog_providers.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/features/general_terms/presentation/providers/general_terms_providers.dart';
+import 'package:edubadges/features/login/domain/web_auto_login.dart';
+import 'package:edubadges/features/login/presentation/providers/auto_login_providers.dart';
 import 'package:edubadges/features/login/presentation/providers/login_providers.dart';
 import 'package:edubadges/shared/data/datasources/notification_permission_local_datasource.dart';
 import 'package:edubadges/shared/presentation/providers/permission_providers.dart';
@@ -45,13 +47,18 @@ class AuthNotifier extends AsyncNotifier<bool> {
   /// Returns `true` when login succeeded, `false` otherwise. Callers should
   /// rely on this return value instead of reading the provider after awaiting,
   /// to avoid touching `ref` on a possibly-unmounted widget.
-  Future<bool> login() async {
+  ///
+  /// [replaceHistory] is for a login the app starts by itself on web: the page
+  /// that started it should not stay in the browser history.
+  Future<bool> login({bool replaceHistory = false}) async {
     state = const AsyncLoading();
     final loginRepository = ref.read(loginRepositoryProvider);
 
     try {
       await _clearUserDependentState();
-      final result = await loginRepository.login();
+      final result = await loginRepository.login(
+        replaceHistory: replaceHistory,
+      );
       return result.fold(
         (failure) {
           logger.e('Login failed: ${failure.message}');
@@ -71,6 +78,11 @@ class AuthNotifier extends AsyncNotifier<bool> {
 
   /// Logout and clear tokens
   Future<void> logout() async {
+    // Set before the state flips to logged out, so the login page the router
+    // shows next already knows not to send the user straight back to eduID.
+    ref
+        .read(autoLoginSuppressionProvider.notifier)
+        .suppress(AutoLoginSuppression.loggedOut);
     final loginRepository = ref.read(loginRepositoryProvider);
     await loginRepository.logout();
     await _clearUserDependentState();
