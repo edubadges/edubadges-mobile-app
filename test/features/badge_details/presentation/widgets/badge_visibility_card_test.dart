@@ -40,6 +40,11 @@ class _FakeBadgeDetailsRepository implements BadgeDetailsRepository {
   }
 
   @override
+  Future<Either<Failure, void>> cancelEnrollment(String enrollmentEntityId) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<Either<Failure, void>> updateBadgeVisibility(
     String entityId, {
     required bool isPublic,
@@ -85,9 +90,7 @@ Future<_FakeBadgeDetailsRepository> _pumpCard(
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [
-        badgeDetailsRepositoryProvider.overrideWithValue(repository),
-      ],
+      overrides: [badgeDetailsRepositoryProvider.overrideWithValue(repository)],
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
@@ -137,10 +140,7 @@ void main() {
   testWidgets('does not offer sharing options for a private badge', (
     WidgetTester tester,
   ) async {
-    final repository = await _pumpCard(
-      tester,
-      badge: _instance(public: false),
-    );
+    final repository = await _pumpCard(tester, badge: _instance(public: false));
 
     expect(repository.getBadgeInstanceCalls, isEmpty);
     expect(find.text('Linkedin'), findsNothing);

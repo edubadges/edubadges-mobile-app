@@ -1032,6 +1032,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get edubadgeRequested => 'Edubadge requested';
 
   @override
+  String edubadgeRequestedOn(String date) {
+    return 'Requested on $date';
+  }
+
+  @override
+  String get cancelRequestButton => 'Cancel request';
+
+  @override
+  String get cancelRequestTitle => 'Cancel edubadge request';
+
+  @override
+  String get cancelRequestConfirmation =>
+      'Are you sure you want to cancel your request for this edubadge? You can request it again later.';
+
+  @override
+  String get cancelRequestSuccess => 'Request cancelled';
+
+  @override
   String get stackable => 'Stackable';
 
   @override

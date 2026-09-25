@@ -1820,6 +1820,36 @@ abstract class AppLocalizations {
   /// **'Edubadge requested'**
   String get edubadgeRequested;
 
+  /// Status text when the user has requested an edubadge, with the date of the request
+  ///
+  /// In en, this message translates to:
+  /// **'Requested on {date}'**
+  String edubadgeRequestedOn(String date);
+
+  /// Button text to cancel a pending edubadge request
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel request'**
+  String get cancelRequestButton;
+
+  /// Title for the dialog confirming cancellation of a pending edubadge request
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel edubadge request'**
+  String get cancelRequestTitle;
+
+  /// Confirmation message asking if the user wants to cancel a pending edubadge request
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel your request for this edubadge? You can request it again later.'**
+  String get cancelRequestConfirmation;
+
+  /// Success message shown after cancelling a pending edubadge request
+  ///
+  /// In en, this message translates to:
+  /// **'Request cancelled'**
+  String get cancelRequestSuccess;
+
   /// Stackable field for badge class
   ///
   /// In en, this message translates to:

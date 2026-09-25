@@ -1227,6 +1227,31 @@
     "@edubadgeRequested": {
         "description": "Status text when the user has requested an edubadge and is waiting for it"
     },
+    "edubadgeRequestedOn": "Aangevraagd op {date}",
+    "@edubadgeRequestedOn": {
+        "description": "Status text when the user has requested an edubadge, with the date of the request",
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "cancelRequestButton": "Aanvraag intrekken",
+    "@cancelRequestButton": {
+        "description": "Button text to cancel a pending edubadge request"
+    },
+    "cancelRequestTitle": "Edubadge-aanvraag intrekken",
+    "@cancelRequestTitle": {
+        "description": "Title for the dialog confirming cancellation of a pending edubadge request"
+    },
+    "cancelRequestConfirmation": "Weet je zeker dat je je aanvraag voor deze edubadge wilt intrekken? Je kunt later opnieuw aanvragen.",
+    "@cancelRequestConfirmation": {
+        "description": "Confirmation message asking if the user wants to cancel a pending edubadge request"
+    },
+    "cancelRequestSuccess": "Aanvraag ingetrokken",
+    "@cancelRequestSuccess": {
+        "description": "Success message shown after cancelling a pending edubadge request"
+    },
     "stackable": "Stackable",
     "@stackable": {
         "description": "Stackable field for badge class"

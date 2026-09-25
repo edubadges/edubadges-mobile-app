@@ -1038,6 +1038,24 @@ class AppLocalizationsNl extends AppLocalizations {
   String get edubadgeRequested => 'Edubadge aangevraagd';
 
   @override
+  String edubadgeRequestedOn(String date) {
+    return 'Aangevraagd op $date';
+  }
+
+  @override
+  String get cancelRequestButton => 'Aanvraag intrekken';
+
+  @override
+  String get cancelRequestTitle => 'Edubadge-aanvraag intrekken';
+
+  @override
+  String get cancelRequestConfirmation =>
+      'Weet je zeker dat je je aanvraag voor deze edubadge wilt intrekken? Je kunt later opnieuw aanvragen.';
+
+  @override
+  String get cancelRequestSuccess => 'Aanvraag ingetrokken';
+
+  @override
   String get stackable => 'Stackable';
 
   @override
