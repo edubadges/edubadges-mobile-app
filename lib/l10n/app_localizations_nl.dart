@@ -191,6 +191,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get generalNotifications => 'Algemene meldingen';
 
   @override
+  String get languageSettings => 'Taal';
+
+  @override
   String get notificationPermissionDeniedTitle =>
       'Notificatiemachtiging vereist';
 

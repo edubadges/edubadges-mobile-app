@@ -228,6 +228,10 @@
     "@generalNotifications": {
         "description": "Label for general notification settings toggle"
     },
+    "languageSettings": "Taal",
+    "@languageSettings": {
+        "description": "Section header on the account page for choosing the app language"
+    },
     "notificationPermissionDeniedTitle": "Notificatiemachtiging vereist",
     "@notificationPermissionDeniedTitle": {
         "description": "Title for dialog when user has denied notification permission"

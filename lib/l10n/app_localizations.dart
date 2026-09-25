@@ -428,6 +428,12 @@ abstract class AppLocalizations {
   /// **'General notifications'**
   String get generalNotifications;
 
+  /// Section header on the account page for choosing the app language
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageSettings;
+
   /// Title for dialog when user has denied notification permission
   ///
   /// In en, this message translates to:
