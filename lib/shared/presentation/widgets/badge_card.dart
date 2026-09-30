@@ -3,8 +3,10 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/utils/app_language.dart';
+import 'package:edubadges/core/utils/error_message.dart';
 import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/core/utils/string.dart';
+import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
@@ -33,6 +35,9 @@ class BadgeCard extends ConsumerWidget {
   final BadgeCardStyle style;
   final bool isSelected, onTapDisabled, badgeRequested;
 
+  /// When the pending request was made; shown next to [badgeRequested].
+  final DateTime? requestedOn;
+
   /// When set, navigation uses this scope and [badgeNavigationEntityId] instead
   /// of inferring claimed vs public from [instance].
   final BadgeDetailsScope? badgeNavigationScope;
@@ -55,6 +60,7 @@ class BadgeCard extends ConsumerWidget {
     this.isSelected = false,
     this.onTapDisabled = false,
     this.badgeRequested = false,
+    this.requestedOn,
     this.badgeNavigationScope,
     this.badgeNavigationEntityId,
     this.showClaimedGalleryOnOpen = false,
@@ -340,30 +346,42 @@ class BadgeCard extends ConsumerWidget {
     if (badgeRequested) {
       return Padding(
         padding: const EdgeInsets.only(top: 16),
-        child: Container(
-          margin: const EdgeInsets.only(
-            left: 12,
-            right: 16,
-            top: 10,
-            bottom: 10,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 8,
-            children: [
-              SvgIcon(
-                assetPath: Assets.iconCheck,
-                size: 20,
-                color: colorScheme.primary,
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(
+                left: 12,
+                right: 16,
+                top: 10,
+                bottom: 10,
               ),
-              Text(
-                l10n.edubadgeRequested,
-                style: textTheme.labelLarge?.copyWith(
-                  color: colorScheme.primary,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 8,
+                children: [
+                  SvgIcon(
+                    assetPath: Assets.iconCheck,
+                    size: 20,
+                    color: colorScheme.primary,
+                  ),
+                  Text(
+                    requestedOn != null
+                        ? l10n.edubadgeRequestedOn(
+                            DateFormat(
+                              'd MMM, yyyy',
+                              l10n.localeName,
+                            ).format(requestedOn!),
+                          )
+                        : l10n.edubadgeRequested,
+                    style: textTheme.labelLarge?.copyWith(
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            _CancelRequestButton(badgeClassId: badgeClass.entityId),
+          ],
         ),
       );
     }
@@ -406,6 +424,77 @@ class BadgeCard extends ConsumerWidget {
         },
         color: colorScheme.primary,
       ),
+    );
+  }
+}
+
+class _CancelRequestButton extends ConsumerStatefulWidget {
+  const _CancelRequestButton({required this.badgeClassId});
+
+  final String badgeClassId;
+
+  @override
+  ConsumerState<_CancelRequestButton> createState() =>
+      _CancelRequestButtonState();
+}
+
+class _CancelRequestButtonState extends ConsumerState<_CancelRequestButton> {
+  bool _isCancelling = false;
+
+  Future<void> _cancelRequest() async {
+    if (_isCancelling) return;
+
+    setState(() => _isCancelling = true);
+    final result = await ref.read(cancelEnrollmentProvider)(
+      widget.badgeClassId,
+    );
+    if (!mounted) return;
+
+    result.fold(
+      (failure) {
+        showAppSnackBar(context, messageFromFailure(context, failure));
+        setState(() => _isCancelling = false);
+      },
+      (_) {
+        showAppSnackBar(
+          context,
+          AppLocalizations.of(context).cancelRequestSuccess,
+        );
+        setState(() => _isCancelling = false);
+      },
+    );
+  }
+
+  Future<void> _confirmCancel() async {
+    if (_isCancelling) return;
+
+    final l10n = AppLocalizations.of(context);
+    await AdaptiveDialog.show(
+      context: context,
+      config: AdaptiveDialogConfig(
+        title: l10n.cancelRequestTitle,
+        description: l10n.cancelRequestConfirmation,
+        firstButtonText: l10n.cancel,
+        secondButtonText: l10n.confirm,
+        onFirstButtonPressed: () {},
+        onSecondButtonPressed: () {
+          _cancelRequest();
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return WideButton(
+      text: l10n.cancelRequestButton,
+      icon: null,
+      secondary: true,
+      color: colorScheme.primary,
+      onTap: _isCancelling ? null : _confirmCancel,
     );
   }
 }
