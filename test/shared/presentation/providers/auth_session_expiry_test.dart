@@ -38,8 +38,17 @@ class _FakeLoginRepository implements LoginRepository {
 
 class _FakeNotificationPermissionLocalDataSource
     implements NotificationPermissionLocalDataSource {
+  _FakeNotificationPermissionLocalDataSource({this.failToClear = false});
+
+  /// Makes clearing fail, as a storage error would.
+  final bool failToClear;
+
   @override
-  Future<void> clearDeclinedPrompt() async {}
+  Future<void> clearDeclinedPrompt() async {
+    if (failToClear) {
+      throw Exception('storage unavailable');
+    }
+  }
 
   @override
   Future<bool> hasDeclinedPrompt() async => false;
@@ -58,13 +67,18 @@ Future<void> _settle() async {
 void main() {
   late StreamController<void> sessionExpired;
 
-  ProviderContainer createContainer(_FakeLoginRepository repository) {
+  ProviderContainer createContainer(
+    _FakeLoginRepository repository, {
+    bool failToClearLocalState = false,
+  }) {
     final container = ProviderContainer(
       overrides: [
         loginRepositoryProvider.overrideWithValue(repository),
         sessionExpiredEventsProvider.overrideWithValue(sessionExpired.stream),
         notificationPermissionLocalDataSourceProvider.overrideWithValue(
-          _FakeNotificationPermissionLocalDataSource(),
+          _FakeNotificationPermissionLocalDataSource(
+            failToClear: failToClearLocalState,
+          ),
         ),
       ],
     );
@@ -87,6 +101,23 @@ void main() {
     expect(container.read(authProvider).value, isFalse);
     expect(container.read(sessionExpiredNoticeProvider), isTrue);
   });
+
+  test(
+    'still returns to the login screen when clearing local state fails',
+    () async {
+      final container = createContainer(
+        _FakeLoginRepository(loggedIn: true),
+        failToClearLocalState: true,
+      );
+      expect(await container.read(authProvider.future), isTrue);
+
+      sessionExpired.add(null);
+      await _settle();
+
+      expect(container.read(authProvider).value, isFalse);
+      expect(container.read(sessionExpiredNoticeProvider), isTrue);
+    },
+  );
 
   test('explains an expired session found while starting up', () async {
     final container = createContainer(

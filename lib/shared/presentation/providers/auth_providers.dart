@@ -62,7 +62,17 @@ class AuthNotifier extends AsyncNotifier<bool> {
   Future<void> _handleSessionExpired() async {
     if (state.value ?? false) {
       logger.w('Auth: session expired, returning to login');
-      await _clearUserDependentState();
+      try {
+        await _clearUserDependentState();
+      } catch (error, stackTrace) {
+        // The tokens are already gone, so return to the login screen anyway.
+        // Nothing awaits this handler, so an error here would go unhandled.
+        logger.e(
+          'Auth: failed to clear user state after the session expired',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      }
       if (!ref.mounted) return;
       state = const AsyncData(false);
     }
