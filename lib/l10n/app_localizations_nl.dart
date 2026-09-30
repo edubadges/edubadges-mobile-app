@@ -1148,4 +1148,11 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get readLess => 'Minder lezen';
+
+  @override
+  String get loginConnectionError =>
+      'We kunnen nu geen verbinding maken met de inlogdienst. Controleer je internetverbinding en probeer het opnieuw.';
+
+  @override
+  String get sessionExpiredMessage => 'Je sessie is verlopen. Log opnieuw in.';
 }

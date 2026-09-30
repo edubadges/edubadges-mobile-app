@@ -2029,6 +2029,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Read less'**
   String get readLess;
+
+  /// Shown on the login screen when SURFconext (the login service) could not be reached, e.g. no internet or the host name could not be resolved
+  ///
+  /// In en, this message translates to:
+  /// **'We can\'t connect to the login service right now. Check your internet connection and try again.'**
+  String get loginConnectionError;
+
+  /// Shown on the login screen after the app logged the user out because their session (refresh token) was no longer valid
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has expired. Please log in again.'**
+  String get sessionExpiredMessage;
 }
 
 class _AppLocalizationsDelegate

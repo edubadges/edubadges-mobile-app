@@ -1371,5 +1371,13 @@
     "readLess": "Read less",
     "@readLess": {
         "description": "Generic button label to collapse expanded content"
+    },
+    "loginConnectionError": "We can't connect to the login service right now. Check your internet connection and try again.",
+    "@loginConnectionError": {
+        "description": "Shown on the login screen when SURFconext (the login service) could not be reached, e.g. no internet or the host name could not be resolved"
+    },
+    "sessionExpiredMessage": "Your session has expired. Please log in again.",
+    "@sessionExpiredMessage": {
+        "description": "Shown on the login screen after the app logged the user out because their session (refresh token) was no longer valid"
     }
 }

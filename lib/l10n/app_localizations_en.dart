@@ -1143,4 +1143,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get readLess => 'Read less';
+
+  @override
+  String get loginConnectionError =>
+      'We can\'t connect to the login service right now. Check your internet connection and try again.';
+
+  @override
+  String get sessionExpiredMessage =>
+      'Your session has expired. Please log in again.';
 }

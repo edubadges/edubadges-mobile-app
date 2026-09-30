@@ -5,6 +5,7 @@ import 'package:edubadges/core/widgets/delayed_loader.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/login/domain/web_auto_login.dart';
 import 'package:edubadges/features/login/presentation/providers/auto_login_providers.dart';
+import 'package:edubadges/features/login/presentation/widgets/login_status_message.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
@@ -264,6 +265,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   ),
                           ),
                         ),
+
+                        const LoginStatusMessage(),
                       ],
                     ),
                   ),

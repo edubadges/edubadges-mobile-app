@@ -1,3 +1,4 @@
+import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
@@ -16,17 +17,62 @@ final authProvider = AsyncNotifierProvider<AuthNotifier, bool>(
   AuthNotifier.new,
 );
 
+/// Fires when SurfConext rejected the refresh token and the session was
+/// cleared (see `OidcAuthDataSource.sessionExpired`).
+final sessionExpiredEventsProvider = Provider<Stream<void>>((ref) {
+  return ref.watch(oidcAuthDataSourceProvider).sessionExpired;
+});
+
+/// Whether the login screen should explain that the session expired.
+///
+/// Shown after a rejected refresh token ended the session; cleared on the next
+/// login or logout.
+final sessionExpiredNoticeProvider =
+    NotifierProvider<SessionExpiredNoticeNotifier, bool>(
+      SessionExpiredNoticeNotifier.new,
+    );
+
+class SessionExpiredNoticeNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void show() => state = true;
+
+  void dismiss() => state = false;
+}
+
 class AuthNotifier extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
+    // Listen before the first check: that check can refresh the token and find
+    // the session already gone.
+    final subscription = ref
+        .read(sessionExpiredEventsProvider)
+        .listen((_) => _handleSessionExpired());
+    ref.onDispose(subscription.cancel);
+
     final loginRepository = ref.read(loginRepositoryProvider);
     final result = await loginRepository.isLoggedIn();
     return result.getOrElse(() => false);
   }
 
+  /// SurfConext rejected the refresh token, so the tokens are gone. Return to
+  /// the login screen instead of leaving the user on screens whose requests
+  /// can only fail.
+  Future<void> _handleSessionExpired() async {
+    if (state.value ?? false) {
+      logger.w('Auth: session expired, returning to login');
+      await _clearUserDependentState();
+      if (!ref.mounted) return;
+      state = const AsyncData(false);
+    }
+    ref.read(sessionExpiredNoticeProvider.notifier).show();
+  }
+
   /// Invalidates all user-dependent and network providers so no stale or
   /// sensitive state persists across logout or when a new user logs in.
   Future<void> _clearUserDependentState() async {
+    ref.read(sessionExpiredNoticeProvider.notifier).dismiss();
     await ref
         .read(notificationPermissionLocalDataSourceProvider)
         .clearDeclinedPrompt();
