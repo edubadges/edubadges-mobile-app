@@ -5,10 +5,12 @@ class BadgeDetailsModel {
   final BadgeInstanceModel? badgeInstance;
   final BadgeClassModel badgeClass;
   final bool requested;
+  final DateTime? requestedOn;
 
   const BadgeDetailsModel({
     required this.badgeInstance,
     required this.badgeClass,
     required this.requested,
+    this.requestedOn,
   });
 }

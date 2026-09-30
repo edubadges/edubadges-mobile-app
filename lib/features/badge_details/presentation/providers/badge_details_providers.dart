@@ -1,4 +1,6 @@
 import 'package:collection/collection.dart';
+import 'package:dartz/dartz.dart';
+import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/features/badge_details/data/datasources/badge_details_datasource.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_model.dart';
@@ -52,13 +54,13 @@ final badgeDetailsModelProvider = FutureProvider.autoDispose
       final badgesListAsync = ref.watch(badgesListProvider);
       final overview = badgesListAsync.value;
 
-      final bool badgeRequested =
-          overview?.requestedBadges.firstWhereOrNull(
+      final BadgeInstanceEntity? enrollment = overview?.requestedBadges
+          .firstWhereOrNull(
             (element) =>
                 element.badgeclass.entityId == query.entityId ||
                 element.entityId == query.entityId,
-          ) !=
-          null;
+          );
+      final bool badgeRequested = enrollment != null;
 
       switch (query.scope) {
         case BadgeDetailsScope.claimed:
@@ -69,6 +71,7 @@ final badgeDetailsModelProvider = FutureProvider.autoDispose
               badgeInstance: badgeInstance,
               badgeClass: badgeInstance.badgeclass as BadgeClassModel,
               requested: badgeRequested,
+              requestedOn: enrollment?.createdAt,
             ),
           );
 
@@ -87,6 +90,7 @@ final badgeDetailsModelProvider = FutureProvider.autoDispose
               badgeInstance: badgeInstance as BadgeInstanceModel?,
               badgeClass: badgeClass,
               requested: badgeRequested,
+              requestedOn: enrollment?.createdAt,
             ),
           );
       }
@@ -132,6 +136,37 @@ final enrollBadgeProvider =
           ref.invalidate(badgeDetailsProvider(badgeclassSlug));
           return true;
         });
+      };
+    });
+
+final cancelEnrollmentProvider =
+    Provider<Future<Either<Failure, void>> Function(String badgeClassId)>((
+      ref,
+    ) {
+      return (String badgeClassId) async {
+        final overview = await ref.read(badgesOverviewProvider.future);
+        final String? enrollmentEntityId = overview.requestedBadges
+            .firstWhereOrNull(
+              (element) =>
+                  element.badgeclass.entityId == badgeClassId ||
+                  element.entityId == badgeClassId,
+            )
+            ?.entityId;
+        if (enrollmentEntityId == null) {
+          return const Left(ValidationFailure('Enrollment not found'));
+        }
+
+        final repository = ref.read(badgeDetailsRepositoryProvider);
+        final result = await repository.cancelEnrollment(enrollmentEntityId);
+
+        if (result.isLeft()) {
+          return result;
+        }
+
+        await ref.read(badgesOverviewProvider.notifier).refresh();
+        ref.invalidate(badgeDetailsModelProvider);
+        ref.invalidate(badgeDetailsProvider(badgeClassId));
+        return const Right(null);
       };
     });
 

@@ -15,6 +15,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginCardButton => 'Go to your backpack';
 
   @override
+  String get loginFailedMessage =>
+      'Signing in was cancelled or did not succeed. Please try again.';
+
+  @override
   String get loginCardText =>
       'Your backpack is the place where you can receive, manage, and share your edubadges.\n\nTo sign in to your backpack, you need an eduID. Click the button below and sign in with your eduID.\n\nDon\'t have an eduID yet? You can easily create one.';
 
@@ -113,7 +117,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
-  String get collectionNameRequired => 'Name is required';
+  String get collectionNameRequired => 'This field is required';
 
   @override
   String get addEdubadgesToCollection => 'Add edubadges to your collection';
@@ -189,6 +193,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get generalNotifications => 'General notifications';
+
+  @override
+  String get languageSettings => 'Language';
 
   @override
   String get notificationPermissionDeniedTitle =>
@@ -362,7 +369,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editCollection => 'Edit collection';
 
   @override
-  String get editCollectionDescription => 'Update your collection details';
+  String get badgesInCollection => 'Badges in collection';
+
+  @override
+  String get badgesInCollectionHelper =>
+      'To create a collection you need to select at least one edubadge.';
+
+  @override
+  String get saveChangesTitle => 'Save changes?';
+
+  @override
+  String get unsavedCollectionChangesDescription =>
+      'You have made changes to this collection. Do you want to save them before you leave this screen?';
+
+  @override
+  String get dontSave => 'Don\'t save';
 
   @override
   String get continueText => 'Continue';
@@ -1032,6 +1053,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get edubadgeRequested => 'Edubadge requested';
 
   @override
+  String edubadgeRequestedOn(String date) {
+    return 'Requested on $date';
+  }
+
+  @override
+  String get cancelRequestButton => 'Cancel request';
+
+  @override
+  String get cancelRequestTitle => 'Cancel edubadge request';
+
+  @override
+  String get cancelRequestConfirmation =>
+      'Are you sure you want to cancel your request for this edubadge? You can request it again later.';
+
+  @override
+  String get cancelRequestSuccess => 'Request cancelled';
+
+  @override
   String get stackable => 'Stackable';
 
   @override
@@ -1104,4 +1143,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get readLess => 'Read less';
+
+  @override
+  String get loginConnectionError =>
+      'We can\'t connect to the login service right now. Check your internet connection and try again.';
+
+  @override
+  String get sessionExpiredMessage =>
+      'Your session has expired. Please log in again.';
 }
