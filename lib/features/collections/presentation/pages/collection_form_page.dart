@@ -6,6 +6,7 @@ import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
+import 'package:edubadges/core/widgets/outlined_button.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
@@ -22,7 +23,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum _UnsavedChangesChoice { discard, save }
 
-/// The values the form started from, to tell whether anything changed.
+/// The values the edit form started from, to tell whether anything changed.
 class _CollectionSnapshot {
   final String name;
   final String description;
@@ -34,31 +35,38 @@ class _CollectionSnapshot {
       badgeInstanceIds = Set.of(collection.badgeInstanceIds);
 }
 
-/// "Edit collection": changes the name, description and edubadges of an
-/// existing collection in one save.
+/// "Nieuwe collectie" and "Collectie wijzigen": the name, description and
+/// edubadges of a collection on one screen.
 ///
-/// The collection's edubadges start out selected. Deselecting all of them is
-/// allowed here (the collection then shows its empty state); only the name is
-/// required. Removing an edubadge from a collection never deletes the badge.
+/// Creating needs a name and at least one edubadge; "Annuleren" leaves without
+/// saving.
 ///
+/// Editing starts with the collection's edubadges selected. Deselecting all of
+/// them is allowed (the collection then shows its empty state); only the name
+/// is required. Removing an edubadge from a collection never deletes the badge.
 /// Leaving with unsaved changes asks whether to save them first. That covers
 /// the close button and pops (via [PopScope]) and, when [exitGuard] is wired to
 /// the route's `onExit`, also `go()` and browser back/forward on web.
-class EditCollectionPage extends ConsumerStatefulWidget {
-  final String collectionId;
+class CollectionFormPage extends ConsumerStatefulWidget {
+  /// The collection being edited; null when creating one.
+  final String? collectionId;
   final RouteExitGuard? exitGuard;
 
-  const EditCollectionPage({
+  const CollectionFormPage.create({super.key})
+    : collectionId = null,
+      exitGuard = null;
+
+  const CollectionFormPage.edit({
     super.key,
-    required this.collectionId,
+    required String this.collectionId,
     this.exitGuard,
   });
 
   @override
-  ConsumerState<EditCollectionPage> createState() => _EditCollectionPageState();
+  ConsumerState<CollectionFormPage> createState() => _CollectionFormPageState();
 }
 
-class _EditCollectionPageState extends ConsumerState<EditCollectionPage> {
+class _CollectionFormPageState extends ConsumerState<CollectionFormPage> {
   final _formKey = GlobalKey<FormState>();
   final _scrollController = ScrollController();
   final _nameController = TextEditingController();
@@ -77,13 +85,21 @@ class _EditCollectionPageState extends ConsumerState<EditCollectionPage> {
   bool _isSaving = false;
   bool _isConfirmingExit = false;
 
+  /// Set when saving a new collection without any edubadge selected.
+  bool _showBadgeError = false;
+
   /// Set once the user saved or chose to discard; leaving is then allowed
   /// without asking again.
   bool _exitAllowed = false;
 
+  bool get _isCreating => widget.collectionId == null;
+
   @override
   void initState() {
     super.initState();
+    if (_isCreating) {
+      return;
+    }
     widget.exitGuard?.attach(_confirmExit);
 
     final collection = _findCollection(ref.read(collectionsProvider));
@@ -107,7 +123,7 @@ class _EditCollectionPageState extends ConsumerState<EditCollectionPage> {
   }
 
   @override
-  void didUpdateWidget(covariant EditCollectionPage oldWidget) {
+  void didUpdateWidget(covariant CollectionFormPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.exitGuard != widget.exitGuard) {
       oldWidget.exitGuard?.detach(_confirmExit);
@@ -157,6 +173,9 @@ class _EditCollectionPageState extends ConsumerState<EditCollectionPage> {
       if (!_selectedBadgeIds.remove(badgeEntityId)) {
         _selectedBadgeIds.add(badgeEntityId);
       }
+      if (_selectedBadgeIds.isNotEmpty) {
+        _showBadgeError = false;
+      }
     });
   }
 
@@ -174,7 +193,7 @@ class _EditCollectionPageState extends ConsumerState<EditCollectionPage> {
   }
 
   Future<void> _handleSave() async {
-    if (!_hasChanges) {
+    if (!_isCreating && !_hasChanges) {
       _close();
       return;
     }
@@ -188,20 +207,31 @@ class _EditCollectionPageState extends ConsumerState<EditCollectionPage> {
     if (_isSaving) {
       return false;
     }
-    if (!(_formKey.currentState?.validate() ?? false)) {
+    final bool fieldsValid = _formKey.currentState?.validate() ?? false;
+    final bool badgesValid = !_isCreating || _selectedBadgeIds.isNotEmpty;
+    if (!fieldsValid || !badgesValid) {
+      setState(() => _showBadgeError = !badgesValid);
       _scrollToTop();
       return false;
     }
 
     setState(() => _isSaving = true);
-    final result = await ref
-        .read(collectionsProvider.notifier)
-        .patchCollection(
-          entityId: widget.collectionId,
-          name: _nameController.text.trim(),
-          description: _descriptionController.text.trim(),
-          badgeInstanceIds: _selectedBadgeIds.toList(),
-        );
+    final notifier = ref.read(collectionsProvider.notifier);
+    final String name = _nameController.text.trim();
+    final String description = _descriptionController.text.trim();
+    final result = _isCreating
+        ? await notifier.createCollection(
+            name: name,
+            description: description,
+            public: false,
+            badgeInstanceIds: _selectedBadgeIds.toList(),
+          )
+        : await notifier.patchCollection(
+            entityId: widget.collectionId!,
+            name: name,
+            description: description,
+            badgeInstanceIds: _selectedBadgeIds.toList(),
+          );
     if (!mounted) {
       return result.isRight();
     }
@@ -236,7 +266,7 @@ class _EditCollectionPageState extends ConsumerState<EditCollectionPage> {
   /// Whether the screen may be left. Asks about unsaved changes first; the
   /// caller does the navigation.
   Future<bool> _confirmExit() async {
-    if (_exitAllowed || !_hasChanges) {
+    if (_isCreating || _exitAllowed || !_hasChanges) {
       return true;
     }
     if (_isSaving || _isConfirmingExit || !mounted) {
@@ -285,13 +315,17 @@ class _EditCollectionPageState extends ConsumerState<EditCollectionPage> {
 
   void _close() {
     _exitAllowed = true;
+    if (_isCreating) {
+      navigateBack(context, fallbackLocation: RoutePath.collections);
+      return;
+    }
     final name =
         _findCollection(ref.read(collectionsProvider))?.name ??
         _nameController.text.trim();
     navigateBack(
       context,
       fallbackLocation: RoutePath.collectionPath(
-        id: widget.collectionId,
+        id: widget.collectionId!,
         title: name,
       ),
     );
@@ -309,24 +343,31 @@ class _EditCollectionPageState extends ConsumerState<EditCollectionPage> {
       appBar: AppBar(
         backgroundColor: colorScheme.surfaceContainer,
         automaticallyImplyLeading: false,
+        leading: _isCreating
+            ? const AppBackButton(fallbackLocation: RoutePath.collections)
+            : null,
         title: Text(
-          l10n.editCollection,
+          _isCreating ? l10n.newCollection : l10n.editCollection,
           style: theme.textTheme.titleLarge?.copyWith(
             color: colorScheme.onSurface,
             fontWeight: FontWeight.w700,
           ),
         ),
         actions: [
-          IconButton(
-            onPressed: _handleCloseRequest,
-            icon: Icon(Icons.close, color: colorScheme.onSurface),
-            tooltip: l10n.semanticsClose,
-          ),
+          if (!_isCreating)
+            IconButton(
+              onPressed: _handleCloseRequest,
+              icon: Icon(Icons.close, color: colorScheme.onSurface),
+              tooltip: l10n.semanticsClose,
+            ),
         ],
       ),
       body: _buildBody(context, collectionsAsync),
     );
 
+    if (_isCreating) {
+      return scaffold;
+    }
     return ListenableBuilder(
       listenable: Listenable.merge([_nameController, _descriptionController]),
       builder: (context, child) => PopScope<Object?>(
@@ -346,7 +387,7 @@ class _EditCollectionPageState extends ConsumerState<EditCollectionPage> {
     BuildContext context,
     AsyncValue<List<CollectionsEntity>> collectionsAsync,
   ) {
-    if (_initial != null) {
+    if (_isCreating || _initial != null) {
       return _buildForm(context);
     }
     if (collectionsAsync.hasError && !collectionsAsync.hasValue) {
@@ -372,6 +413,7 @@ class _EditCollectionPageState extends ConsumerState<EditCollectionPage> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final Color? badgeSectionColor = _showBadgeError ? colorScheme.error : null;
 
     return Form(
       key: _formKey,
@@ -399,16 +441,22 @@ class _EditCollectionPageState extends ConsumerState<EditCollectionPage> {
                             child: Text(
                               l10n.badgesInCollection,
                               style: theme.textTheme.titleMedium?.copyWith(
-                                color: colorScheme.onSurface,
+                                color:
+                                    badgeSectionColor ?? colorScheme.onSurface,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                           const SizedBox(height: 4),
-                          Text(
-                            l10n.badgesInCollectionHelper,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
+                          Semantics(
+                            liveRegion: _showBadgeError,
+                            child: Text(
+                              l10n.badgesInCollectionHelper,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color:
+                                    badgeSectionColor ??
+                                    colorScheme.onSurfaceVariant,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -425,11 +473,18 @@ class _EditCollectionPageState extends ConsumerState<EditCollectionPage> {
             ),
           ),
           CollectionActionBar(
-            child: PrimaryButton(
-              text: l10n.save,
-              onPressed: _handleSave,
-              isLoading: _isSaving,
-            ),
+            children: [
+              PrimaryButton(
+                text: l10n.save,
+                onPressed: _handleSave,
+                isLoading: _isSaving,
+              ),
+              if (_isCreating)
+                CustomOutlinedButton(
+                  text: l10n.cancel,
+                  onPressed: _isSaving ? null : _close,
+                ),
+            ],
           ),
         ],
       ),

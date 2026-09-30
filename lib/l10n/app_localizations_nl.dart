@@ -117,7 +117,7 @@ class AppLocalizationsNl extends AppLocalizations {
   String get cancel => 'Annuleer';
 
   @override
-  String get collectionNameRequired => 'Naam is verplicht';
+  String get collectionNameRequired => 'Dit veld is verplicht';
 
   @override
   String get addEdubadgesToCollection => 'Voeg edubadges toe aan je collectie';

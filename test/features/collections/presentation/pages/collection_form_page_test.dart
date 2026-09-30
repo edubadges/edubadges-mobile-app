@@ -6,7 +6,7 @@ import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/utils/route_exit_guard.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
-import 'package:edubadges/features/collections/presentation/pages/edit_collection_page.dart';
+import 'package:edubadges/features/collections/presentation/pages/collection_form_page.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +58,7 @@ Future<_Harness> _openEditScreen(
       GoRoute(
         path: RoutePath.editCollection,
         onExit: (context, state) => exitGuard.canExit(),
-        builder: (context, state) => EditCollectionPage(
+        builder: (context, state) => CollectionFormPage.edit(
           collectionId: state.pathParameters['id']!,
           exitGuard: exitGuard,
         ),
@@ -104,6 +104,62 @@ Future<_Harness> _openEditScreen(
   return _Harness(router, repository, container);
 }
 
+const String _overviewText = 'collections overview';
+
+/// Opens "Nieuwe collectie" on top of a stand-in collections overview, as the
+/// "+" on the overview does.
+Future<_Harness> _openCreateScreen(WidgetTester tester) async {
+  tester.view.devicePixelRatio = 1;
+  tester.view.physicalSize = const Size(420, 1400);
+  addTearDown(tester.view.reset);
+
+  final repository = FakeCollectionsRepository();
+  final router = GoRouter(
+    initialLocation: RoutePath.collections,
+    routes: [
+      GoRoute(
+        path: RoutePath.collections,
+        builder: (context, state) => const Scaffold(body: Text(_overviewText)),
+      ),
+      GoRoute(
+        path: RoutePath.newCollection,
+        builder: (context, state) => const CollectionFormPage.create(),
+      ),
+    ],
+  );
+  addTearDown(router.dispose);
+
+  final container = ProviderContainer(
+    overrides: collectionsTestOverrides(
+      repository: repository,
+      collections: const [],
+      claimedBadges: [_b1, _b2, _b3],
+    ),
+  );
+  addTearDown(container.dispose);
+  await container.read(badgesOverviewProvider.future);
+  await container.read(collectionsProvider.future);
+
+  await tester.pumpWidget(
+    UncontrolledProviderScope(
+      container: container,
+      child: MaterialApp.router(
+        routerConfig: router,
+        theme: AppThemes.lightTheme,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('en'),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+  unawaited(router.push(RoutePath.newCollection));
+  await tester.pumpAndSettle();
+
+  expect(find.text('New collection'), findsOneWidget);
+  return _Harness(router, repository, container);
+}
+
 bool _isChecked(WidgetTester tester, String badgeEntityId) {
   final checkbox = find.descendant(
     of: find.byKey(ValueKey<String>(badgeEntityId)),
@@ -132,7 +188,7 @@ Finder get _unsavedChangesDialog => find.text('Save changes?');
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('EditCollectionPage', () {
+  group('CollectionFormPage.edit', () {
     testWidgets('prefills the form and pre-selects the collection badges', (
       tester,
     ) async {
@@ -205,7 +261,7 @@ void main() {
       );
       await _tapSave(tester);
 
-      expect(find.text('Name is required'), findsOneWidget);
+      expect(find.text('This field is required'), findsOneWidget);
       expect(harness.repository.patchCalls, isEmpty);
       expect(find.text('Edit collection'), findsOneWidget);
     });
@@ -316,7 +372,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(harness.repository.patchCalls, isEmpty);
-        expect(find.text('Name is required'), findsOneWidget);
+        expect(find.text('This field is required'), findsOneWidget);
         expect(find.text('Edit collection'), findsOneWidget);
       });
 
@@ -379,6 +435,89 @@ void main() {
         expect(find.text(_detailText), findsOneWidget);
         expect(harness.repository.patchCalls, isEmpty);
       });
+    });
+  });
+
+  group('CollectionFormPage.create', () {
+    testWidgets('starts empty with Save and Cancel', (tester) async {
+      await _openCreateScreen(tester);
+
+      expect(_isChecked(tester, 'b1'), isFalse);
+      expect(_isChecked(tester, 'b2'), isFalse);
+      expect(_isChecked(tester, 'b3'), isFalse);
+      expect(find.widgetWithText(ElevatedButton, 'Save'), findsOneWidget);
+      expect(find.widgetWithText(OutlinedButton, 'Cancel'), findsOneWidget);
+      expect(find.byTooltip('Close'), findsNothing);
+    });
+
+    testWidgets('asks for a name and at least one badge', (tester) async {
+      final harness = await _openCreateScreen(tester);
+      final ThemeData theme = AppThemes.lightTheme;
+
+      await _tapSave(tester);
+
+      expect(find.text('This field is required'), findsOneWidget);
+      final Text heading = tester.widget(find.text('Badges in collection'));
+      expect(heading.style?.color, theme.colorScheme.error);
+      expect(harness.repository.createCalls, isEmpty);
+      expect(find.text('New collection'), findsOneWidget);
+
+      // Selecting a badge clears its error.
+      await _tapBadge(tester, 'b1');
+      final Text headingAfter = tester.widget(
+        find.text('Badges in collection'),
+      );
+      expect(headingAfter.style?.color, isNot(theme.colorScheme.error));
+    });
+
+    testWidgets('creates the collection with the selected badges', (
+      tester,
+    ) async {
+      final harness = await _openCreateScreen(tester);
+
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Name of the collection'),
+        'Mijn collectie',
+      );
+      await _tapBadge(tester, 'b2');
+      await _tapBadge(tester, 'b1');
+      await _tapSave(tester);
+
+      final call = harness.repository.createCalls.single;
+      expect(call.name, 'Mijn collectie');
+      expect(call.public, isFalse);
+      expect(call.badgeInstanceIds, ['b2', 'b1']);
+      expect(find.text(_overviewText), findsOneWidget);
+    });
+
+    testWidgets('Cancel leaves without saving or asking', (tester) async {
+      final harness = await _openCreateScreen(tester);
+
+      await _tapBadge(tester, 'b1');
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Cancel'));
+      await tester.pumpAndSettle();
+
+      expect(_unsavedChangesDialog, findsNothing);
+      expect(harness.repository.createCalls, isEmpty);
+      expect(find.text(_overviewText), findsOneWidget);
+    });
+
+    testWidgets('stays open and reports a failed save', (tester) async {
+      final harness = await _openCreateScreen(tester);
+      harness.repository.createFailure = const ServerFailure('Boom', 500);
+
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Name of the collection'),
+        'Mijn collectie',
+      );
+      await _tapBadge(tester, 'b1');
+      await _tapSave(tester);
+
+      expect(harness.repository.createCalls, hasLength(1));
+      expect(find.text('Something went wrong'), findsOneWidget);
+      expect(find.text('New collection'), findsOneWidget);
+      // The collections underneath keep their data.
+      expect(harness.container.read(collectionsProvider).hasError, isFalse);
     });
   });
 }

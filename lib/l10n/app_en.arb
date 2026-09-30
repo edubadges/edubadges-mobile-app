@@ -137,7 +137,7 @@
     "@cancel": {
         "description": "Button text to cancel an action or close a dialog"
     },
-    "collectionNameRequired": "Name is required",
+    "collectionNameRequired": "This field is required",
     "@collectionNameRequired": {
         "description": "Error message shown when collection name is not provided"
     },

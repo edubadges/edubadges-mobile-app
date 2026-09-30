@@ -64,9 +64,25 @@ class PatchCall {
   });
 }
 
+class CreateCall {
+  final String name;
+  final String? description;
+  final bool public;
+  final List<String> badgeInstanceIds;
+
+  const CreateCall({
+    required this.name,
+    this.description,
+    required this.public,
+    required this.badgeInstanceIds,
+  });
+}
+
 class FakeCollectionsRepository implements CollectionsRepository {
   final List<PatchCall> patchCalls = [];
   Either<Failure, void> patchResult = const Right(null);
+  final List<CreateCall> createCalls = [];
+  Failure? createFailure;
 
   @override
   Future<Either<Failure, void>> patchCollection({
@@ -112,7 +128,23 @@ class FakeCollectionsRepository implements CollectionsRepository {
     String? description,
     required bool public,
     required List<String> badgeInstanceIds,
-  }) => throw UnimplementedError();
+  }) async {
+    createCalls.add(
+      CreateCall(
+        name: name,
+        description: description,
+        public: public,
+        badgeInstanceIds: badgeInstanceIds,
+      ),
+    );
+    final Failure? failure = createFailure;
+    if (failure != null) {
+      return Left(failure);
+    }
+    return Right(
+      testCollection(entityId: 'new', name: name, description: description),
+    );
+  }
 }
 
 class FakeBadgesOverviewNotifier extends BadgesOverviewNotifier {

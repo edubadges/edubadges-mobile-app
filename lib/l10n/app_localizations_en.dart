@@ -117,7 +117,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
-  String get collectionNameRequired => 'Name is required';
+  String get collectionNameRequired => 'This field is required';
 
   @override
   String get addEdubadgesToCollection => 'Add edubadges to your collection';
