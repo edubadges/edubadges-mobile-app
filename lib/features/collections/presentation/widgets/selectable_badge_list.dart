@@ -67,6 +67,7 @@ class SelectableBadgeTile extends StatelessWidget {
             badgeClass: badge.badgeclass as BadgeClassModel,
             style: BadgeCardStyle.small,
             isSelected: isSelected,
+            borderColor: Theme.of(context).colorScheme.outline,
             onTap: onToggle,
             trailing: ExcludeSemantics(
               child: ExcludeFocus(

@@ -305,7 +305,7 @@ abstract class AppLocalizations {
   /// Error message shown when collection name is not provided
   ///
   /// In en, this message translates to:
-  /// **'Name is required'**
+  /// **'This field is required'**
   String get collectionNameRequired;
 
   /// Title or header for the section where users can add edubadges to a collection

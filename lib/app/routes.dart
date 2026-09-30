@@ -24,11 +24,9 @@ import 'package:edubadges/features/badges_overview/presentation/pages/badge_priv
 import 'package:edubadges/features/badges_overview/presentation/pages/badges_overview_page.dart';
 import 'package:edubadges/features/catalog/presentation/pages/catalog_page.dart';
 import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
-import 'package:edubadges/features/collections/presentation/pages/badge_selection_page.dart';
+import 'package:edubadges/features/collections/presentation/pages/collection_form_page.dart';
 import 'package:edubadges/features/collections/presentation/pages/collection_page.dart';
 import 'package:edubadges/features/collections/presentation/pages/collections_page.dart';
-import 'package:edubadges/features/collections/presentation/pages/edit_collection_page.dart';
-import 'package:edubadges/features/collections/presentation/pages/new_collection_page.dart';
 import 'package:edubadges/features/general_terms/domain/general_terms_url_resolver.dart';
 import 'package:edubadges/features/general_terms/presentation/pages/general_terms_page.dart'
     deferred as general_terms;
@@ -172,7 +170,7 @@ final appRouter = Provider<GoRouter>((ref) {
           },
           restorationId: state.pageKey.value,
           fullscreenDialog: true,
-          child: EditCollectionPage(
+          child: CollectionFormPage.edit(
             collectionId: state.pathParameters['id'] ?? '',
             exitGuard: editCollectionExitGuard,
           ),
@@ -333,28 +331,8 @@ final appRouter = Provider<GoRouter>((ref) {
 
       GoRoute(
         path: RoutePath.newCollection,
-        builder: (context, state) {
-          final name = state.uri.queryParameters['name'] ?? '';
-          final description = state.uri.queryParameters['description'];
-
-          return NewCollectionPage(name: name, description: description);
-        },
-      ),
-
-      GoRoute(
-        path: RoutePath.newCollectionBadgeSelection,
-        name: 'new-collection-badge-selection',
-        builder: (context, state) {
-          final id = state.uri.queryParameters['id'];
-          final name = state.uri.queryParameters['name'] ?? '';
-          final description = state.uri.queryParameters['description'];
-
-          return BadgeSelectionPage(
-            id: id,
-            name: name,
-            description: description,
-          );
-        },
+        name: 'new-collection',
+        builder: (context, state) => const CollectionFormPage.create(),
       ),
 
       GoRoute(

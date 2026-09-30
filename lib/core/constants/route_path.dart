@@ -9,7 +9,6 @@ class RoutePath {
   static const String collection = '/collection/:id';
   static const String editCollection = '/collection/:id/edit';
   static const String newCollection = '/new-collection';
-  static const String newCollectionBadgeSelection = '/new-collection/badges';
 
   /// Claimed badge (instance id). Carousel on by default; use `?gallery=false` for single-badge layout.
   static const String badgeDetailsClaimed = '/details/:id';
@@ -177,33 +176,5 @@ class RoutePath {
 
   static String badgeClaimSuccessPath({required String id}) {
     return Uri(path: badgeClaimSuccess, queryParameters: {'id': id}).toString();
-  }
-
-  static String newCollectionPath({required String name, String? description}) {
-    return Uri(
-      path: newCollection,
-      queryParameters: {
-        'name': name,
-        if (description != null && description.isNotEmpty)
-          'description': description,
-      },
-    ).toString();
-  }
-
-  /// Query: optional [id] (existing collection), [name], optional [description].
-  static String newCollectionBadgeSelectionPath({
-    String? id,
-    required String name,
-    String? description,
-  }) {
-    return Uri(
-      path: newCollectionBadgeSelection,
-      queryParameters: {
-        if (id != null && id.isNotEmpty) 'id': id,
-        'name': name,
-        if (description != null && description.isNotEmpty)
-          'description': description,
-      },
-    ).toString();
   }
 }

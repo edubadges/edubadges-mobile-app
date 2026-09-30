@@ -137,7 +137,7 @@
     "@cancel": {
         "description": "Button text to cancel an action or close a dialog"
     },
-    "collectionNameRequired": "Naam is verplicht",
+    "collectionNameRequired": "Dit veld is verplicht",
     "@collectionNameRequired": {
         "description": "Error message shown when collection name is not provided"
     },

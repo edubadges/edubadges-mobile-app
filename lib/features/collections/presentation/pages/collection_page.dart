@@ -295,11 +295,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       context.push(
-                        RoutePath.newCollectionBadgeSelectionPath(
-                          id: collection.id,
-                          name: collection.title,
-                          description: collection.description,
-                        ),
+                        RoutePath.editCollectionPath(id: collection.id),
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -419,11 +415,10 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                       firstButtonText: l10n.cancel,
                       secondButtonText: l10n.delete,
                       isDestructiveAction: true,
-                      onFirstButtonPressed: () {
-                        context.pop();
-                      },
+                      // AdaptiveDialog closes itself before calling these, so
+                      // popping here would also leave the collection page.
+                      onFirstButtonPressed: () {},
                       onSecondButtonPressed: () async {
-                        context.pop();
                         final collectionsAsync = ref.read(collectionsProvider);
                         final List<CollectionsEntity> collections =
                             await collectionsAsync.when(

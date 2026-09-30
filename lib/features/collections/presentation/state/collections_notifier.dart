@@ -259,15 +259,11 @@ class CollectionsNotifier extends AsyncNotifier<List<CollectionsEntity>> {
       badgeInstanceIds: badgeInstanceIds,
     );
 
-    return result.fold(
-      (failure) {
-        state = AsyncError(failure, StackTrace.current);
-        return Left(failure);
-      },
-      (_) {
-        refresh();
-        return const Right(null);
-      },
-    );
+    // A failure is only returned: the create form reports it, and the
+    // collections that are already loaded stay on screen.
+    return result.fold((failure) => Left(failure), (_) {
+      refresh();
+      return const Right(null);
+    });
   }
 }

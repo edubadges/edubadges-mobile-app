@@ -52,6 +52,10 @@ class BadgeCard extends ConsumerWidget {
   /// checkbox. Ignored by the other styles.
   final Widget? trailing;
 
+  /// Border of an unselected [BadgeCardStyle.small] card; defaults to
+  /// `outlineVariant`. Ignored by the other styles.
+  final Color? borderColor;
+
   const BadgeCard({
     super.key,
     required this.instance,
@@ -66,6 +70,7 @@ class BadgeCard extends ConsumerWidget {
     this.showClaimedGalleryOnOpen = false,
     this.onTap,
     this.trailing,
+    this.borderColor,
   });
 
   int? getTimeInvestment() {
@@ -160,7 +165,7 @@ class BadgeCard extends ConsumerWidget {
           border: Border.all(
             color: isSelected
                 ? colorScheme.primary
-                : colorScheme.outlineVariant,
+                : borderColor ?? colorScheme.outlineVariant,
           ),
           color: isSelected
               ? colorScheme.surface
