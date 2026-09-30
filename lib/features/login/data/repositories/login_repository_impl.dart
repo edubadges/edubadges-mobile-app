@@ -13,35 +13,29 @@ class LoginRepositoryImpl implements LoginRepository {
   LoginRepositoryImpl(this.loginDataSource, this.remoteDataSource);
 
   @override
-  Future<Either<Failure, void>> login() async {
-    return repositoryGuard<void>(
-      () async {
-        await loginDataSource.login();
-        final status = await remoteDataSource.login();
+  Future<Either<Failure, void>> login({bool replaceHistory = false}) async {
+    return repositoryGuard<void>(() async {
+      await loginDataSource.login(replaceHistory: replaceHistory);
+      final status = await remoteDataSource.login();
 
-        // If required, perform a second login with specific acr_values.
-        // This should trigger the system to let the user complete the registration flow.
-        if (status is LoginLinkAccountRequired ||
-            status is LoginRevalidateNameRequired) {
-          await loginDataSource.login(addAcrValues: true);
-          await remoteDataSource.login();
-        }
+      // If required, perform a second login with specific acr_values.
+      // This should trigger the system to let the user complete the registration flow.
+      if (status is LoginLinkAccountRequired ||
+          status is LoginRevalidateNameRequired) {
+        await loginDataSource.login(addAcrValues: true);
+        await remoteDataSource.login();
+      }
 
-        return;
-      },
-      logMessage: 'Failed to login',
-    );
+      return;
+    }, logMessage: 'Failed to login');
   }
 
   @override
   Future<Either<Failure, void>> logout() async {
-    return repositoryGuard<void>(
-      () async {
-        await loginDataSource.logout();
-        return;
-      },
-      logMessage: 'Failed to logout',
-    );
+    return repositoryGuard<void>(() async {
+      await loginDataSource.logout();
+      return;
+    }, logMessage: 'Failed to logout');
   }
 
   @override

@@ -16,6 +16,7 @@ class AppThemes {
       textTheme: _textTheme,
       appBarTheme: _appBarTheme,
       switchTheme: _switchTheme,
+      checkboxTheme: _checkboxTheme,
       tabBarTheme: _tabBarTheme,
       // High-contrast focus indicator for keyboard/screen reader (EU accessibility)
       focusColor: AppColors.primary,
@@ -31,6 +32,7 @@ class AppThemes {
       textTheme: _textTheme,
       appBarTheme: _appBarTheme,
       switchTheme: _switchTheme,
+      checkboxTheme: _checkboxTheme,
       tabBarTheme: _tabBarTheme,
       focusColor: AppColors.onSurface,
     );
@@ -233,6 +235,29 @@ class AppThemes {
         letterSpacing: 0.0,
         fontWeight: FontWeight.w400,
       ),
+    );
+  }
+
+  /// Design system checkbox: an unchecked box is filled light grey with a thin
+  /// outline, a checked one is filled with the primary colour.
+  static CheckboxThemeData get _checkboxTheme {
+    return CheckboxThemeData(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return AppColors.surfaceDim;
+        }
+        return states.contains(WidgetState.selected)
+            ? AppColors.primary
+            : AppColors.surfaceContainerHighest;
+      }),
+      checkColor: const WidgetStatePropertyAll(AppColors.onPrimary),
+      side: WidgetStateBorderSide.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return const BorderSide(color: AppColors.primary);
+        }
+        return const BorderSide(color: AppColors.outline);
+      }),
     );
   }
 

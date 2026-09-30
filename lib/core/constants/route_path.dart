@@ -7,8 +7,8 @@ class RoutePath {
   static const String start = '/';
   static const String collections = '/collections';
   static const String collection = '/collection/:id';
+  static const String editCollection = '/collection/:id/edit';
   static const String newCollection = '/new-collection';
-  static const String newCollectionBadgeSelection = '/new-collection/badges';
 
   /// Claimed badge (instance id). Carousel on by default; use `?gallery=false` for single-badge layout.
   static const String badgeDetailsClaimed = '/details/:id';
@@ -63,6 +63,15 @@ class RoutePath {
       return true;
     }
     return false;
+  }
+
+  /// Where a logged-out visitor of [path] is sent, or null when [path] is
+  /// public.
+  ///
+  /// Every protected location goes to [login]. On web the login page then
+  /// starts the eduID login right away; public pages never get there.
+  static String? redirectForAnonymousVisitor(String path) {
+    return isPublicPath(path) ? null : login;
   }
 
   /// List of routes that should redirect logged-in users to their home page.
@@ -123,6 +132,10 @@ class RoutePath {
     ).toString();
   }
 
+  static String editCollectionPath({required String id}) {
+    return '/collection/${Uri.encodeComponent(id)}/edit';
+  }
+
   static String agreementDetailsPath({
     required String agreementId,
     required String titleLong,
@@ -163,33 +176,5 @@ class RoutePath {
 
   static String badgeClaimSuccessPath({required String id}) {
     return Uri(path: badgeClaimSuccess, queryParameters: {'id': id}).toString();
-  }
-
-  static String newCollectionPath({required String name, String? description}) {
-    return Uri(
-      path: newCollection,
-      queryParameters: {
-        'name': name,
-        if (description != null && description.isNotEmpty)
-          'description': description,
-      },
-    ).toString();
-  }
-
-  /// Query: optional [id] (existing collection), [name], optional [description].
-  static String newCollectionBadgeSelectionPath({
-    String? id,
-    required String name,
-    String? description,
-  }) {
-    return Uri(
-      path: newCollectionBadgeSelection,
-      queryParameters: {
-        if (id != null && id.isNotEmpty) 'id': id,
-        'name': name,
-        if (description != null && description.isNotEmpty)
-          'description': description,
-      },
-    ).toString();
   }
 }

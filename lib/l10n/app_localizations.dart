@@ -110,6 +110,12 @@ abstract class AppLocalizations {
   /// **'Go to your backpack'**
   String get loginCardButton;
 
+  /// Error shown on the web login page when the eduID login was cancelled or failed, above the button to try again
+  ///
+  /// In en, this message translates to:
+  /// **'Signing in was cancelled or did not succeed. Please try again.'**
+  String get loginFailedMessage;
+
   /// Explanatory text on the login card describing the app and eduID requirement
   ///
   /// In en, this message translates to:
@@ -299,7 +305,7 @@ abstract class AppLocalizations {
   /// Error message shown when collection name is not provided
   ///
   /// In en, this message translates to:
-  /// **'Name is required'**
+  /// **'This field is required'**
   String get collectionNameRequired;
 
   /// Title or header for the section where users can add edubadges to a collection
@@ -427,6 +433,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'General notifications'**
   String get generalNotifications;
+
+  /// Section header on the account page for choosing the app language
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageSettings;
 
   /// Title for dialog when user has denied notification permission
   ///
@@ -698,11 +710,35 @@ abstract class AppLocalizations {
   /// **'Edit collection'**
   String get editCollection;
 
-  /// Description text for the edit collection screen
+  /// Section heading above the list of edubadges that can be selected for a collection
   ///
   /// In en, this message translates to:
-  /// **'Update your collection details'**
-  String get editCollectionDescription;
+  /// **'Badges in collection'**
+  String get badgesInCollection;
+
+  /// Helper text below the badges section heading on the collection form
+  ///
+  /// In en, this message translates to:
+  /// **'To create a collection you need to select at least one edubadge.'**
+  String get badgesInCollectionHelper;
+
+  /// Title of the dialog shown when leaving a screen with unsaved changes
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes?'**
+  String get saveChangesTitle;
+
+  /// Body of the dialog shown when leaving the edit collection screen with unsaved changes
+  ///
+  /// In en, this message translates to:
+  /// **'You have made changes to this collection. Do you want to save them before you leave this screen?'**
+  String get unsavedCollectionChangesDescription;
+
+  /// Dialog action that discards unsaved changes and leaves the screen
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t save'**
+  String get dontSave;
 
   /// Button text to continue to the next step
   ///
@@ -1820,6 +1856,36 @@ abstract class AppLocalizations {
   /// **'Edubadge requested'**
   String get edubadgeRequested;
 
+  /// Status text when the user has requested an edubadge, with the date of the request
+  ///
+  /// In en, this message translates to:
+  /// **'Requested on {date}'**
+  String edubadgeRequestedOn(String date);
+
+  /// Button text to cancel a pending edubadge request
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel request'**
+  String get cancelRequestButton;
+
+  /// Title for the dialog confirming cancellation of a pending edubadge request
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel edubadge request'**
+  String get cancelRequestTitle;
+
+  /// Confirmation message asking if the user wants to cancel a pending edubadge request
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel your request for this edubadge? You can request it again later.'**
+  String get cancelRequestConfirmation;
+
+  /// Success message shown after cancelling a pending edubadge request
+  ///
+  /// In en, this message translates to:
+  /// **'Request cancelled'**
+  String get cancelRequestSuccess;
+
   /// Stackable field for badge class
   ///
   /// In en, this message translates to:
@@ -1963,6 +2029,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Read less'**
   String get readLess;
+
+  /// Shown on the login screen when SURFconext (the login service) could not be reached, e.g. no internet or the host name could not be resolved
+  ///
+  /// In en, this message translates to:
+  /// **'We can\'t connect to the login service right now. Check your internet connection and try again.'**
+  String get loginConnectionError;
+
+  /// Shown on the login screen after the app logged the user out because their session (refresh token) was no longer valid
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has expired. Please log in again.'**
+  String get sessionExpiredMessage;
 }
 
 class _AppLocalizationsDelegate

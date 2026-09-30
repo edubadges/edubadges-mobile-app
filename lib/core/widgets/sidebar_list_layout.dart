@@ -27,6 +27,12 @@ class SidebarListLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    // Keeps the last item above the system navigation bar on pages outside the
+    // tab shell (the app runs edge-to-edge). Inside the shell the navigation
+    // bar has already taken this inset, so it is zero there.
+    final Widget endSpacing = SliverToBoxAdapter(
+      child: SizedBox(height: 16 + MediaQuery.paddingOf(context).bottom),
+    );
 
     if (useSidebarLayout) {
       // On web, drop the bottom padding so no background-coloured strip shows
@@ -41,10 +47,7 @@ class SidebarListLayout extends StatelessWidget {
           children: [
             SizedBox(
               width: sidebarWidth,
-              child: SingleChildScrollView(
-                primary: false,
-                child: sidebar,
-              ),
+              child: SingleChildScrollView(primary: false, child: sidebar),
             ),
             SizedBox(width: columnGap),
             Expanded(
@@ -54,10 +57,7 @@ class SidebarListLayout extends StatelessWidget {
                 child: CustomScrollView(
                   controller: scrollController,
                   physics: const AlwaysScrollableScrollPhysics(),
-                  slivers: [
-                    ...slivers,
-                    const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                  ],
+                  slivers: [...slivers, endSpacing],
                 ),
               ),
             ),
@@ -80,7 +80,7 @@ class SidebarListLayout extends StatelessWidget {
             ),
           ),
           ...slivers,
-          const SliverToBoxAdapter(child: SizedBox(height: 16)),
+          endSpacing,
         ],
       ),
     );

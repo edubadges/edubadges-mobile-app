@@ -4,9 +4,9 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/error_message.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_back_button.dart';
-import 'package:edubadges/core/widgets/app_modal.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/debug_error_log_button.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
@@ -16,7 +16,6 @@ import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
-import 'package:edubadges/features/collections/presentation/widgets/edit_collection_bottom_sheet.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
@@ -133,10 +132,15 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                                 entityId: collection.entityId,
                                 public: state,
                               );
-                          updateResult.fold(
-                            (_) => publicNotifier.value = !state,
-                            (_) {},
-                          );
+                          updateResult.fold((failure) {
+                            publicNotifier.value = !state;
+                            if (context.mounted) {
+                              showAppSnackBar(
+                                context,
+                                messageFromFailure(context, failure),
+                              );
+                            }
+                          }, (_) {});
                         }
                       : null;
                   return AnimatedIconSwitch(
@@ -291,11 +295,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       context.push(
-                        RoutePath.newCollectionBadgeSelectionPath(
-                          id: collection.id,
-                          name: collection.title,
-                          description: collection.description,
-                        ),
+                        RoutePath.editCollectionPath(id: collection.id),
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -396,27 +396,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
             actions: [
               IconButton(
                 onPressed: () {
-                  collectionsAsync.when(
-                    data: (collections) async {
-                      try {
-                        final foundCollection = collections.firstWhere(
-                          (c) => c.entityId == collection.id,
-                        );
-                        await showAppFormModal<void>(
-                          context,
-                          builder: (context) => EditCollectionBottomSheet(
-                            collection: foundCollection,
-                          ),
-                        );
-                      } catch (e) {
-                        if (context.mounted && context.canPop()) {
-                          context.pop();
-                        }
-                      }
-                    },
-                    loading: () {},
-                    error: (error, stackTrace) {},
-                  );
+                  context.push(RoutePath.editCollectionPath(id: collection.id));
                 },
                 icon: const SvgIcon(
                   assetPath: Assets.iconEdit,
@@ -435,11 +415,10 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                       firstButtonText: l10n.cancel,
                       secondButtonText: l10n.delete,
                       isDestructiveAction: true,
-                      onFirstButtonPressed: () {
-                        context.pop();
-                      },
+                      // AdaptiveDialog closes itself before calling these, so
+                      // popping here would also leave the collection page.
+                      onFirstButtonPressed: () {},
                       onSecondButtonPressed: () async {
-                        context.pop();
                         final collectionsAsync = ref.read(collectionsProvider);
                         final List<CollectionsEntity> collections =
                             await collectionsAsync.when(

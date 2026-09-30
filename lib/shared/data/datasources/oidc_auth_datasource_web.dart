@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
+import 'package:edubadges/core/auth/oidc_error_classifier.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/shared/data/datasources/secure_token_storage.dart';
@@ -22,6 +23,8 @@ class OidcAuthDataSource {
   final FlutterSecureStorage _pkceStorage = const FlutterSecureStorage();
   Fresh<OAuth2Token>? _fresh;
   Future<OAuth2Token>? _refreshInFlight;
+  final StreamController<void> _sessionExpired =
+      StreamController<void>.broadcast();
 
   static const String _verifierKey = 'oidc_pkce_verifier';
   static const String _stateKey = 'oidc_pkce_state';
@@ -38,6 +41,11 @@ class OidcAuthDataSource {
   /// `https://dev.edubadges.preprod.aws.coffeeit.nl/` or `http://localhost:8080/`.
   String get _redirectUri => '${Uri.base.origin}/';
 
+  /// Fires when SurfConext rejected the refresh token and the session was
+  /// cleared, as opposed to the user logging out. The app then has to return
+  /// to the login screen.
+  Stream<void> get sessionExpired => _sessionExpired.stream;
+
   void setFresh(Fresh<OAuth2Token>? fresh) {
     _fresh = fresh;
   }
@@ -47,7 +55,13 @@ class OidcAuthDataSource {
   /// This navigates the whole page away, so the returned future never
   /// completes; the flow resumes on the next app load via
   /// [completeLoginFromRedirect].
-  Future<void> login({bool addAcrValues = false}) async {
+  ///
+  /// With [replaceHistory] the current page is replaced in the browser history,
+  /// so Back from eduID does not land on a page that redirects straight back.
+  Future<void> login({
+    bool addAcrValues = false,
+    bool replaceHistory = false,
+  }) async {
     final String verifier = _generateRandomString(64);
     final String challenge = _codeChallenge(verifier);
     final String state = _generateRandomString(32);
@@ -75,7 +89,11 @@ class OidcAuthDataSource {
     ).replace(queryParameters: params).toString();
 
     logger.i('Auth(web): redirecting to authorization endpoint');
-    web.window.location.href = authUrl;
+    if (replaceHistory) {
+      web.window.location.replace(authUrl);
+    } else {
+      web.window.location.href = authUrl;
+    }
 
     // Suspend until the page unloads so callers don't continue the flow.
     await Completer<void>().future;
@@ -100,7 +118,9 @@ class OidcAuthDataSource {
 
     final String? verifier = await _pkceStorage.read(key: _verifierKey);
     final String? storedState = await _pkceStorage.read(key: _stateKey);
-    if (verifier == null || storedState == null || storedState != returnedState) {
+    if (verifier == null ||
+        storedState == null ||
+        storedState != returnedState) {
       logger.e('Auth(web): state mismatch or missing PKCE verifier');
       await _clearPkce();
       return false;
@@ -253,12 +273,13 @@ class OidcAuthDataSource {
       }
       return newToken;
     } catch (e) {
-      if (_isPermanentAuthFailure(e)) {
+      if (isPermanentAuthFailure(e)) {
         logger.e(
           'Auth(web): refresh token rejected, clearing session',
           error: e,
         );
         await logout();
+        _sessionExpired.add(null);
       } else {
         logger.w('Auth(web): token refresh failed, keeping session', error: e);
       }
@@ -279,27 +300,6 @@ class OidcAuthDataSource {
 
   SecureTokenStorage get tokenStorage {
     return _tokenStorage;
-  }
-
-  /// Whether [error] means the stored grant can never succeed again.
-  ///
-  /// The token endpoint rejects a dead grant with an OAuth error code; offline
-  /// browsers, timeouts and 5xx responses are transient, and clearing tokens
-  /// for those logs the user out whenever a refresh runs at a bad moment.
-  static bool _isPermanentAuthFailure(Object error) {
-    if (error is! DioException) {
-      return false;
-    }
-    final int? statusCode = error.response?.statusCode;
-    if (statusCode != 400 && statusCode != 401) {
-      return false;
-    }
-    final dynamic data = error.response?.data;
-    final String? code = data is Map ? data['error'] as String? : null;
-    return code == 'invalid_grant' ||
-        code == 'invalid_client' ||
-        code == 'unauthorized_client' ||
-        code == 'invalid_scope';
   }
 
   Future<void> _clearPkce() async {

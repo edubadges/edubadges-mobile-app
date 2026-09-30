@@ -41,6 +41,13 @@ class _FakeBadgeDetailsRepository implements BadgeDetailsRepository {
   }
 
   @override
+  Future<Either<Failure, void>> cancelEnrollment(
+    String enrollmentEntityId,
+  ) async {
+    return const Right(null);
+  }
+
+  @override
   Future<Either<Failure, void>> updateBadgeVisibility(
     String entityId, {
     required bool isPublic,

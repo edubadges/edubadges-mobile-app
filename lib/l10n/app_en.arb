@@ -9,6 +9,10 @@
     "@loginCardButton": {
         "description": "Button text on the login card to navigate to the user's edubadges"
     },
+    "loginFailedMessage": "Signing in was cancelled or did not succeed. Please try again.",
+    "@loginFailedMessage": {
+        "description": "Error shown on the web login page when the eduID login was cancelled or failed, above the button to try again"
+    },
     "loginCardText": "Your backpack is the place where you can receive, manage, and share your edubadges.\n\nTo sign in to your backpack, you need an eduID. Click the button below and sign in with your eduID.\n\nDon't have an eduID yet? You can easily create one.",
     "@loginCardText": {
         "description": "Explanatory text on the login card describing the app and eduID requirement"
@@ -133,7 +137,7 @@
     "@cancel": {
         "description": "Button text to cancel an action or close a dialog"
     },
-    "collectionNameRequired": "Name is required",
+    "collectionNameRequired": "This field is required",
     "@collectionNameRequired": {
         "description": "Error message shown when collection name is not provided"
     },
@@ -227,6 +231,10 @@
     "generalNotifications": "General notifications",
     "@generalNotifications": {
         "description": "Label for general notification settings toggle"
+    },
+    "languageSettings": "Language",
+    "@languageSettings": {
+        "description": "Section header on the account page for choosing the app language"
     },
     "notificationPermissionDeniedTitle": "Notification permission required",
     "@notificationPermissionDeniedTitle": {
@@ -425,9 +433,25 @@
     "@editCollection": {
         "description": "Button text or title for editing a collection"
     },
-    "editCollectionDescription": "Update your collection details",
-    "@editCollectionDescription": {
-        "description": "Description text for the edit collection screen"
+    "badgesInCollection": "Badges in collection",
+    "@badgesInCollection": {
+        "description": "Section heading above the list of edubadges that can be selected for a collection"
+    },
+    "badgesInCollectionHelper": "To create a collection you need to select at least one edubadge.",
+    "@badgesInCollectionHelper": {
+        "description": "Helper text below the badges section heading on the collection form"
+    },
+    "saveChangesTitle": "Save changes?",
+    "@saveChangesTitle": {
+        "description": "Title of the dialog shown when leaving a screen with unsaved changes"
+    },
+    "unsavedCollectionChangesDescription": "You have made changes to this collection. Do you want to save them before you leave this screen?",
+    "@unsavedCollectionChangesDescription": {
+        "description": "Body of the dialog shown when leaving the edit collection screen with unsaved changes"
+    },
+    "dontSave": "Don't save",
+    "@dontSave": {
+        "description": "Dialog action that discards unsaved changes and leaves the screen"
     },
     "continueText": "Continue",
     "@continueText": {
@@ -1227,6 +1251,31 @@
     "@edubadgeRequested": {
         "description": "Status text when the user has requested an edubadge and is waiting for it"
     },
+    "edubadgeRequestedOn": "Requested on {date}",
+    "@edubadgeRequestedOn": {
+        "description": "Status text when the user has requested an edubadge, with the date of the request",
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "cancelRequestButton": "Cancel request",
+    "@cancelRequestButton": {
+        "description": "Button text to cancel a pending edubadge request"
+    },
+    "cancelRequestTitle": "Cancel edubadge request",
+    "@cancelRequestTitle": {
+        "description": "Title for the dialog confirming cancellation of a pending edubadge request"
+    },
+    "cancelRequestConfirmation": "Are you sure you want to cancel your request for this edubadge? You can request it again later.",
+    "@cancelRequestConfirmation": {
+        "description": "Confirmation message asking if the user wants to cancel a pending edubadge request"
+    },
+    "cancelRequestSuccess": "Request cancelled",
+    "@cancelRequestSuccess": {
+        "description": "Success message shown after cancelling a pending edubadge request"
+    },
     "stackable": "Stackable",
     "@stackable": {
         "description": "Stackable field for badge class"
@@ -1322,5 +1371,13 @@
     "readLess": "Read less",
     "@readLess": {
         "description": "Generic button label to collapse expanded content"
+    },
+    "loginConnectionError": "We can't connect to the login service right now. Check your internet connection and try again.",
+    "@loginConnectionError": {
+        "description": "Shown on the login screen when SURFconext (the login service) could not be reached, e.g. no internet or the host name could not be resolved"
+    },
+    "sessionExpiredMessage": "Your session has expired. Please log in again.",
+    "@sessionExpiredMessage": {
+        "description": "Shown on the login screen after the app logged the user out because their session (refresh token) was no longer valid"
     }
 }
