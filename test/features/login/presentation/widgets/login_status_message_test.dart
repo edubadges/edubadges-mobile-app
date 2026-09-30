@@ -17,7 +17,7 @@ class _FakeAuthNotifier extends AuthNotifier {
   Future<bool> build() async => false;
 
   @override
-  Future<bool> login() async {
+  Future<bool> login({bool replaceHistory = false}) async {
     state = AsyncError(loginFailure!, StackTrace.empty);
     return false;
   }

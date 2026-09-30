@@ -7,6 +7,7 @@ class RoutePath {
   static const String start = '/';
   static const String collections = '/collections';
   static const String collection = '/collection/:id';
+  static const String editCollection = '/collection/:id/edit';
   static const String newCollection = '/new-collection';
   static const String newCollectionBadgeSelection = '/new-collection/badges';
 
@@ -65,6 +66,15 @@ class RoutePath {
     return false;
   }
 
+  /// Where a logged-out visitor of [path] is sent, or null when [path] is
+  /// public.
+  ///
+  /// Every protected location goes to [login]. On web the login page then
+  /// starts the eduID login right away; public pages never get there.
+  static String? redirectForAnonymousVisitor(String path) {
+    return isPublicPath(path) ? null : login;
+  }
+
   /// List of routes that should redirect logged-in users to their home page.
   static const List<String> redirectRoutesForLoggedInUsers = [login];
 
@@ -121,6 +131,10 @@ class RoutePath {
           'description': description,
       },
     ).toString();
+  }
+
+  static String editCollectionPath({required String id}) {
+    return '/collection/${Uri.encodeComponent(id)}/edit';
   }
 
   static String agreementDetailsPath({

@@ -59,7 +59,10 @@ Future<String> _resolveTermsUrl(Dio dio) async {
 }
 
 String _languageCodeFromDio(Dio dio) {
-  final header = dio.options.headers['x-language'];
+  // Accept-Language is the one language header web sends as well.
+  final header =
+      dio.options.headers['Accept-Language'] ??
+      dio.options.headers['x-language'];
   if (header is String && header.isNotEmpty) {
     final normalized = header.trim().toLowerCase();
     final firstToken = normalized.split(',').first;

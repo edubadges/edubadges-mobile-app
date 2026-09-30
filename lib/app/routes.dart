@@ -4,6 +4,7 @@ import 'package:edubadges/core/analytics/piwik_pro_route_observer.dart';
 import 'package:edubadges/core/app_container.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/app_language.dart';
+import 'package:edubadges/core/utils/route_exit_guard.dart';
 import 'package:edubadges/core/widgets/deferred_widget.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/presentation/pages/account_page.dart';
@@ -26,6 +27,7 @@ import 'package:edubadges/features/collections/data/models/collection_route_mode
 import 'package:edubadges/features/collections/presentation/pages/badge_selection_page.dart';
 import 'package:edubadges/features/collections/presentation/pages/collection_page.dart';
 import 'package:edubadges/features/collections/presentation/pages/collections_page.dart';
+import 'package:edubadges/features/collections/presentation/pages/edit_collection_page.dart';
 import 'package:edubadges/features/collections/presentation/pages/new_collection_page.dart';
 import 'package:edubadges/features/general_terms/domain/general_terms_url_resolver.dart';
 import 'package:edubadges/features/general_terms/presentation/pages/general_terms_page.dart'
@@ -47,6 +49,10 @@ final appRouter = Provider<GoRouter>((ref) {
   final refreshListenable = RouterRefreshListenable(ref);
   ref.onDispose(refreshListenable.dispose);
 
+  // Lets the edit collection page ask about unsaved changes however the route
+  // is left, including browser back/forward on web.
+  final editCollectionExitGuard = RouteExitGuard();
+
   final router = GoRouter(
     initialLocation: RoutePath.login,
     refreshListenable: refreshListenable,
@@ -56,10 +62,9 @@ final appRouter = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final bool loggedIn = ref.read(authProvider).asData?.value ?? false;
       final bool isGoingToLogin = state.uri.path == RoutePath.login;
-      final bool isPublicRoute = RoutePath.isPublicPath(state.uri.path);
 
-      if (!loggedIn && !isGoingToLogin && !isPublicRoute) {
-        return RoutePath.login;
+      if (!loggedIn) {
+        return RoutePath.redirectForAnonymousVisitor(state.uri.path);
       }
 
       // After login, decide where to go based on a priority system.
@@ -151,6 +156,27 @@ final appRouter = Provider<GoRouter>((ref) {
 
           return CollectionPage(collection: collection);
         },
+      ),
+
+      GoRoute(
+        path: RoutePath.editCollection,
+        name: 'edit-collection',
+        onExit: (context, state) => editCollectionExitGuard.canExit(),
+        // Presented as a full-screen dialog (close button, no iOS back swipe).
+        pageBuilder: (context, state) => MaterialPage<void>(
+          key: state.pageKey,
+          name: state.name ?? state.path,
+          arguments: <String, String>{
+            ...state.pathParameters,
+            ...state.uri.queryParameters,
+          },
+          restorationId: state.pageKey.value,
+          fullscreenDialog: true,
+          child: EditCollectionPage(
+            collectionId: state.pathParameters['id'] ?? '',
+            exitGuard: editCollectionExitGuard,
+          ),
+        ),
       ),
 
       // Deep link from public share → badge class details (must be before `/public/:id`)

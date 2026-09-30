@@ -15,6 +15,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get loginCardButton => 'Ga naar je backpack';
 
   @override
+  String get loginFailedMessage =>
+      'Het inloggen is geannuleerd of niet gelukt. Probeer het opnieuw.';
+
+  @override
   String get loginCardText =>
       'Je backpack is de plek waar je jouw edubadges kunt ontvangen, beheren en delen.\n\nOm in te loggen op je backpack heb je een eduID nodig. Klik op de onderstaande knop en log in met je eduID.\n\nHeb je nog geen eduID? Dan kun je eenvoudig een eduID aanmaken.';
 
@@ -191,6 +195,9 @@ class AppLocalizationsNl extends AppLocalizations {
   String get generalNotifications => 'Algemene meldingen';
 
   @override
+  String get languageSettings => 'Taal';
+
+  @override
   String get notificationPermissionDeniedTitle =>
       'Notificatiemachtiging vereist';
 
@@ -359,11 +366,24 @@ class AppLocalizationsNl extends AppLocalizations {
   String get goBack => 'Ga terug';
 
   @override
-  String get editCollection => 'Bewerk collectie';
+  String get editCollection => 'Collectie wijzigen';
 
   @override
-  String get editCollectionDescription =>
-      'Werk de details van je collectie bij';
+  String get badgesInCollection => 'Badges in collectie';
+
+  @override
+  String get badgesInCollectionHelper =>
+      'Om een collectie aan te maken dien je minimaal één edubadge te selecteren.';
+
+  @override
+  String get saveChangesTitle => 'Wijzigingen opslaan?';
+
+  @override
+  String get unsavedCollectionChangesDescription =>
+      'Je hebt wijzigingen aangebracht in deze collectie. Wil je ze opslaan voordat je dit scherm verlaat?';
+
+  @override
+  String get dontSave => 'Niet opslaan';
 
   @override
   String get continueText => 'Doorgaan';
@@ -1036,6 +1056,24 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get edubadgeRequested => 'Edubadge aangevraagd';
+
+  @override
+  String edubadgeRequestedOn(String date) {
+    return 'Aangevraagd op $date';
+  }
+
+  @override
+  String get cancelRequestButton => 'Aanvraag intrekken';
+
+  @override
+  String get cancelRequestTitle => 'Edubadge-aanvraag intrekken';
+
+  @override
+  String get cancelRequestConfirmation =>
+      'Weet je zeker dat je je aanvraag voor deze edubadge wilt intrekken? Je kunt later opnieuw aanvragen.';
+
+  @override
+  String get cancelRequestSuccess => 'Aanvraag ingetrokken';
 
   @override
   String get stackable => 'Stackable';

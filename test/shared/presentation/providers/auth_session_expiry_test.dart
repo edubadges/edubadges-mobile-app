@@ -24,7 +24,7 @@ class _FakeLoginRepository implements LoginRepository {
   }
 
   @override
-  Future<Either<Failure, void>> login() async {
+  Future<Either<Failure, void>> login({bool replaceHistory = false}) async {
     loggedIn = true;
     return const Right(null);
   }

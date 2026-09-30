@@ -9,6 +9,7 @@ import 'package:edubadges/core/constants/env_keys.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/network/network_providers.dart';
+import 'package:edubadges/core/storage/storage_providers.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/core/utils/url_strategy.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
@@ -103,6 +104,7 @@ void main() async {
 
   final container = ProviderContainer();
   appProviderContainer = container;
+  await _loadPreferences(container);
   final apiClient = container.read(apiClientProvider);
   await apiClient.init();
   await applyDevAccessTokenIfDefined(container);
@@ -176,6 +178,21 @@ Flavor _resolveFlavor() {
 StateError _flavorError(String message) {
   debugPrint('Edubadges startup failed: $message');
   return StateError(message);
+}
+
+/// Loads the preferences before anything reads the app language, so a language
+/// chosen earlier applies to the first frame and the first API requests.
+Future<void> _loadPreferences(ProviderContainer container) async {
+  try {
+    await container.read(sharedPreferencesProvider.future);
+  } catch (error, stackTrace) {
+    // Without preferences the app runs in the device language.
+    logger.w(
+      'Failed to load preferences on startup',
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
 }
 
 Future<void> _syncBadgeCountOnStartup(ProviderContainer container) async {

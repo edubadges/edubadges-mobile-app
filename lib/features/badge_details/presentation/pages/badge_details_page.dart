@@ -214,6 +214,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
               style: BadgeCardStyle.large,
               onTapDisabled: true,
               badgeRequested: details?.requested ?? false,
+              requestedOn: details?.requestedOn,
             ),
           if (visibilitySection != null) ...[
             const SizedBox(height: 16),
@@ -263,6 +264,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           style: BadgeCardStyle.large,
           onTapDisabled: true,
           badgeRequested: details.requested,
+          requestedOn: details.requestedOn,
         ),
       ),
     );

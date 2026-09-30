@@ -1,18 +1,17 @@
 import 'package:collection/collection.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/error_message.dart';
-import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
-import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
+import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:edubadges/features/badges_overview/domain/entities/badges_overview_state.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
+import 'package:edubadges/features/collections/presentation/widgets/collection_action_bar.dart';
+import 'package:edubadges/features/collections/presentation/widgets/selectable_badge_list.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
-import 'package:edubadges/shared/data/models/badge_class_model.dart';
-import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -168,30 +167,18 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
           );
         }
 
-        return ListView.builder(
+        return CustomScrollView(
           controller: _scrollController,
-          padding: const EdgeInsets.all(16),
-          itemCount: badges.length,
-          itemBuilder: (context, index) {
-            final badge = badges[index];
-            final isSelected = _selectedBadgeIds.contains(badge.entityId);
-
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: KeyboardActivatable(
-                wrapWithSemantics: false,
-                includeOuterTapTarget: false,
-                onActivate: () => _toggleBadgeSelection(badge.entityId),
-                child: BadgeCard(
-                  instance: badge,
-                  badgeClass: badge.badgeclass as BadgeClassModel,
-                  style: BadgeCardStyle.small,
-                  isSelected: isSelected,
-                  onTap: () => _toggleBadgeSelection(badge.entityId),
-                ),
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SelectableBadgeSliverList(
+                badges: badges,
+                selectedBadgeIds: _selectedBadgeIds,
+                onToggle: _toggleBadgeSelection,
               ),
-            );
-          },
+            ),
+          ],
         );
       },
       loading: () => Center(
@@ -219,77 +206,18 @@ class _BadgeSelectionPageState extends ConsumerState<BadgeSelectionPage> {
       ),
     );
 
-    final Widget actionButton = SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _handleCreate,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: colorScheme.primary,
-          foregroundColor: colorScheme.onPrimary,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: Text(
-          l10n.add,
-          style: theme.textTheme.labelLarge?.copyWith(
-            color: colorScheme.onPrimary,
+    return Column(
+      children: [
+        Expanded(
+          child: MaxWidthWrapper(
+            scrollController: _scrollController,
+            child: badgeList,
           ),
         ),
-      ),
-    );
-
-    // On web the action bar background/border spans the full width while the
-    // button itself stays constrained to the content width (matching the list).
-    if (PlatformInfo.isWeb) {
-      return Column(
-        children: [
-          Expanded(
-            child: MaxWidthWrapper(
-              scrollController: _scrollController,
-              child: badgeList,
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: colorScheme.surface,
-              border: Border(
-                top: BorderSide(color: colorScheme.outlineVariant, width: 1),
-              ),
-            ),
-            child: Center(
-              child: ConstrainedBox(
-                // Matches MaxWidthWrapper's default max content width.
-                constraints: const BoxConstraints(
-                  maxWidth: MaxWidthWrapper.defaultMaxWidth,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: actionButton,
-                ),
-              ),
-            ),
-          ),
-        ],
-      );
-    }
-
-    return MaxWidthWrapper(
-      scrollController: _scrollController,
-      child: Column(
-        children: [
-          Expanded(child: badgeList),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: colorScheme.surface,
-              border: Border(
-                top: BorderSide(color: colorScheme.outlineVariant, width: 1),
-              ),
-            ),
-            child: actionButton,
-          ),
-        ],
-      ),
+        CollectionActionBar(
+          child: PrimaryButton(text: l10n.add, onPressed: _handleCreate),
+        ),
+      ],
     );
   }
 }

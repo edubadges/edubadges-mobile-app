@@ -9,6 +9,10 @@
     "@loginCardButton": {
         "description": "Button text on the login card to navigate to the user's edubadges"
     },
+    "loginFailedMessage": "Het inloggen is geannuleerd of niet gelukt. Probeer het opnieuw.",
+    "@loginFailedMessage": {
+        "description": "Error shown on the web login page when the eduID login was cancelled or failed, above the button to try again"
+    },
     "loginCardText": "Je backpack is de plek waar je jouw edubadges kunt ontvangen, beheren en delen.\n\nOm in te loggen op je backpack heb je een eduID nodig. Klik op de onderstaande knop en log in met je eduID.\n\nHeb je nog geen eduID? Dan kun je eenvoudig een eduID aanmaken.",
     "@loginCardText": {
         "description": "Explanatory text on the login card describing the app and eduID requirement"
@@ -228,6 +232,10 @@
     "@generalNotifications": {
         "description": "Label for general notification settings toggle"
     },
+    "languageSettings": "Taal",
+    "@languageSettings": {
+        "description": "Section header on the account page for choosing the app language"
+    },
     "notificationPermissionDeniedTitle": "Notificatiemachtiging vereist",
     "@notificationPermissionDeniedTitle": {
         "description": "Title for dialog when user has denied notification permission"
@@ -421,13 +429,29 @@
     "@goBack": {
         "description": "Button text to navigate back to the previous screen"
     },
-    "editCollection": "Bewerk collectie",
+    "editCollection": "Collectie wijzigen",
     "@editCollection": {
         "description": "Button text or title for editing a collection"
     },
-    "editCollectionDescription": "Werk de details van je collectie bij",
-    "@editCollectionDescription": {
-        "description": "Description text for the edit collection screen"
+    "badgesInCollection": "Badges in collectie",
+    "@badgesInCollection": {
+        "description": "Section heading above the list of edubadges that can be selected for a collection"
+    },
+    "badgesInCollectionHelper": "Om een collectie aan te maken dien je minimaal één edubadge te selecteren.",
+    "@badgesInCollectionHelper": {
+        "description": "Helper text below the badges section heading on the collection form"
+    },
+    "saveChangesTitle": "Wijzigingen opslaan?",
+    "@saveChangesTitle": {
+        "description": "Title of the dialog shown when leaving a screen with unsaved changes"
+    },
+    "unsavedCollectionChangesDescription": "Je hebt wijzigingen aangebracht in deze collectie. Wil je ze opslaan voordat je dit scherm verlaat?",
+    "@unsavedCollectionChangesDescription": {
+        "description": "Body of the dialog shown when leaving the edit collection screen with unsaved changes"
+    },
+    "dontSave": "Niet opslaan",
+    "@dontSave": {
+        "description": "Dialog action that discards unsaved changes and leaves the screen"
     },
     "continueText": "Doorgaan",
     "@continueText": {
@@ -1226,6 +1250,31 @@
     "edubadgeRequested": "Edubadge aangevraagd",
     "@edubadgeRequested": {
         "description": "Status text when the user has requested an edubadge and is waiting for it"
+    },
+    "edubadgeRequestedOn": "Aangevraagd op {date}",
+    "@edubadgeRequestedOn": {
+        "description": "Status text when the user has requested an edubadge, with the date of the request",
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "cancelRequestButton": "Aanvraag intrekken",
+    "@cancelRequestButton": {
+        "description": "Button text to cancel a pending edubadge request"
+    },
+    "cancelRequestTitle": "Edubadge-aanvraag intrekken",
+    "@cancelRequestTitle": {
+        "description": "Title for the dialog confirming cancellation of a pending edubadge request"
+    },
+    "cancelRequestConfirmation": "Weet je zeker dat je je aanvraag voor deze edubadge wilt intrekken? Je kunt later opnieuw aanvragen.",
+    "@cancelRequestConfirmation": {
+        "description": "Confirmation message asking if the user wants to cancel a pending edubadge request"
+    },
+    "cancelRequestSuccess": "Aanvraag ingetrokken",
+    "@cancelRequestSuccess": {
+        "description": "Success message shown after cancelling a pending edubadge request"
     },
     "stackable": "Stackable",
     "@stackable": {

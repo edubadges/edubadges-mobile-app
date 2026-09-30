@@ -8,6 +8,7 @@ abstract class BadgeDetailsDataSource {
   Future<BadgeClassModel> getBadgeDetails(String entityId);
   Future<BadgeInstanceModel> getBadgeInstance(String entityId);
   Future<void> enroll(String badgeclassSlug);
+  Future<void> cancelEnrollment(String enrollmentEntityId);
   Future<void> updateBadgeVisibility(
     String entityId, {
     required bool isPublic,
@@ -77,6 +78,11 @@ class BadgeDetailsDataSourceImpl implements BadgeDetailsDataSource {
       '/enroll',
       data: {'badgeclass_slug': badgeclassSlug},
     );
+  }
+
+  @override
+  Future<void> cancelEnrollment(String enrollmentEntityId) async {
+    await apiClient.delete<void>('/enrollments/$enrollmentEntityId');
   }
 
   @override

@@ -31,13 +31,33 @@ final packageInfoProvider = FutureProvider<PackageInfo>((ref) {
   return PackageInfo.fromPlatform();
 });
 
+/// Sets the headers that tell the API which language to answer in.
+///
+/// `Accept-Language` is CORS-safelisted, so web sends it too. Web browsers
+/// preflight custom headers and the API only allows a fixed CORS header list,
+/// so `x-language` stays native-only.
+void _applyLanguageHeaders(Map<String, dynamic> headers, AppLanguage language) {
+  headers['Accept-Language'] = language.code;
+  if (!kIsWeb) {
+    headers['x-language'] = language.code;
+  }
+}
+
 final dioProvider = Provider<Dio>((ref) {
   final config = ref.watch(networkConfigProvider);
   final oidcAuth = ref.watch(oidcAuthDataSourceProvider);
-  final language = ref.watch(appLanguageProvider);
 
   final dio = config.createDio();
   dio.options.headers['x-requested-with'] = PlatformInfo.requestedWithHeaderValue;
+
+  // Listened to rather than watched: a language switch must not rebuild Dio.
+  // That would replace the token-refreshing interceptor and rebuild every
+  // provider built on the API client, the login and auth ones included.
+  _applyLanguageHeaders(dio.options.headers, ref.read(appLanguageProvider));
+  ref.listen<AppLanguage>(
+    appLanguageProvider,
+    (_, language) => _applyLanguageHeaders(dio.options.headers, language),
+  );
 
   dio.interceptors.insert(0, InterceptorsWrapper(
     onRequest: (options, handler) async {
@@ -47,7 +67,6 @@ final dioProvider = Provider<Dio>((ref) {
         final packageInfo = await ref.read(packageInfoProvider.future);
         options.headers['x-platform'] = PlatformInfo.platformHeaderValue;
         options.headers['x-app-version'] = packageInfo.version;
-        options.headers['x-language'] = language.code;
       }
       handler.next(options);
     },

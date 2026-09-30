@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/widgets/delayed_loader.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
+import 'package:edubadges/features/login/domain/web_auto_login.dart';
+import 'package:edubadges/features/login/presentation/providers/auto_login_providers.dart';
 import 'package:edubadges/features/login/presentation/widgets/login_status_message.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
@@ -23,6 +26,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   );
   Timer? _timer;
   int _currentPage = 0;
+
+  /// Set once this page has asked for a login, by itself or through the
+  /// button, so the automatic login on web fires at most once.
+  bool _loginRequested = false;
   late final List<String> _extendedImages;
 
   final List<String> _badgeImages = [
@@ -47,7 +54,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     _currentPage = 0;
 
     _timer = Timer.periodic(const Duration(seconds: 4), (_) {
-      if (!mounted) return;
+      // The carousel is not on screen while the page only shows a loader.
+      if (!mounted || !_pageController.hasClients) return;
 
       final nextPage = _currentPage + 1;
 
@@ -63,7 +71,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       // (do it early so the jump happens during/after animation)
       if (_currentPage >= _badgeImages.length * 2 - 3) {
         Future.delayed(const Duration(milliseconds: 1000), () {
-          if (!mounted) return;
+          if (!mounted || !_pageController.hasClients) return;
           _pageController.jumpToPage(_badgeImages.length);
           _currentPage = _badgeImages.length;
         });
@@ -78,6 +86,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     super.dispose();
   }
 
+  Future<void> _login({bool replaceHistory = false}) async {
+    _loginRequested = true;
+    ref.read(autoLoginSuppressionProvider.notifier).clear();
+    await ref.read(authProvider.notifier).login(replaceHistory: replaceHistory);
+  }
+
+  void _startAutoLogin() {
+    if (_loginRequested) return;
+    _loginRequested = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      // This page only shows a loader, so keep it out of the history: Back
+      // from eduID should not reload it and redirect straight back.
+      unawaited(_login(replaceHistory: true));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -86,6 +111,22 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final textTheme = theme.textTheme;
 
     final authAsync = ref.watch(authProvider);
+    final LoginEntryMode mode = resolveLoginEntryMode(
+      autoLoginSupported: ref.watch(autoLoginSupportedProvider),
+      auth: authAsync,
+      suppression: ref.watch(autoLoginSuppressionProvider),
+    );
+
+    switch (mode) {
+      case LoginEntryMode.startLogin:
+        _startAutoLogin();
+        return const _LoginLoadingView();
+      case LoginEntryMode.loading:
+        return const _LoginLoadingView();
+      case LoginEntryMode.landing:
+      case LoginEntryMode.landingWithError:
+        break;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -179,17 +220,28 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                         const SizedBox(height: 24),
 
+                        if (mode == LoginEntryMode.landingWithError) ...[
+                          SizedBox(
+                            width: double.infinity,
+                            child: Semantics(
+                              liveRegion: true,
+                              child: Text(
+                                l10n.loginFailedMessage,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.error,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+
                         SizedBox(
                           width: double.infinity,
                           height: 54,
                           child: ElevatedButton(
-                            onPressed: authAsync.isLoading
-                                ? null
-                                : () async {
-                                    await ref
-                                        .read(authProvider.notifier)
-                                        .login();
-                                  },
+                            onPressed: authAsync.isLoading ? null : _login,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: colorScheme.primary,
                               foregroundColor: colorScheme.onPrimary,
@@ -225,5 +277,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         ),
       ),
     );
+  }
+}
+
+/// Shown instead of the landing page while authentication resolves or the
+/// browser is on its way to eduID, so the landing page does not flash first.
+class _LoginLoadingView extends StatelessWidget {
+  const _LoginLoadingView();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: DelayedLoader()));
   }
 }
