@@ -9,6 +9,10 @@
     "@loginCardButton": {
         "description": "Button text on the login card to navigate to the user's edubadges"
     },
+    "loginFailedMessage": "Signing in was cancelled or did not succeed. Please try again.",
+    "@loginFailedMessage": {
+        "description": "Error shown on the web login page when the eduID login was cancelled or failed, above the button to try again"
+    },
     "loginCardText": "Your backpack is the place where you can receive, manage, and share your edubadges.\n\nTo sign in to your backpack, you need an eduID. Click the button below and sign in with your eduID.\n\nDon't have an eduID yet? You can easily create one.",
     "@loginCardText": {
         "description": "Explanatory text on the login card describing the app and eduID requirement"

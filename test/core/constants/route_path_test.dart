@@ -1,14 +1,8 @@
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Mirrors the guard in `routes.dart`, which sends an anonymous visitor to
-/// [RoutePath.login] for every location that is not public.
-String? _redirectForAnonymousVisitor(String path) {
-  if (path == RoutePath.login || RoutePath.isPublicPath(path)) {
-    return null;
-  }
-  return RoutePath.login;
-}
+String? _redirectForAnonymousVisitor(String path) =>
+    RoutePath.redirectForAnonymousVisitor(path);
 
 void main() {
   group('isPublicPath', () {
@@ -56,6 +50,22 @@ void main() {
         _redirectForAnonymousVisitor('/quality-assurance/enrollment/abc'),
         isNull,
       );
+    });
+
+    test('public badge pages and the login route do not redirect', () {
+      expect(_redirectForAnonymousVisitor(RoutePath.login), isNull);
+      expect(_redirectForAnonymousVisitor('/public/abc'), isNull);
+      expect(_redirectForAnonymousVisitor('/enrollment/abc'), isNull);
+      expect(
+        _redirectForAnonymousVisitor('/public/abc/quality-assurance'),
+        isNull,
+      );
+    });
+
+    test('the backpack itself sends a logged-out visitor to login', () {
+      expect(_redirectForAnonymousVisitor(RoutePath.main), RoutePath.login);
+      expect(_redirectForAnonymousVisitor('/details/abc'), RoutePath.login);
+      expect(_redirectForAnonymousVisitor('/collection/abc'), RoutePath.login);
     });
 
     test('claimed badge URLs still redirect to login', () {

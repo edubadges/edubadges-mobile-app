@@ -31,7 +31,12 @@ class OidcAuthDataSource {
   /// conditional-export barrel (never invoked on mobile).
   Future<bool> completeLoginFromRedirect(Uri uri) async => false;
 
-  Future<void> login({bool addAcrValues = false}) async {
+  /// [replaceHistory] only matters for the web redirect; there is no browser
+  /// history to replace here.
+  Future<void> login({
+    bool addAcrValues = false,
+    bool replaceHistory = false,
+  }) async {
     try {
       final Map<String, String> additionalParameters = {};
       List<String>? promptValues;

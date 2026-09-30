@@ -110,6 +110,12 @@ abstract class AppLocalizations {
   /// **'Go to your backpack'**
   String get loginCardButton;
 
+  /// Error shown on the web login page when the eduID login was cancelled or failed, above the button to try again
+  ///
+  /// In en, this message translates to:
+  /// **'Signing in was cancelled or did not succeed. Please try again.'**
+  String get loginFailedMessage;
+
   /// Explanatory text on the login card describing the app and eduID requirement
   ///
   /// In en, this message translates to:
