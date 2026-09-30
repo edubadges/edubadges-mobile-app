@@ -37,6 +37,7 @@ class AccountPage extends ConsumerStatefulWidget {
 class _AccountPageState extends ConsumerState<AccountPage> {
   final ScrollController _scrollController = ScrollController();
 
+  static const double _spacingExtraSmall = 4.0;
   static const double _spacingSmall = 8.0;
   static const double _spacingMedium = 16.0;
   static const double _cardBorderRadius = 20.0;
@@ -44,6 +45,13 @@ class _AccountPageState extends ConsumerState<AccountPage> {
   static const double _badgeBorderRadius = 8.0;
   static const double _chevronSize = 12.0;
   static const double _chevronPadding = 8.0;
+  static const double _languageOptionHeight = 48.0;
+
+  /// In the order the design lists them.
+  static const List<AppLanguage> _languageOptions = [
+    AppLanguage.dutch,
+    AppLanguage.english,
+  ];
 
   @override
   void dispose() {
@@ -51,9 +59,14 @@ class _AccountPageState extends ConsumerState<AccountPage> {
     super.dispose();
   }
 
-  Widget _buildDivider(ColorScheme colorScheme) {
+  Widget _buildDivider(
+    ColorScheme colorScheme, {
+    EdgeInsetsGeometry padding = const EdgeInsets.symmetric(
+      vertical: _spacingSmall,
+    ),
+  }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: _spacingSmall),
+      padding: padding,
       child: Divider(color: colorScheme.outlineVariant, height: 1),
     );
   }
@@ -298,6 +311,98 @@ class _AccountPageState extends ConsumerState<AccountPage> {
     }
   }
 
+  Widget _buildLanguageSection(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final selectedLanguage = ref.watch(appLanguageProvider);
+
+    return _buildSectionCard(
+      context: context,
+      title: l10n.languageSettings,
+      children: [
+        // The option rows carry the rest of the spacing around the dividers.
+        _buildDivider(
+          colorScheme,
+          padding: const EdgeInsets.only(
+            top: _spacingSmall,
+            bottom: _spacingExtraSmall,
+          ),
+        ),
+        RadioTheme(
+          // Shrinks the radio to the size of the icon in the design, so it
+          // lines up with the right edge of the card content.
+          data: RadioTheme.of(context).copyWith(
+            visualDensity: const VisualDensity(
+              horizontal: VisualDensity.minimumDensity,
+              vertical: VisualDensity.minimumDensity,
+            ),
+          ),
+          child: RadioGroup<AppLanguage>(
+            groupValue: selectedLanguage,
+            onChanged: (language) => _handleLanguageSelected(ref, language),
+            child: Column(
+              children: [
+                for (final (index, language) in _languageOptions.indexed) ...[
+                  if (index > 0)
+                    _buildDivider(
+                      colorScheme,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: _spacingExtraSmall,
+                      ),
+                    ),
+                  _buildLanguageOption(context, language),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLanguageOption(BuildContext context, AppLanguage language) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Theme(
+      // The app-wide focus colour is opaque, which as a row highlight would
+      // hide both the label and the radio.
+      data: theme.copyWith(
+        focusColor: theme.focusColor.withValues(alpha: 0.12),
+      ),
+      child: RadioListTile<AppLanguage>(
+        value: language,
+        controlAffinity: ListTileControlAffinity.trailing,
+        contentPadding: EdgeInsets.zero,
+        minTileHeight: _languageOptionHeight,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(_badgeBorderRadius),
+        ),
+        fillColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? colorScheme.primary
+              : colorScheme.outline,
+        ),
+        title: Text.rich(
+          // Each name is in its own language; tagging it lets screen readers
+          // pronounce it that way whatever the app language is.
+          TextSpan(text: language.displayName, locale: language.locale),
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleLanguageSelected(
+    WidgetRef ref,
+    AppLanguage? language,
+  ) async {
+    if (language == null) return;
+    await ref.read(appLanguageProvider.notifier).setLanguage(language);
+  }
+
   String _formatAgreementDateText(
     BuildContext context,
     bool type,
@@ -322,7 +427,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    final langCode = ref.read(appLanguageProvider).code;
+    final langCode = ref.watch(appLanguageProvider).code;
     final institution = agreement.terms.institution;
     final institutionName = institution != null
         ? getLocalizedString(
@@ -437,7 +542,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
             grouped.putIfAbsent(key, () => []).add(agreement);
           }
 
-          final langCode = ref.read(appLanguageProvider).code;
+          final langCode = ref.watch(appLanguageProvider).code;
           final groupEntries = grouped.entries.toList();
 
           return groupEntries.expand((groupEntry) {
@@ -632,6 +737,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
           child: _buildDataSection(context, profile),
         ),
         if (!PlatformInfo.isWeb) _buildNotificationSection(context, ref, profile),
+        _buildLanguageSection(context, ref),
       ],
     );
   }

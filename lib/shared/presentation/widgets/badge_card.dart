@@ -114,7 +114,7 @@ class BadgeCard extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
     final institution = badgeClass.issuer?.faculty?.institution;
-    final langCode = ref.read(appLanguageProvider).code;
+    final langCode = ref.watch(appLanguageProvider).code;
     final institutionName = getLocalizedString(
       institution?.nameDutch,
       institution?.nameEnglish,

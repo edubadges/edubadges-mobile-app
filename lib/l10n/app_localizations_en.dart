@@ -191,6 +191,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalNotifications => 'General notifications';
 
   @override
+  String get languageSettings => 'Language';
+
+  @override
   String get notificationPermissionDeniedTitle =>
       'Notification permission required';
 

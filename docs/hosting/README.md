@@ -214,7 +214,9 @@ Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
 
 `Access-Control-Allow-Credentials` is not required — the app sends a bearer
 token. The web app does not send `x-platform`, `x-app-version` or `x-language`,
-but it does send `x-requested-with`.
+but it does send `x-requested-with`. It also sets `Accept-Language` to the
+language chosen in the app (`en` or `nl`); that header is CORS-safelisted, so
+it needs no entry in the allowed headers.
 
 ## 7. Notes on the build
 
