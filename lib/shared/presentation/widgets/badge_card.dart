@@ -43,6 +43,10 @@ class BadgeCard extends ConsumerWidget {
 
   final VoidCallback? onTap;
 
+  /// Shown at the end of the row for [BadgeCardStyle.small], e.g. a selection
+  /// checkbox. Ignored by the other styles.
+  final Widget? trailing;
+
   const BadgeCard({
     super.key,
     required this.instance,
@@ -55,6 +59,7 @@ class BadgeCard extends ConsumerWidget {
     this.badgeNavigationEntityId,
     this.showClaimedGalleryOnOpen = false,
     this.onTap,
+    this.trailing,
   });
 
   int? getTimeInvestment() {
@@ -197,6 +202,7 @@ class BadgeCard extends ConsumerWidget {
                 ),
               ),
             ),
+            if (trailing != null) ...[const SizedBox(width: 12), trailing!],
           ],
         ),
       );

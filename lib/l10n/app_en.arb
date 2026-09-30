@@ -433,9 +433,25 @@
     "@editCollection": {
         "description": "Button text or title for editing a collection"
     },
-    "editCollectionDescription": "Update your collection details",
-    "@editCollectionDescription": {
-        "description": "Description text for the edit collection screen"
+    "badgesInCollection": "Badges in collection",
+    "@badgesInCollection": {
+        "description": "Section heading above the list of edubadges that can be selected for a collection"
+    },
+    "badgesInCollectionHelper": "To create a collection you need to select at least one edubadge.",
+    "@badgesInCollectionHelper": {
+        "description": "Helper text below the badges section heading on the collection form"
+    },
+    "saveChangesTitle": "Save changes?",
+    "@saveChangesTitle": {
+        "description": "Title of the dialog shown when leaving a screen with unsaved changes"
+    },
+    "unsavedCollectionChangesDescription": "You have made changes to this collection. Do you want to save them before you leave this screen?",
+    "@unsavedCollectionChangesDescription": {
+        "description": "Body of the dialog shown when leaving the edit collection screen with unsaved changes"
+    },
+    "dontSave": "Don't save",
+    "@dontSave": {
+        "description": "Dialog action that discards unsaved changes and leaves the screen"
     },
     "continueText": "Continue",
     "@continueText": {

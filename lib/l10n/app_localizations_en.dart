@@ -369,7 +369,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editCollection => 'Edit collection';
 
   @override
-  String get editCollectionDescription => 'Update your collection details';
+  String get badgesInCollection => 'Badges in collection';
+
+  @override
+  String get badgesInCollectionHelper =>
+      'To create a collection you need to select at least one edubadge.';
+
+  @override
+  String get saveChangesTitle => 'Save changes?';
+
+  @override
+  String get unsavedCollectionChangesDescription =>
+      'You have made changes to this collection. Do you want to save them before you leave this screen?';
+
+  @override
+  String get dontSave => 'Don\'t save';
 
   @override
   String get continueText => 'Continue';

@@ -366,11 +366,24 @@ class AppLocalizationsNl extends AppLocalizations {
   String get goBack => 'Ga terug';
 
   @override
-  String get editCollection => 'Bewerk collectie';
+  String get editCollection => 'Collectie wijzigen';
 
   @override
-  String get editCollectionDescription =>
-      'Werk de details van je collectie bij';
+  String get badgesInCollection => 'Badges in collectie';
+
+  @override
+  String get badgesInCollectionHelper =>
+      'Om een collectie aan te maken dien je minimaal één edubadge te selecteren.';
+
+  @override
+  String get saveChangesTitle => 'Wijzigingen opslaan?';
+
+  @override
+  String get unsavedCollectionChangesDescription =>
+      'Je hebt wijzigingen aangebracht in deze collectie. Wil je ze opslaan voordat je dit scherm verlaat?';
+
+  @override
+  String get dontSave => 'Niet opslaan';
 
   @override
   String get continueText => 'Doorgaan';

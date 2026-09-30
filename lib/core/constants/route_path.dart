@@ -7,6 +7,7 @@ class RoutePath {
   static const String start = '/';
   static const String collections = '/collections';
   static const String collection = '/collection/:id';
+  static const String editCollection = '/collection/:id/edit';
   static const String newCollection = '/new-collection';
   static const String newCollectionBadgeSelection = '/new-collection/badges';
 
@@ -130,6 +131,10 @@ class RoutePath {
           'description': description,
       },
     ).toString();
+  }
+
+  static String editCollectionPath({required String id}) {
+    return '/collection/${Uri.encodeComponent(id)}/edit';
   }
 
   static String agreementDetailsPath({
