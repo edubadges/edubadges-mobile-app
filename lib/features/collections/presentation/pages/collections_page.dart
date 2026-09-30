@@ -3,14 +3,12 @@ import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/image.dart';
-import 'package:edubadges/core/widgets/app_modal.dart';
 import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/page_header.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/collections/domain/entities/collections_entity.dart';
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
-import 'package:edubadges/features/collections/presentation/widgets/create_collection_bottom_sheet.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:flutter/material.dart';
@@ -33,20 +31,12 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
     super.dispose();
   }
 
-  void _showCreateCollectionBottomSheet(BuildContext context) {
-    showAppFormModal<void>(
-      context,
-      useRootNavigator: true,
-      builder: (context) => const CreateCollectionBottomSheet(),
-    );
-  }
-
   Widget _buildAddButton({
     required BuildContext context,
     required AppLocalizations l10n,
   }) {
     return IconButton(
-      onPressed: () => _showCreateCollectionBottomSheet(context),
+      onPressed: () => context.push(RoutePath.newCollection),
       icon: const ExcludeSemantics(
         child: Icon(Icons.add, color: AppColors.primary, size: 24),
       ),
@@ -318,6 +308,10 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
     final remainingCount = badgeCount - 3;
 
     return GridView.builder(
+      // Each card has its own small grid. Without this, every grid attaches to
+      // the page's PrimaryScrollController (MaxWidthWrapper) on mobile, and the
+      // page scrollbar asserts that its controller has several positions.
+      primary: false,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
