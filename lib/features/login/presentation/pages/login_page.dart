@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
+import 'package:edubadges/features/login/presentation/widgets/login_status_message.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
@@ -212,6 +213,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   ),
                           ),
                         ),
+
+                        const LoginStatusMessage(),
                       ],
                     ),
                   ),

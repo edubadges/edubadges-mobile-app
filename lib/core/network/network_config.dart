@@ -140,14 +140,30 @@ class NetworkConfig {
         refreshToken: (token, client) async {
           try {
             return await onRefreshToken!();
-          } catch (e) {
+          } on DioException {
+            rethrow;
+          } catch (e, stackTrace) {
             // Revoking clears the stored token, so reserve it for grants the
-            // server has definitively rejected. Transient failures propagate
-            // as-is and leave the session intact.
+            // server has definitively rejected. Transient failures leave the
+            // session intact.
             if (isPermanentAuthFailure(e)) {
               throw RevokeTokenException();
             }
-            rethrow;
+            // Fresh fails the request only for a DioException. For anything
+            // else (every AppAuth error on mobile) it hands the original
+            // 401/403 back as a successful response, which screens then fail
+            // to parse. Wrap it so the request fails as a network error.
+            Error.throwWithStackTrace(
+              DioException(
+                requestOptions: RequestOptions(),
+                type: isNetworkAuthFailure(e)
+                    ? DioExceptionType.connectionError
+                    : DioExceptionType.unknown,
+                error: e,
+                message: 'Token refresh failed',
+              ),
+              stackTrace,
+            );
           }
         },
       );
