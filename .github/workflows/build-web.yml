@@ -1,0 +1,67 @@
+name: Build and Deploy Flutter Web
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build web — ${{ github.ref_name }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.41.6"
+          channel: "stable"
+
+      - name: Dependencies
+        run: flutter pub get
+
+      - name: Determine flavor based on branch
+        id: flavor-map
+        run: |
+          case "${{ github.ref_name }}" in
+            develop)
+              echo "flavor=dev" >> $GITHUB_OUTPUT
+              ;;
+            test)
+              echo "flavor=tst" >> $GITHUB_OUTPUT
+              ;;
+            acceptance)
+              echo "flavor=acc" >> $GITHUB_OUTPUT
+              ;;
+            main)
+              echo "flavor=prod" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+      - name: Build web
+        run: |
+          ./tool/build_web.sh ${{ steps.flavor-map.outputs.flavor }}
+
+      - name: Create tarball
+        run: tar -czf web-${{ github.ref_name }}.tar.gz -C build/web .
+
+      - name: Upload to target repo
+        run: |
+          mkdir -p dist/${{ github.ref_name }}
+          TAG="web-${{ github.ref_name }}"
+          mv $TAG.tar.gz dist/${{ github.ref_name }}/web.tar.gz
+          git config --global user.name "github-actions[bot]"
+          ADDR="github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "$ADDR"
+          CLONE_URL="https://${{ secrets.DEPLOY_TOKEN }}@github.com"
+          CLONE_URL+="/edubadges/edubadges-backpack-web.git"
+          git clone "$CLONE_URL" --depth 1 deploy-repo
+          mkdir -p deploy-repo/dist/${{ github.ref_name }}
+          cp -r dist/* deploy-repo/dist/
+          cd deploy-repo
+          git add -A
+          if git diff --staged --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
+          git commit -m "Build ${{ github.ref_name }} ${{ github.sha }}"
+          git push
