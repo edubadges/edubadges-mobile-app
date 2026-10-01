@@ -28,7 +28,7 @@ jobs:
       - name: Determine flavor based on branch
         id: flavor-map
         run: |
-          case "${{ github.ref_name }}" in
+          case "${{ inputs.source-branch }}" in
             develop)
               echo "flavor=dev" >> $GITHUB_OUTPUT
               ;;
@@ -48,20 +48,20 @@ jobs:
           ./tool/build_web.sh ${{ steps.flavor-map.outputs.flavor }}
 
       - name: Create tarball
-        run: tar -czf web-${{ github.ref_name }}.tar.gz -C build/web .
+        run: tar -czf web-${{ inputs.source-branch }}.tar.gz -C build/web .
 
       - name: Upload to target repo
         run: |
-          mkdir -p dist/${{ github.ref_name }}
-          TAG="web-${{ github.ref_name }}"
-          mv $TAG.tar.gz dist/${{ github.ref_name }}/web.tar.gz
+          mkdir -p dist/${{ inputs.source-branch }}
+          TAG="web-${{ inputs.source-branch }}"
+          mv $TAG.tar.gz dist/${{ inputs.source-branch }}/web.tar.gz
           git config --global user.name "github-actions[bot]"
           ADDR="github-actions[bot]@users.noreply.github.com"
           git config --global user.email "$ADDR"
           CLONE_URL="https://${{ secrets.DEPLOY_TOKEN }}@github.com"
           CLONE_URL+="/edubadges/edubadges-backpack-web.git"
           git clone "$CLONE_URL" --depth 1 deploy-repo
-          mkdir -p deploy-repo/dist/${{ github.ref_name }}
+          mkdir -p deploy-repo/dist/${{ inputs.source-branch }}
           cp -r dist/* deploy-repo/dist/
           cd deploy-repo
           git add -A
@@ -69,5 +69,5 @@ jobs:
             echo "Nothing to commit"
             exit 0
           fi
-          git commit -m "Build ${{ github.ref_name }} ${{ github.sha }}"
+          git commit -m "Build ${{ inputs.source-branch }} ${{ github.sha }}"
           git push
