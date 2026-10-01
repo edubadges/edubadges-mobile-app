@@ -186,10 +186,29 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
 
   Widget _buildInstitutionAutocomplete(AppLocalizations l10n) {
     final institutionsAsync = ref.watch(catalogInstitutionsProvider);
+    final String lang = ref.watch(appLanguageProvider).code;
+
+    String institutionName(CatalogInstitution institution) {
+      return getLocalizedString(
+        institution.nameDutch,
+        institution.nameEnglish,
+        lang,
+      );
+    }
+
+    final CatalogInstitution? selectedInstitution = _selectedInstitution;
 
     return institutionsAsync.when(
       data: (institutions) {
         return Autocomplete<CatalogInstitution>(
+          // Recreated when the app language changes, so a selected institution
+          // shows its name in the new language. Anything typed is kept.
+          key: ValueKey<String>(lang),
+          initialValue: TextEditingValue(
+            text: selectedInstitution != null
+                ? institutionName(selectedInstitution)
+                : _institutionController.text,
+          ),
           optionsBuilder: (TextEditingValue textEditingValue) {
             if (textEditingValue.text.isEmpty) {
               return const Iterable<CatalogInstitution>.empty();
@@ -198,14 +217,7 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
               return institution.matchesSearch(textEditingValue.text);
             });
           },
-          displayStringForOption: (CatalogInstitution institution) {
-            final lang = ref.read(appLanguageProvider).code;
-            return getLocalizedString(
-              institution.nameDutch,
-              institution.nameEnglish,
-              lang,
-            );
-          },
+          displayStringForOption: institutionName,
           fieldViewBuilder:
               (
                 BuildContext context,
@@ -265,8 +277,6 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
                 AutocompleteOnSelected<CatalogInstitution> onSelected,
                 Iterable<CatalogInstitution> options,
               ) {
-                final lang = ref.read(appLanguageProvider).code;
-
                 return Align(
                   alignment: Alignment.topLeft,
                   child: Material(
@@ -292,11 +302,7 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
                             },
                             child: ListTile(
                               title: Text(
-                                getLocalizedString(
-                                  option.nameDutch,
-                                  option.nameEnglish,
-                                  lang,
-                                ),
+                                institutionName(option),
                                 style: Theme.of(context).textTheme.bodyLarge,
                               ),
                             ),

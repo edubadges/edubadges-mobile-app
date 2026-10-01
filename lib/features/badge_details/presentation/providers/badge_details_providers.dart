@@ -1,4 +1,6 @@
 import 'package:collection/collection.dart';
+import 'package:dartz/dartz.dart';
+import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/features/badge_details/data/datasources/badge_details_datasource.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_model.dart';
@@ -31,6 +33,20 @@ final badgeDetailsProvider = FutureProvider.autoDispose
       return result.fold((failure) => throw failure, (badge) => badge);
     });
 
+/// Badge instance by its **instance** entity id.
+///
+/// The badge instance list (`/badge-instances`) is served with a trimmed
+/// serializer that omits instance-only fields such as `linkedin_url`; only the
+/// detail endpoint returns them. Use this to load those fields for a badge that
+/// was taken from a list response.
+final badgeInstanceProvider = FutureProvider.autoDispose
+    .family<BadgeInstanceModel, String>((ref, instanceEntityId) async {
+      final repository = ref.read(badgeDetailsRepositoryProvider);
+      final result = await repository.getBadgeInstance(instanceEntityId);
+
+      return result.fold((failure) => throw failure, (instance) => instance);
+    });
+
 final badgeDetailsModelProvider = FutureProvider.autoDispose
     .family<BadgeDetailsModel?, BadgeDetailsQuery>((ref, query) async {
       final repository = ref.read(badgeDetailsRepositoryProvider);
@@ -38,13 +54,13 @@ final badgeDetailsModelProvider = FutureProvider.autoDispose
       final badgesListAsync = ref.watch(badgesListProvider);
       final overview = badgesListAsync.value;
 
-      final bool badgeRequested =
-          overview?.requestedBadges.firstWhereOrNull(
+      final BadgeInstanceEntity? enrollment = overview?.requestedBadges
+          .firstWhereOrNull(
             (element) =>
                 element.badgeclass.entityId == query.entityId ||
                 element.entityId == query.entityId,
-          ) !=
-          null;
+          );
+      final bool badgeRequested = enrollment != null;
 
       switch (query.scope) {
         case BadgeDetailsScope.claimed:
@@ -55,6 +71,7 @@ final badgeDetailsModelProvider = FutureProvider.autoDispose
               badgeInstance: badgeInstance,
               badgeClass: badgeInstance.badgeclass as BadgeClassModel,
               requested: badgeRequested,
+              requestedOn: enrollment?.createdAt,
             ),
           );
 
@@ -73,6 +90,7 @@ final badgeDetailsModelProvider = FutureProvider.autoDispose
               badgeInstance: badgeInstance as BadgeInstanceModel?,
               badgeClass: badgeClass,
               requested: badgeRequested,
+              requestedOn: enrollment?.createdAt,
             ),
           );
       }
@@ -121,6 +139,37 @@ final enrollBadgeProvider =
       };
     });
 
+final cancelEnrollmentProvider =
+    Provider<Future<Either<Failure, void>> Function(String badgeClassId)>((
+      ref,
+    ) {
+      return (String badgeClassId) async {
+        final overview = await ref.read(badgesOverviewProvider.future);
+        final String? enrollmentEntityId = overview.requestedBadges
+            .firstWhereOrNull(
+              (element) =>
+                  element.badgeclass.entityId == badgeClassId ||
+                  element.entityId == badgeClassId,
+            )
+            ?.entityId;
+        if (enrollmentEntityId == null) {
+          return const Left(ValidationFailure('Enrollment not found'));
+        }
+
+        final repository = ref.read(badgeDetailsRepositoryProvider);
+        final result = await repository.cancelEnrollment(enrollmentEntityId);
+
+        if (result.isLeft()) {
+          return result;
+        }
+
+        await ref.read(badgesOverviewProvider.notifier).refresh();
+        ref.invalidate(badgeDetailsModelProvider);
+        ref.invalidate(badgeDetailsProvider(badgeClassId));
+        return const Right(null);
+      };
+    });
+
 final updateBadgeVisibilityProvider =
     Provider<
       Future<bool> Function(
@@ -149,6 +198,7 @@ final updateBadgeVisibilityProvider =
             await ref.read(badgesOverviewProvider.notifier).refresh();
             await ref.read(collectionsProvider.notifier).refresh();
             ref.invalidate(badgeDetailsProvider(entityId));
+            ref.invalidate(badgeInstanceProvider(entityId), asReload: true);
             ref.invalidate(badgeDetailsModelProvider, asReload: true);
             return true;
           } catch (_) {

@@ -17,6 +17,16 @@ Future<Either<Failure, T>> repositoryGuard<T>(
       return Left(NetworkFailure(e.message));
     }
 
+    if (e is ValidationException) {
+      return Left(
+        ValidationFailure(
+          e.message,
+          code: e.code,
+          apiErrorCode: e.apiErrorCode,
+        ),
+      );
+    }
+
     if (e is ServerException) {
       return Left(ServerFailure(e.message, e.statusCode));
     }
@@ -27,16 +37,7 @@ Future<Either<Failure, T>> repositoryGuard<T>(
 
     return Left(ServerFailure(e.message, 500));
   } catch (e, stackTrace) {
-    logger.e(
-      '$logMessage (unexpected)',
-      error: e,
-      stackTrace: stackTrace,
-    );
-    return const Left(
-      ServerFailure(
-        'An unexpected error occurred',
-        500,
-      ),
-    );
+    logger.e('$logMessage (unexpected)', error: e, stackTrace: stackTrace);
+    return const Left(ServerFailure('An unexpected error occurred', 500));
   }
 }

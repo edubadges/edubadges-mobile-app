@@ -1,6 +1,7 @@
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/core/utils/logger.dart';
+import 'package:edubadges/features/login/presentation/providers/auto_login_providers.dart';
 import 'package:edubadges/shared/data/datasources/oidc_auth_datasource.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web/web.dart' as web;
@@ -12,6 +13,8 @@ import 'package:web/web.dart' as web;
 /// before the router evaluates authentication. After handling, the OAuth query
 /// parameters are stripped from the URL and the app is pointed at the login
 /// route so the existing post-login redirect logic (terms / main) takes over.
+/// When the login was cancelled or failed, the login route shows its landing
+/// page with an error instead of sending the user back to eduID.
 Future<void> completeWebLoginRedirect(ProviderContainer container) async {
   final Uri uri = Uri.base;
   final bool hasCode = uri.queryParameters.containsKey('code');
@@ -25,11 +28,16 @@ Future<void> completeWebLoginRedirect(ProviderContainer container) async {
   container.read(dioProvider);
   final OidcAuthDataSource oidc = container.read(oidcAuthDataSourceProvider);
 
+  bool succeeded = false;
   try {
-    await oidc.completeLoginFromRedirect(uri);
+    succeeded = await oidc.completeLoginFromRedirect(uri);
   } catch (e) {
     logger.e('Auth(web): failed to complete login redirect', error: e);
   } finally {
     web.window.history.replaceState(null, '', RoutePath.login);
   }
+
+  container
+      .read(autoLoginSuppressionProvider.notifier)
+      .recordLoginRedirect(succeeded: succeeded);
 }

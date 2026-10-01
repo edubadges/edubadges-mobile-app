@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:edubadges/core/auth/oidc_error_classifier.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
+import 'package:edubadges/core/network/errors/error_codes.dart';
+import 'package:edubadges/core/network/errors/exceptions.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/shared/data/datasources/secure_token_storage.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
@@ -19,8 +23,15 @@ class OidcAuthDataSource {
   final SecureTokenStorage _tokenStorage = SecureTokenStorage();
   Fresh<OAuth2Token>? _fresh;
   Future<OAuth2Token>? _refreshInFlight;
+  final StreamController<void> _sessionExpired =
+      StreamController<void>.broadcast();
 
   final List<String> _scopes = ['openid', 'eduid.nl/links', 'offline_access'];
+
+  /// Fires when SurfConext rejected the refresh token and the session was
+  /// cleared, as opposed to the user logging out. The app then has to return
+  /// to the login screen.
+  Stream<void> get sessionExpired => _sessionExpired.stream;
 
   void setFresh(Fresh<OAuth2Token>? fresh) {
     _fresh = fresh;
@@ -31,7 +42,12 @@ class OidcAuthDataSource {
   /// conditional-export barrel (never invoked on mobile).
   Future<bool> completeLoginFromRedirect(Uri uri) async => false;
 
-  Future<void> login({bool addAcrValues = false}) async {
+  /// [replaceHistory] only matters for the web redirect; there is no browser
+  /// history to replace here.
+  Future<void> login({
+    bool addAcrValues = false,
+    bool replaceHistory = false,
+  }) async {
     try {
       final Map<String, String> additionalParameters = {};
       List<String>? promptValues;
@@ -84,7 +100,17 @@ class OidcAuthDataSource {
       } else {
         throw Exception('Login failed: no token received');
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      if (isNetworkAuthFailure(e)) {
+        // Surfaces as a NetworkFailure, so the login screen can say SurfConext
+        // is unreachable instead of the login silently doing nothing.
+        throw NetworkException(
+          message: 'SurfConext could not be reached',
+          code: ErrorCodes.networkError,
+          originalError: e,
+          stackTrace: stackTrace,
+        );
+      }
       rethrow;
     }
   }
@@ -211,6 +237,7 @@ class OidcAuthDataSource {
       if (isPermanentAuthFailure(e)) {
         logger.e('Auth: Refresh token rejected, clearing session', error: e);
         await logout();
+        _sessionExpired.add(null);
       } else {
         logger.w('Auth: Token refresh failed, keeping session', error: e);
       }

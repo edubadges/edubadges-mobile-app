@@ -16,7 +16,13 @@ class AdaptiveDialogConfig {
   final VoidCallback onFirstButtonPressed;
   final VoidCallback onSecondButtonPressed;
   final bool isFirstButtonDefaultAction;
+
+  /// Colours the second button as destructive (error colour).
   final bool isDestructiveAction;
+
+  /// Colours the first button as destructive (error colour), e.g. a
+  /// "Don't save" action next to a primary "Save".
+  final bool isFirstButtonDestructive;
 
   const AdaptiveDialogConfig({
     required this.title,
@@ -28,6 +34,7 @@ class AdaptiveDialogConfig {
     required this.onSecondButtonPressed,
     this.isFirstButtonDefaultAction = false,
     this.isDestructiveAction = false,
+    this.isFirstButtonDestructive = false,
   });
 }
 
@@ -48,6 +55,7 @@ class AdaptiveDialog extends StatelessWidget {
 
   final bool isFirstButtonDefaultAction;
   final bool isDestructiveAction;
+  final bool isFirstButtonDestructive;
 
   const AdaptiveDialog({
     super.key,
@@ -60,6 +68,7 @@ class AdaptiveDialog extends StatelessWidget {
     required this.onSecondButtonPressed,
     this.isFirstButtonDefaultAction = false,
     this.isDestructiveAction = false,
+    this.isFirstButtonDestructive = false,
   });
 
   static Future<void> show({
@@ -78,6 +87,7 @@ class AdaptiveDialog extends StatelessWidget {
         onSecondButtonPressed: config.onSecondButtonPressed,
         isFirstButtonDefaultAction: config.isFirstButtonDefaultAction,
         isDestructiveAction: config.isDestructiveAction,
+        isFirstButtonDestructive: config.isFirstButtonDestructive,
       ),
     );
   }
@@ -114,6 +124,9 @@ class AdaptiveDialog extends StatelessWidget {
     final secondButtonColor = isDestructiveAction
         ? AppColors.error
         : AppColors.primary;
+    final firstButtonColor = isFirstButtonDestructive
+        ? AppColors.error
+        : AppColors.iosBlue;
 
     return CupertinoAlertDialog(
       title: Text(title, style: Theme.of(context).textTheme.headlineSmall),
@@ -122,21 +135,26 @@ class AdaptiveDialog extends StatelessWidget {
       actions: [
         CupertinoDialogAction(
           isDefaultAction: isFirstButtonDefaultAction,
+          isDestructiveAction: isFirstButtonDestructive,
           textStyle: isFirstButtonDefaultAction
               ? Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: AppColors.iosBlue,
+                  color: firstButtonColor,
                   fontWeight: FontWeight.w600,
                 )
               : Theme.of(
                   context,
-                ).textTheme.labelLarge?.copyWith(color: AppColors.iosBlue),
+                ).textTheme.labelLarge?.copyWith(color: firstButtonColor),
           onPressed: () {
             Navigator.of(context).pop();
             onFirstButtonPressed();
           },
           child: Text(
             localizedFirstButtonText,
-            style: Theme.of(context).textTheme.labelLarge,
+            style: isFirstButtonDestructive
+                ? Theme.of(
+                    context,
+                  ).textTheme.labelLarge?.copyWith(color: AppColors.error)
+                : Theme.of(context).textTheme.labelLarge,
           ),
         ),
         CupertinoDialogAction(
@@ -207,10 +225,15 @@ class AdaptiveDialog extends StatelessWidget {
                   Navigator.of(context).pop();
                   onFirstButtonPressed();
                 },
+                style: isFirstButtonDestructive
+                    ? TextButton.styleFrom(foregroundColor: AppColors.error)
+                    : null,
                 child: Text(
                   localizedFirstButtonText,
                   style: theme.textTheme.labelLarge?.copyWith(
-                    color: theme.colorScheme.primary,
+                    color: isFirstButtonDestructive
+                        ? AppColors.error
+                        : theme.colorScheme.primary,
                   ),
                 ),
               ),

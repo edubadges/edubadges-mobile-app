@@ -33,13 +33,20 @@ class BadgeDetailsRepositoryImpl implements BadgeDetailsRepository {
 
   @override
   Future<Either<Failure, void>> enroll(String badgeclassSlug) async {
-    return await repositoryGuard<void>(
-      () async {
-        await dataSource.enroll(badgeclassSlug);
-        return;
-      },
-      logMessage: 'Failed to enroll in badge',
-    );
+    return await repositoryGuard<void>(() async {
+      await dataSource.enroll(badgeclassSlug);
+      return;
+    }, logMessage: 'Failed to enroll in badge');
+  }
+
+  @override
+  Future<Either<Failure, void>> cancelEnrollment(
+    String enrollmentEntityId,
+  ) async {
+    return repositoryGuard<void>(() async {
+      await dataSource.cancelEnrollment(enrollmentEntityId);
+      return;
+    }, logMessage: 'Failed to cancel enrollment');
   }
 
   @override
@@ -49,17 +56,14 @@ class BadgeDetailsRepositoryImpl implements BadgeDetailsRepository {
     required bool includeEvidence,
     required bool includeGradeAchieved,
   }) async {
-    return repositoryGuard<void>(
-      () async {
-        await dataSource.updateBadgeVisibility(
-          entityId,
-          isPublic: isPublic,
-          includeEvidence: includeEvidence,
-          includeGradeAchieved: includeGradeAchieved,
-        );
-        return;
-      },
-      logMessage: 'Failed to update badge visibility',
-    );
+    return repositoryGuard<void>(() async {
+      await dataSource.updateBadgeVisibility(
+        entityId,
+        isPublic: isPublic,
+        includeEvidence: includeEvidence,
+        includeGradeAchieved: includeGradeAchieved,
+      );
+      return;
+    }, logMessage: 'Failed to update badge visibility');
   }
 }

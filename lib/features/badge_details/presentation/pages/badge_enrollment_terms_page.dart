@@ -6,7 +6,7 @@ import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/core/utils/app_language.dart';
-import 'package:edubadges/core/utils/string.dart';
+import 'package:edubadges/core/utils/markdown_sanitizer.dart';
 import 'package:edubadges/core/widgets/actionable_content_layout.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
@@ -154,7 +154,7 @@ class _BadgeEnrollmentTermsPageState
       content: markdownAsyncValue.when(
         data: (String data) {
           return MarkdownBody(
-            data: filterBadMarkdown(data),
+            data: sanitizeMarkdown(data),
             styleSheet: AppThemes.markdownStyleSheet(context).copyWith(
               h1: theme.textTheme.bodyMedium?.copyWith(
                 color: colorScheme.onSurface,
