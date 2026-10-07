@@ -67,11 +67,12 @@ void main() {
   });
 
   testWidgets(
-    'the older /public/catalog/<id> link still leaves the login page',
+    'the older /public/catalog/<id> link redirects to the public badge page',
     (tester) async {
       final match = await resolve(tester, '/public/catalog/$entityId');
 
-      expect(match.uri.path, isNot('/login'));
+      expect(match.uri.path, '/public/$entityId');
+      expect(lastRouteName(match), 'badge-details-public');
     },
   );
 }
