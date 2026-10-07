@@ -1,8 +1,9 @@
 {
   "applinks": {
+    "apps": [],
     "details": [
       {
-        "appIDs": ["ZYJ4TZX4UU.nl.surf.edubadges"],
+        "appID": "ZYJ4TZX4UU.nl.surf.edubadges",
         "components": [
           { "/": "/public/collections/*", "exclude": true },
           { "/": "/public/*" }

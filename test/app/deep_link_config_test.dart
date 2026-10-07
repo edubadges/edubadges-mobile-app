@@ -129,7 +129,8 @@ void main() {
               as Map<String, dynamic>;
       final applinks = aasa['applinks'] as Map<String, dynamic>;
       final detail = (applinks['details'] as List).single as Map;
-      expect(detail['appIDs'], ['ZYJ4TZX4UU.nl.surf.edubadges']);
+      expect(applinks['apps'], isEmpty);
+      expect(detail['appID'], 'ZYJ4TZX4UU.nl.surf.edubadges');
       // The first matching component wins, so the exclusion must come first.
       expect(detail['components'], [
         {'/': '/public/collections/*', 'exclude': true},
