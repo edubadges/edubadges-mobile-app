@@ -8,6 +8,7 @@
 	<array>
 		<string>applinks:demo.edubadges.nl</string>
 		<string>applinks:edubadges.nl</string>
+		<string>applinks:www.edubadges.nl</string>
 	</array>
 </dict>
 </plist>
