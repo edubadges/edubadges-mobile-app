@@ -276,7 +276,6 @@ class BadgeCard extends ConsumerWidget {
           style: textTheme.titleMedium,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          softWrap: false,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 12),

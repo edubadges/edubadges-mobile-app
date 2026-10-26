@@ -1,4 +1,5 @@
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_issuer_label.dart';
@@ -64,7 +65,7 @@ class BadgeInfoChip extends StatelessWidget {
 /// (catalog search results) can share it without a common entity type.
 class BadgeGridTile extends StatelessWidget {
   static const double _imageSize = 100;
-  static const double _nameHeight = 72;
+  static const int _nameMaxLines = 2;
   static const double _visibilityIconSize = 32;
 
   final String? imageUrl;
@@ -130,14 +131,16 @@ class BadgeGridTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Center(child: _buildBadgeImage(colorScheme)),
+        const SizedBox(height: 8),
+        // Always two lines tall, so every tile in a grid lines up the same.
         SizedBox(
-          height: _nameHeight,
+          height: LayoutConstants.badgeGridTileNameHeight,
           child: Center(
             child: Text(
               name,
               style: textTheme.titleMedium,
               textAlign: TextAlign.center,
-              maxLines: 3,
+              maxLines: _nameMaxLines,
               overflow: TextOverflow.ellipsis,
             ),
           ),

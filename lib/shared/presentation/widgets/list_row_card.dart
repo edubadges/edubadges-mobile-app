@@ -3,6 +3,11 @@ import 'package:edubadges/shared/presentation/widgets/badge_issuer_label.dart';
 import 'package:flutter/material.dart';
 
 class ListRowCard extends StatelessWidget {
+  /// 16 padding + 2 title lines (40) + 2 issuer lines (32) + 16 padding, as in
+  /// the design. Rows with shorter text keep this height, so all cards in a
+  /// list are the same size.
+  static const double minHeight = 106;
+
   final String? imageUrl;
   final String title;
   final String issuerName;
@@ -60,10 +65,16 @@ class ListRowCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     final cardContent = Container(
+      constraints: const BoxConstraints(minHeight: minHeight),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: colorScheme.outlineVariant),
         color: colorScheme.surfaceContainer,
+      ),
+      // Drawn in front so the hairline does not add to the height, which the
+      // design measures from the outer edge.
+      foregroundDecoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       padding: const EdgeInsets.all(16),
       child: Row(
