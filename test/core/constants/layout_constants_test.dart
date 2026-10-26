@@ -58,13 +58,13 @@ void main() {
     const double image = 100;
     const double name = 72;
     const double chipRow = 32;
-    const double institution = 22;
+    const double issuer = 32;
     const double gap = 8;
 
     test('drops the chip row when there are no chips', () {
       expect(
         LayoutConstants.badgeGridTileHeightFor(1000, hasChips: false),
-        padding + image + name + gap + institution,
+        padding + image + name + gap + issuer,
       );
       expect(
         LayoutConstants.badgeGridTileHeightFor(200, hasChips: false),
@@ -78,7 +78,7 @@ void main() {
           LayoutConstants.badgeGridSingleChipRowMinTileWidth,
           hasChips: true,
         ),
-        padding + image + name + gap * 2 + chipRow + institution,
+        padding + image + name + gap * 2 + chipRow + issuer,
       );
     });
 
@@ -88,7 +88,7 @@ void main() {
           LayoutConstants.badgeGridSingleChipRowMinTileWidth - 1,
           hasChips: true,
         ),
-        padding + image + name + gap * 3 + chipRow * 2 + institution,
+        padding + image + name + gap * 3 + chipRow * 2 + issuer,
       );
     });
   });

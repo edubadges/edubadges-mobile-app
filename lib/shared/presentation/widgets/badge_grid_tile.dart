@@ -1,6 +1,7 @@
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_issuer_label.dart';
 import 'package:flutter/material.dart';
 
 /// A single piece of metadata shown on a [BadgeGridTile], such as the time
@@ -64,11 +65,11 @@ class BadgeInfoChip extends StatelessWidget {
 class BadgeGridTile extends StatelessWidget {
   static const double _imageSize = 100;
   static const double _nameHeight = 72;
-  static const double _institutionLogoSize = 22;
   static const double _visibilityIconSize = 32;
 
   final String? imageUrl;
   final String name;
+  final String issuerName;
   final String institutionName;
   final String? institutionImageUrl;
   final List<BadgeInfoChipData> chips;
@@ -85,6 +86,7 @@ class BadgeGridTile extends StatelessWidget {
     super.key,
     this.imageUrl,
     required this.name,
+    required this.issuerName,
     required this.institutionName,
     this.institutionImageUrl,
     this.chips = const <BadgeInfoChipData>[],
@@ -116,38 +118,6 @@ class BadgeGridTile extends StatelessWidget {
         semanticLabel: imageSemanticLabel,
         errorBuilder: (context, error, stackTrace) => placeholder(),
       ),
-    );
-  }
-
-  Widget _buildInstitutionRow(TextTheme textTheme, ColorScheme colorScheme) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (institutionImageUrl != null && institutionImageUrl!.isNotEmpty) ...[
-          ExcludeSemantics(
-            child: AppNetworkImage(
-              imageUrl: institutionImageUrl!,
-              height: _institutionLogoSize,
-              width: _institutionLogoSize,
-              errorBuilder: (context, error, stackTrace) =>
-                  const SizedBox(height: _institutionLogoSize),
-            ),
-          ),
-          const SizedBox(width: 8),
-        ],
-        Flexible(
-          child: Text(
-            institutionName,
-            style: textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-            maxLines: 1,
-            softWrap: false,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
     );
   }
 
@@ -199,7 +169,12 @@ class BadgeGridTile extends StatelessWidget {
           ),
         ],
         const SizedBox(height: 8),
-        _buildInstitutionRow(textTheme, colorScheme),
+        BadgeIssuerLabel(
+          issuerName: issuerName,
+          institutionName: institutionName,
+          logoUrl: institutionImageUrl,
+          centered: true,
+        ),
       ],
     );
 

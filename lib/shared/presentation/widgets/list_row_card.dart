@@ -1,10 +1,12 @@
 import 'package:edubadges/core/widgets/app_network_image.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_issuer_label.dart';
 import 'package:flutter/material.dart';
 
 class ListRowCard extends StatelessWidget {
   final String? imageUrl;
   final String title;
-  final String subtitle;
+  final String issuerName;
+  final String institutionName;
   final VoidCallback? onTap;
   final String? semanticLabel;
 
@@ -12,7 +14,8 @@ class ListRowCard extends StatelessWidget {
     super.key,
     this.imageUrl,
     required this.title,
-    required this.subtitle,
+    required this.issuerName,
+    required this.institutionName,
     this.onTap,
     this.semanticLabel,
   });
@@ -78,13 +81,9 @@ class ListRowCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                Text(
-                  subtitle,
-                  style: textTheme.bodySmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                BadgeIssuerLabel(
+                  issuerName: issuerName,
+                  institutionName: institutionName,
                 ),
               ],
             ),

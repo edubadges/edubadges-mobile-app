@@ -68,8 +68,8 @@ Future<void> _pumpGrid(
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) => BadgeGridTile(
                       name: name,
-                      institutionName:
-                          'Kennis & Informatie van Hogeschool Rotterdam',
+                      issuerName: 'Kennis & Informatie',
+                      institutionName: 'Hogeschool Rotterdam',
                       // Real badges carry a logo, which makes the institution
                       // row taller than its text alone.
                       institutionImageUrl: 'https://example.org/logo.png',
@@ -236,7 +236,7 @@ void main() {
       expect(tile.height, LayoutConstants.badgeGridTileHeightWithoutChips);
 
       final Rect institution = tester.getRect(
-        find.text('Kennis & Informatie van Hogeschool Rotterdam').first,
+        find.text('Hogeschool Rotterdam').first,
       );
       expect(institution.bottom, lessThanOrEqualTo(tile.bottom - 16));
     });

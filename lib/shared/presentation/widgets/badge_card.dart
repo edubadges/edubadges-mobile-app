@@ -21,6 +21,7 @@ import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_grid_tile.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_issuer_label.dart';
 import 'package:edubadges/shared/presentation/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -133,6 +134,11 @@ class BadgeCard extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final institution = badgeClass.issuer?.faculty?.institution;
     final langCode = ref.watch(appLanguageProvider).code;
+    final issuerName = getLocalizedString(
+      badgeClass.issuer?.nameDutch,
+      badgeClass.issuer?.nameEnglish,
+      langCode,
+    );
     final institutionName = getLocalizedString(
       institution?.nameDutch,
       institution?.nameEnglish,
@@ -146,6 +152,7 @@ class BadgeCard extends ConsumerWidget {
       return BadgeGridTile(
         imageUrl: badgeImageUrl,
         name: badgeClass.name,
+        issuerName: issuerName,
         institutionName: institutionName,
         institutionImageUrl: institutionImageUrl,
         chips: _buildInfoChips(l10n),
@@ -204,12 +211,9 @@ class BadgeCard extends ConsumerWidget {
                       style: textTheme.titleSmall,
                       maxLines: 2,
                     ),
-                    Text(
-                      institutionName,
-                      style: textTheme.bodySmall,
-                      maxLines: 1,
-                      softWrap: false,
-                      overflow: TextOverflow.ellipsis,
+                    BadgeIssuerLabel(
+                      issuerName: issuerName,
+                      institutionName: institutionName,
                     ),
                   ],
                 ),
@@ -286,33 +290,12 @@ class BadgeCard extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 8),
-        if (institution != null)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (institutionImageUrl != null)
-                ExcludeSemantics(
-                  child: AppNetworkImage(
-                    imageUrl: institutionImageUrl,
-                    height: 25,
-                    width: 25,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const SizedBox(height: 25, width: 25);
-                    },
-                  ),
-                ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  institutionName,
-                  style: textTheme.bodySmall,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  softWrap: false,
-                ),
-              ),
-            ],
+        if (institution != null || issuerName.isNotEmpty)
+          BadgeIssuerLabel(
+            issuerName: issuerName,
+            institutionName: institutionName,
+            logoUrl: institutionImageUrl,
+            centered: true,
           ),
         if (instance == null &&
             badgeClass.userMayEnroll &&

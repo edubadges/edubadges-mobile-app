@@ -21,11 +21,11 @@ class LayoutConstants {
   /// Above this the three info chips sit on one row, as in the design.
   static const double badgeGridSingleChipRowMinTileWidth = 380;
 
-  /// 16 padding + 100 image + 72 name + 8 + 22 institution + 16 padding,
-  /// matching the 234 in the catalog design, which draws no chip row.
-  static const double badgeGridTileHeightWithoutChips = 234;
+  /// 16 padding + 100 image + 72 name + 8 + 32 issuer and institution + 16
+  /// padding. The catalog tile draws no chip row.
+  static const double badgeGridTileHeightWithoutChips = 244;
 
-  /// One chip row and its gap on top, matching the 274 in the overview design.
+  /// One chip row and its gap on top, as in the overview design.
   static const double badgeGridTileHeight =
       badgeGridTileHeightWithoutChips + 32 + 8;
 

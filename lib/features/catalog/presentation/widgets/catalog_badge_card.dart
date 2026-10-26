@@ -22,16 +22,6 @@ class CatalogBadgeCard extends ConsumerWidget {
     this.useGridTile = false,
   });
 
-  String _buildSubtitle(String issuerName, String institutionName) {
-    if (issuerName.isEmpty) {
-      return institutionName;
-    }
-    if (institutionName.isEmpty) {
-      return issuerName;
-    }
-    return '$issuerName — $institutionName';
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final language = ref.watch(appLanguageProvider);
@@ -53,7 +43,8 @@ class CatalogBadgeCard extends ConsumerWidget {
       return BadgeGridTile(
         imageUrl: badgeImageUrl,
         name: badge.name,
-        institutionName: _buildSubtitle(issuerName, institutionName),
+        issuerName: issuerName,
+        institutionName: institutionName,
         institutionImageUrl: institutionImageUrl,
         // No chips: grade and award date only exist once a badge is awarded,
         // and /catalog does not return the extension set that holds the time
@@ -70,7 +61,8 @@ class CatalogBadgeCard extends ConsumerWidget {
     return ListRowCard(
       imageUrl: badgeImageUrl,
       title: badge.name,
-      subtitle: _buildSubtitle(issuerName, institutionName),
+      issuerName: issuerName,
+      institutionName: institutionName,
       onTap: onTap,
     );
   }
