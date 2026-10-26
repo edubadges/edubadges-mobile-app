@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/widgets/app_network_image.dart';
@@ -15,18 +17,44 @@ class BadgeInfoChipData {
 }
 
 class BadgeInfoChip extends StatelessWidget {
+  static const double _paddingStart = 8;
+  static const double _paddingEnd = 12;
+  static const double _iconSize = 18;
+  static const double _iconGap = 6;
+
   final String icon;
   final String label;
 
   const BadgeInfoChip({super.key, required this.icon, required this.label});
 
+  static TextStyle? _labelStyle(BuildContext context) => Theme.of(
+    context,
+  ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600);
+
+  /// Width the chip for [label] takes, measured the way [build] lays it out.
+  static double widthFor(BuildContext context, String label) {
+    final TextPainter painter = TextPainter(
+      text: TextSpan(text: label, style: _labelStyle(context)),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final double textWidth = painter.width.ceilToDouble();
+    painter.dispose();
+    return _paddingStart + _iconSize + _iconGap + textWidth + _paddingEnd;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     final onPrimaryContainer = Theme.of(context).colorScheme.onPrimaryContainer;
 
     return Container(
-      padding: const EdgeInsets.only(left: 8, right: 12, top: 6, bottom: 6),
+      padding: const EdgeInsets.only(
+        left: _paddingStart,
+        right: _paddingEnd,
+        top: 6,
+        bottom: 6,
+      ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(8),
@@ -36,18 +64,15 @@ class BadgeInfoChip extends StatelessWidget {
         children: [
           SvgIcon(
             assetPath: icon,
-            size: 18,
+            size: _iconSize,
             color: onPrimaryContainer,
             excludeFromSemantics: true,
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: _iconGap),
           Flexible(
             child: Text(
               label,
-              style: textTheme.labelMedium?.copyWith(
-                color: onPrimaryContainer,
-                fontWeight: FontWeight.w600,
-              ),
+              style: _labelStyle(context)?.copyWith(color: onPrimaryContainer),
               maxLines: 1,
               softWrap: false,
               overflow: TextOverflow.ellipsis,
@@ -64,6 +89,8 @@ class BadgeInfoChip extends StatelessWidget {
 /// Presentation only, so the badges overview (badge instances) and the catalog
 /// (catalog search results) can share it without a common entity type.
 class BadgeGridTile extends StatelessWidget {
+  static const double _padding = 16;
+  static const double _chipSpacing = 8;
   static const double _imageSize = 100;
   static const int _nameMaxLines = 2;
   static const double _visibilityIconSize = 32;
@@ -96,6 +123,41 @@ class BadgeGridTile extends StatelessWidget {
     this.imageSemanticLabel,
     this.onTap,
   });
+
+  /// The most chip rows any of [chipSets] wraps onto in a tile of
+  /// [tileWidth]. A grid sizes every tile to this, so the tiles stay equal
+  /// without reserving a second row no badge needs.
+  static int chipRowsFor(
+    BuildContext context,
+    Iterable<List<BadgeInfoChipData>> chipSets,
+    double tileWidth,
+  ) {
+    final double available = tileWidth - _padding * 2;
+    // Dates and hours repeat across a backpack, so measure each label once.
+    final Map<String, double> widths = <String, double>{};
+    int maxRows = 0;
+    for (final List<BadgeInfoChipData> chips in chipSets) {
+      int rows = 0;
+      double line = 0;
+      for (final BadgeInfoChipData chip in chips) {
+        final double width = math.min(
+          widths.putIfAbsent(
+            chip.label,
+            () => BadgeInfoChip.widthFor(context, chip.label),
+          ),
+          available,
+        );
+        if (rows == 0 || line + _chipSpacing + width > available) {
+          rows++;
+          line = width;
+        } else {
+          line += _chipSpacing + width;
+        }
+      }
+      maxRows = math.max(maxRows, rows);
+    }
+    return maxRows;
+  }
 
   Widget _buildBadgeImage(ColorScheme colorScheme) {
     Widget placeholder() => SizedBox(
@@ -159,8 +221,8 @@ class BadgeGridTile extends StatelessWidget {
                 alignment: Alignment.topCenter,
                 maxHeight: double.infinity,
                 child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                  spacing: _chipSpacing,
+                  runSpacing: _chipSpacing,
                   alignment: WrapAlignment.center,
                   children: [
                     for (final BadgeInfoChipData chip in chips)
@@ -193,7 +255,7 @@ class BadgeGridTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: colorScheme.outlineVariant),
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(_padding),
       child: Stack(
         children: [
           MergeSemantics(child: content),

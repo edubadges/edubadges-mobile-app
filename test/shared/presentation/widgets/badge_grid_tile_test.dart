@@ -38,13 +38,16 @@ Future<void> _withDesktopPlatform(Future<void> Function() runTest) async {
   }
 }
 
-Future<void> _pumpGrid(
+/// Pumps a grid sized the way the badges overview sizes it, and returns the
+/// chip rows it reserved.
+Future<int> _pumpGrid(
   WidgetTester tester, {
   required double gridWidth,
   required int columns,
   String name = 'English Grammar B1+',
   List<BadgeInfoChipData> chips = _chips,
 }) async {
+  int chipRows = 0;
   await tester.pumpWidget(
     MaterialApp(
       theme: AppThemes.lightTheme,
@@ -53,35 +56,43 @@ Future<void> _pumpGrid(
           child: SizedBox(
             width: gridWidth,
             height: 800,
-            child: CustomScrollView(
-              slivers: [
-                SliverGrid(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: columns,
-                    crossAxisSpacing: LayoutConstants.badgeGridSpacing,
-                    mainAxisSpacing: LayoutConstants.badgeGridSpacing,
-                    mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
-                      LayoutConstants.badgeGridTileWidth(gridWidth, columns),
-                      hasChips: chips.isNotEmpty,
+            child: Builder(
+              builder: (BuildContext context) {
+                chipRows = BadgeGridTile.chipRowsFor(
+                  context,
+                  <List<BadgeInfoChipData>>[chips],
+                  LayoutConstants.badgeGridTileWidth(gridWidth, columns),
+                );
+                return CustomScrollView(
+                  slivers: [
+                    SliverGrid(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: columns,
+                        crossAxisSpacing: LayoutConstants.badgeGridSpacing,
+                        mainAxisSpacing: LayoutConstants.badgeGridSpacing,
+                        mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
+                          chipRows: chipRows,
+                        ),
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) => BadgeGridTile(
+                          name: name,
+                          issuerName: 'Kennis & Informatie',
+                          institutionName: 'Hogeschool Rotterdam',
+                          // Real badges carry a logo, which makes the institution
+                          // row taller than its text alone.
+                          institutionImageUrl: 'https://example.org/logo.png',
+                          chips: chips,
+                          isPublic: index.isEven,
+                          visibilityLabel: 'Badge is public',
+                          onTap: () {},
+                        ),
+                        childCount: 6,
+                      ),
                     ),
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) => BadgeGridTile(
-                      name: name,
-                      issuerName: 'Kennis & Informatie',
-                      institutionName: 'Hogeschool Rotterdam',
-                      // Real badges carry a logo, which makes the institution
-                      // row taller than its text alone.
-                      institutionImageUrl: 'https://example.org/logo.png',
-                      chips: chips,
-                      isPublic: index.isEven,
-                      visibilityLabel: 'Badge is public',
-                      onTap: () {},
-                    ),
-                    childCount: 6,
-                  ),
-                ),
-              ],
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -89,6 +100,7 @@ Future<void> _pumpGrid(
     ),
   );
   await tester.pumpAndSettle();
+  return chipRows;
 }
 
 /// The default test font is a uniform-width placeholder, which measures chips
@@ -135,7 +147,11 @@ void main() {
         );
         expect(columns, greaterThanOrEqualTo(2));
 
-        await _pumpGrid(tester, gridWidth: gridWidth, columns: columns);
+        final int chipRows = await _pumpGrid(
+          tester,
+          gridWidth: gridWidth,
+          columns: columns,
+        );
 
         expect(tester.takeException(), isNull);
 
@@ -147,10 +163,7 @@ void main() {
         expect(firstRow.map((Rect rect) => rect.top).toSet().length, 1);
         expect(
           firstRow.last.height,
-          LayoutConstants.badgeGridTileHeightFor(
-            firstRow.last.width,
-            hasChips: true,
-          ),
+          LayoutConstants.badgeGridTileHeightFor(chipRows: chipRows),
         );
 
         // Chips outside the clipped region are invisible but still report a
@@ -267,5 +280,71 @@ void main() {
 
       expect(tester.takeException(), isNull);
     });
+  });
+
+  // SURF-680: a fixed width threshold reserved a second chip row on every
+  // tile narrower than 380, leaving a blank band when the chips fit on one.
+  testWidgets('reserves no chip row the badges do not need', (
+    WidgetTester tester,
+  ) async {
+    await _withDesktopPlatform(() async {
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      const List<BadgeInfoChipData> chips = <BadgeInfoChipData>[
+        BadgeInfoChipData(icon: Assets.iconCollections, label: '9'),
+        BadgeInfoChipData(icon: Assets.iconDate, label: '16 Oct, 2026'),
+      ];
+      final int chipRows = await _pumpGrid(
+        tester,
+        gridWidth: _overviewGridWidth(1440),
+        columns: 3,
+        chips: chips,
+      );
+
+      expect(chipRows, 1);
+      expect(tester.takeException(), isNull);
+
+      final Rect date = tester.getRect(find.text('16 Oct, 2026').first);
+      final Rect issuer = tester.getRect(
+        find.text('Kennis & Informatie').first,
+      );
+      // The chip row's own 6 padding plus the 8 gap above the issuer.
+      expect(issuer.top - date.bottom, lessThan(32));
+    });
+  });
+
+  testWidgets('counts the rows the chips wrap onto', (
+    WidgetTester tester,
+  ) async {
+    late BuildContext context;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppThemes.lightTheme,
+        home: Builder(
+          builder: (BuildContext builderContext) {
+            context = builderContext;
+            return const SizedBox();
+          },
+        ),
+      ),
+    );
+
+    expect(BadgeGridTile.chipRowsFor(context, const [_chips], 500), 1);
+    expect(BadgeGridTile.chipRowsFor(context, const [_chips], 300), 2);
+    expect(
+      BadgeGridTile.chipRowsFor(context, const [<BadgeInfoChipData>[]], 300),
+      0,
+    );
+    // The grid takes the badge that needs the most rows.
+    expect(
+      BadgeGridTile.chipRowsFor(context, const [
+        <BadgeInfoChipData>[],
+        _chips,
+      ], 300),
+      2,
+    );
   });
 }

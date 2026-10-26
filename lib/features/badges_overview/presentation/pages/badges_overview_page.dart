@@ -15,6 +15,7 @@ import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_grid_tile.dart';
 import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -180,14 +181,27 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
               constraints.crossAxisExtent,
               gridColumns,
             );
+            final AppLocalizations l10n = AppLocalizations.of(context);
+            // Every tile gets the height of the badge with the most chip
+            // rows, so the grid stays even without blank chip rows.
+            final int chipRows = BadgeGridTile.chipRowsFor(
+              context,
+              badges.map(
+                (BadgeInstanceEntity badge) => BadgeCard.infoChips(
+                  instance: badge,
+                  badgeClass: badge.badgeclass as BadgeClassModel,
+                  l10n: l10n,
+                ),
+              ),
+              tileWidth,
+            );
             return SliverGrid(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: gridColumns,
                 crossAxisSpacing: LayoutConstants.badgeGridSpacing,
                 mainAxisSpacing: LayoutConstants.badgeGridSpacing,
                 mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
-                  tileWidth,
-                  hasChips: true,
+                  chipRows: chipRows,
                 ),
               ),
               delegate: SliverChildBuilderDelegate(

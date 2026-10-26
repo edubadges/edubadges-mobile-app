@@ -63,31 +63,25 @@ void main() {
 
     test('drops the chip row when there are no chips', () {
       expect(
-        LayoutConstants.badgeGridTileHeightFor(1000, hasChips: false),
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 0),
         padding + image + gap + name + gap + issuer,
       );
       expect(
-        LayoutConstants.badgeGridTileHeightFor(200, hasChips: false),
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 0),
         LayoutConstants.badgeGridTileHeightWithoutChips,
       );
     });
 
-    test('matches the design when the chips fit on one row', () {
+    test('matches the design with one chip row', () {
       expect(
-        LayoutConstants.badgeGridTileHeightFor(
-          LayoutConstants.badgeGridSingleChipRowMinTileWidth,
-          hasChips: true,
-        ),
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 1),
         padding + image + gap + name + gap * 2 + chipRow + issuer,
       );
     });
 
-    test('reserves a second chip row on narrower tiles', () {
+    test('adds a row and its gap per extra chip row', () {
       expect(
-        LayoutConstants.badgeGridTileHeightFor(
-          LayoutConstants.badgeGridSingleChipRowMinTileWidth - 1,
-          hasChips: true,
-        ),
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 2),
         padding + image + gap + name + gap * 3 + chipRow * 2 + issuer,
       );
     });

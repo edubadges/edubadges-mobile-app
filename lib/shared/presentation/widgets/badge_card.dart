@@ -77,7 +77,9 @@ class BadgeCard extends ConsumerWidget {
     this.borderColor,
   });
 
-  int? getTimeInvestment() {
+  int? getTimeInvestment() => _timeInvestment(badgeClass);
+
+  static int? _timeInvestment(BadgeClassModel badgeClass) {
     final match = badgeClass.badgeclassextensionSet?.firstWhereOrNull(
       (element) => element.name == 'extensions:TimeInvestmentExtension',
     );
@@ -87,11 +89,16 @@ class BadgeCard extends ConsumerWidget {
     return match != null ? int.tryParse(match.value.toString()) : null;
   }
 
-  List<BadgeInfoChipData> _buildInfoChips(AppLocalizations l10n) {
-    final int? timeInvestment = getTimeInvestment();
-    final BadgeInstanceEntity? badgeInstance = instance;
-    final String? gradeAchieved = badgeInstance is BadgeInstanceModel
-        ? badgeInstance.gradeAchieved
+  /// The chips a card shows for [badgeClass], and for [instance] once awarded.
+  /// Grids use it to size their tiles before building them.
+  static List<BadgeInfoChipData> infoChips({
+    required BadgeInstanceEntity? instance,
+    required BadgeClassModel badgeClass,
+    required AppLocalizations l10n,
+  }) {
+    final int? timeInvestment = _timeInvestment(badgeClass);
+    final String? gradeAchieved = instance is BadgeInstanceModel
+        ? instance.gradeAchieved
         : null;
 
     return [
@@ -102,16 +109,19 @@ class BadgeCard extends ConsumerWidget {
         ),
       if (gradeAchieved != null)
         BadgeInfoChipData(icon: Assets.iconCollections, label: gradeAchieved),
-      if (badgeInstance?.issuedOn != null)
+      if (instance?.issuedOn != null)
         BadgeInfoChipData(
           icon: Assets.iconDate,
           label: DateFormat(
             'd MMM, yyyy',
             l10n.localeName,
-          ).format(badgeInstance!.issuedOn!),
+          ).format(instance!.issuedOn!),
         ),
     ];
   }
+
+  List<BadgeInfoChipData> _buildInfoChips(AppLocalizations l10n) =>
+      infoChips(instance: instance, badgeClass: badgeClass, l10n: l10n);
 
   void _openDetails(BuildContext context) {
     final scope =
