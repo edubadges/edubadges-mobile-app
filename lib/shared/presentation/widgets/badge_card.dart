@@ -22,6 +22,7 @@ import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_grid_tile.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_issuer_label.dart';
+import 'package:edubadges/shared/presentation/widgets/list_row_card.dart';
 import 'package:edubadges/shared/presentation/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -168,75 +169,16 @@ class BadgeCard extends ConsumerWidget {
     }
 
     if (style == BadgeCardStyle.small) {
-      final cardContent = Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected
-                ? colorScheme.primary
-                : borderColor ?? colorScheme.outlineVariant,
-          ),
-          color: isSelected
-              ? colorScheme.surface
-              : colorScheme.surfaceContainer,
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            ExcludeSemantics(
-              child: AppNetworkImage(
-                imageUrl: badgeImageUrl ?? '',
-                height: 64,
-                width: 64,
-                errorBuilder: (context, error, stackTrace) {
-                  return SizedBox(
-                    height: 64,
-                    width: 64,
-                    child: Icon(
-                      Icons.image_not_supported_outlined,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: MergeSemantics(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      badgeClass.name,
-                      style: textTheme.titleSmall,
-                      maxLines: 2,
-                    ),
-                    BadgeIssuerLabel(
-                      issuerName: issuerName,
-                      institutionName: institutionName,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            if (trailing != null) ...[const SizedBox(width: 12), trailing!],
-          ],
-        ),
+      return ListRowCard(
+        imageUrl: badgeImageUrl,
+        title: badgeClass.name,
+        issuerName: issuerName,
+        institutionName: institutionName,
+        isSelected: isSelected,
+        borderColor: borderColor,
+        trailing: trailing,
+        onTap: onTapDisabled ? null : onTap,
       );
-
-      final effectiveOnTap = onTapDisabled ? null : onTap;
-      if (effectiveOnTap != null) {
-        return Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(20),
-            onTap: effectiveOnTap,
-            child: cardContent,
-          ),
-        );
-      }
-
-      return cardContent;
     }
 
     final Widget largeContent = Column(
