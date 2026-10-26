@@ -30,6 +30,8 @@ import 'package:intl/intl.dart';
 enum BadgeCardStyle { small, large, grid }
 
 class BadgeCard extends ConsumerWidget {
+  static const double _visibilityIconSize = 32;
+
   final BadgeInstanceEntity? instance;
   final BadgeClassModel badgeClass;
   final BadgeCardStyle style;
@@ -336,7 +338,26 @@ class BadgeCard extends ConsumerWidget {
               : colorScheme.surfaceContainer,
         ),
         padding: const EdgeInsets.all(16),
-        child: largeContent,
+        child: Stack(
+          children: [
+            largeContent,
+            // Shown on the badge itself, so its visibility reads at a glance.
+            if (instance != null)
+              Positioned(
+                top: 0,
+                right: 0,
+                child: SvgIcon(
+                  assetPath: instance!.public
+                      ? Assets.iconUnlocked
+                      : Assets.iconLocked,
+                  size: _visibilityIconSize,
+                  semanticLabel: instance!.public
+                      ? l10n.semanticsBadgeVisibilityPublic
+                      : l10n.semanticsBadgeVisibilityPrivate,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
