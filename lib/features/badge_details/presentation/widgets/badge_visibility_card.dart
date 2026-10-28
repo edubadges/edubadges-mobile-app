@@ -179,13 +179,17 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    l10n.badgeVisibleAndShareableDescription,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                  // The explanation only helps while the badge is still
+                  // private; once public the share buttons take its place.
+                  if (!isPublic) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.badgeVisibleAndShareableDescription,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),

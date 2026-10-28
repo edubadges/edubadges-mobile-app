@@ -56,39 +56,33 @@ void main() {
   group('badgeGridTileHeightFor', () {
     const double padding = 16 * 2;
     const double image = 100;
-    const double name = 72;
+    const double name = 48;
     const double chipRow = 32;
-    const double institution = 22;
+    const double issuer = 32;
     const double gap = 8;
 
     test('drops the chip row when there are no chips', () {
       expect(
-        LayoutConstants.badgeGridTileHeightFor(1000, hasChips: false),
-        padding + image + name + gap + institution,
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 0),
+        padding + image + gap + name + gap + issuer,
       );
       expect(
-        LayoutConstants.badgeGridTileHeightFor(200, hasChips: false),
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 0),
         LayoutConstants.badgeGridTileHeightWithoutChips,
       );
     });
 
-    test('matches the design when the chips fit on one row', () {
+    test('matches the design with one chip row', () {
       expect(
-        LayoutConstants.badgeGridTileHeightFor(
-          LayoutConstants.badgeGridSingleChipRowMinTileWidth,
-          hasChips: true,
-        ),
-        padding + image + name + gap * 2 + chipRow + institution,
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 1),
+        padding + image + gap + name + gap * 2 + chipRow + issuer,
       );
     });
 
-    test('reserves a second chip row on narrower tiles', () {
+    test('adds a row and its gap per extra chip row', () {
       expect(
-        LayoutConstants.badgeGridTileHeightFor(
-          LayoutConstants.badgeGridSingleChipRowMinTileWidth - 1,
-          hasChips: true,
-        ),
-        padding + image + name + gap * 3 + chipRow * 2 + institution,
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 2),
+        padding + image + gap + name + gap * 3 + chipRow * 2 + issuer,
       );
     });
   });

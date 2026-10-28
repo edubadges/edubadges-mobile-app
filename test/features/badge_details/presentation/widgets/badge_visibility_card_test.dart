@@ -146,4 +146,21 @@ void main() {
     expect(find.text('Linkedin'), findsNothing);
     expect(find.text('Copy link'), findsNothing);
   });
+
+  testWidgets('explains the setting only while the badge is private', (
+    WidgetTester tester,
+  ) async {
+    const String description =
+        'With this setting, you determine whether your edubadge is public and '
+        'can be viewed by others when you share it.';
+
+    await _pumpCard(tester, badge: _instance(public: false));
+    expect(find.text(description), findsOneWidget);
+
+    await _pumpCard(
+      tester,
+      badge: _instance(public: true, linkedinUrl: _linkedinUrl),
+    );
+    expect(find.text(description), findsNothing);
+  });
 }

@@ -18,19 +18,16 @@ class LayoutConstants {
   /// design draws them at 437 and never squeezes three narrow ones in.
   static const double badgeGridExtraColumnMinTileWidth = 300;
 
-  /// Above this the three info chips sit on one row, as in the design.
-  static const double badgeGridSingleChipRowMinTileWidth = 380;
+  /// Two [TextTheme.titleMedium] lines: names are clamped to two lines, so
+  /// every tile keeps the same size without a third line of white space.
+  static const double badgeGridTileNameHeight = 2 * 24;
 
-  /// 16 padding + 100 image + 72 name + 8 + 22 institution + 16 padding,
-  /// matching the 234 in the catalog design, which draws no chip row.
-  static const double badgeGridTileHeightWithoutChips = 234;
+  /// 16 padding + 100 image + 8 + name + 8 + 32 issuer and institution + 16
+  /// padding. The catalog tile draws no chip row.
+  static const double badgeGridTileHeightWithoutChips =
+      16 + 100 + 8 + badgeGridTileNameHeight + 8 + 32 + 16;
 
-  /// One chip row and its gap on top, matching the 274 in the overview design.
-  static const double badgeGridTileHeight =
-      badgeGridTileHeightWithoutChips + 32 + 8;
-
-  /// Narrower tiles wrap the chips onto a second row.
-  static const double badgeGridTileHeightWrapped = badgeGridTileHeight + 32 + 8;
+  static const double badgeGridChipRowHeight = 32;
 
   static const int badgeGridMinColumns = 2;
   static const int badgesOverviewGridMaxColumns = 3;
@@ -60,15 +57,10 @@ class LayoutConstants {
   static double badgeGridTileWidth(double gridWidth, int columns) =>
       (gridWidth - badgeGridSpacing * (columns - 1)) / columns;
 
-  static double badgeGridTileHeightFor(
-    double tileWidth, {
-    required bool hasChips,
-  }) {
-    if (!hasChips) return badgeGridTileHeightWithoutChips;
-    return tileWidth >= badgeGridSingleChipRowMinTileWidth
-        ? badgeGridTileHeight
-        : badgeGridTileHeightWrapped;
-  }
+  /// Height of a tile whose chips wrap onto [chipRows] rows, each with its 8
+  /// gap on top. One row matches the overview design.
+  static double badgeGridTileHeightFor({required int chipRows}) =>
+      badgeGridTileHeightWithoutChips + chipRows * (badgeGridChipRowHeight + 8);
 
   static const int collectionsGridCrossAxisCount = 3;
   static const double collectionsGridMainAxisExtent = 104;

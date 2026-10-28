@@ -784,20 +784,13 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           child: _buildSectionCard(
             title: l10n.theEdubadge,
             margin: _sectionMargin(useSidebarLayout),
+            // The issue date sits on the badge card next to its visibility
+            // lock, so this section only adds the expiry.
             items: [
-              if (details!.badgeInstance!.issuedOn != null)
-                BadgeDetailItemModel(
-                  icon: Assets.iconUnlockedAlternate,
-                  title: l10n.issuedOn,
-                  subtitle: DateFormat(
-                    AppConstants.mediumDateFormat,
-                    l10n.localeName,
-                  ).format(details.badgeInstance!.issuedOn!),
-                ),
               BadgeDetailItemModel(
                 icon: Assets.iconBadgeExpireDate,
                 title: l10n.expiresOn,
-                subtitle: details.badgeInstance!.expiresAt == null
+                subtitle: details!.badgeInstance!.expiresAt == null
                     ? l10n.never
                     : DateFormat(
                         AppConstants.mediumDateFormat,
