@@ -4,6 +4,7 @@ import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/features/catalog/domain/entities/catalog_badge.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_grid_tile.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_issuer_label.dart';
 import 'package:edubadges/shared/presentation/widgets/list_row_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,24 +23,30 @@ class CatalogBadgeCard extends ConsumerWidget {
     this.useGridTile = false,
   });
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final language = ref.watch(appLanguageProvider);
-    final issuerName = getLocalizedString(
+  /// The names and logo a card shows for [badge]. The grid uses it to size its
+  /// tiles before building them.
+  static BadgeIssuerNames issuerNames(CatalogBadge badge, String langCode) => (
+    issuerName: getLocalizedString(
       badge.issuerNameDutch,
       badge.issuerNameEnglish,
-      language.code,
-    );
-    final institutionName = getLocalizedString(
+      langCode,
+    ),
+    institutionName: getLocalizedString(
       badge.institutionNameDutch,
       badge.institutionNameEnglish,
-      language.code,
-    );
+      langCode,
+    ),
+    logoUrl: buildImageUrl(badge.institutionImageDutch),
+  );
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final (:issuerName, :institutionName, logoUrl: institutionImageUrl) =
+        issuerNames(badge, ref.watch(appLanguageProvider).code);
     final badgeImageUrl = buildImageUrl(badge.image);
 
     if (useGridTile) {
       final l10n = AppLocalizations.of(context);
-      final institutionImageUrl = buildImageUrl(badge.institutionImageDutch);
       return BadgeGridTile(
         imageUrl: badgeImageUrl,
         name: badge.name,

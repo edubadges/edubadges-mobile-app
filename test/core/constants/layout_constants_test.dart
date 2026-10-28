@@ -58,31 +58,37 @@ void main() {
     const double image = 100;
     const double name = 48;
     const double chipRow = 32;
-    const double issuer = 32;
+    const double issuer = 22;
     const double gap = 8;
 
     test('drops the chip row when there are no chips', () {
       expect(
-        LayoutConstants.badgeGridTileHeightFor(chipRows: 0),
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 0, issuerLines: 1),
         padding + image + gap + name + gap + issuer,
-      );
-      expect(
-        LayoutConstants.badgeGridTileHeightFor(chipRows: 0),
-        LayoutConstants.badgeGridTileHeightWithoutChips,
       );
     });
 
     test('matches the design with one chip row', () {
       expect(
-        LayoutConstants.badgeGridTileHeightFor(chipRows: 1),
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 1, issuerLines: 1),
         padding + image + gap + name + gap * 2 + chipRow + issuer,
       );
     });
 
     test('adds a row and its gap per extra chip row', () {
       expect(
-        LayoutConstants.badgeGridTileHeightFor(chipRows: 2),
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 2, issuerLines: 1),
         padding + image + gap + name + gap * 3 + chipRow * 2 + issuer,
+      );
+    });
+
+    // SURF-679: a name that does not fit wraps onto a second issuer line
+    // instead of being cut off.
+    test('grows from the logo height to two issuer lines', () {
+      const double issuerLine = 16;
+      expect(
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 1, issuerLines: 2),
+        padding + image + gap + name + gap * 2 + chipRow + issuerLine * 2,
       );
     });
   });
