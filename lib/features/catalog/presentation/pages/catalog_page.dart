@@ -2,7 +2,6 @@ import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
-import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/page_header.dart';
 import 'package:edubadges/core/widgets/sidebar_list_layout.dart';
@@ -227,18 +226,15 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
       );
     }
 
+    // The card's own ink well takes focus and handles Enter and Space, so
+    // each badge is a single tab stop.
     final Widget item = FocusTraversalOrder(
+      key: ValueKey('catalog_badge_${badge.entityId}'),
       order: NumericFocusOrder(index.toDouble()),
-      child: KeyboardActivatable(
-        key: ValueKey('catalog_badge_${badge.entityId}'),
-        wrapWithSemantics: false,
-        includeOuterTapTarget: false,
-        onActivate: openBadgeDetails,
-        child: CatalogBadgeCard(
-          badge: badge,
-          onTap: openBadgeDetails,
-          useGridTile: useGridTile,
-        ),
+      child: CatalogBadgeCard(
+        badge: badge,
+        onTap: openBadgeDetails,
+        useGridTile: useGridTile,
       ),
     );
 

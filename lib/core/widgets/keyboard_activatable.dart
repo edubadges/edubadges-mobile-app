@@ -1,8 +1,13 @@
+import 'package:edubadges/core/widgets/focus_ring_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 /// Wraps a child to make it focusable and activatable via keyboard (Enter/Space).
-/// Focus highlight is drawn by Flutter.
+/// The focus ring is drawn by [FocusRingOverlay]; wrap this in a
+/// [FocusRingShape] when the child is not a plain rectangle.
+///
+/// Not for a child that takes focus itself, such as an [InkWell] or a button:
+/// that would make two tab stops for one control.
 class KeyboardActivatable extends StatelessWidget {
   final Widget child;
   final VoidCallback? onActivate;

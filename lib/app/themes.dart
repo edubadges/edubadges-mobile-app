@@ -18,8 +18,10 @@ class AppThemes {
       switchTheme: _switchTheme,
       checkboxTheme: _checkboxTheme,
       tabBarTheme: _tabBarTheme,
-      // High-contrast focus indicator for keyboard/screen reader (EU accessibility)
-      focusColor: AppColors.primary,
+      // The visible focus indicator is the ring FocusRingOverlay draws. This
+      // fill only tints the focused control, so it has to stay translucent:
+      // an opaque primary fill hides the primary-coloured text and icons.
+      focusColor: AppColors.primary.withValues(alpha: 0.12),
     );
   }
 
@@ -34,7 +36,7 @@ class AppThemes {
       switchTheme: _switchTheme,
       checkboxTheme: _checkboxTheme,
       tabBarTheme: _tabBarTheme,
-      focusColor: AppColors.onSurface,
+      focusColor: AppColors.onSurface.withValues(alpha: 0.12),
     );
   }
 

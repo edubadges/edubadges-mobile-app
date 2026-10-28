@@ -4,7 +4,6 @@ import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/app_modal.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
-import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/badges_overview/domain/entities/badges_overview_state.dart';
@@ -82,7 +81,13 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.badgesOverviewTitle, style: textTheme.titleLarge),
+                Semantics(
+                  header: true,
+                  child: Text(
+                    l10n.badgesOverviewTitle,
+                    style: textTheme.titleLarge,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   l10n.badgesOverviewSubtitle,
@@ -150,22 +155,18 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
       final navigationEntityId = scope == BadgeDetailsScope.enrollment
           ? badge.badgeclass.entityId
           : badge.entityId;
-      void activate() => onActivate(badge);
+      // The card's own ink well takes focus and handles Enter and Space, so
+      // each badge is a single tab stop.
       return FocusTraversalOrder(
+        key: ValueKey('${keyPrefix}_${badge.entityId}'),
         order: NumericFocusOrder(index.toDouble()),
-        child: KeyboardActivatable(
-          key: ValueKey('${keyPrefix}_${badge.entityId}'),
-          wrapWithSemantics: false,
-          includeOuterTapTarget: false,
-          onActivate: activate,
-          child: _buildBadgeCard(
-            badge: badge,
-            scope: scope,
-            navigationEntityId: navigationEntityId,
-            onActivate: activate,
-            useGridTile: gridColumns > 0,
-            showClaimedGalleryOnOpen: showClaimedGalleryOnOpen,
-          ),
+        child: _buildBadgeCard(
+          badge: badge,
+          scope: scope,
+          navigationEntityId: navigationEntityId,
+          onActivate: () => onActivate(badge),
+          useGridTile: gridColumns > 0,
+          showClaimedGalleryOnOpen: showClaimedGalleryOnOpen,
         ),
       );
     }

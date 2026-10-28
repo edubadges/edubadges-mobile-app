@@ -9,7 +9,6 @@ import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/debug_error_log_button.dart';
-import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
 import 'package:edubadges/core/widgets/sidebar_list_layout.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
@@ -194,21 +193,16 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                 children: [
                   SizedBox(
                     width: double.infinity,
-                    child: KeyboardActivatable(
-                      wrapWithSemantics: false,
-                      includeOuterTapTarget: false,
-                      onActivate: copyLink,
-                      child: ElevatedButton.icon(
-                        onPressed: copyLink,
-                        icon: const Icon(Icons.copy, size: 20),
-                        label: Text(l10n.copyLink),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: colorScheme.primary,
-                          foregroundColor: colorScheme.onPrimary,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                    child: ElevatedButton.icon(
+                      onPressed: copyLink,
+                      icon: const Icon(Icons.copy, size: 20),
+                      label: Text(l10n.copyLink),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorScheme.primary,
+                        foregroundColor: colorScheme.onPrimary,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                     ),
