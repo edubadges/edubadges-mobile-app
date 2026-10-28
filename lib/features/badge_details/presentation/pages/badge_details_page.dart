@@ -12,6 +12,7 @@ import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/focus_ring_overlay.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
+import 'package:edubadges/core/widgets/page_title.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_detail_item_model.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_model.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
@@ -334,22 +335,50 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     );
   }
 
+  /// The name of the badge on screen, once it has loaded.
+  String? _visibleBadgeName() {
+    if (_shouldShowCarousel) {
+      final List<BadgeInstanceEntity>? badges = ref
+          .watch(badgesListProvider)
+          .value
+          ?.claimedBadges;
+      if (badges == null || _currentIndex >= badges.length) return null;
+      return (badges[_currentIndex].badgeclass as BadgeClassModel).name;
+    }
+    return ref
+        .watch(
+          badgeDetailsModelProvider(
+            BadgeDetailsQuery(
+              scope: widget.badge.scope,
+              entityId: widget.badge.id,
+            ),
+          ),
+        )
+        .value
+        ?.badgeClass
+        .name;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        final bool useSidebarLayout =
-            constraints.maxWidth >= LayoutConstants.sidebarListLayoutMinWidth;
+    final String? badgeName = _visibleBadgeName();
+    return PageTitle(
+      title: (AppLocalizations l10n) => badgeName ?? l10n.pageTitleBadgeDetails,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final bool useSidebarLayout =
+              constraints.maxWidth >= LayoutConstants.sidebarListLayoutMinWidth;
 
-        final Widget body = _shouldShowCarousel
-            ? _buildCarouselView(useSidebarLayout: useSidebarLayout)
-            : _buildSingleBadgeView(useSidebarLayout: useSidebarLayout);
+          final Widget body = _shouldShowCarousel
+              ? _buildCarouselView(useSidebarLayout: useSidebarLayout)
+              : _buildSingleBadgeView(useSidebarLayout: useSidebarLayout);
 
-        return Scaffold(
-          appBar: useSidebarLayout ? null : _buildBackAppBar(),
-          body: body,
-        );
-      },
+          return Scaffold(
+            appBar: useSidebarLayout ? null : _buildBackAppBar(),
+            body: body,
+          );
+        },
+      ),
     );
   }
 

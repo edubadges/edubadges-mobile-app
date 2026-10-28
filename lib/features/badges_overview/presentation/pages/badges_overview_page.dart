@@ -203,6 +203,7 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
                 mainAxisSpacing: LayoutConstants.badgeGridSpacing,
                 mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
                   chipRows: chipRows,
+                  textScaler: MediaQuery.textScalerOf(context),
                 ),
               ),
               delegate: SliverChildBuilderDelegate(
@@ -536,11 +537,18 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
           appBar: isDesktopLayout
               ? null
               : AppBar(
-                  title: SvgPicture.asset(
-                    Assets.imageLogo,
-                    width: 131,
-                    height: 32,
-                    semanticsLabel: l10n.appName,
+                  // The logo stands in for the page heading the desktop
+                  // layout shows, so screen readers get that heading here too.
+                  title: Semantics(
+                    header: true,
+                    label: l10n.badgesOverviewTitle,
+                    child: ExcludeSemantics(
+                      child: SvgPicture.asset(
+                        Assets.imageLogo,
+                        width: 131,
+                        height: 32,
+                      ),
+                    ),
                   ),
                   centerTitle: true,
                   actions: [

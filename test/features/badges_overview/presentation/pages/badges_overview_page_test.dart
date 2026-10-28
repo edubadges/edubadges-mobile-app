@@ -165,4 +165,17 @@ void main() {
     expect(earned.center.dx, closeTo(pageWidth / 4, 24));
     expect(requested.center.dx, closeTo(pageWidth * 3 / 4, 24));
   });
+
+  testWidgets('the phone layout has a page heading for screen readers', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle semantics = tester.ensureSemantics();
+    await _pumpOverview(tester, size: const Size(390, 800));
+
+    expect(
+      tester.getSemantics(find.bySemanticsLabel('My Edubadges')),
+      isSemantics(label: 'My Edubadges', isHeader: true),
+    );
+    semantics.dispose();
+  });
 }

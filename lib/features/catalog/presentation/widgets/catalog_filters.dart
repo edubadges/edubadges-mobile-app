@@ -5,6 +5,7 @@ import 'package:edubadges/features/catalog/domain/enums/catalog_institution_type
 import 'package:edubadges/features/catalog/presentation/providers/institution_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CatalogFilters extends ConsumerStatefulWidget {
@@ -65,34 +66,41 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
             ),
           ),
           const SizedBox(height: 8),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildFilterChip(
-                  label: l10n.allLevels,
-                  level: null,
-                  colorScheme: colorScheme,
-                ),
-                const SizedBox(width: 8),
-                _buildFilterChip(
-                  label: l10n.mbo,
-                  level: CatalogInstitutionType.MBO,
-                  colorScheme: colorScheme,
-                ),
-                const SizedBox(width: 8),
-                _buildFilterChip(
-                  label: l10n.hbo,
-                  level: CatalogInstitutionType.HBO,
-                  colorScheme: colorScheme,
-                ),
-                const SizedBox(width: 8),
-                _buildFilterChip(
-                  label: l10n.wo,
-                  level: CatalogInstitutionType.WO,
-                  colorScheme: colorScheme,
-                ),
-              ],
+          // One level out of four, so read as radio buttons that say which
+          // one is checked.
+          Semantics(
+            container: true,
+            role: SemanticsRole.radioGroup,
+            label: l10n.catalogLevelFilterLabel,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _buildFilterChip(
+                    label: l10n.allLevels,
+                    level: null,
+                    colorScheme: colorScheme,
+                  ),
+                  const SizedBox(width: 8),
+                  _buildFilterChip(
+                    label: l10n.mbo,
+                    level: CatalogInstitutionType.MBO,
+                    colorScheme: colorScheme,
+                  ),
+                  const SizedBox(width: 8),
+                  _buildFilterChip(
+                    label: l10n.hbo,
+                    level: CatalogInstitutionType.HBO,
+                    colorScheme: colorScheme,
+                  ),
+                  const SizedBox(width: 8),
+                  _buildFilterChip(
+                    label: l10n.wo,
+                    level: CatalogInstitutionType.WO,
+                    colorScheme: colorScheme,
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -151,9 +159,10 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
       widget.onLevelChanged?.call(level);
     }
 
-    return Semantics(
-      selected: isSelected,
-      child: MergeSemantics(
+    return MergeSemantics(
+      child: Semantics(
+        inMutuallyExclusiveGroup: true,
+        checked: isSelected,
         child: InkWell(
           onTap: onChipTap,
           borderRadius: BorderRadius.circular(8),

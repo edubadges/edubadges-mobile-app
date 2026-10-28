@@ -6,6 +6,7 @@ import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/route_exit_guard.dart';
 import 'package:edubadges/core/widgets/deferred_widget.dart';
+import 'package:edubadges/core/widgets/page_title.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/presentation/pages/account_page.dart';
 import 'package:edubadges/features/account/presentation/pages/agreement_details_page.dart';
@@ -103,7 +104,10 @@ final appRouter = Provider<GoRouter>((ref) {
         path: RoutePath.login,
         name: 'login',
         builder: (context, state) {
-          return const LoginPage();
+          return PageTitle(
+            title: (l10n) => l10n.pageTitleLogin,
+            child: const LoginPage(),
+          );
         },
       ),
 
@@ -111,7 +115,10 @@ final appRouter = Provider<GoRouter>((ref) {
         path: RoutePath.notificationPermission,
         name: 'notification-permission',
         builder: (context, state) {
-          return const NotificationPermissionPage();
+          return PageTitle(
+            title: (l10n) => l10n.notificationPermissionsTitle,
+            child: const NotificationPermissionPage(),
+          );
         },
       ),
 
@@ -127,9 +134,12 @@ final appRouter = Provider<GoRouter>((ref) {
         },
         builder: (context, state) {
           final url = state.extra as String;
-          return DeferredWidget(
-            loadLibrary: general_terms.loadLibrary,
-            createWidget: () => general_terms.GeneralTermsPage(url: url),
+          return PageTitle(
+            title: (l10n) => l10n.generalAgreementTitle,
+            child: DeferredWidget(
+              loadLibrary: general_terms.loadLibrary,
+              createWidget: () => general_terms.GeneralTermsPage(url: url),
+            ),
           );
         },
       ),
@@ -143,7 +153,10 @@ final appRouter = Provider<GoRouter>((ref) {
           final description = state.uri.queryParameters['description'];
 
           if (id == null || id.isEmpty) {
-            return const CollectionsPage();
+            return PageTitle(
+              title: (l10n) => l10n.tabCollections,
+              child: const CollectionsPage(),
+            );
           }
 
           final collection = CollectionRouteModel(
@@ -152,7 +165,10 @@ final appRouter = Provider<GoRouter>((ref) {
             description: description?.isNotEmpty ?? false ? description : null,
           );
 
-          return CollectionPage(collection: collection);
+          return PageTitle(
+            title: (l10n) => title.isNotEmpty ? title : l10n.tabCollections,
+            child: CollectionPage(collection: collection),
+          );
         },
       ),
 
@@ -170,9 +186,12 @@ final appRouter = Provider<GoRouter>((ref) {
           },
           restorationId: state.pageKey.value,
           fullscreenDialog: true,
-          child: CollectionFormPage.edit(
-            collectionId: state.pathParameters['id'] ?? '',
-            exitGuard: editCollectionExitGuard,
+          child: PageTitle(
+            title: (l10n) => l10n.editCollection,
+            child: CollectionFormPage.edit(
+              collectionId: state.pathParameters['id'] ?? '',
+              exitGuard: editCollectionExitGuard,
+            ),
           ),
         ),
       ),
@@ -213,11 +232,14 @@ final appRouter = Provider<GoRouter>((ref) {
         name: 'badge-quality-assurance-claimed',
         builder: (context, state) {
           final badgeId = state.pathParameters['id'] ?? '';
-          return DeferredWidget(
-            loadLibrary: quality_assurance.loadLibrary,
-            createWidget: () => quality_assurance.QualityAssurancePage(
-              badgeId: badgeId,
-              scope: BadgeDetailsScope.claimed,
+          return PageTitle(
+            title: (l10n) => l10n.qualityAssurance,
+            child: DeferredWidget(
+              loadLibrary: quality_assurance.loadLibrary,
+              createWidget: () => quality_assurance.QualityAssurancePage(
+                badgeId: badgeId,
+                scope: BadgeDetailsScope.claimed,
+              ),
             ),
           );
         },
@@ -228,11 +250,14 @@ final appRouter = Provider<GoRouter>((ref) {
         name: 'badge-quality-assurance-enrollment',
         builder: (context, state) {
           final badgeId = state.pathParameters['id'] ?? '';
-          return DeferredWidget(
-            loadLibrary: quality_assurance.loadLibrary,
-            createWidget: () => quality_assurance.QualityAssurancePage(
-              badgeId: badgeId,
-              scope: BadgeDetailsScope.enrollment,
+          return PageTitle(
+            title: (l10n) => l10n.qualityAssurance,
+            child: DeferredWidget(
+              loadLibrary: quality_assurance.loadLibrary,
+              createWidget: () => quality_assurance.QualityAssurancePage(
+                badgeId: badgeId,
+                scope: BadgeDetailsScope.enrollment,
+              ),
             ),
           );
         },
@@ -243,11 +268,14 @@ final appRouter = Provider<GoRouter>((ref) {
         name: 'badge-quality-assurance-public',
         builder: (context, state) {
           final badgeId = state.pathParameters['id'] ?? '';
-          return DeferredWidget(
-            loadLibrary: quality_assurance.loadLibrary,
-            createWidget: () => quality_assurance.QualityAssurancePage(
-              badgeId: badgeId,
-              scope: BadgeDetailsScope.public,
+          return PageTitle(
+            title: (l10n) => l10n.qualityAssurance,
+            child: DeferredWidget(
+              loadLibrary: quality_assurance.loadLibrary,
+              createWidget: () => quality_assurance.QualityAssurancePage(
+                badgeId: badgeId,
+                scope: BadgeDetailsScope.public,
+              ),
             ),
           );
         },
@@ -325,14 +353,20 @@ final appRouter = Provider<GoRouter>((ref) {
             textUrlShort: textUrlShort,
           );
 
-          return AgreementDetailsPage(agreement: agreement);
+          return PageTitle(
+            title: (l10n) => titleLong.isNotEmpty ? titleLong : titleShort,
+            child: AgreementDetailsPage(agreement: agreement),
+          );
         },
       ),
 
       GoRoute(
         path: RoutePath.newCollection,
         name: 'new-collection',
-        builder: (context, state) => const CollectionFormPage.create(),
+        builder: (context, state) => PageTitle(
+          title: (l10n) => l10n.newCollection,
+          child: const CollectionFormPage.create(),
+        ),
       ),
 
       GoRoute(
@@ -344,11 +378,14 @@ final appRouter = Provider<GoRouter>((ref) {
               state.uri.queryParameters['remainingCount'] ?? '0';
           final remainingCount = int.tryParse(remainingCountStr) ?? 0;
 
-          return DeferredWidget(
-            loadLibrary: badge_claim.loadLibrary,
-            createWidget: () => badge_claim.BadgeClaimPage(
-              badgeId: badgeId,
-              remainingCount: remainingCount,
+          return PageTitle(
+            title: (l10n) => l10n.claimEdubadge,
+            child: DeferredWidget(
+              loadLibrary: badge_claim.loadLibrary,
+              createWidget: () => badge_claim.BadgeClaimPage(
+                badgeId: badgeId,
+                remainingCount: remainingCount,
+              ),
             ),
           );
         },
@@ -359,7 +396,10 @@ final appRouter = Provider<GoRouter>((ref) {
         name: 'badge-privacy',
         builder: (context, state) {
           final badgeId = state.pathParameters['id'] ?? '';
-          return BadgePrivacyPage(badgeId: badgeId);
+          return PageTitle(
+            title: (l10n) => l10n.badgePrivacyTitle,
+            child: BadgePrivacyPage(badgeId: badgeId),
+          );
         },
       ),
 
@@ -368,8 +408,11 @@ final appRouter = Provider<GoRouter>((ref) {
         name: 'badge-enrollment-terms',
         builder: (context, state) {
           final badgeClassEntityId = state.pathParameters['id'] ?? '';
-          return BadgeEnrollmentTermsPage(
-            badgeClassEntityId: badgeClassEntityId,
+          return PageTitle(
+            title: (l10n) => l10n.pageTitleEnrollmentTerms,
+            child: BadgeEnrollmentTermsPage(
+              badgeClassEntityId: badgeClassEntityId,
+            ),
           );
         },
       ),
@@ -379,10 +422,13 @@ final appRouter = Provider<GoRouter>((ref) {
         name: 'badge-claim-success',
         builder: (context, state) {
           final badgeClassId = state.uri.queryParameters['id'] ?? '';
-          return DeferredWidget(
-            loadLibrary: badge_claim_success.loadLibrary,
-            createWidget: () => badge_claim_success.BadgeClaimSuccessPage(
-              badgeClassId: badgeClassId,
+          return PageTitle(
+            title: (l10n) => l10n.badgeClaimSuccessSubtitle,
+            child: DeferredWidget(
+              loadLibrary: badge_claim_success.loadLibrary,
+              createWidget: () => badge_claim_success.BadgeClaimSuccessPage(
+                badgeClassId: badgeClassId,
+              ),
             ),
           );
         },
@@ -401,7 +447,16 @@ final appRouter = Provider<GoRouter>((ref) {
             ) {
               return IndexedStack(
                 index: navigationShell.currentIndex,
-                children: children,
+                children: [
+                  // Hidden tabs stay built but without tickers, as in
+                  // go_router's own container: nothing animates out of
+                  // sight, and their pages know not to set the page title.
+                  for (int i = 0; i < children.length; i++)
+                    TickerMode(
+                      enabled: i == navigationShell.currentIndex,
+                      child: children[i],
+                    ),
+                ],
               );
             },
         branches: [
@@ -411,7 +466,10 @@ final appRouter = Provider<GoRouter>((ref) {
               GoRoute(
                 path: RoutePath.main,
                 name: 'badges',
-                builder: (context, state) => const BadgesOverviewPage(),
+                builder: (context, state) => PageTitle(
+                  title: (l10n) => l10n.badgesOverviewTitle,
+                  child: const BadgesOverviewPage(),
+                ),
               ),
             ],
           ),
@@ -422,7 +480,10 @@ final appRouter = Provider<GoRouter>((ref) {
               GoRoute(
                 path: RoutePath.collections,
                 name: 'collections',
-                builder: (context, state) => const CollectionsPage(),
+                builder: (context, state) => PageTitle(
+                  title: (l10n) => l10n.tabCollections,
+                  child: const CollectionsPage(),
+                ),
               ),
             ],
           ),
@@ -433,7 +494,10 @@ final appRouter = Provider<GoRouter>((ref) {
               GoRoute(
                 path: RoutePath.catalog,
                 name: 'catalog',
-                builder: (context, state) => const CatalogPage(),
+                builder: (context, state) => PageTitle(
+                  title: (l10n) => l10n.tabCatalog,
+                  child: const CatalogPage(),
+                ),
               ),
             ],
           ),
@@ -444,7 +508,10 @@ final appRouter = Provider<GoRouter>((ref) {
               GoRoute(
                 path: RoutePath.account,
                 name: 'account',
-                builder: (context, state) => const AccountPage(),
+                builder: (context, state) => PageTitle(
+                  title: (l10n) => l10n.tabAccount,
+                  child: const AccountPage(),
+                ),
               ),
             ],
           ),

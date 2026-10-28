@@ -130,10 +130,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Semantics(
-          label: l10n.appName,
-          child: SvgPicture.asset(Assets.imageLogo),
-        ),
+        title: SvgPicture.asset(Assets.imageLogo, semanticsLabel: l10n.appName),
         centerTitle: true,
       ),
       body: MaxWidthWrapper(
@@ -169,6 +166,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 const SizedBox(height: 40),
 
                 Card(
+                  // Not one merged node: the card's paragraphs are read as
+                  // text in their own right, also by the browser's "speak".
+                  semanticContainer: false,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
@@ -252,7 +252,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
                             child: authAsync.isLoading
                                 ? CircularProgressIndicator(
-                                    color: Colors.white,
+                                    // The button is disabled, so pale, while
+                                    // it loads.
+                                    color: colorScheme.primary,
                                     semanticsLabel: AppLocalizations.of(
                                       context,
                                     ).semanticsLoading,

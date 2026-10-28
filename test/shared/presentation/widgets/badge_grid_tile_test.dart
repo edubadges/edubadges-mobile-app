@@ -4,7 +4,7 @@ import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_grid_tile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -47,11 +47,20 @@ Future<int> _pumpGrid(
   required int columns,
   String name = 'English Grammar B1+',
   List<BadgeInfoChipData> chips = _chips,
+  double textScale = 1,
 }) async {
   int chipRows = 0;
   await tester.pumpWidget(
     MaterialApp(
       theme: AppThemes.lightTheme,
+      // Text enlarged in the browser settings, which Flutter web reads as the
+      // text scale.
+      builder: (BuildContext context, Widget? child) => MediaQuery(
+        data: MediaQuery.of(
+          context,
+        ).copyWith(textScaler: TextScaler.linear(textScale)),
+        child: child!,
+      ),
       home: Scaffold(
         body: Center(
           child: SizedBox(
@@ -73,6 +82,7 @@ Future<int> _pumpGrid(
                         mainAxisSpacing: LayoutConstants.badgeGridSpacing,
                         mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
                           chipRows: chipRows,
+                          textScaler: MediaQuery.textScalerOf(context),
                         ),
                       ),
                       delegate: SliverChildBuilderDelegate(
@@ -182,6 +192,53 @@ void main() {
       });
     });
   }
+
+  testWidgets('keeps names, chips and issuers whole at 200% text', (
+    WidgetTester tester,
+  ) async {
+    await _withDesktopPlatform(() async {
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final double gridWidth = _overviewGridWidth(1440);
+      await _pumpGrid(
+        tester,
+        gridWidth: gridWidth,
+        columns: LayoutConstants.badgeGridColumnCount(
+          gridWidth,
+          maxColumns: LayoutConstants.badgesOverviewGridMaxColumns,
+        ),
+        textScale: 2,
+      );
+
+      expect(tester.takeException(), isNull);
+
+      // Both name lines fit their box instead of the second being cut off.
+      final RenderParagraph name = tester.renderObject<RenderParagraph>(
+        find.text('English Grammar B1+').first,
+      );
+      expect(
+        name.size.height,
+        greaterThanOrEqualTo(name.getMinIntrinsicHeight(name.size.width) - 0.5),
+      );
+
+      final Rect tile = tester.getRect(find.byType(BadgeGridTile).first);
+      final Rect chipRegion = tester.getRect(find.byType(OverflowBox).first);
+      for (final BadgeInfoChipData chip in _chips) {
+        expect(
+          tester.getRect(find.text(chip.label).first).bottom,
+          lessThanOrEqualTo(chipRegion.bottom),
+          reason: 'chip "${chip.label}" is clipped',
+        );
+      }
+      expect(
+        tester.getRect(find.text('Hogeschool Rotterdam').first).bottom,
+        lessThanOrEqualTo(tile.bottom),
+      );
+    });
+  });
 
   test('the grid widens the tiles as the window grows', () {
     int columns(double browserWidth) => LayoutConstants.badgeGridColumnCount(

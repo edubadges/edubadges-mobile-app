@@ -4,6 +4,7 @@ import 'package:edubadges/features/account/presentation/providers/account_provid
 import 'package:edubadges/features/main/main_page.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -127,4 +128,42 @@ void main() {
       isNotNull,
     );
   });
+
+  for (final Size size in <Size>[const Size(1280, 800), const Size(390, 800)]) {
+    testWidgets(
+      'marks the page and the navigation as landmarks at ${size.width.toInt()}px',
+      (WidgetTester tester) async {
+        final SemanticsHandle semantics = tester.ensureSemantics();
+        await _pumpMainPage(tester, size: size);
+
+        final List<SemanticsRole> roles = <SemanticsRole>[];
+        void collect(SemanticsNode node) {
+          roles.add(node.getSemanticsData().role);
+          node.visitChildren((SemanticsNode child) {
+            collect(child);
+            return true;
+          });
+        }
+
+        collect(
+          tester
+              .binding
+              .renderViews
+              .first
+              .owner!
+              .semanticsOwner!
+              .rootSemanticsNode!,
+        );
+        expect(
+          roles.where((SemanticsRole role) => role == SemanticsRole.main),
+          hasLength(1),
+        );
+        expect(
+          roles.where((SemanticsRole role) => role == SemanticsRole.navigation),
+          hasLength(1),
+        );
+        semantics.dispose();
+      },
+    );
+  }
 }

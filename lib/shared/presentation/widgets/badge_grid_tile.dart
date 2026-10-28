@@ -196,7 +196,9 @@ class BadgeGridTile extends StatelessWidget {
         const SizedBox(height: 8),
         // Always two lines tall, so every tile in a grid lines up the same.
         SizedBox(
-          height: LayoutConstants.badgeGridTileNameHeight,
+          height: LayoutConstants.badgeGridTileNameHeightFor(
+            MediaQuery.textScalerOf(context),
+          ),
           child: Center(
             child: Text(
               name,

@@ -8,6 +8,7 @@ import 'package:edubadges/features/badges_overview/presentation/providers/badges
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/app_badge_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -187,31 +188,43 @@ class _MainPageState extends ConsumerState<MainPage>
   }) {
     final int currentIndex = widget.navigationShell.currentIndex;
     return Scaffold(
-      body: SafeArea(child: widget.navigationShell),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: currentIndex,
-        onDestinationSelected: _onTap,
-        backgroundColor: colorScheme.surfaceContainer,
-        elevation: 8,
-        indicatorColor: pillColor,
-        labelTextStyle: WidgetStateProperty.resolveWith((
-          Set<WidgetState> states,
-        ) {
-          if (states.contains(WidgetState.selected)) {
+      // Landmarks, so screen reader users can jump between the page and the
+      // navigation (WCAG 1.3.1, 2.4.1).
+      body: SafeArea(
+        child: Semantics(
+          container: true,
+          role: SemanticsRole.main,
+          child: widget.navigationShell,
+        ),
+      ),
+      bottomNavigationBar: Semantics(
+        container: true,
+        role: SemanticsRole.navigation,
+        child: NavigationBar(
+          selectedIndex: currentIndex,
+          onDestinationSelected: _onTap,
+          backgroundColor: colorScheme.surfaceContainer,
+          elevation: 8,
+          indicatorColor: pillColor,
+          labelTextStyle: WidgetStateProperty.resolveWith((
+            Set<WidgetState> states,
+          ) {
+            if (states.contains(WidgetState.selected)) {
+              return theme.textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              );
+            }
             return theme.textTheme.labelMedium?.copyWith(
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.normal,
+              color: colorScheme.onSurfaceVariant,
             );
-          }
-          return theme.textTheme.labelMedium?.copyWith(
-            fontWeight: FontWeight.normal,
-            color: colorScheme.onSurfaceVariant,
-          );
-        }),
-        destinations: List<NavigationDestination>.generate(
-          destinations.length,
-          (int index) => _buildNavigationBarDestination(
-            destination: destinations[index],
-            colorScheme: colorScheme,
+          }),
+          destinations: List<NavigationDestination>.generate(
+            destinations.length,
+            (int index) => _buildNavigationBarDestination(
+              destination: destinations[index],
+              colorScheme: colorScheme,
+            ),
           ),
         ),
       ),
@@ -251,43 +264,47 @@ class _MainPageState extends ConsumerState<MainPage>
     return Scaffold(
       body: Row(
         children: <Widget>[
-          SafeArea(
-            bottom: !PlatformInfo.isWeb,
-            child: NavigationDrawerTheme(
-              data: NavigationDrawerThemeData(
-                labelTextStyle: WidgetStateProperty.resolveWith((
-                  Set<WidgetState> states,
-                ) {
-                  if (states.contains(WidgetState.selected)) {
+          Semantics(
+            container: true,
+            role: SemanticsRole.navigation,
+            child: SafeArea(
+              bottom: !PlatformInfo.isWeb,
+              child: NavigationDrawerTheme(
+                data: NavigationDrawerThemeData(
+                  labelTextStyle: WidgetStateProperty.resolveWith((
+                    Set<WidgetState> states,
+                  ) {
+                    if (states.contains(WidgetState.selected)) {
+                      return theme.textTheme.labelLarge?.copyWith(
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                      );
+                    }
                     return theme.textTheme.labelLarge?.copyWith(
-                      color: colorScheme.primary,
-                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurfaceVariant,
                     );
-                  }
-                  return theme.textTheme.labelLarge?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                  );
-                }),
-              ),
-              child: NavigationDrawer(
-                selectedIndex: currentIndex,
-                onDestinationSelected: _onTap,
-                backgroundColor: colorScheme.surfaceContainer,
-                indicatorColor: pillColor,
-                elevation: 0,
-                header: _buildDrawerHeader(
-                  l10n: l10n,
-                  colorScheme: colorScheme,
+                  }),
                 ),
-                children: destinations
-                    .map(
-                      (_NavigationDestinationData destination) =>
-                          _buildNavigationDrawerDestination(
-                            destination: destination,
-                            colorScheme: colorScheme,
-                          ),
-                    )
-                    .toList(),
+                child: NavigationDrawer(
+                  selectedIndex: currentIndex,
+                  onDestinationSelected: _onTap,
+                  backgroundColor: colorScheme.surfaceContainer,
+                  indicatorColor: pillColor,
+                  elevation: 0,
+                  header: _buildDrawerHeader(
+                    l10n: l10n,
+                    colorScheme: colorScheme,
+                  ),
+                  children: destinations
+                      .map(
+                        (_NavigationDestinationData destination) =>
+                            _buildNavigationDrawerDestination(
+                              destination: destination,
+                              colorScheme: colorScheme,
+                            ),
+                      )
+                      .toList(),
+                ),
               ),
             ),
           ),
@@ -300,7 +317,11 @@ class _MainPageState extends ConsumerState<MainPage>
               // semantics of what was painted before it in the same container,
               // which without this is the drawer beside it, leaving screen
               // readers without the navigation.
-              child: Semantics(container: true, child: widget.navigationShell),
+              child: Semantics(
+                container: true,
+                role: SemanticsRole.main,
+                child: widget.navigationShell,
+              ),
             ),
           ),
         ],

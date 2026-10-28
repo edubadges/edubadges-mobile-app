@@ -175,7 +175,10 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
               mainAxisSpacing: LayoutConstants.badgeGridSpacing,
               // The catalog card carries no chips, so its height never depends
               // on how wide the tiles end up.
-              mainAxisExtent: LayoutConstants.badgeGridTileHeightWithoutChips,
+              mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
+                chipRows: 0,
+                textScaler: MediaQuery.textScalerOf(context),
+              ),
             ),
             delegate: SliverChildBuilderDelegate(
               (context, index) => _buildBadgeListItem(
