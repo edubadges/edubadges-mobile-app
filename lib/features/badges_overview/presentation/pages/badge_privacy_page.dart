@@ -314,8 +314,9 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
                     width: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
+                      // The button is disabled, so pale, while it loads.
                       valueColor: const AlwaysStoppedAnimation<Color>(
-                        Colors.white,
+                        AppColors.primary,
                       ),
                       semanticsLabel: AppLocalizations.of(
                         context,

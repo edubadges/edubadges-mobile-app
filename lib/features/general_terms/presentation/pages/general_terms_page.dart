@@ -125,6 +125,11 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
                         p: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurface,
                         ),
+                        // The default link blue is 2.8:1 on the surface.
+                        a: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.primary,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
                   ),

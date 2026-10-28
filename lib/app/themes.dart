@@ -18,6 +18,7 @@ class AppThemes {
       switchTheme: _switchTheme,
       checkboxTheme: _checkboxTheme,
       tabBarTheme: _tabBarTheme,
+      scrollbarTheme: _scrollbarTheme,
       // The visible focus indicator is the ring FocusRingOverlay draws. This
       // fill only tints the focused control, so it has to stay translucent:
       // an opaque primary fill hides the primary-coloured text and icons.
@@ -36,6 +37,7 @@ class AppThemes {
       switchTheme: _switchTheme,
       checkboxTheme: _checkboxTheme,
       tabBarTheme: _tabBarTheme,
+      scrollbarTheme: _scrollbarTheme,
       focusColor: AppColors.onSurface.withValues(alpha: 0.12),
     );
   }
@@ -297,6 +299,21 @@ class AppThemes {
     );
   }
 
+  /// The web layouts keep their scrollbar visible. Material's default thumb
+  /// is 10% of the text colour, 1.2:1 on the surface; this one has 3:1
+  /// (WCAG 1.4.11), and darkens while hovered or dragged.
+  static ScrollbarThemeData get _scrollbarTheme {
+    return ScrollbarThemeData(
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.dragged) ||
+            states.contains(WidgetState.hovered)) {
+          return AppColors.onSurfaceVariant;
+        }
+        return AppColors.outline;
+      }),
+    );
+  }
+
   static SwitchThemeData get _switchTheme {
     return SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) {
@@ -387,7 +404,8 @@ class AppThemes {
       strong: const TextStyle(fontWeight: FontWeight.bold),
       del: TextStyle(
         decoration: TextDecoration.lineThrough,
-        color: colorScheme.onSurface.withValues(alpha: 0.6),
+        // At 0.6 the text falls just under 4.5:1.
+        color: colorScheme.onSurface.withValues(alpha: 0.7),
       ),
       horizontalRuleDecoration: BoxDecoration(
         border: Border(top: BorderSide(color: colorScheme.outlineVariant)),
