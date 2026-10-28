@@ -13,8 +13,9 @@ import 'package:flutter/services.dart';
 /// indicator without each widget drawing its own.
 ///
 /// The ring follows the shape of an [InkResponse] or [FocusRingShape] that
-/// wraps exactly the focused widget, and is clipped to the scroll views it
-/// sits in so it never floats over an app bar.
+/// wraps exactly the focused widget. It stays inside the scroll views the
+/// widget sits in, so it never floats over an app bar, and moves inwards
+/// where the widget runs past them so it is always fully visible.
 ///
 /// Like the browser's `:focus-visible`, the ring only shows after a key press
 /// and hides again on the next pointer press, so a mouse or touch user does
@@ -160,8 +161,8 @@ class _FocusRingOverlayState extends State<FocusRingOverlay> {
     final Rect? rect = _rectIn(overlay, target.findRenderObject());
     if (rect == null) return null;
 
-    // Clip to every scroll view around the widget, leaving room for the ring
-    // so it is not cut off where the widget touches the viewport edge.
+    // The part of the screen the widget can show in: inside every scroll view
+    // around it, so the ring never covers an app bar or a navigation bar.
     Rect clip = Offset.zero & overlay.size;
     ScrollableState? scrollable = target
         .findAncestorStateOfType<ScrollableState>();
@@ -171,15 +172,22 @@ class _FocusRingOverlayState extends State<FocusRingOverlay> {
         scrollable.context.findRenderObject(),
       );
       if (viewport != null) {
-        clip = clip.intersect(viewport.inflate(FocusRingOverlay.ringWidth * 2));
+        clip = clip.intersect(viewport);
       }
       scrollable = scrollable.context
           .findAncestorStateOfType<ScrollableState>();
     }
-    if (clip.isEmpty || !clip.overlaps(rect)) return null;
+
+    // Where the widget runs past that area, such as a section taller than the
+    // screen or a card against the screen edge, the ring moves inwards so all
+    // four sides stay visible.
+    final Rect ringRect = rect.intersect(
+      clip.deflate(FocusRingOverlay.ringWidth * 2),
+    );
+    if (ringRect.width <= 0 || ringRect.height <= 0) return null;
 
     return _FocusRing(
-      rect: rect,
+      rect: ringRect,
       clip: clip,
       shape: _shapeOf(target, overlay, rect),
     );

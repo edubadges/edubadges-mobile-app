@@ -61,7 +61,9 @@ class KeyboardActivatable extends StatelessWidget {
   Widget _buildWrappedChild() {
     if (wrapWithSemantics) {
       return Semantics(
-        button: true,
+        // A card that opens nothing, such as the badge on its own details
+        // page, is not announced as a button.
+        button: onActivate != null,
         enabled: enabled,
         label: semanticLabel,
         onTap: onActivate,

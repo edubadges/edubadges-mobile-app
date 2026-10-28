@@ -275,7 +275,10 @@ class _MainPageState extends ConsumerState<MainPage>
                 backgroundColor: colorScheme.surfaceContainer,
                 indicatorColor: pillColor,
                 elevation: 0,
-                header: _buildDrawerHeader(l10n: l10n, colorScheme: colorScheme),
+                header: _buildDrawerHeader(
+                  l10n: l10n,
+                  colorScheme: colorScheme,
+                ),
                 children: destinations
                     .map(
                       (_NavigationDestinationData destination) =>
@@ -293,7 +296,11 @@ class _MainPageState extends ConsumerState<MainPage>
               // On web there is no system inset; the bottom inset otherwise
               // renders as a background-coloured strip under the side view.
               bottom: !PlatformInfo.isWeb,
-              child: widget.navigationShell,
+              // A semantics boundary of its own: every page route blocks the
+              // semantics of what was painted before it in the same container,
+              // which without this is the drawer beside it, leaving screen
+              // readers without the navigation.
+              child: Semantics(container: true, child: widget.navigationShell),
             ),
           ),
         ],

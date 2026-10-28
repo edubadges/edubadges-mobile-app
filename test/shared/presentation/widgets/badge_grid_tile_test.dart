@@ -4,6 +4,7 @@ import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_grid_tile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -346,5 +347,44 @@ void main() {
       ], 300),
       2,
     );
+  });
+
+  testWidgets('a tappable tile is one button named after the badge first', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle semantics = tester.ensureSemantics();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppThemes.lightTheme,
+        home: Scaffold(
+          body: SizedBox(
+            width: 300,
+            height: LayoutConstants.badgeGridTileHeightFor(chipRows: 1),
+            child: BadgeGridTile(
+              name: 'English Grammar B1+',
+              issuerName: 'Kennis & Informatie',
+              institutionName: 'Hogeschool Rotterdam',
+              chips: _chips.take(1).toList(),
+              isPublic: false,
+              visibilityLabel: 'Badge is private',
+              onTap: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // The node that takes keyboard focus used to be named by the shield alone.
+    final SemanticsNode node = tester.getSemantics(find.byType(InkWell));
+    expect(
+      node,
+      isSemantics(isButton: true, isFocusable: true, hasTapAction: true),
+    );
+    final String label = node.getSemanticsData().label;
+    expect(label, startsWith('English Grammar B1+'));
+    expect(label, contains('Hogeschool Rotterdam'));
+    expect(label, endsWith('Badge is private'));
+    semantics.dispose();
   });
 }

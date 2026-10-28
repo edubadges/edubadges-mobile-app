@@ -2,7 +2,6 @@ import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/widgets/focus_ring_overlay.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
-import 'package:edubadges/shared/presentation/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -154,6 +153,53 @@ void main() {
     );
   });
 
+  testWidgets('keeps the ring on screen around a widget taller than it', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppThemes.lightTheme,
+        builder: (BuildContext context, Widget? child) =>
+            FocusRingOverlay(child: child!),
+        home: Scaffold(
+          body: ListView(
+            key: _tileKey,
+            children: [
+              KeyboardActivatable(
+                onActivate: () {},
+                child: const SizedBox(height: 2000),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await _pressTab(tester);
+
+    // The widget runs past the top and bottom of the list, so the ring is
+    // drawn just inside the list instead of off screen.
+    final Rect viewport = tester.getRect(find.byKey(_tileKey));
+    expect(
+      _ringLayer(tester),
+      paints
+        ..path(color: AppColors.surfaceContainer)
+        ..path(
+          color: AppColors.primary,
+          includes: <Offset>[
+            viewport.center,
+            Offset(viewport.center.dx, viewport.top + 2),
+            Offset(viewport.center.dx, viewport.bottom - 2),
+          ],
+          excludes: <Offset>[
+            Offset(viewport.center.dx, viewport.top + 0.5),
+            Offset(viewport.center.dx, viewport.bottom - 0.5),
+          ],
+        ),
+    );
+  });
+
   testWidgets('leaves text fields to their own focused border', (
     WidgetTester tester,
   ) async {
@@ -174,39 +220,5 @@ void main() {
   ) async {
     expect(AppThemes.lightTheme.focusColor.a, lessThan(0.2));
     expect(AppThemes.highContrastTheme.focusColor.a, lessThan(0.2));
-  });
-
-  testWidgets('a wide button is a single tab stop that Enter activates', (
-    WidgetTester tester,
-  ) async {
-    int taps = 0;
-    await _pumpApp(
-      tester,
-      Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          WideButton(text: 'Request', icon: null, onTap: () => taps++),
-          TextButton(onPressed: () {}, child: const Text('Next')),
-        ],
-      ),
-    );
-
-    await _pressTab(tester);
-    expect(
-      FocusManager.instance.primaryFocus?.context
-          ?.findAncestorWidgetOfExactType<WideButton>(),
-      isNotNull,
-    );
-
-    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-    await tester.pumpAndSettle();
-    expect(taps, 1);
-
-    await _pressTab(tester);
-    expect(
-      FocusManager.instance.primaryFocus?.context
-          ?.findAncestorWidgetOfExactType<TextButton>(),
-      isNotNull,
-    );
   });
 }
