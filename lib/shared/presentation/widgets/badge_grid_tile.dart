@@ -219,7 +219,9 @@ class BadgeGridTile extends StatelessWidget {
         const SizedBox(height: 8),
         // Always two lines tall, so every tile in a grid lines up the same.
         SizedBox(
-          height: LayoutConstants.badgeGridTileNameHeight,
+          height: LayoutConstants.badgeGridTileNameHeightFor(
+            MediaQuery.textScalerOf(context),
+          ),
           child: Center(
             child: Text(
               name,
@@ -286,11 +288,18 @@ class BadgeGridTile extends StatelessWidget {
             Positioned(
               top: 0,
               right: 0,
-              // Both shields carry their own two-tone palette, so no tint.
-              child: SvgIcon(
-                assetPath: isPublic! ? Assets.iconUnlocked : Assets.iconLocked,
-                size: _visibilityIconSize,
-                semanticLabel: visibilityLabel,
+              // A node of its own, so a tile merged into one button reads the
+              // badge first and its visibility after it.
+              child: Semantics(
+                container: true,
+                // Both shields carry their own two-tone palette, so no tint.
+                child: SvgIcon(
+                  assetPath: isPublic!
+                      ? Assets.iconUnlocked
+                      : Assets.iconLocked,
+                  size: _visibilityIconSize,
+                  semanticLabel: visibilityLabel,
+                ),
               ),
             ),
         ],
@@ -301,12 +310,19 @@ class BadgeGridTile extends StatelessWidget {
       return tile;
     }
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: onTap,
-        child: tile,
+    // One button for the whole tile, so the node that takes focus is named by
+    // the badge rather than by the visibility shield, the only other label.
+    return MergeSemantics(
+      child: Semantics(
+        button: true,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(20),
+            onTap: onTap,
+            child: tile,
+          ),
+        ),
       ),
     );
   }

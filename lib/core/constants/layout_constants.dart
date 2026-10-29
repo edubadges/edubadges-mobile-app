@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 
+import 'package:flutter/painting.dart';
+
 class LayoutConstants {
   LayoutConstants._();
 
@@ -22,7 +24,22 @@ class LayoutConstants {
 
   /// Two [TextTheme.titleMedium] lines: names are clamped to two lines, so
   /// every tile keeps the same size without a third line of white space.
-  static const double badgeGridTileNameHeight = 2 * 24;
+  static const double badgeGridTileNameHeight = 2 * _nameLineHeight;
+
+  /// Line heights of the tile text: the name ([TextTheme.titleMedium]), the
+  /// issuer and institution ([TextTheme.bodySmall]) and the chip labels
+  /// ([TextTheme.labelMedium]).
+  static const double _nameLineHeight = 24;
+  static const double _issuerLineHeight = 16;
+  static const double _chipLineHeight = 16;
+
+  /// The chip icon, which sets the chip height until the label outgrows it.
+  static const double _chipIconSize = 18;
+
+  /// [badgeGridTileNameHeight] at [textScaler], so two lines of enlarged text
+  /// still fit (WCAG 1.4.4).
+  static double badgeGridTileNameHeightFor(TextScaler textScaler) =>
+      2 * textScaler.scale(_nameLineHeight);
 
   /// 16 padding + 100 image + 8 + name + 8 + 16 padding: all of a tile but its
   /// chip rows and issuer label.
@@ -30,8 +47,12 @@ class LayoutConstants {
       16 + 100 + 8 + badgeGridTileNameHeight + 8 + 16;
 
   /// The issuer label: one [TextTheme.bodySmall] line (16) beside its 22 logo,
-  /// or two lines when a name does not fit on one.
-  static double badgeGridIssuerHeight(int lines) => math.max(22, 16.0 * lines);
+  /// or two lines when a name does not fit on one. Its lines grow with
+  /// [textScaler].
+  static double badgeGridIssuerHeight(
+    int lines, {
+    TextScaler textScaler = TextScaler.noScaling,
+  }) => math.max(22, lines * textScaler.scale(_issuerLineHeight));
 
   static const double badgeGridChipRowHeight = 32;
 
@@ -67,13 +88,26 @@ class LayoutConstants {
   /// gap on top, and whose issuer label takes [issuerLines] lines. One chip
   /// row and one issuer line match the overview design; the catalog tile draws
   /// no chips.
+  ///
+  /// Text enlarged through the browser or the system ([textScaler]) makes the
+  /// tile taller by as much as its text lines grow, so nothing is cut off.
   static double badgeGridTileHeightFor({
     required int chipRows,
     required int issuerLines,
-  }) =>
-      _badgeGridTileFixedHeight +
-      badgeGridIssuerHeight(issuerLines) +
-      chipRows * (badgeGridChipRowHeight + 8);
+    TextScaler textScaler = TextScaler.noScaling,
+  }) {
+    // How much a line outgrows the room it has at the design size.
+    double growth(double lineHeight, {required double room}) =>
+        math.max(0.0, textScaler.scale(lineHeight) - room);
+
+    return _badgeGridTileFixedHeight +
+        2 * growth(_nameLineHeight, room: _nameLineHeight) +
+        badgeGridIssuerHeight(issuerLines, textScaler: textScaler) +
+        chipRows *
+            (badgeGridChipRowHeight +
+                8 +
+                growth(_chipLineHeight, room: _chipIconSize));
+  }
 
   static const int collectionsGridCrossAxisCount = 3;
   static const double collectionsGridMainAxisExtent = 104;

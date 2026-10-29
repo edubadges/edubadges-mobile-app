@@ -195,4 +195,20 @@ void main() {
 
     expect(find.text('Taal'), findsOneWidget);
   });
+
+  testWidgets('section titles are headings of their own', (
+    WidgetTester tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    await _pumpAccountPage(tester);
+
+    // Merged into its card, a whole section was the heading, which the web
+    // exposes as a page banner.
+    for (final String title in <String>['Data', 'Language']) {
+      final SemanticsNode node = tester.getSemantics(find.text(title));
+      expect(node, isSemantics(isHeader: true, label: title), reason: title);
+      expect(node.childrenCount, 0, reason: title);
+    }
+    semantics.dispose();
+  });
 }

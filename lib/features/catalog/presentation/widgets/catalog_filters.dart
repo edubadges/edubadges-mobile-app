@@ -1,10 +1,12 @@
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/string.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/features/catalog/domain/entities/catalog_institution.dart';
 import 'package:edubadges/features/catalog/domain/enums/catalog_institution_type.dart';
 import 'package:edubadges/features/catalog/presentation/providers/institution_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CatalogFilters extends ConsumerStatefulWidget {
@@ -65,34 +67,41 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
             ),
           ),
           const SizedBox(height: 8),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildFilterChip(
-                  label: l10n.allLevels,
-                  level: null,
-                  colorScheme: colorScheme,
-                ),
-                const SizedBox(width: 8),
-                _buildFilterChip(
-                  label: l10n.mbo,
-                  level: CatalogInstitutionType.MBO,
-                  colorScheme: colorScheme,
-                ),
-                const SizedBox(width: 8),
-                _buildFilterChip(
-                  label: l10n.hbo,
-                  level: CatalogInstitutionType.HBO,
-                  colorScheme: colorScheme,
-                ),
-                const SizedBox(width: 8),
-                _buildFilterChip(
-                  label: l10n.wo,
-                  level: CatalogInstitutionType.WO,
-                  colorScheme: colorScheme,
-                ),
-              ],
+          // One level out of four, so read as radio buttons that say which
+          // one is checked.
+          Semantics(
+            container: true,
+            role: SemanticsRole.radioGroup,
+            label: l10n.catalogLevelFilterLabel,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _buildFilterChip(
+                    label: l10n.allLevels,
+                    level: null,
+                    colorScheme: colorScheme,
+                  ),
+                  const SizedBox(width: 8),
+                  _buildFilterChip(
+                    label: l10n.mbo,
+                    level: CatalogInstitutionType.MBO,
+                    colorScheme: colorScheme,
+                  ),
+                  const SizedBox(width: 8),
+                  _buildFilterChip(
+                    label: l10n.hbo,
+                    level: CatalogInstitutionType.HBO,
+                    colorScheme: colorScheme,
+                  ),
+                  const SizedBox(width: 8),
+                  _buildFilterChip(
+                    label: l10n.wo,
+                    level: CatalogInstitutionType.WO,
+                    colorScheme: colorScheme,
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -151,9 +160,10 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
       widget.onLevelChanged?.call(level);
     }
 
-    return Semantics(
-      selected: isSelected,
-      child: MergeSemantics(
+    return MergeSemantics(
+      child: Semantics(
+        inMutuallyExclusiveGroup: true,
+        checked: isSelected,
         child: InkWell(
           onTap: onChipTap,
           borderRadius: BorderRadius.circular(8),
@@ -263,6 +273,8 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
                       widget.onInstitutionChanged?.call(null);
                     }
                   },
+                  // Enter picks the highlighted suggestion.
+                  onSubmitted: (_) => onFieldSubmitted(),
                 );
               },
           onSelected: (CatalogInstitution selection) {
@@ -288,26 +300,10 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
                         maxHeight: 200,
                         maxWidth: 400,
                       ),
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        itemCount: options.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final CatalogInstitution option = options.elementAt(
-                            index,
-                          );
-                          return InkWell(
-                            onTap: () {
-                              onSelected(option);
-                            },
-                            child: ListTile(
-                              title: Text(
-                                institutionName(option),
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                            ),
-                          );
-                        },
+                      child: _InstitutionOptions(
+                        options: options,
+                        onSelected: onSelected,
+                        institutionName: institutionName,
                       ),
                     ),
                   ),
@@ -325,15 +321,12 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
             horizontal: 16,
             vertical: 16,
           ),
-          suffixIcon: SizedBox(
+          suffixIcon: const SizedBox(
             width: 20,
             height: 20,
             child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-              ),
+              padding: EdgeInsets.all(12),
+              child: LoadingSpinner(strokeWidth: 2),
             ),
           ),
         ),
@@ -351,6 +344,118 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
           errorText: l10n.catalogFailedToLoadInstitutions,
         ),
       ),
+    );
+  }
+}
+
+/// The institution suggestions under the search field.
+///
+/// The arrow keys move a highlight through them while keyboard focus stays in
+/// the field, so the highlighted one is drawn like a focused control and
+/// scrolled into view, as Material's own suggestion list does.
+class _InstitutionOptions extends StatefulWidget {
+  final Iterable<CatalogInstitution> options;
+  final AutocompleteOnSelected<CatalogInstitution> onSelected;
+  final String Function(CatalogInstitution institution) institutionName;
+
+  const _InstitutionOptions({
+    required this.options,
+    required this.onSelected,
+    required this.institutionName,
+  });
+
+  @override
+  State<_InstitutionOptions> createState() => _InstitutionOptionsState();
+}
+
+class _InstitutionOptionsState extends State<_InstitutionOptions> {
+  final ScrollController _scrollController = ScrollController();
+  int? _highlightedIndex;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final int highlightedIndex = AutocompleteHighlightedOption.of(context);
+    if (highlightedIndex != _highlightedIndex) {
+      _highlightedIndex = highlightedIndex;
+      _scrollIntoView(highlightedIndex);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollIntoView(int index, {bool retry = true}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || index >= widget.options.length) {
+        return;
+      }
+      final BuildContext? optionContext = GlobalObjectKey(
+        widget.options.elementAt(index),
+      ).currentContext;
+      if (optionContext != null) {
+        Scrollable.ensureVisible(optionContext, alignment: 0.5);
+      } else if (retry &&
+          widget.options.length > 1 &&
+          _scrollController.hasClients) {
+        // Not built yet (Page Down/Up moves four at a time, which can be
+        // past the built rows at large text): jump to about where it is, then
+        // centre it once it has been built.
+        final ScrollPosition position = _scrollController.position;
+        position.jumpTo(
+          position.maxScrollExtent * index / (widget.options.length - 1),
+        );
+        _scrollIntoView(index, retry: false);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
+    return ListView.builder(
+      controller: _scrollController,
+      padding: EdgeInsets.zero,
+      shrinkWrap: true,
+      itemCount: widget.options.length,
+      itemBuilder: (BuildContext context, int index) {
+        final CatalogInstitution option = widget.options.elementAt(index);
+        final bool highlighted = index == _highlightedIndex;
+        return MergeSemantics(
+          child: Semantics(
+            button: true,
+            selected: highlighted,
+            child: InkWell(
+              key: GlobalObjectKey(option),
+              onTap: () {
+                widget.onSelected(option);
+              },
+              child: Container(
+                color: highlighted ? theme.focusColor : null,
+                foregroundDecoration: highlighted
+                    ? BoxDecoration(
+                        border: Border.all(
+                          color: theme.colorScheme.primary,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(4),
+                      )
+                    : null,
+                child: ListTile(
+                  title: Text(
+                    widget.institutionName(option),
+                    style: theme.textTheme.bodyLarge,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

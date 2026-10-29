@@ -1316,6 +1316,10 @@
     "@semanticsClearFilter": {
         "description": "Accessibility label for clear filter button"
     },
+    "semanticsOpenQualityAssurance": "Open quality assurance page",
+    "@semanticsOpenQualityAssurance": {
+        "description": "Tooltip and accessibility label for the button that opens the badge's quality assurance web page"
+    },
     "semanticsBadgeImage": "Badge image",
     "@semanticsBadgeImage": {
         "description": "Accessibility label for badge image"
@@ -1391,5 +1395,21 @@
     "sessionExpiredMessage": "Your session has expired. Please log in again.",
     "@sessionExpiredMessage": {
         "description": "Shown on the login screen after the app logged the user out because their session (refresh token) was no longer valid"
+    },
+    "pageTitleLogin": "Log in",
+    "@pageTitleLogin": {
+        "description": "Browser tab title of the login page"
+    },
+    "pageTitleBadgeDetails": "Edubadge details",
+    "@pageTitleBadgeDetails": {
+        "description": "Browser tab title of a badge details page until the badge name has loaded"
+    },
+    "pageTitleEnrollmentTerms": "Terms for this edubadge",
+    "@pageTitleEnrollmentTerms": {
+        "description": "Browser tab title of the page with the terms to accept before requesting an edubadge"
+    },
+    "catalogLevelFilterLabel": "Education level",
+    "@catalogLevelFilterLabel": {
+        "description": "Accessible name of the group of education level filters (all, MBO, HBO, WO) in the catalog"
     }
 }

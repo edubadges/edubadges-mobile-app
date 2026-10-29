@@ -34,13 +34,13 @@ class PrimaryButton extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           disabledBackgroundColor: colorScheme.primary.withValues(alpha: 0.12),
         ).copyWith(animationDuration: const Duration(milliseconds: 0)),
-        
-        
+
         child: isLoading
             ? DelayedLoader(
                 size: 20,
                 strokeWidth: 2,
-                color: colorScheme.onPrimary,
+                // The button is disabled, so pale, while it loads.
+                color: colorScheme.primary,
               )
             : Text(
                 text,

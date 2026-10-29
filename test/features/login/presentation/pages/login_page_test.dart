@@ -9,6 +9,7 @@ import 'package:edubadges/features/login/presentation/providers/auto_login_provi
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -211,6 +212,39 @@ void main() {
 
       expect(landing, findsOneWidget);
       expect(error, findsNothing);
+    });
+  });
+
+  group('accessibility', () {
+    testWidgets('names the logo for screen readers', (tester) async {
+      final SemanticsHandle semantics = tester.ensureSemantics();
+      await pumpLoginPage(tester, web: false);
+
+      expect(find.bySemanticsLabel(_l10n.appName), findsOneWidget);
+      // The app bar title is a heading. With a node inside it, the web shows
+      // it as a page banner, which may not sit in the main landmark.
+      final SemanticsNode logo = tester.getSemantics(
+        find.bySemanticsLabel(_l10n.appName),
+      );
+      expect(logo, isSemantics(isHeader: true, label: _l10n.appName));
+      expect(logo.childrenCount, 0);
+      semantics.dispose();
+    });
+
+    testWidgets('reads the card text as text, not as a group label', (
+      tester,
+    ) async {
+      final SemanticsHandle semantics = tester.ensureSemantics();
+      await pumpLoginPage(tester, web: false);
+
+      // As the card's own label, the text wrapped the login button and
+      // reached the browser only as an aria-label of that group.
+      final SemanticsNode text = tester.getSemantics(
+        find.text(_l10n.loginCardText),
+      );
+      expect(text.getSemanticsData().label, _l10n.loginCardText);
+      expect(text.childrenCount, 0);
+      semantics.dispose();
     });
   });
 }

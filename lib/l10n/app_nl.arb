@@ -1303,6 +1303,7 @@
     "semanticsBack": "Terug",
     "semanticsClearSearch": "Zoekopdracht wissen",
     "semanticsClearFilter": "Filter wissen",
+    "semanticsOpenQualityAssurance": "Pagina over kwaliteitswaarborging openen",
     "semanticsBadgeImage": "Badge-afbeelding",
     "semanticsInstitutionLogo": "Logo van de instelling",
     "semanticsImageNotSupported": "Afbeelding niet beschikbaar",
@@ -1324,5 +1325,9 @@
     "readMore": "Lees meer",
     "readLess": "Minder lezen",
     "loginConnectionError": "We kunnen nu geen verbinding maken met de inlogdienst. Controleer je internetverbinding en probeer het opnieuw.",
-    "sessionExpiredMessage": "Je sessie is verlopen. Log opnieuw in."
+    "sessionExpiredMessage": "Je sessie is verlopen. Log opnieuw in.",
+    "pageTitleLogin": "Inloggen",
+    "pageTitleBadgeDetails": "Details van edubadge",
+    "pageTitleEnrollmentTerms": "Voorwaarden voor deze edubadge",
+    "catalogLevelFilterLabel": "Onderwijsniveau"
 }

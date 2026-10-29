@@ -1934,6 +1934,12 @@ abstract class AppLocalizations {
   /// **'Clear filter'**
   String get semanticsClearFilter;
 
+  /// Tooltip and accessibility label for the button that opens the badge's quality assurance web page
+  ///
+  /// In en, this message translates to:
+  /// **'Open quality assurance page'**
+  String get semanticsOpenQualityAssurance;
+
   /// Accessibility label for badge image
   ///
   /// In en, this message translates to:
@@ -2047,6 +2053,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your session has expired. Please log in again.'**
   String get sessionExpiredMessage;
+
+  /// Browser tab title of the login page
+  ///
+  /// In en, this message translates to:
+  /// **'Log in'**
+  String get pageTitleLogin;
+
+  /// Browser tab title of a badge details page until the badge name has loaded
+  ///
+  /// In en, this message translates to:
+  /// **'Edubadge details'**
+  String get pageTitleBadgeDetails;
+
+  /// Browser tab title of the page with the terms to accept before requesting an edubadge
+  ///
+  /// In en, this message translates to:
+  /// **'Terms for this edubadge'**
+  String get pageTitleEnrollmentTerms;
+
+  /// Accessible name of the group of education level filters (all, MBO, HBO, WO) in the catalog
+  ///
+  /// In en, this message translates to:
+  /// **'Education level'**
+  String get catalogLevelFilterLabel;
 }
 
 class _AppLocalizationsDelegate

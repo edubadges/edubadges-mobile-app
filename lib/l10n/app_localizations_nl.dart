@@ -1102,6 +1102,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get semanticsClearFilter => 'Filter wissen';
 
   @override
+  String get semanticsOpenQualityAssurance =>
+      'Pagina over kwaliteitswaarborging openen';
+
+  @override
   String get semanticsBadgeImage => 'Badge-afbeelding';
 
   @override
@@ -1160,4 +1164,16 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get sessionExpiredMessage => 'Je sessie is verlopen. Log opnieuw in.';
+
+  @override
+  String get pageTitleLogin => 'Inloggen';
+
+  @override
+  String get pageTitleBadgeDetails => 'Details van edubadge';
+
+  @override
+  String get pageTitleEnrollmentTerms => 'Voorwaarden voor deze edubadge';
+
+  @override
+  String get catalogLevelFilterLabel => 'Onderwijsniveau';
 }

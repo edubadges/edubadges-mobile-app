@@ -9,8 +9,11 @@ import 'package:edubadges/core/utils/markdown_sanitizer.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/utils/url_safety.dart';
 import 'package:edubadges/core/widgets/app_back_button.dart';
+import 'package:edubadges/core/widgets/focus_ring_overlay.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
+import 'package:edubadges/core/widgets/page_title.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_detail_item_model.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_model.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_route_model.dart';
@@ -251,20 +254,23 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     if (details?.badgeClass == null) {
       return const SizedBox.shrink();
     }
-    return FocusableSection(
-      child: Container(
-        margin: useSidebarLayout
-            ? EdgeInsets.zero
-            : const EdgeInsets.symmetric(
-                horizontal: LayoutConstants.sidebarListLayoutPadding,
-              ),
-        child: BadgeCard(
-          instance: details?.badgeInstance,
-          badgeClass: details!.badgeClass,
-          style: BadgeCardStyle.large,
-          onTapDisabled: true,
-          badgeRequested: details.requested,
-          requestedOn: details.requestedOn,
+    return Padding(
+      padding: useSidebarLayout
+          ? EdgeInsets.zero
+          : const EdgeInsets.symmetric(
+              horizontal: LayoutConstants.sidebarListLayoutPadding,
+            ),
+      child: FocusRingShape.rounded(
+        borderRadius: BorderRadius.circular(20),
+        child: FocusableSection(
+          child: BadgeCard(
+            instance: details?.badgeInstance,
+            badgeClass: details!.badgeClass,
+            style: BadgeCardStyle.large,
+            onTapDisabled: true,
+            badgeRequested: details.requested,
+            requestedOn: details.requestedOn,
+          ),
         ),
       ),
     );
@@ -330,22 +336,50 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     );
   }
 
+  /// The name of the badge on screen, once it has loaded.
+  String? _visibleBadgeName() {
+    if (_shouldShowCarousel) {
+      final List<BadgeInstanceEntity>? badges = ref
+          .watch(badgesListProvider)
+          .value
+          ?.claimedBadges;
+      if (badges == null || _currentIndex >= badges.length) return null;
+      return (badges[_currentIndex].badgeclass as BadgeClassModel).name;
+    }
+    return ref
+        .watch(
+          badgeDetailsModelProvider(
+            BadgeDetailsQuery(
+              scope: widget.badge.scope,
+              entityId: widget.badge.id,
+            ),
+          ),
+        )
+        .value
+        ?.badgeClass
+        .name;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        final bool useSidebarLayout =
-            constraints.maxWidth >= LayoutConstants.sidebarListLayoutMinWidth;
+    final String? badgeName = _visibleBadgeName();
+    return PageTitle(
+      title: (AppLocalizations l10n) => badgeName ?? l10n.pageTitleBadgeDetails,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final bool useSidebarLayout =
+              constraints.maxWidth >= LayoutConstants.sidebarListLayoutMinWidth;
 
-        final Widget body = _shouldShowCarousel
-            ? _buildCarouselView(useSidebarLayout: useSidebarLayout)
-            : _buildSingleBadgeView(useSidebarLayout: useSidebarLayout);
+          final Widget body = _shouldShowCarousel
+              ? _buildCarouselView(useSidebarLayout: useSidebarLayout)
+              : _buildSingleBadgeView(useSidebarLayout: useSidebarLayout);
 
-        return Scaffold(
-          appBar: useSidebarLayout ? null : _buildBackAppBar(),
-          body: body,
-        );
-      },
+          return Scaffold(
+            appBar: useSidebarLayout ? null : _buildBackAppBar(),
+            body: body,
+          );
+        },
+      ),
     );
   }
 
@@ -394,13 +428,9 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           },
         );
       },
-      loading: () => SizedBox(
+      loading: () => const SizedBox(
         height: _badgeCardHeight,
-        child: Center(
-          child: CircularProgressIndicator(
-            semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-          ),
-        ),
+        child: Center(child: LoadingSpinner()),
       ),
       error: (error, stackTrace) => SizedBox(
         height: _badgeCardHeight,
@@ -459,13 +489,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           useSidebarLayout: useSidebarLayout,
         );
       },
-      loading: () => [
-        Center(
-          child: CircularProgressIndicator(
-            semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-          ),
-        ),
-      ],
+      loading: () => [const Center(child: LoadingSpinner())],
       error: (error, stackTrace) => [
         Center(
           child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
@@ -602,13 +626,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           useSidebarLayout: useSidebarLayout,
         ),
       ],
-      loading: () => [
-        Center(
-          child: CircularProgressIndicator(
-            semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-          ),
-        ),
-      ],
+      loading: () => [const Center(child: LoadingSpinner())],
       error: (error, stackTrace) => [
         Center(
           child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
@@ -655,222 +673,207 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
 
     return [
       if (details?.badgeClass.description != null)
-        FocusableSection(
-          child: _buildSectionCard(
-            title: l10n.aboutThisEdubadge,
-            margin: _sectionMargin(useSidebarLayout),
-            item: MarkdownBody(
-              data: sanitizeMarkdown(details!.badgeClass.description!),
-              styleSheet: AppThemes.markdownStyleSheet(context),
-            ),
+        _buildSectionCard(
+          title: l10n.aboutThisEdubadge,
+          margin: _sectionMargin(useSidebarLayout),
+          item: MarkdownBody(
+            data: sanitizeMarkdown(details!.badgeClass.description!),
+            styleSheet: AppThemes.markdownStyleSheet(context),
           ),
         ),
       if (learningOutcome != null)
-        FocusableSection(
-          child: _buildSectionCard(
-            title: l10n.learningOutcomes,
-            margin: _sectionMargin(useSidebarLayout),
-            item: MarkdownBody(
-              data: sanitizeMarkdown(learningOutcome),
-              styleSheet: AppThemes.markdownStyleSheet(context),
-            ),
+        _buildSectionCard(
+          title: l10n.learningOutcomes,
+          margin: _sectionMargin(useSidebarLayout),
+          item: MarkdownBody(
+            data: sanitizeMarkdown(learningOutcome),
+            styleSheet: AppThemes.markdownStyleSheet(context),
           ),
         ),
       if (criteriaText != null)
-        FocusableSection(
-          child: _buildSectionCard(
-            title: l10n.badgeCriteria,
-            margin: _sectionMargin(useSidebarLayout),
-            item: MarkdownBody(
-              data: sanitizeMarkdown(criteriaText),
-              styleSheet: AppThemes.markdownStyleSheet(context),
-            ),
+        _buildSectionCard(
+          title: l10n.badgeCriteria,
+          margin: _sectionMargin(useSidebarLayout),
+          item: MarkdownBody(
+            data: sanitizeMarkdown(criteriaText),
+            styleSheet: AppThemes.markdownStyleSheet(context),
           ),
         ),
       if (badgeClass != null && qualityAssuranceText != null)
-        FocusableSection(
-          child: _buildSectionCard(
-            title: l10n.qualityAssurance,
-            margin: _sectionMargin(useSidebarLayout),
-            action: badgeClass.qualityAssuranceUrl != null
-                ? IconButton(
-                    onPressed: () {
-                      launchExternalUrl(badgeClass.qualityAssuranceUrl!);
-                    },
-                    icon: Icon(Icons.launch, color: colorScheme.onSurface),
-                  )
-                : null,
-            item: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _ClampedMarkdownPreview(
-                  maxLines: _qualityAssurancePreviewMaxLines,
-                  child: MarkdownBody(
-                    data: sanitizeMarkdown(qualityAssuranceText),
-                    styleSheet: AppThemes.markdownStyleSheet(context),
-                  ),
+        _buildSectionCard(
+          title: l10n.qualityAssurance,
+          margin: _sectionMargin(useSidebarLayout),
+          action: badgeClass.qualityAssuranceUrl != null
+              ? IconButton(
+                  onPressed: () {
+                    launchExternalUrl(badgeClass.qualityAssuranceUrl!);
+                  },
+                  icon: Icon(Icons.launch, color: colorScheme.onSurface),
+                  tooltip: l10n.semanticsOpenQualityAssurance,
+                )
+              : null,
+          item: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _ClampedMarkdownPreview(
+                maxLines: _qualityAssurancePreviewMaxLines,
+                child: MarkdownBody(
+                  data: sanitizeMarkdown(qualityAssuranceText),
+                  styleSheet: AppThemes.markdownStyleSheet(context),
                 ),
-                const SizedBox(height: 20),
-                Center(
-                  child: WideButton(
-                    onTap: () {
-                      if (useSidebarLayout) {
-                        showDialog<void>(
-                          context: context,
-                          builder: (context) {
-                            final size = MediaQuery.sizeOf(context);
-                            final double width = math.min(
-                              600.0,
-                              size.width * 0.85,
-                            );
-                            final double preferredHeight = width * 16 / 9;
-                            final double height = math.min(
-                              preferredHeight,
-                              size.height,
-                            );
-                            return Dialog(
-                              backgroundColor: Theme.of(
-                                context,
-                              ).colorScheme.surface,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24),
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: WideButton(
+                  onTap: () {
+                    if (useSidebarLayout) {
+                      showDialog<void>(
+                        context: context,
+                        builder: (context) {
+                          final size = MediaQuery.sizeOf(context);
+                          final double width = math.min(
+                            600.0,
+                            size.width * 0.85,
+                          );
+                          final double preferredHeight = width * 16 / 9;
+                          final double height = math.min(
+                            preferredHeight,
+                            size.height,
+                          );
+                          return Dialog(
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surface,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: SizedBox(
+                              width: width,
+                              height: height,
+                              child: QualityAssurancePage(
+                                badgeId: badgeId,
+                                scope: widget.badge.scope,
+                                isDialog: true,
                               ),
-                              clipBehavior: Clip.antiAlias,
-                              child: SizedBox(
-                                width: width,
-                                height: height,
-                                child: QualityAssurancePage(
-                                  badgeId: badgeId,
-                                  scope: widget.badge.scope,
-                                  isDialog: true,
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      } else {
-                        final path = RoutePath.badgeQualityAssurancePath(
-                          scope: widget.badge.scope,
-                          id: badgeId,
-                        );
-                        context.push(path);
-                      }
-                    },
-                    icon: null,
-                    text: l10n.readMore,
-                    secondary: true,
-                    color: colorScheme.primary,
-                  ),
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      final path = RoutePath.badgeQualityAssurancePath(
+                        scope: widget.badge.scope,
+                        id: badgeId,
+                      );
+                      context.push(path);
+                    }
+                  },
+                  icon: null,
+                  text: l10n.readMore,
+                  secondary: true,
+                  color: colorScheme.primary,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       if (details?.badgeInstance?.evidences?.isNotEmpty == true)
-        FocusableSection(
-          child: _buildSectionCard(
-            title: l10n.badgeEvidenceMetadataTitle,
-            margin: _sectionMargin(useSidebarLayout),
-            item: _buildEvidenceMetadata(
-              evidences: details!.badgeInstance!.evidences!,
-              textTheme: textTheme,
-              colorScheme: colorScheme,
-              l10n: l10n,
-            ),
+        _buildSectionCard(
+          title: l10n.badgeEvidenceMetadataTitle,
+          margin: _sectionMargin(useSidebarLayout),
+          item: _buildEvidenceMetadata(
+            evidences: details!.badgeInstance!.evidences!,
+            textTheme: textTheme,
+            colorScheme: colorScheme,
+            l10n: l10n,
           ),
         ),
       if (details?.badgeInstance != null)
-        FocusableSection(
-          child: _buildSectionCard(
-            title: l10n.theEdubadge,
-            margin: _sectionMargin(useSidebarLayout),
-            // The issue date sits on the badge card next to its visibility
-            // lock, so this section only adds the expiry.
-            items: [
-              BadgeDetailItemModel(
-                icon: Assets.iconBadgeExpireDate,
-                title: l10n.expiresOn,
-                subtitle: details!.badgeInstance!.expiresAt == null
-                    ? l10n.never
-                    : DateFormat(
-                        AppConstants.mediumDateFormat,
-                        l10n.localeName,
-                      ).format(details.badgeInstance!.expiresAt!),
-              ),
-            ],
-          ),
-        ),
-      FocusableSection(
-        child: _buildSectionCard(
-          title: l10n.badgeTheProgram,
+        _buildSectionCard(
+          title: l10n.theEdubadge,
           margin: _sectionMargin(useSidebarLayout),
+          // The issue date sits on the badge card next to its visibility
+          // lock, so this section only adds the expiry.
           items: [
-            if (details != null)
-              BadgeDetailItemModel(
-                icon: Assets.iconType,
-                title: l10n.type,
-                subtitle: details.badgeClass.badgeClassType.getLocalizedName(
-                  l10n,
-                ),
-              ),
-            if (eCTS != null)
-              BadgeDetailItemModel(
-                icon: Assets.iconTimeInvestment,
-                title: l10n.studyLoad,
-                subtitle: '$eCTS ECTS/EC',
-              ),
-            if (language != null)
-              BadgeDetailItemModel(
-                icon: Assets.iconLanguage,
-                title: l10n.language,
-                subtitle: language,
-              ),
-            if (eQF != null && isEqfNlqfLevelVerified)
-              BadgeDetailItemModel(
-                icon: Assets.iconIndicatif,
-                title: l10n.indicativeLevel,
-                subtitle: 'EQF $eQF',
-              ),
-            if (participation != null && participation.isNotEmpty)
-              BadgeDetailItemModel(
-                icon: Assets.iconBadgeFormParticipation,
-                title: l10n.formOfParticipation,
-                subtitle: participation
-                    .map((p) => p.getLocalizedName(l10n))
-                    .join(', '),
-              ),
-            if (stackable != null)
-              BadgeDetailItemModel(
-                icon: Assets.iconDocumentShield,
-                title: l10n.stackable,
-                subtitle: stackable == true
-                    ? l10n.stackableTrue
-                    : l10n.stackableFalse,
-              ),
+            BadgeDetailItemModel(
+              icon: Assets.iconBadgeExpireDate,
+              title: l10n.expiresOn,
+              subtitle: details!.badgeInstance!.expiresAt == null
+                  ? l10n.never
+                  : DateFormat(
+                      AppConstants.mediumDateFormat,
+                      l10n.localeName,
+                    ).format(details.badgeInstance!.expiresAt!),
+            ),
           ],
         ),
+      _buildSectionCard(
+        title: l10n.badgeTheProgram,
+        margin: _sectionMargin(useSidebarLayout),
+        items: [
+          if (details != null)
+            BadgeDetailItemModel(
+              icon: Assets.iconType,
+              title: l10n.type,
+              subtitle: details.badgeClass.badgeClassType.getLocalizedName(
+                l10n,
+              ),
+            ),
+          if (eCTS != null)
+            BadgeDetailItemModel(
+              icon: Assets.iconTimeInvestment,
+              title: l10n.studyLoad,
+              subtitle: '$eCTS ECTS/EC',
+            ),
+          if (language != null)
+            BadgeDetailItemModel(
+              icon: Assets.iconLanguage,
+              title: l10n.language,
+              subtitle: language,
+            ),
+          if (eQF != null && isEqfNlqfLevelVerified)
+            BadgeDetailItemModel(
+              icon: Assets.iconIndicatif,
+              title: l10n.indicativeLevel,
+              subtitle: 'EQF $eQF',
+            ),
+          if (participation != null && participation.isNotEmpty)
+            BadgeDetailItemModel(
+              icon: Assets.iconBadgeFormParticipation,
+              title: l10n.formOfParticipation,
+              subtitle: participation
+                  .map((p) => p.getLocalizedName(l10n))
+                  .join(', '),
+            ),
+          if (stackable != null)
+            BadgeDetailItemModel(
+              icon: Assets.iconDocumentShield,
+              title: l10n.stackable,
+              subtitle: stackable == true
+                  ? l10n.stackableTrue
+                  : l10n.stackableFalse,
+            ),
+        ],
       ),
       if (assessmentType != null || supervisedStatus != null)
-        FocusableSection(
-          child: _buildSectionCard(
-            title: l10n.badgeTheAssessment,
-            margin: _sectionMargin(useSidebarLayout),
-            items: [
-              if (assessmentType != null && assessmentType.isNotEmpty)
-                BadgeDetailItemModel(
-                  icon: Assets.iconBadgeIndicatief,
-                  title: l10n.assessmentType,
-                  subtitle: assessmentType
-                      .map((a) => a.getLocalizedName(l10n))
-                      .join(', '),
-                ),
-              if (supervisedStatus != null)
-                BadgeDetailItemModel(
-                  icon: Assets.iconBadgeUnderReview,
-                  subtitle: supervisedStatus,
-                ),
-            ],
-          ),
+        _buildSectionCard(
+          title: l10n.badgeTheAssessment,
+          margin: _sectionMargin(useSidebarLayout),
+          items: [
+            if (assessmentType != null && assessmentType.isNotEmpty)
+              BadgeDetailItemModel(
+                icon: Assets.iconBadgeIndicatief,
+                title: l10n.assessmentType,
+                subtitle: assessmentType
+                    .map((a) => a.getLocalizedName(l10n))
+                    .join(', '),
+              ),
+            if (supervisedStatus != null)
+              BadgeDetailItemModel(
+                icon: Assets.iconBadgeUnderReview,
+                subtitle: supervisedStatus,
+              ),
+          ],
         ),
       SizedBox(height: useSidebarLayout ? 16 : 70),
     ];
@@ -1012,69 +1015,81 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: colorScheme.outlineVariant),
-        color: colorScheme.surfaceContainer,
-      ),
-      margin:
+    // Focusable inside its margin, so the focus ring hugs the card rather
+    // than the gap around it.
+    return Padding(
+      padding:
           margin ??
           const EdgeInsets.symmetric(
             horizontal: LayoutConstants.sidebarListLayoutPadding,
             vertical: _sectionCardSpacing / 2,
           ),
-      padding: action != null
-          ? const EdgeInsets.only(left: 16, bottom: 16, top: 6, right: 6)
-          : const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Semantics(
-            header: true,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    style: textTheme.titleMedium?.copyWith(
-                      color: colorScheme.onSurface,
-                    ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                ?action,
-              ],
+      child: FocusRingShape.rounded(
+        borderRadius: BorderRadius.circular(20),
+        child: FocusableSection(
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: colorScheme.outlineVariant),
+              color: colorScheme.surfaceContainer,
             ),
-          ),
-          const SizedBox(height: 8),
-          Padding(
             padding: action != null
-                ? const EdgeInsets.only(right: 16)
-                : EdgeInsets.zero,
+                ? const EdgeInsets.only(left: 16, bottom: 16, top: 6, right: 6)
+                : const EdgeInsets.all(16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ?item,
-                if (items != null && items.isNotEmpty)
-                  ...List.generate(items.length * 2 - 1, (int index) {
-                    if (index.isOdd) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        child: Divider(height: 1),
-                      );
-                    } else {
-                      return _buildSectionItem(item: items[index ~/ 2]);
-                    }
-                  }),
+                Row(
+                  children: [
+                    Expanded(
+                      // Its own node: inside a FocusableSection a plain header
+                      // merges into the section and makes the whole body the heading.
+                      child: Semantics(
+                        header: true,
+                        container: true,
+                        child: Text(
+                          title,
+                          style: textTheme.titleMedium?.copyWith(
+                            color: colorScheme.onSurface,
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                    ?action,
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: action != null
+                      ? const EdgeInsets.only(right: 16)
+                      : EdgeInsets.zero,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ?item,
+                      if (items != null && items.isNotEmpty)
+                        ...List.generate(items.length * 2 - 1, (int index) {
+                          if (index.isOdd) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              child: Divider(height: 1),
+                            );
+                          } else {
+                            return _buildSectionItem(item: items[index ~/ 2]);
+                          }
+                        }),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

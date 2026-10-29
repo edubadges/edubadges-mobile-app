@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
+import 'package:edubadges/core/widgets/focus_ring_overlay.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:flutter/material.dart';
 
@@ -269,7 +270,9 @@ class _AnimatedIconSwitchState extends State<AnimatedIconSwitch>
         ? null
         : () => widget.onChanged!(!widget.value);
 
-    return KeyboardActivatable(
+    return FocusRingShape.rounded(
+      borderRadius: BorderRadius.circular(widget.borderRadius),
+      child: KeyboardActivatable(
       enabled: widget.onChanged != null,
       wrapWithSemantics: false,
       includeOuterTapTarget: false,
@@ -470,6 +473,7 @@ class _AnimatedIconSwitchState extends State<AnimatedIconSwitch>
         ),
       ),
         ),
+      ),
       ),
     );
   }

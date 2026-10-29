@@ -26,7 +26,9 @@ class AppColors {
   static const Color errorContainer = Color(0xFFF5E7E7);
 
   // Surface colors
-  static const Color outline = Color(0xFF929292);
+  // 3:1 against the surface and white (WCAG 1.4.11): the edge of an
+  // unchecked checkbox or a text field is all that marks the control.
+  static const Color outline = Color(0xFF858585);
   static const Color scrim = Color(0xFF000000);
   static const Color shadow = Color(0xFF000000);
   static const Color surface = Color(0xFFF6F0F9);
@@ -66,7 +68,6 @@ class AppColors {
   static const Color onTertiaryFixed = Color(0xFF31111D);
   static const Color onTertiaryFixedVariant = Color(0xFF555555);
   static const Color outlineVariant = Color(0xFFE0E0E0);
-
 
   static const Color iosBlue = Color(0xFF007AFF);
 }

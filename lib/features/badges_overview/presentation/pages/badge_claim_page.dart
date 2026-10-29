@@ -9,6 +9,7 @@ import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
@@ -337,14 +338,9 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
                                 ? SizedBox(
                                     height: 20,
                                     width: 20,
-                                    child: CircularProgressIndicator(
+                                    child: LoadingSpinner(
                                       strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        colorScheme.primary,
-                                      ),
-                                      semanticsLabel: AppLocalizations.of(
-                                        context,
-                                      ).semanticsLoading,
+                                      color: colorScheme.primary,
                                     ),
                                   )
                                 : Text(
@@ -362,11 +358,7 @@ class _BadgeClaimPageState extends ConsumerState<BadgeClaimPage> {
               ),
             );
           },
-          loading: () => Center(
-            child: CircularProgressIndicator(
-              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-            ),
-          ),
+          loading: () => const Center(child: LoadingSpinner()),
           error: (error, stackTrace) => Center(
             child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
           ),

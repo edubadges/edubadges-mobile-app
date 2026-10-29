@@ -4,6 +4,7 @@ import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/image.dart';
 import 'package:edubadges/core/widgets/app_network_image.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/page_header.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
@@ -252,13 +253,9 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
                             ];
                           },
                           loading: () => [
-                            SliverFillRemaining(
+                            const SliverFillRemaining(
                               hasScrollBody: false,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  semanticsLabel: l10n.semanticsLoading,
-                                ),
-                              ),
+                              child: Center(child: LoadingSpinner()),
                             ),
                           ],
                           error: (error, stackTrace) => [

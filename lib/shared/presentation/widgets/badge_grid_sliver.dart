@@ -67,6 +67,7 @@ class BadgeGridSliver extends ConsumerWidget {
             mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
               chipRows: chipRows,
               issuerLines: issuerLines,
+              textScaler: MediaQuery.textScalerOf(context),
             ),
           ),
           delegate: SliverChildBuilderDelegate(

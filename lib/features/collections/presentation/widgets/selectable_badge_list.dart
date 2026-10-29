@@ -1,4 +1,3 @@
-import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
@@ -58,25 +57,20 @@ class SelectableBadgeTile extends StatelessWidget {
     return MergeSemantics(
       child: Semantics(
         checked: isSelected,
-        child: KeyboardActivatable(
-          wrapWithSemantics: false,
-          includeOuterTapTarget: false,
-          onActivate: onToggle,
-          child: BadgeCard(
-            instance: badge,
-            badgeClass: badge.badgeclass as BadgeClassModel,
-            style: BadgeCardStyle.small,
-            isSelected: isSelected,
-            borderColor: Theme.of(context).colorScheme.outline,
-            onTap: onToggle,
-            trailing: ExcludeSemantics(
-              child: ExcludeFocus(
-                child: Checkbox(
-                  value: isSelected,
-                  onChanged: (_) => onToggle(),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  visualDensity: VisualDensity.compact,
-                ),
+        child: BadgeCard(
+          instance: badge,
+          badgeClass: badge.badgeclass as BadgeClassModel,
+          style: BadgeCardStyle.small,
+          isSelected: isSelected,
+          borderColor: Theme.of(context).colorScheme.outline,
+          onTap: onToggle,
+          trailing: ExcludeSemantics(
+            child: ExcludeFocus(
+              child: Checkbox(
+                value: isSelected,
+                onChanged: (_) => onToggle(),
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                visualDensity: VisualDensity.compact,
               ),
             ),
           ),

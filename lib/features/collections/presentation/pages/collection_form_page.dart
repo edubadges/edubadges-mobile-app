@@ -5,6 +5,7 @@ import 'package:edubadges/core/utils/route_exit_guard.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/outlined_button.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
@@ -402,11 +403,7 @@ class _CollectionFormPageState extends ConsumerState<CollectionFormPage> {
       // Loaded, but this collection no longer exists.
       return const Center(child: ErrorMessageWidget());
     }
-    return Center(
-      child: CircularProgressIndicator(
-        semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-      ),
-    );
+    return const Center(child: LoadingSpinner());
   }
 
   Widget _buildForm(BuildContext context) {
@@ -517,13 +514,8 @@ class _CollectionFormPageState extends ConsumerState<CollectionFormPage> {
               onToggle: _toggleBadge,
             );
           },
-          loading: () => SliverToBoxAdapter(
-            child: Center(
-              child: CircularProgressIndicator(
-                semanticsLabel: l10n.semanticsLoading,
-              ),
-            ),
-          ),
+          loading: () =>
+              const SliverToBoxAdapter(child: Center(child: LoadingSpinner())),
           error: (error, stackTrace) => SliverToBoxAdapter(
             child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
           ),

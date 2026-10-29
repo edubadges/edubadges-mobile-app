@@ -122,6 +122,7 @@ class ListRowCard extends StatelessWidget {
     if (onTap != null) {
       return MergeSemantics(
         child: Semantics(
+          button: true,
           label: semanticLabel,
           child: Material(
             color: Colors.transparent,

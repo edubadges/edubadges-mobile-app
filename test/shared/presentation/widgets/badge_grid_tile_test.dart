@@ -6,6 +6,7 @@ import 'package:edubadges/shared/presentation/widgets/badge_grid_tile.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_issuer_label.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../helpers/app_fonts.dart';
@@ -52,6 +53,7 @@ Future<({int chipRows, int issuerLines})> _pumpGrid(
   String name = 'English Grammar B1+',
   String issuerName = 'Kennis & Informatie',
   List<BadgeInfoChipData> chips = _chips,
+  double textScale = 1,
 }) async {
   // Real badges carry a logo, which makes the issuer row taller than one line
   // of text alone.
@@ -64,6 +66,14 @@ Future<({int chipRows, int issuerLines})> _pumpGrid(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: const Locale('nl'),
+      // Text enlarged in the browser settings, which Flutter web reads as the
+      // text scale.
+      builder: (BuildContext context, Widget? child) => MediaQuery(
+        data: MediaQuery.of(
+          context,
+        ).copyWith(textScaler: TextScaler.linear(textScale)),
+        child: child!,
+      ),
       home: Scaffold(
         body: Center(
           child: SizedBox(
@@ -97,6 +107,7 @@ Future<({int chipRows, int issuerLines})> _pumpGrid(
                         mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
                           chipRows: chipRows,
                           issuerLines: issuerLines,
+                          textScaler: MediaQuery.textScalerOf(context),
                         ),
                       ),
                       delegate: SliverChildBuilderDelegate(
@@ -185,6 +196,53 @@ void main() {
       });
     });
   }
+
+  testWidgets('keeps names, chips and issuers whole at 200% text', (
+    WidgetTester tester,
+  ) async {
+    await _withDesktopPlatform(() async {
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final double gridWidth = _overviewGridWidth(1440);
+      await _pumpGrid(
+        tester,
+        gridWidth: gridWidth,
+        columns: LayoutConstants.badgeGridColumnCount(
+          gridWidth,
+          maxColumns: LayoutConstants.badgesOverviewGridMaxColumns,
+        ),
+        textScale: 2,
+      );
+
+      expect(tester.takeException(), isNull);
+
+      // Both name lines fit their box instead of the second being cut off.
+      final RenderParagraph name = tester.renderObject<RenderParagraph>(
+        find.text('English Grammar B1+').first,
+      );
+      expect(
+        name.size.height,
+        greaterThanOrEqualTo(name.getMinIntrinsicHeight(name.size.width) - 0.5),
+      );
+
+      final Rect tile = tester.getRect(find.byType(BadgeGridTile).first);
+      final Rect chipRegion = tester.getRect(find.byType(OverflowBox).first);
+      for (final BadgeInfoChipData chip in _chips) {
+        expect(
+          tester.getRect(find.text(chip.label).first).bottom,
+          lessThanOrEqualTo(chipRegion.bottom),
+          reason: 'chip "${chip.label}" is clipped',
+        );
+      }
+      expect(
+        tester.getRect(find.byType(BadgeIssuerLabel).first).bottom,
+        lessThanOrEqualTo(tile.bottom),
+      );
+    });
+  });
 
   test('the grid widens the tiles as the window grows', () {
     int columns(double browserWidth) => LayoutConstants.badgeGridColumnCount(
@@ -405,5 +463,50 @@ void main() {
       ], 300),
       2,
     );
+  });
+
+  testWidgets('a tappable tile is one button named after the badge first', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle semantics = tester.ensureSemantics();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppThemes.lightTheme,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('en'),
+        home: Scaffold(
+          body: SizedBox(
+            width: 300,
+            height: LayoutConstants.badgeGridTileHeightFor(
+              chipRows: 1,
+              issuerLines: 1,
+            ),
+            child: BadgeGridTile(
+              name: 'English Grammar B1+',
+              issuerName: 'Kennis & Informatie',
+              institutionName: 'Hogeschool Rotterdam',
+              chips: _chips.take(1).toList(),
+              isPublic: false,
+              visibilityLabel: 'Badge is private',
+              onTap: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // The node that takes keyboard focus used to be named by the shield alone.
+    final SemanticsNode node = tester.getSemantics(find.byType(InkWell));
+    expect(
+      node,
+      isSemantics(isButton: true, isFocusable: true, hasTapAction: true),
+    );
+    final String label = node.getSemanticsData().label;
+    expect(label, startsWith('English Grammar B1+'));
+    expect(label, contains('Hogeschool Rotterdam'));
+    expect(label, endsWith('Badge is private'));
+    semantics.dispose();
   });
 }

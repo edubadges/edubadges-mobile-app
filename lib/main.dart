@@ -10,6 +10,7 @@ import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/core/storage/storage_providers.dart';
+import 'package:edubadges/core/utils/browser_zoom.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/core/utils/url_strategy.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
@@ -27,6 +28,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,6 +44,12 @@ void main() async {
 
   if (kIsWeb) {
     GoRouter.optionURLReflectsImperativeAPIs = true;
+    // Flutter web only builds the accessibility tree once a user finds and
+    // presses its hidden "Enable accessibility" button. Until then the page
+    // has no text for screen readers or the browser's own "speak" feature, so
+    // build it from the start.
+    SemanticsBinding.instance.ensureSemantics();
+    allowBrowserZoom();
   }
 
   await initializeDateFormatting();

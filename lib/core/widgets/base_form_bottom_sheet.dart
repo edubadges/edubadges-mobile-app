@@ -89,13 +89,18 @@ class BaseFormBottomSheet extends StatelessWidget {
                       ),
                     ),
                   Center(
-                    child: Text(
-                      title,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        color: colorScheme.onSurface,
-                        fontWeight: FontWeight.bold,
+                    // Names the dialog for screen readers, and is its heading.
+                    child: Semantics(
+                      header: true,
+                      namesRoute: true,
+                      child: Text(
+                        title,
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          color: colorScheme.onSurface,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
                   const SizedBox(height: 12),

@@ -1097,6 +1097,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get semanticsClearFilter => 'Clear filter';
 
   @override
+  String get semanticsOpenQualityAssurance => 'Open quality assurance page';
+
+  @override
   String get semanticsBadgeImage => 'Badge image';
 
   @override
@@ -1156,4 +1159,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get sessionExpiredMessage =>
       'Your session has expired. Please log in again.';
+
+  @override
+  String get pageTitleLogin => 'Log in';
+
+  @override
+  String get pageTitleBadgeDetails => 'Edubadge details';
+
+  @override
+  String get pageTitleEnrollmentTerms => 'Terms for this edubadge';
+
+  @override
+  String get catalogLevelFilterLabel => 'Education level';
 }

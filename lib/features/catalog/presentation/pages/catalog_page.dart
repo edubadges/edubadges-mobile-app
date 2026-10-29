@@ -3,7 +3,7 @@ import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
-import 'package:edubadges/core/widgets/keyboard_activatable.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/page_header.dart';
 import 'package:edubadges/core/widgets/sidebar_list_layout.dart';
@@ -158,13 +158,9 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
     );
     final Widget loadingSliver = SliverToBoxAdapter(
       child: state.hasMore
-          ? Padding(
-              padding: const EdgeInsets.all(16),
-              child: Center(
-                child: CircularProgressIndicator(
-                  semanticsLabel: l10n.semanticsLoading,
-                ),
-              ),
+          ? const Padding(
+              padding: EdgeInsets.all(16),
+              child: Center(child: LoadingSpinner()),
             )
           : const SizedBox.shrink(),
     );
@@ -196,6 +192,7 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
                   mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
                     chipRows: 0,
                     issuerLines: issuerLines,
+                    textScaler: MediaQuery.textScalerOf(context),
                   ),
                 ),
                 delegate: SliverChildBuilderDelegate(
@@ -249,18 +246,15 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
       );
     }
 
+    // The card's own ink well takes focus and handles Enter and Space, so
+    // each badge is a single tab stop.
     final Widget item = FocusTraversalOrder(
+      key: ValueKey('catalog_badge_${badge.entityId}'),
       order: NumericFocusOrder(index.toDouble()),
-      child: KeyboardActivatable(
-        key: ValueKey('catalog_badge_${badge.entityId}'),
-        wrapWithSemantics: false,
-        includeOuterTapTarget: false,
-        onActivate: openBadgeDetails,
-        child: CatalogBadgeCard(
-          badge: badge,
-          onTap: openBadgeDetails,
-          useGridTile: useGridTile,
-        ),
+      child: CatalogBadgeCard(
+        badge: badge,
+        onTap: openBadgeDetails,
+        useGridTile: useGridTile,
       ),
     );
 
@@ -355,11 +349,7 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
                     child: Builder(
                       builder: (BuildContext context) {
                         if (isCatalogLoading) {
-                          return Center(
-                            child: CircularProgressIndicator(
-                              semanticsLabel: l10n.semanticsLoading,
-                            ),
-                          );
+                          return const Center(child: LoadingSpinner());
                         }
                         if (catalogError != null && catalogState == null) {
                           return Center(

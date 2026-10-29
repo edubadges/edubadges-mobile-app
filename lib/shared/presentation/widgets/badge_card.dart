@@ -9,6 +9,7 @@ import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/focus_ring_overlay.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
@@ -267,42 +268,45 @@ class BadgeCard extends ConsumerWidget {
       ],
     );
 
-    return KeyboardActivatable(
-      enabled: !onTapDisabled,
-      onActivate: onTapDisabled ? null : () => _openDetails(context),
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
+    return FocusRingShape.rounded(
+      borderRadius: BorderRadius.circular(20),
+      child: KeyboardActivatable(
+        enabled: !onTapDisabled,
+        onActivate: onTapDisabled ? null : () => _openDetails(context),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSelected
+                  ? colorScheme.primary
+                  : colorScheme.outlineVariant,
+            ),
             color: isSelected
-                ? colorScheme.primary
-                : colorScheme.outlineVariant,
+                ? colorScheme.surface
+                : colorScheme.surfaceContainer,
           ),
-          color: isSelected
-              ? colorScheme.surface
-              : colorScheme.surfaceContainer,
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Stack(
-          children: [
-            largeContent,
-            // Shown on the badge itself, so its visibility reads at a glance.
-            if (instance != null)
-              Positioned(
-                top: 0,
-                right: 0,
-                child: SvgIcon(
-                  assetPath: instance!.public
-                      ? Assets.iconUnlocked
-                      : Assets.iconLocked,
-                  size: _visibilityIconSize,
-                  semanticLabel: instance!.public
-                      ? l10n.semanticsBadgeVisibilityPublic
-                      : l10n.semanticsBadgeVisibilityPrivate,
+          padding: const EdgeInsets.all(16),
+          child: Stack(
+            children: [
+              largeContent,
+              // Shown on the badge itself, so its visibility reads at a glance.
+              if (instance != null)
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: SvgIcon(
+                    assetPath: instance!.public
+                        ? Assets.iconUnlocked
+                        : Assets.iconLocked,
+                    size: _visibilityIconSize,
+                    semanticLabel: instance!.public
+                        ? l10n.semanticsBadgeVisibilityPublic
+                        : l10n.semanticsBadgeVisibilityPrivate,
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
