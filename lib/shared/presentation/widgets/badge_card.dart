@@ -123,6 +123,28 @@ class BadgeCard extends ConsumerWidget {
   List<BadgeInfoChipData> _buildInfoChips(AppLocalizations l10n) =>
       infoChips(instance: instance, badgeClass: badgeClass, l10n: l10n);
 
+  /// The names and logo a card shows for [badgeClass]. Grids use it to size
+  /// their tiles before building them.
+  static BadgeIssuerNames issuerNames(
+    BadgeClassModel badgeClass,
+    String langCode,
+  ) {
+    final institution = badgeClass.issuer?.faculty?.institution;
+    return (
+      issuerName: getLocalizedString(
+        badgeClass.issuer?.nameDutch,
+        badgeClass.issuer?.nameEnglish,
+        langCode,
+      ),
+      institutionName: getLocalizedString(
+        institution?.nameDutch,
+        institution?.nameEnglish,
+        langCode,
+      ),
+      logoUrl: buildImageUrl(institution?.imageDutch),
+    );
+  }
+
   void _openDetails(BuildContext context) {
     final scope =
         badgeNavigationScope ??
@@ -144,18 +166,8 @@ class BadgeCard extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
     final institution = badgeClass.issuer?.faculty?.institution;
-    final langCode = ref.watch(appLanguageProvider).code;
-    final issuerName = getLocalizedString(
-      badgeClass.issuer?.nameDutch,
-      badgeClass.issuer?.nameEnglish,
-      langCode,
-    );
-    final institutionName = getLocalizedString(
-      institution?.nameDutch,
-      institution?.nameEnglish,
-      langCode,
-    );
-    final institutionImageUrl = buildImageUrl(institution?.imageDutch);
+    final (:issuerName, :institutionName, logoUrl: institutionImageUrl) =
+        issuerNames(badgeClass, ref.watch(appLanguageProvider).code);
     final badgeImageUrl = buildImageUrl(badgeClass.image);
 
     if (style == BadgeCardStyle.grid) {

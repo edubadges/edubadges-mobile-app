@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 class LayoutConstants {
   LayoutConstants._();
 
@@ -22,10 +24,14 @@ class LayoutConstants {
   /// every tile keeps the same size without a third line of white space.
   static const double badgeGridTileNameHeight = 2 * 24;
 
-  /// 16 padding + 100 image + 8 + name + 8 + 32 issuer and institution + 16
-  /// padding. The catalog tile draws no chip row.
-  static const double badgeGridTileHeightWithoutChips =
-      16 + 100 + 8 + badgeGridTileNameHeight + 8 + 32 + 16;
+  /// 16 padding + 100 image + 8 + name + 8 + 16 padding: all of a tile but its
+  /// chip rows and issuer label.
+  static const double _badgeGridTileFixedHeight =
+      16 + 100 + 8 + badgeGridTileNameHeight + 8 + 16;
+
+  /// The issuer label: one [TextTheme.bodySmall] line (16) beside its 22 logo,
+  /// or two lines when a name does not fit on one.
+  static double badgeGridIssuerHeight(int lines) => math.max(22, 16.0 * lines);
 
   static const double badgeGridChipRowHeight = 32;
 
@@ -58,9 +64,16 @@ class LayoutConstants {
       (gridWidth - badgeGridSpacing * (columns - 1)) / columns;
 
   /// Height of a tile whose chips wrap onto [chipRows] rows, each with its 8
-  /// gap on top. One row matches the overview design.
-  static double badgeGridTileHeightFor({required int chipRows}) =>
-      badgeGridTileHeightWithoutChips + chipRows * (badgeGridChipRowHeight + 8);
+  /// gap on top, and whose issuer label takes [issuerLines] lines. One chip
+  /// row and one issuer line match the overview design; the catalog tile draws
+  /// no chips.
+  static double badgeGridTileHeightFor({
+    required int chipRows,
+    required int issuerLines,
+  }) =>
+      _badgeGridTileFixedHeight +
+      badgeGridIssuerHeight(issuerLines) +
+      chipRows * (badgeGridChipRowHeight + 8);
 
   static const int collectionsGridCrossAxisCount = 3;
   static const double collectionsGridMainAxisExtent = 104;

@@ -1,21 +1,33 @@
+import 'dart:math' as math;
+
 import 'package:edubadges/core/widgets/app_network_image.dart';
+import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
-/// Who awarded a badge: the issuer on the first line and its institution on
-/// the second, optionally next to the institution logo.
+/// What a [BadgeIssuerLabel] shows, so a grid can measure the label before
+/// building it.
+typedef BadgeIssuerNames = ({
+  String issuerName,
+  String institutionName,
+  String? logoUrl,
+});
+
+/// Who awarded a badge, "Issuer van instelling", optionally next to the
+/// institution logo.
 ///
-/// The two names are stacked instead of joined on one line, so neither gets
-/// cut off on narrow cards.
+/// One line when it fits, as in the design. A name that does not fit wraps
+/// onto a second line instead of being cut off (SURF-679).
 class BadgeIssuerLabel extends StatelessWidget {
-  /// Two [TextTheme.bodySmall] lines high.
-  static const double logoSize = 32;
+  static const double logoSize = 22;
+  static const double _logoGap = 8;
+  static const int maxLines = 2;
 
   final String issuerName;
   final String institutionName;
   final String? logoUrl;
 
-  /// Centers the label in its row, for the vertical cards. Next to a logo the
-  /// names stay left aligned so they read as one block.
+  /// Centers the label in its row, for the vertical cards. Next to a logo a
+  /// wrapped label stays left aligned so it reads as one block.
   final bool centered;
 
   const BadgeIssuerLabel({
@@ -26,42 +38,66 @@ class BadgeIssuerLabel extends StatelessWidget {
     this.centered = false,
   });
 
+  static String _text(
+    BuildContext context,
+    String issuerName,
+    String institutionName,
+  ) {
+    if (issuerName.isEmpty) return institutionName;
+    if (institutionName.isEmpty) return issuerName;
+    return AppLocalizations.of(
+      context,
+    ).badgeIssuerOfInstitution(issuerName, institutionName);
+  }
+
+  static TextStyle? _style(BuildContext context) =>
+      Theme.of(context).textTheme.bodySmall;
+
+  /// Lines the label for [names] takes in [maxWidth], measured the way [build]
+  /// lays it out.
+  static int lineCount(
+    BuildContext context,
+    BadgeIssuerNames names, {
+    required double maxWidth,
+  }) {
+    final bool hasLogo = (names.logoUrl ?? '').isNotEmpty;
+    final TextPainter painter = TextPainter(
+      text: TextSpan(
+        text: _text(context, names.issuerName, names.institutionName),
+        style: _style(context),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: maxLines,
+    );
+    painter.layout(
+      maxWidth: math.max(
+        0,
+        hasLogo ? maxWidth - logoSize - _logoGap : maxWidth,
+      ),
+    );
+    final int lines = painter.computeLineMetrics().length;
+    painter.dispose();
+    return lines.clamp(1, maxLines);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final TextStyle? style = textTheme.bodySmall?.copyWith(
-      color: colorScheme.onSurfaceVariant,
-    );
-    final List<String> lines = <String>[
-      issuerName,
-      institutionName,
-    ].where((String line) => line.isNotEmpty).toList();
-
     final String url = logoUrl ?? '';
     final bool hasLogo = url.isNotEmpty;
-    final bool centerNames = centered && !hasLogo;
 
-    final Widget names = Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: centerNames
-          ? CrossAxisAlignment.center
-          : CrossAxisAlignment.start,
-      children: [
-        for (final String line in lines)
-          Text(
-            line,
-            style: style,
-            textAlign: centerNames ? TextAlign.center : TextAlign.start,
-            maxLines: 1,
-            softWrap: false,
-            overflow: TextOverflow.ellipsis,
-          ),
-      ],
+    final Widget label = Text(
+      _text(context, issuerName, institutionName),
+      style: _style(
+        context,
+      )?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+      textAlign: centered && !hasLogo ? TextAlign.center : TextAlign.start,
+      maxLines: maxLines,
+      overflow: TextOverflow.ellipsis,
     );
 
     if (!hasLogo) {
-      return names;
+      return label;
     }
 
     return Row(
@@ -79,8 +115,8 @@ class BadgeIssuerLabel extends StatelessWidget {
                 const SizedBox(height: logoSize, width: logoSize),
           ),
         ),
-        const SizedBox(width: 8),
-        Flexible(child: names),
+        const SizedBox(width: _logoGap),
+        Flexible(child: label),
       ],
     );
   }

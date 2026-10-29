@@ -1,5 +1,6 @@
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
@@ -13,8 +14,10 @@ import 'package:edubadges/features/catalog/presentation/providers/catalog_provid
 import 'package:edubadges/features/catalog/presentation/widgets/catalog_badge_card.dart';
 import 'package:edubadges/features/catalog/presentation/widgets/catalog_filters.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_grid_tile.dart';
 import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -113,6 +116,7 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
     required int gridColumns,
   }) {
     final displayBadges = state.displayBadges;
+    final String langCode = ref.watch(appLanguageProvider).code;
     final horizontalPadding = useSidebarLayout
         ? 0.0
         : LayoutConstants.sidebarListLayoutPadding;
@@ -169,24 +173,42 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
       return [
         SliverPadding(
           padding: padding,
-          sliver: SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: gridColumns,
-              crossAxisSpacing: LayoutConstants.badgeGridSpacing,
-              mainAxisSpacing: LayoutConstants.badgeGridSpacing,
-              // The catalog card carries no chips, so its height never depends
-              // on how wide the tiles end up.
-              mainAxisExtent: LayoutConstants.badgeGridTileHeightWithoutChips,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => _buildBadgeListItem(
-                context: context,
-                badge: displayBadges[index],
-                index: index,
-                useGridTile: true,
-              ),
-              childCount: displayBadges.length,
-            ),
+          sliver: SliverLayoutBuilder(
+            builder: (BuildContext context, SliverConstraints constraints) {
+              // The catalog card carries no chips, so only an issuer that
+              // wraps onto a second line makes the tiles taller.
+              final int issuerLines = BadgeGridTile.issuerLinesFor(
+                context,
+                displayBadges.map(
+                  (CatalogBadge badge) =>
+                      CatalogBadgeCard.issuerNames(badge, langCode),
+                ),
+                LayoutConstants.badgeGridTileWidth(
+                  constraints.crossAxisExtent,
+                  gridColumns,
+                ),
+              );
+              return SliverGrid(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: gridColumns,
+                  crossAxisSpacing: LayoutConstants.badgeGridSpacing,
+                  mainAxisSpacing: LayoutConstants.badgeGridSpacing,
+                  mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
+                    chipRows: 0,
+                    issuerLines: issuerLines,
+                  ),
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => _buildBadgeListItem(
+                    context: context,
+                    badge: displayBadges[index],
+                    index: index,
+                    useGridTile: true,
+                  ),
+                  childCount: displayBadges.length,
+                ),
+              );
+            },
           ),
         ),
         loadingSliver,

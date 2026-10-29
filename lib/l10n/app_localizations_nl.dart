@@ -720,6 +720,11 @@ class AppLocalizationsNl extends AppLocalizations {
   String get unableToLoadSubtitle => 'Probeer het later opnieuw';
 
   @override
+  String badgeIssuerOfInstitution(String issuer, String institution) {
+    return '$issuer van $institution';
+  }
+
+  @override
   String failedToLoadTermsFrom(String institution) {
     return 'Fout bij het laden van voorwaarden van $institution';
   }
