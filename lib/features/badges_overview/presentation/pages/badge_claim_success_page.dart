@@ -6,6 +6,7 @@ import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badge_details/domain/entities/badge_details_query.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
@@ -168,10 +169,8 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
                 matchedUnclaimedByClass;
 
             if (claimedBadge == null) {
-              return Center(
-                child: CircularProgressIndicator(
-                  semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-                ),
+              return const Center(
+                child: LoadingSpinner(),
               );
             }
 
@@ -226,10 +225,8 @@ class _BadgeClaimSuccessPageState extends ConsumerState<BadgeClaimSuccessPage>
               ],
             );
           },
-          loading: () => Center(
-            child: CircularProgressIndicator(
-              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-            ),
+          loading: () => const Center(
+            child: LoadingSpinner(),
           ),
           error: (err, stack) => InfoStateView(
             title: l10n.badgeClaimErrorTitle,

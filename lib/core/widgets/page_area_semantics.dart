@@ -27,7 +27,37 @@ class PageAreaSemantics extends StatelessWidget {
       container: true,
       explicitChildNodes: true,
       role: role,
-      child: child,
+      child: role == SemanticsRole.main ? _InMainLandmark(child: child) : child,
     );
   }
+}
+
+/// Makes the page [child] the main landmark, unless it is shown inside one
+/// already: the tab pages are, in the main page's [PageAreaSemantics], while
+/// pages opened over the whole window, such as a badge's details or the login
+/// page, are not. Without one, checkers report the page as content outside any
+/// landmark (axe `region`).
+class MainLandmark extends StatelessWidget {
+  final Widget child;
+
+  const MainLandmark({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    if (context.dependOnInheritedWidgetOfExactType<_InMainLandmark>() != null) {
+      return child;
+    }
+    return Semantics(
+      container: true,
+      role: SemanticsRole.main,
+      child: _InMainLandmark(child: child),
+    );
+  }
+}
+
+class _InMainLandmark extends InheritedWidget {
+  const _InMainLandmark({required super.child});
+
+  @override
+  bool updateShouldNotify(_InMainLandmark oldWidget) => false;
 }

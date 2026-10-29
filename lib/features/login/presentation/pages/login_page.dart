@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/widgets/delayed_loader.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/login/domain/web_auto_login.dart';
 import 'package:edubadges/features/login/presentation/providers/auto_login_providers.dart';
@@ -130,7 +131,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: SvgPicture.asset(Assets.imageLogo, semanticsLabel: l10n.appName),
+        // The app bar makes its title a heading. Named as an image, the logo
+        // would be a node inside it, and a heading with content is exposed on
+        // the web as a page banner, which may not sit in the main landmark.
+        title: Semantics(
+          label: l10n.appName,
+          child: ExcludeSemantics(child: SvgPicture.asset(Assets.imageLogo)),
+        ),
         centerTitle: true,
       ),
       body: MaxWidthWrapper(
@@ -251,13 +258,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               elevation: 0,
                             ),
                             child: authAsync.isLoading
-                                ? CircularProgressIndicator(
+                                ? LoadingSpinner(
                                     // The button is disabled, so pale, while
                                     // it loads.
                                     color: colorScheme.primary,
-                                    semanticsLabel: AppLocalizations.of(
-                                      context,
-                                    ).semanticsLoading,
                                   )
                                 : Text(
                                     l10n.loginCardButton,

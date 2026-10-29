@@ -11,6 +11,7 @@ import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/debug_error_log_button.dart';
 import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/sidebar_list_layout.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
@@ -566,11 +567,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                 useSidebarLayout: isLargeScreen,
               );
             },
-            loading: () => Center(
-              child: CircularProgressIndicator(
-                semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-              ),
-            ),
+            loading: () => const Center(child: LoadingSpinner()),
 
             error: (error, stackTrace) => Center(
               child: Column(

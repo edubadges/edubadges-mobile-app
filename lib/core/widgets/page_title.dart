@@ -1,9 +1,11 @@
+import 'package:edubadges/core/widgets/page_area_semantics.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 /// Sets the browser tab title to "[title] – Edubadges" while the page it wraps
-/// is the one on screen (WCAG 2.4.2 Page titled).
+/// is the one on screen (WCAG 2.4.2 Page titled), and makes the page the main
+/// landmark when nothing around it is ([MainLandmark]).
 ///
 /// Pages under the current route, and pages in a shell tab that is not shown,
 /// keep building in the background with their tickers off; they leave the
@@ -35,6 +37,6 @@ class PageTitle extends StatelessWidget {
         ),
       );
     }
-    return child;
+    return MainLandmark(child: child);
   }
 }

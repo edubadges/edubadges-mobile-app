@@ -4,6 +4,7 @@ import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/app_modal.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/badges_overview/domain/entities/badges_overview_state.dart';
@@ -529,11 +530,7 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
           body: Builder(
             builder: (BuildContext context) {
               if (isBadgesLoading) {
-                return Center(
-                  child: CircularProgressIndicator(
-                    semanticsLabel: l10n.semanticsLoading,
-                  ),
-                );
+                return const Center(child: LoadingSpinner());
               }
               if (badgesError != null && badgesState == null) {
                 return Center(

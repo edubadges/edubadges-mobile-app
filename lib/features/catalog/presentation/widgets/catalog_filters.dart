@@ -1,5 +1,6 @@
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/string.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/features/catalog/domain/entities/catalog_institution.dart';
 import 'package:edubadges/features/catalog/domain/enums/catalog_institution_type.dart';
 import 'package:edubadges/features/catalog/presentation/providers/institution_providers.dart';
@@ -320,15 +321,12 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
             horizontal: 16,
             vertical: 16,
           ),
-          suffixIcon: SizedBox(
+          suffixIcon: const SizedBox(
             width: 20,
             height: 20,
             child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-              ),
+              padding: EdgeInsets.all(12),
+              child: LoadingSpinner(strokeWidth: 2),
             ),
           ),
         ),

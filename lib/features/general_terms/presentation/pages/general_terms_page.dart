@@ -1,6 +1,7 @@
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/markdown_sanitizer.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:edubadges/features/general_terms/presentation/providers/general_terms_providers.dart';
@@ -107,13 +108,7 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
             markdownAsync.when(
               data: (markdownContent) {
                 if (markdownContent.isEmpty) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      semanticsLabel: AppLocalizations.of(
-                        context,
-                      ).semanticsLoading,
-                    ),
-                  );
+                  return const Center(child: LoadingSpinner());
                 }
                 return SingleChildScrollView(
                   controller: _scrollController,
@@ -135,11 +130,7 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
                   ),
                 );
               },
-              loading: () => Center(
-                child: CircularProgressIndicator(
-                  semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-                ),
-              ),
+              loading: () => const Center(child: LoadingSpinner()),
               error: (error, stackTrace) => Center(
                 child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
               ),

@@ -221,6 +221,13 @@ void main() {
       await pumpLoginPage(tester, web: false);
 
       expect(find.bySemanticsLabel(_l10n.appName), findsOneWidget);
+      // The app bar title is a heading. With a node inside it, the web shows
+      // it as a page banner, which may not sit in the main landmark.
+      final SemanticsNode logo = tester.getSemantics(
+        find.bySemanticsLabel(_l10n.appName),
+      );
+      expect(logo, isSemantics(isHeader: true, label: _l10n.appName));
+      expect(logo.childrenCount, 0);
       semantics.dispose();
     });
 

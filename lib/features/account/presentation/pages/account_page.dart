@@ -12,6 +12,7 @@ import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_modal.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/page_header.dart';
 import 'package:edubadges/core/widgets/sidebar_list_layout.dart';
@@ -93,8 +94,11 @@ class _AccountPageState extends ConsumerState<AccountPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // A node of its own: merged into the card, the whole section
+            // would be the heading, which the web exposes as a page banner.
             Semantics(
               header: true,
+              container: true,
               identifier: semanticsIdentifier,
               child: Text(
                 title,
@@ -563,6 +567,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                 ),
                 child: Semantics(
                   header: true,
+                  container: true,
                   child: Text(
                     institutionName,
                     style: theme.textTheme.titleMedium?.copyWith(
@@ -871,10 +876,8 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                         useSidebarLayout: useSidebarLayout,
                       );
                     },
-                    loading: () => Center(
-                      child: CircularProgressIndicator(
-                        semanticsLabel: l10n.semanticsLoading,
-                      ),
+                    loading: () => const Center(
+                      child: LoadingSpinner(),
                     ),
                     error: (error, stack) => Center(
                       child: Column(

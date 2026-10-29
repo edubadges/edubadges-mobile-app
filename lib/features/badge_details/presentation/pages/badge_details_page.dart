@@ -12,6 +12,7 @@ import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/focus_ring_overlay.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/page_title.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_detail_item_model.dart';
 import 'package:edubadges/features/badge_details/data/models/badge_details_model.dart';
@@ -427,13 +428,9 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           },
         );
       },
-      loading: () => SizedBox(
+      loading: () => const SizedBox(
         height: _badgeCardHeight,
-        child: Center(
-          child: CircularProgressIndicator(
-            semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-          ),
-        ),
+        child: Center(child: LoadingSpinner()),
       ),
       error: (error, stackTrace) => SizedBox(
         height: _badgeCardHeight,
@@ -492,13 +489,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           useSidebarLayout: useSidebarLayout,
         );
       },
-      loading: () => [
-        Center(
-          child: CircularProgressIndicator(
-            semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-          ),
-        ),
-      ],
+      loading: () => [const Center(child: LoadingSpinner())],
       error: (error, stackTrace) => [
         Center(
           child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
@@ -635,13 +626,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
           useSidebarLayout: useSidebarLayout,
         ),
       ],
-      loading: () => [
-        Center(
-          child: CircularProgressIndicator(
-            semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-          ),
-        ),
-      ],
+      loading: () => [const Center(child: LoadingSpinner())],
       error: (error, stackTrace) => [
         Center(
           child: ErrorMessageWidget(error: error, stackTrace: stackTrace),

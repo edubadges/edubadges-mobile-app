@@ -3,6 +3,7 @@ import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/page_header.dart';
 import 'package:edubadges/core/widgets/sidebar_list_layout.dart';
@@ -157,13 +158,9 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
     );
     final Widget loadingSliver = SliverToBoxAdapter(
       child: state.hasMore
-          ? Padding(
-              padding: const EdgeInsets.all(16),
-              child: Center(
-                child: CircularProgressIndicator(
-                  semanticsLabel: l10n.semanticsLoading,
-                ),
-              ),
+          ? const Padding(
+              padding: EdgeInsets.all(16),
+              child: Center(child: LoadingSpinner()),
             )
           : const SizedBox.shrink(),
     );
@@ -352,11 +349,7 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
                     child: Builder(
                       builder: (BuildContext context) {
                         if (isCatalogLoading) {
-                          return Center(
-                            child: CircularProgressIndicator(
-                              semanticsLabel: l10n.semanticsLoading,
-                            ),
-                          );
+                          return const Center(child: LoadingSpinner());
                         }
                         if (catalogError != null && catalogState == null) {
                           return Center(

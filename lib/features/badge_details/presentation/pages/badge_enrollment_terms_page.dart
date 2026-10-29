@@ -10,6 +10,7 @@ import 'package:edubadges/core/utils/markdown_sanitizer.dart';
 import 'package:edubadges/core/widgets/actionable_content_layout.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
@@ -175,11 +176,7 @@ class _BadgeEnrollmentTermsPageState
           );
         },
         loading: () {
-          return Center(
-            child: CircularProgressIndicator(
-              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-            ),
-          );
+          return const Center(child: LoadingSpinner());
         },
       ),
       actions: [
@@ -204,18 +201,13 @@ class _BadgeEnrollmentTermsPageState
               ),
             ),
             child: _isSubmitting
-                ? SizedBox(
+                ? const SizedBox(
                     height: 20,
                     width: 20,
-                    child: CircularProgressIndicator(
+                    child: LoadingSpinner(
                       strokeWidth: 2,
                       // The button is disabled, so pale, while it loads.
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        AppColors.primary,
-                      ),
-                      semanticsLabel: AppLocalizations.of(
-                        context,
-                      ).semanticsLoading,
+                      color: AppColors.primary,
                     ),
                   )
                 : Text(
@@ -296,13 +288,7 @@ class _BadgeEnrollmentTermsPageState
             colorScheme: colorScheme,
           );
         },
-        loading: () => Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(
-              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-            ),
-          ),
-        ),
+        loading: () => const Scaffold(body: Center(child: LoadingSpinner())),
         error: (Object err, StackTrace stack) => Scaffold(
           body: Center(
             child: ErrorMessageWidget(error: err, stackTrace: stack),

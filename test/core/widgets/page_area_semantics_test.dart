@@ -52,4 +52,67 @@ void main() {
     expect(_ancestors(tester, field), before);
     semantics.dispose();
   });
+
+  group('MainLandmark', () {
+    int mainLandmarks(WidgetTester tester) {
+      int count = 0;
+      void visit(SemanticsNode node) {
+        if (node.getSemanticsData().role == SemanticsRole.main) count++;
+        node.visitChildren((SemanticsNode child) {
+          visit(child);
+          return true;
+        });
+      }
+
+      visit(
+        tester
+            .binding
+            .renderViews
+            .first
+            .owner!
+            .semanticsOwner!
+            .rootSemanticsNode!,
+      );
+      return count;
+    }
+
+    testWidgets('makes a page on its own the main landmark', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle semantics = tester.ensureSemantics();
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: MainLandmark(child: Scaffold(body: Text('Badge details'))),
+        ),
+      );
+
+      expect(mainLandmarks(tester), 1);
+      semantics.dispose();
+    });
+
+    testWidgets('adds none inside the main page area or another page', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle semantics = tester.ensureSemantics();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PageAreaSemantics(
+              role: SemanticsRole.main,
+              child: Navigator(
+                onGenerateRoute: (_) => MaterialPageRoute<void>(
+                  builder: (_) => const MainLandmark(
+                    child: MainLandmark(child: Text('Catalog')),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(mainLandmarks(tester), 1);
+      semantics.dispose();
+    });
+  });
 }

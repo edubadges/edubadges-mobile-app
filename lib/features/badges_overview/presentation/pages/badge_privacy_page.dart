@@ -13,6 +13,7 @@ import 'package:edubadges/core/widgets/actionable_content_layout.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
@@ -282,11 +283,7 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
           );
         },
         loading: () {
-          return Center(
-            child: CircularProgressIndicator(
-              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-            ),
-          );
+          return const Center(child: LoadingSpinner());
         },
       ),
       actions: [
@@ -309,18 +306,13 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
               ),
             ),
             child: _isClaiming
-                ? SizedBox(
+                ? const SizedBox(
                     height: 20,
                     width: 20,
-                    child: CircularProgressIndicator(
+                    child: LoadingSpinner(
                       strokeWidth: 2,
                       // The button is disabled, so pale, while it loads.
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        AppColors.primary,
-                      ),
-                      semanticsLabel: AppLocalizations.of(
-                        context,
-                      ).semanticsLoading,
+                      color: AppColors.primary,
                     ),
                   )
                 : Text(
@@ -346,17 +338,12 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
               side: const BorderSide(color: AppColors.primary),
             ),
             child: _isDeclining
-                ? SizedBox(
+                ? const SizedBox(
                     height: 20,
                     width: 20,
-                    child: CircularProgressIndicator(
+                    child: LoadingSpinner(
                       strokeWidth: 2,
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        AppColors.primary,
-                      ),
-                      semanticsLabel: AppLocalizations.of(
-                        context,
-                      ).semanticsLoading,
+                      color: AppColors.primary,
                     ),
                   )
                 : Text(
@@ -464,13 +451,8 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
                 colorScheme: colorScheme,
               );
             },
-            loading: () => Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(
-                  semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-                ),
-              ),
-            ),
+            loading: () =>
+                const Scaffold(body: Center(child: LoadingSpinner())),
             error: (Object err, StackTrace stack) => Scaffold(
               body: Center(
                 child: ErrorMessageWidget(error: err, stackTrace: stack),
@@ -478,13 +460,7 @@ class _BadgePrivacyPageState extends ConsumerState<BadgePrivacyPage> {
             ),
           );
         },
-        loading: () => Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(
-              semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-            ),
-          ),
-        ),
+        loading: () => const Scaffold(body: Center(child: LoadingSpinner())),
         error: (err, stack) => Scaffold(
           body: Center(
             child: ErrorMessageWidget(error: err, stackTrace: stack),
