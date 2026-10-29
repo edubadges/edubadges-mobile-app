@@ -1928,6 +1928,12 @@ abstract class AppLocalizations {
   /// **'Clear filter'**
   String get semanticsClearFilter;
 
+  /// Tooltip and accessibility label for the button that opens the badge's quality assurance web page
+  ///
+  /// In en, this message translates to:
+  /// **'Open quality assurance page'**
+  String get semanticsOpenQualityAssurance;
+
   /// Accessibility label for badge image
   ///
   /// In en, this message translates to:

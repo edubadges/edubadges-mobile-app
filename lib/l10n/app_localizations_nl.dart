@@ -1097,6 +1097,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get semanticsClearFilter => 'Filter wissen';
 
   @override
+  String get semanticsOpenQualityAssurance =>
+      'Pagina over kwaliteitswaarborging openen';
+
+  @override
   String get semanticsBadgeImage => 'Badge-afbeelding';
 
   @override

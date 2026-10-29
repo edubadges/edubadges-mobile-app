@@ -1304,6 +1304,10 @@
     "@semanticsClearFilter": {
         "description": "Accessibility label for clear filter button"
     },
+    "semanticsOpenQualityAssurance": "Open quality assurance page",
+    "@semanticsOpenQualityAssurance": {
+        "description": "Tooltip and accessibility label for the button that opens the badge's quality assurance web page"
+    },
     "semanticsBadgeImage": "Badge image",
     "@semanticsBadgeImage": {
         "description": "Accessibility label for badge image"

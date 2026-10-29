@@ -724,6 +724,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                     launchExternalUrl(badgeClass.qualityAssuranceUrl!);
                   },
                   icon: Icon(Icons.launch, color: colorScheme.onSurface),
+                  tooltip: l10n.semanticsOpenQualityAssurance,
                 )
               : null,
           item: Column(

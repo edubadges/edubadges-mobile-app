@@ -1092,6 +1092,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get semanticsClearFilter => 'Clear filter';
 
   @override
+  String get semanticsOpenQualityAssurance => 'Open quality assurance page';
+
+  @override
   String get semanticsBadgeImage => 'Badge image';
 
   @override

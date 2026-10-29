@@ -101,6 +101,7 @@ class _QualityAssurancePageState extends ConsumerState<QualityAssurancePage> {
             IconButton(
               onPressed: () => _launchExternalUrl(qualityAssuranceUrl),
               icon: Icon(Icons.launch, color: colorScheme.onSurface),
+              tooltip: l10n.semanticsOpenQualityAssurance,
             ),
         ],
       ),
