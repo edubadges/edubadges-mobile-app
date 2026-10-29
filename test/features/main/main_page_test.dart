@@ -1,4 +1,5 @@
 import 'package:edubadges/app/themes.dart';
+import 'package:edubadges/core/widgets/page_area_semantics.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/main/main_page.dart';
@@ -161,6 +162,16 @@ void main() {
         expect(
           roles.where((SemanticsRole role) => role == SemanticsRole.navigation),
           hasLength(1),
+        );
+        // So suggestions opening on a page don't move it (and take the
+        // browser focus off their text field).
+        expect(
+          find.byWidgetPredicate(
+            (Widget widget) =>
+                widget is PageAreaSemantics &&
+                widget.role == SemanticsRole.main,
+          ),
+          findsOneWidget,
         );
         semantics.dispose();
       },

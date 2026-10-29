@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/utils/platform_info.dart';
+import 'package:edubadges/core/widgets/page_area_semantics.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/badges_overview/presentation/providers/badges_overview_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
@@ -191,8 +192,7 @@ class _MainPageState extends ConsumerState<MainPage>
       // Landmarks, so screen reader users can jump between the page and the
       // navigation (WCAG 1.3.1, 2.4.1).
       body: SafeArea(
-        child: Semantics(
-          container: true,
+        child: PageAreaSemantics(
           role: SemanticsRole.main,
           child: widget.navigationShell,
         ),
@@ -317,8 +317,7 @@ class _MainPageState extends ConsumerState<MainPage>
               // semantics of what was painted before it in the same container,
               // which without this is the drawer beside it, leaving screen
               // readers without the navigation.
-              child: Semantics(
-                container: true,
+              child: PageAreaSemantics(
                 role: SemanticsRole.main,
                 child: widget.navigationShell,
               ),
