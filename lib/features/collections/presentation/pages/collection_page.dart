@@ -5,6 +5,7 @@ import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/error_message.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
@@ -19,8 +20,10 @@ import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_grid_sliver.dart';
 import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -65,6 +68,47 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
       }
       _publicNotifier.value = isPublic;
     });
+  }
+
+  /// The backpack overview's grid on web, as long as two tiles fit; the list
+  /// of large cards otherwise.
+  Widget _buildBadgeSliver(List<BadgeInstanceEntity> badges) {
+    return SliverLayoutBuilder(
+      builder: (BuildContext context, SliverConstraints constraints) {
+        final int columns = PlatformInfo.isWeb
+            ? LayoutConstants.badgeGridColumnCount(
+                constraints.crossAxisExtent,
+                maxColumns: LayoutConstants.badgesOverviewGridMaxColumns,
+              )
+            : 0;
+
+        if (columns > 0) {
+          return BadgeGridSliver(
+            badges: badges,
+            columns: columns,
+            itemBuilder: (context, index) => BadgeCard(
+              instance: badges[index],
+              badgeClass: badges[index].badgeclass as BadgeClassModel,
+              style: BadgeCardStyle.grid,
+            ),
+          );
+        }
+
+        return SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            final badge = badges[index];
+            return Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: BadgeCard(
+                instance: badge,
+                badgeClass: badge.badgeclass as BadgeClassModel,
+                style: BadgeCardStyle.large,
+              ),
+            );
+          }, childCount: badges.length),
+        );
+      },
+    );
   }
 
   Widget _buildVisibilitySection(
@@ -516,19 +560,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                     padding: EdgeInsets.symmetric(
                       horizontal: horizontalPadding,
                     ),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final badge = badges[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 16),
-                          child: BadgeCard(
-                            instance: badge,
-                            badgeClass: badge.badgeclass as BadgeClassModel,
-                            style: BadgeCardStyle.large,
-                          ),
-                        );
-                      }, childCount: badges.length),
-                    ),
+                    sliver: _buildBadgeSliver(badges),
                   ),
                 ],
                 useSidebarLayout: isLargeScreen,

@@ -159,6 +159,29 @@ class BadgeGridTile extends StatelessWidget {
     return maxRows;
   }
 
+  /// The most lines any of [issuers] wraps onto in a tile of [tileWidth]. A
+  /// grid sizes every tile to this, so it only reserves a second issuer line
+  /// when a name needs one.
+  static int issuerLinesFor(
+    BuildContext context,
+    Iterable<BadgeIssuerNames> issuers,
+    double tileWidth,
+  ) {
+    int maxLines = 1;
+    for (final BadgeIssuerNames issuer in issuers) {
+      maxLines = math.max(
+        maxLines,
+        BadgeIssuerLabel.lineCount(
+          context,
+          issuer,
+          maxWidth: tileWidth - _padding * 2,
+        ),
+      );
+      if (maxLines == BadgeIssuerLabel.maxLines) break;
+    }
+    return maxLines;
+  }
+
   Widget _buildBadgeImage(ColorScheme colorScheme) {
     Widget placeholder() => SizedBox(
       height: _imageSize,

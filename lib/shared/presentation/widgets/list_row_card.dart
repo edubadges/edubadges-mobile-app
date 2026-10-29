@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 class ListRowCard extends StatelessWidget {
   static const double _imageSize = 64;
 
-  /// 16 padding + 2 title lines (40) + 2 + 2 issuer lines (32) + 16 padding,
-  /// as in the design. Rows with shorter text keep this height, so all cards
-  /// in a list are the same size.
-  static const double minHeight = 106;
+  /// 16 padding + 64 image + 16 padding, as in the design. Two title lines
+  /// (40) + 2 + the issuer line (16) fit beside the image; only a card whose
+  /// title and issuer both wrap grows past it.
+  static const double minHeight = 96;
 
   final String? imageUrl;
   final String title;

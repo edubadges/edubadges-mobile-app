@@ -41,10 +41,18 @@ class LayoutConstants {
   static double badgeGridTileNameHeightFor(TextScaler textScaler) =>
       2 * textScaler.scale(_nameLineHeight);
 
-  /// 16 padding + 100 image + 8 + name + 8 + 32 issuer and institution + 16
-  /// padding. The catalog tile draws no chip row.
-  static const double badgeGridTileHeightWithoutChips =
-      16 + 100 + 8 + badgeGridTileNameHeight + 8 + 32 + 16;
+  /// 16 padding + 100 image + 8 + name + 8 + 16 padding: all of a tile but its
+  /// chip rows and issuer label.
+  static const double _badgeGridTileFixedHeight =
+      16 + 100 + 8 + badgeGridTileNameHeight + 8 + 16;
+
+  /// The issuer label: one [TextTheme.bodySmall] line (16) beside its 22 logo,
+  /// or two lines when a name does not fit on one. Its lines grow with
+  /// [textScaler].
+  static double badgeGridIssuerHeight(
+    int lines, {
+    TextScaler textScaler = TextScaler.noScaling,
+  }) => math.max(22, lines * textScaler.scale(_issuerLineHeight));
 
   static const double badgeGridChipRowHeight = 32;
 
@@ -77,26 +85,28 @@ class LayoutConstants {
       (gridWidth - badgeGridSpacing * (columns - 1)) / columns;
 
   /// Height of a tile whose chips wrap onto [chipRows] rows, each with its 8
-  /// gap on top. One row matches the overview design.
+  /// gap on top, and whose issuer label takes [issuerLines] lines. One chip
+  /// row and one issuer line match the overview design; the catalog tile draws
+  /// no chips.
   ///
   /// Text enlarged through the browser or the system ([textScaler]) makes the
   /// tile taller by as much as its text lines grow, so nothing is cut off.
   static double badgeGridTileHeightFor({
     required int chipRows,
+    required int issuerLines,
     TextScaler textScaler = TextScaler.noScaling,
   }) {
     // How much a line outgrows the room it has at the design size.
     double growth(double lineHeight, {required double room}) =>
         math.max(0.0, textScaler.scale(lineHeight) - room);
 
-    final double textGrowth =
+    return _badgeGridTileFixedHeight +
         2 * growth(_nameLineHeight, room: _nameLineHeight) +
-        // Two issuer lines sit next to a logo exactly that tall.
-        2 * growth(_issuerLineHeight, room: _issuerLineHeight) +
-        chipRows * growth(_chipLineHeight, room: _chipIconSize);
-    return badgeGridTileHeightWithoutChips +
-        chipRows * (badgeGridChipRowHeight + 8) +
-        textGrowth;
+        badgeGridIssuerHeight(issuerLines, textScaler: textScaler) +
+        chipRows *
+            (badgeGridChipRowHeight +
+                8 +
+                growth(_chipLineHeight, room: _chipIconSize));
   }
 
   static const int collectionsGridCrossAxisCount = 3;

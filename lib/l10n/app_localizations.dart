@@ -1292,6 +1292,12 @@ abstract class AppLocalizations {
   /// **'Please try again later'**
   String get unableToLoadSubtitle;
 
+  /// Issuer and its institution on one line on the web badge tiles, e.g. 'Kennis & Informatie of Hogeschool Rotterdam'
+  ///
+  /// In en, this message translates to:
+  /// **'{issuer} of {institution}'**
+  String badgeIssuerOfInstitution(String issuer, String institution);
+
   /// No description provided for @failedToLoadTermsFrom.
   ///
   /// In en, this message translates to:

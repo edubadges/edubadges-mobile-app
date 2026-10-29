@@ -719,6 +719,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unableToLoadSubtitle => 'Please try again later';
 
   @override
+  String badgeIssuerOfInstitution(String issuer, String institution) {
+    return '$issuer of $institution';
+  }
+
+  @override
   String failedToLoadTermsFrom(String institution) {
     return 'Failed to load terms from $institution';
   }

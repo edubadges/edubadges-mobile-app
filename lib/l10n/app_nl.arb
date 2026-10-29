@@ -854,6 +854,17 @@
     "@unableToLoadSubtitle": {
         "description": "Subtitle message suggesting user to retry later after a loading failure"
     },
+    "badgeIssuerOfInstitution": "{issuer} van {institution}",
+    "@badgeIssuerOfInstitution": {
+        "placeholders": {
+            "issuer": {
+                "type": "String"
+            },
+            "institution": {
+                "type": "String"
+            }
+        }
+    },
     "failedToLoadTermsFrom": "Fout bij het laden van voorwaarden van {institution}",
     "@failedToLoadTermsFrom": {
         "placeholders": {
