@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:edubadges/core/constants/environment_config.dart';
 import 'package:edubadges/core/errors/failures.dart';
 import 'package:edubadges/features/badge_details/domain/repositories/badge_details_repository.dart';
 import 'package:edubadges/features/badge_details/presentation/providers/badge_details_providers.dart';
@@ -9,8 +10,10 @@ import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/domain/enums/badge_class_type.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const String _linkedinUrl =
     'https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME';
@@ -109,6 +112,22 @@ Future<_FakeBadgeDetailsRepository> _pumpCard(
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  setUpAll(() {
+    // The copied link is built from the configured public host.
+    if (!EnvironmentConfig.instance.isInitialized) {
+      EnvironmentConfig.instance.init(
+        apiUrl: 'https://api.example.test',
+        openIdUrl: 'https://login.example.test',
+        openIdClientId: 'test-client',
+        enableAnalytics: false,
+        enableCrashlytics: false,
+        publicCollectionBaseUrl: 'https://example.test',
+        piwikProBaseUrl: 'https://analytics.example.test',
+        piwikProSiteId: 'test-site',
+      );
+    }
+  });
+
   testWidgets(
     'loads the badge instance details to share a public badge that came '
     'without a linkedin url',
@@ -162,5 +181,88 @@ void main() {
       badge: _instance(public: true, linkedinUrl: _linkedinUrl),
     );
     expect(find.text(description), findsNothing);
+  });
+
+  testWidgets('keeps saying the link was copied after the snackbar has gone', (
+    WidgetTester tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    String? copiedText;
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (MethodCall call) async {
+        if (call.method == 'Clipboard.setData') {
+          copiedText =
+              (call.arguments as Map<Object?, Object?>)['text'] as String?;
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+
+    await _pumpCard(
+      tester,
+      badge: _instance(public: true, linkedinUrl: _linkedinUrl),
+    );
+
+    await tester.tap(find.text('Copy link'));
+    // One frame for the clipboard write to finish, one for the snackbar.
+    await tester.pump();
+    await tester.pump();
+    expect(
+      copiedText,
+      'https://example.test/public/assertions/instance-1?lang=en',
+    );
+    expect(find.text('Edubadge link copied to clipboard'), findsOneWidget);
+
+    // Let the snackbar finish coming in, time out and animate away.
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 4));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Edubadge link copied to clipboard'), findsNothing);
+    expect(find.text('Copy link'), findsNothing);
+    expect(find.text('Link copied'), findsOneWidget);
+    expect(find.byIcon(Icons.check), findsOneWidget);
+  });
+
+  testWidgets('does not claim the link was copied when copying fails', (
+    WidgetTester tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (MethodCall call) async {
+        if (call.method == 'Clipboard.setData') {
+          throw PlatformException(code: 'copy_fail');
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+
+    await _pumpCard(
+      tester,
+      badge: _instance(public: true, linkedinUrl: _linkedinUrl),
+    );
+
+    await tester.tap(find.text('Copy link'));
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('Something went wrong'), findsOneWidget);
+    expect(find.text('Edubadge link copied to clipboard'), findsNothing);
+    expect(find.text('Copy link'), findsOneWidget);
+    expect(find.text('Link copied'), findsNothing);
   });
 }
