@@ -41,6 +41,10 @@ class BadgeVisibilityCard extends ConsumerStatefulWidget {
 class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
   late bool isPublic;
 
+  /// Whether the copy link button has copied the link. The button then says
+  /// so itself, so the confirmation stays readable after the snackbar is gone.
+  bool _linkCopied = false;
+
   @override
   void initState() {
     super.initState();
@@ -52,6 +56,7 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.badge.public != widget.badge.public) {
       isPublic = widget.badge.public;
+      _linkCopied = false;
     }
   }
 
@@ -119,9 +124,9 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
             children: [
               if (hasCopyLinkOption)
                 WideButton(
-                  text: l10n.copyLink,
+                  text: _linkCopied ? l10n.linkCopied : l10n.copyLink,
                   icon: Icon(
-                    Icons.copy,
+                    _linkCopied ? Icons.check : Icons.copy,
                     size: 20,
                     color: getContrastingTextColor(colorScheme.primary),
                   ),
@@ -135,6 +140,7 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                     await Clipboard.setData(ClipboardData(text: link));
 
                     if (context.mounted) {
+                      setState(() => _linkCopied = true);
                       showAppSnackBar(context, l10n.badgeLinkCopied);
                     }
                   },

@@ -42,17 +42,23 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
   final ScrollController _scrollController = ScrollController();
   late final ValueNotifier<bool> _publicNotifier;
 
+  /// Whether the copy link button has copied the link. The button then says
+  /// so itself, so the confirmation stays readable after the snackbar is gone.
+  final ValueNotifier<bool> _linkCopiedNotifier = ValueNotifier<bool>(false);
+
   CollectionRouteModel get collection => widget.collection;
 
   @override
   void initState() {
     super.initState();
     _publicNotifier = ValueNotifier<bool>(false);
+    _publicNotifier.addListener(_resetLinkCopied);
   }
 
   @override
   void dispose() {
     _publicNotifier.dispose();
+    _linkCopiedNotifier.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -69,6 +75,10 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
       }
       _publicNotifier.value = isPublic;
     });
+  }
+
+  void _resetLinkCopied() {
+    _linkCopiedNotifier.value = false;
   }
 
   /// The backpack overview's grid on web, as long as two tiles fit; the list
@@ -231,6 +241,7 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                 final link =
                     '${EnvironmentConfig.instance.publicCollectionBaseUrl}/${collection.entityId}';
                 Clipboard.setData(ClipboardData(text: link));
+                _linkCopiedNotifier.value = true;
                 showAppSnackBar(context, l10n.linkCopied);
               }
 
@@ -238,18 +249,28 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                 children: [
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: copyLink,
-                      icon: const Icon(Icons.copy, size: 20),
-                      label: Text(l10n.copyLink),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: colorScheme.primary,
-                        foregroundColor: colorScheme.onPrimary,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
+                    child: ValueListenableBuilder<bool>(
+                      valueListenable: _linkCopiedNotifier,
+                      builder: (context, linkCopied, child) {
+                        return ElevatedButton.icon(
+                          onPressed: copyLink,
+                          icon: Icon(
+                            linkCopied ? Icons.check : Icons.copy,
+                            size: 20,
+                          ),
+                          label: Text(
+                            linkCopied ? l10n.linkCopied : l10n.copyLink,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: colorScheme.primary,
+                            foregroundColor: colorScheme.onPrimary,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
