@@ -58,6 +58,9 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
       isPublic = widget.badge.public;
       _linkCopied = false;
     }
+    if (oldWidget.badge.entityId != widget.badge.entityId) {
+      _linkCopied = false;
+    }
   }
 
   /// Badges that come from a list response (catalog, backpack overview, claim
@@ -132,14 +135,21 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                   ),
                   color: colorScheme.primary,
                   onTap: () async {
-                    final String link = createBadgeInstanceLink(
-                      widget.badge.entityId,
-                      ref,
-                    );
+                    final String entityId = widget.badge.entityId;
+                    final String link = createBadgeInstanceLink(entityId, ref);
 
-                    await Clipboard.setData(ClipboardData(text: link));
+                    try {
+                      await Clipboard.setData(ClipboardData(text: link));
+                    } catch (e) {
+                      if (context.mounted) {
+                        showAppSnackBar(context, l10n.somethingWentWrong);
+                      }
+                      return;
+                    }
 
-                    if (context.mounted) {
+                    // The card may show another badge by the time the write
+                    // finishes; only this badge's link was copied.
+                    if (context.mounted && widget.badge.entityId == entityId) {
                       setState(() => _linkCopied = true);
                       showAppSnackBar(context, l10n.badgeLinkCopied);
                     }

@@ -230,4 +230,39 @@ void main() {
     expect(find.text('Link copied'), findsOneWidget);
     expect(find.byIcon(Icons.check), findsOneWidget);
   });
+
+  testWidgets('does not claim the link was copied when copying fails', (
+    WidgetTester tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({});
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (MethodCall call) async {
+        if (call.method == 'Clipboard.setData') {
+          throw PlatformException(code: 'copy_fail');
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+
+    await _pumpCard(
+      tester,
+      badge: _instance(public: true, linkedinUrl: _linkedinUrl),
+    );
+
+    await tester.tap(find.text('Copy link'));
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('Something went wrong'), findsOneWidget);
+    expect(find.text('Edubadge link copied to clipboard'), findsNothing);
+    expect(find.text('Copy link'), findsOneWidget);
+    expect(find.text('Link copied'), findsNothing);
+  });
 }

@@ -237,10 +237,20 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
               if (!isPublicValue || !canMakePublic) {
                 return const SizedBox.shrink();
               }
-              void copyLink() {
+              Future<void> copyLink() async {
                 final link =
                     '${EnvironmentConfig.instance.publicCollectionBaseUrl}/${collection.entityId}';
-                Clipboard.setData(ClipboardData(text: link));
+                try {
+                  await Clipboard.setData(ClipboardData(text: link));
+                } catch (e) {
+                  if (context.mounted) {
+                    showAppSnackBar(context, l10n.somethingWentWrong);
+                  }
+                  return;
+                }
+                if (!context.mounted) {
+                  return;
+                }
                 _linkCopiedNotifier.value = true;
                 showAppSnackBar(context, l10n.linkCopied);
               }
