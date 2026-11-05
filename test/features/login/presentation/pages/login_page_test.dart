@@ -13,6 +13,8 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../../../helpers/heading_levels.dart';
+
 class _FakeSuppressionStorage implements AutoLoginSuppressionStorage {
   _FakeSuppressionStorage(this.stored);
 
@@ -221,13 +223,22 @@ void main() {
       await pumpLoginPage(tester, web: false);
 
       expect(find.bySemanticsLabel(_l10n.appName), findsOneWidget);
-      // The app bar title is a heading. With a node inside it, the web shows
-      // it as a page banner, which may not sit in the main landmark.
+      // Named as text: an image node would sit inside the app bar.
       final SemanticsNode logo = tester.getSemantics(
         find.bySemanticsLabel(_l10n.appName),
       );
-      expect(logo, isSemantics(isHeader: true, label: _l10n.appName));
+      expect(logo, isSemantics(isHeader: false, label: _l10n.appName));
       expect(logo.childrenCount, 0);
+      semantics.dispose();
+    });
+
+    testWidgets('the login title is the only heading, at the page level', (
+      tester,
+    ) async {
+      final SemanticsHandle semantics = tester.ensureSemantics();
+      await pumpLoginPage(tester, web: false);
+
+      expect(headingLevels(tester), {_l10n.loginTitle: 1});
       semantics.dispose();
     });
 

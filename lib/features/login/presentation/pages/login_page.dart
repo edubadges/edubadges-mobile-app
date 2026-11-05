@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/widgets/delayed_loader.dart';
 import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
@@ -131,9 +132,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        // The app bar makes its title a heading. Named as an image, the logo
-        // would be a node inside it, and a heading with content is exposed on
-        // the web as a page banner, which may not sit in the main landmark.
+        // The login title below is the page heading, so the logo is not one;
+        // screen readers read it as the app name.
+        excludeHeaderSemantics: true,
         title: Semantics(
           label: l10n.appName,
           child: ExcludeSemantics(child: SvgPicture.asset(Assets.imageLogo)),
@@ -150,6 +151,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               children: [
                 Semantics(
                   header: true,
+                  headingLevel: HeadingLevel.page,
                   child: Text(
                     l10n.loginTitle,
                     style: textTheme.titleLarge?.copyWith(

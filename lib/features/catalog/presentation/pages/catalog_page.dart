@@ -1,3 +1,4 @@
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/app_language.dart';
@@ -326,7 +327,13 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
         return Scaffold(
           appBar: useSidebarLayout
               ? null
-              : AppBar(title: Text(l10n.tabCatalog)),
+              : AppBar(
+                  // The app bar makes its title a heading; this sets its level.
+                  title: Semantics(
+                    headingLevel: HeadingLevel.page,
+                    child: Text(l10n.tabCatalog),
+                  ),
+                ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

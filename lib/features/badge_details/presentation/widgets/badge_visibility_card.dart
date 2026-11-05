@@ -1,5 +1,6 @@
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/branding.dart';
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/utils/color.dart';
 import 'package:edubadges/core/utils/links.dart';
@@ -188,6 +189,7 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                 children: [
                   Semantics(
                     header: true,
+                    headingLevel: HeadingLevel.section,
                     child: Text(
                       l10n.badgeVisibleAndShareable,
                       style: theme.textTheme.titleSmall?.copyWith(

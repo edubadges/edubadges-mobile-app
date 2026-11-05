@@ -1,3 +1,4 @@
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/markdown_sanitizer.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
@@ -97,7 +98,11 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.generalAgreementTitle),
+        // The app bar makes its title a heading; this sets its level.
+        title: Semantics(
+          headingLevel: HeadingLevel.page,
+          child: Text(l10n.generalAgreementTitle),
+        ),
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),

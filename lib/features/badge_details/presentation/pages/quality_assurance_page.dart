@@ -1,4 +1,5 @@
 import 'package:edubadges/app/themes.dart';
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/markdown_sanitizer.dart';
 import 'package:edubadges/core/utils/url_safety.dart';
@@ -88,7 +89,12 @@ class _QualityAssurancePageState extends ConsumerState<QualityAssurancePage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: widget.isDialog ? null : AppBackButton(onPressed: _close),
-        title: Text(l10n.qualityAssurance),
+        // The app bar makes its title a heading. In a dialog it keeps the
+        // default level, as dialog titles do.
+        title: Semantics(
+          headingLevel: widget.isDialog ? null : HeadingLevel.page,
+          child: Text(l10n.qualityAssurance),
+        ),
         backgroundColor: colorScheme.surfaceContainer,
         surfaceTintColor: colorScheme.surfaceContainer,
         actions: [

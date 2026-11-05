@@ -1,4 +1,5 @@
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/platform_info.dart';
@@ -83,6 +84,7 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
               children: [
                 Semantics(
                   header: true,
+                  headingLevel: HeadingLevel.page,
                   child: Text(
                     l10n.badgesOverviewTitle,
                     style: textTheme.titleLarge,
@@ -509,6 +511,7 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
                   // layout shows, so screen readers get that heading here too.
                   title: Semantics(
                     header: true,
+                    headingLevel: HeadingLevel.page,
                     label: l10n.badgesOverviewTitle,
                     child: ExcludeSemantics(
                       child: SvgPicture.asset(
