@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:edubadges/app/constants.dart';
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/markdown_sanitizer.dart';
@@ -1048,6 +1049,7 @@ class _BadgeDetailsPageState extends ConsumerState<BadgeDetailsPage> {
                       // merges into the section and makes the whole body the heading.
                       child: Semantics(
                         header: true,
+                        headingLevel: HeadingLevel.section,
                         container: true,
                         child: Text(
                           title,

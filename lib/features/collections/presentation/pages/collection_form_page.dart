@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/error_message.dart';
 import 'package:edubadges/core/utils/route_exit_guard.dart';
@@ -347,11 +348,15 @@ class _CollectionFormPageState extends ConsumerState<CollectionFormPage> {
         leading: _isCreating
             ? const AppBackButton(fallbackLocation: RoutePath.collections)
             : null,
-        title: Text(
-          _isCreating ? l10n.newCollection : l10n.editCollection,
-          style: theme.textTheme.titleLarge?.copyWith(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeight.w700,
+        // The app bar makes its title a heading; this sets its level.
+        title: Semantics(
+          headingLevel: HeadingLevel.page,
+          child: Text(
+            _isCreating ? l10n.newCollection : l10n.editCollection,
+            style: theme.textTheme.titleLarge?.copyWith(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
         actions: [
@@ -435,6 +440,7 @@ class _CollectionFormPageState extends ConsumerState<CollectionFormPage> {
                           const SizedBox(height: 32),
                           Semantics(
                             header: true,
+                            headingLevel: HeadingLevel.section,
                             child: Text(
                               l10n.badgesInCollection,
                               style: theme.textTheme.titleMedium?.copyWith(

@@ -1,3 +1,4 @@
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/loading_spinner.dart';
@@ -59,6 +60,7 @@ class _CatalogFiltersState extends ConsumerState<CatalogFilters> {
         children: [
           Semantics(
             header: true,
+            headingLevel: HeadingLevel.section,
             child: Text(
               l10n.filters,
               style: textTheme.titleMedium?.copyWith(

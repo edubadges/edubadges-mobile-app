@@ -1,5 +1,6 @@
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/image.dart';
@@ -182,7 +183,11 @@ class _CollectionsPageState extends ConsumerState<CollectionsPage> {
           appBar: isGridLayout
               ? null
               : AppBar(
-                  title: Text(l10n.tabCollections),
+                  // The app bar makes its title a heading; this sets its level.
+                  title: Semantics(
+                    headingLevel: HeadingLevel.page,
+                    child: Text(l10n.tabCollections),
+                  ),
                   backgroundColor: AppColors.surface,
                   actions: [_buildAddButton(context: context, l10n: l10n)],
                 ),

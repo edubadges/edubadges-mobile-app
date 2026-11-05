@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/error_message.dart';
@@ -455,11 +456,15 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
             leading: const AppBackButton(
               fallbackLocation: RoutePath.collections,
             ),
-            title: Text(
-              collectionTitle,
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: colorScheme.onSurface,
-                fontWeight: FontWeight.w700,
+            // The app bar makes its title a heading; this sets its level.
+            title: Semantics(
+              headingLevel: HeadingLevel.page,
+              child: Text(
+                collectionTitle,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
             backgroundColor: AppColors.surface,
