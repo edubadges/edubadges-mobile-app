@@ -434,6 +434,12 @@ abstract class AppLocalizations {
   /// **'General notifications'**
   String get generalNotifications;
 
+  /// Installed app version at the bottom of the account page, e.g. 1.0.4 (12)
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String appVersion(String version);
+
   /// Section header on the account page for choosing the app language
   ///
   /// In en, this message translates to:

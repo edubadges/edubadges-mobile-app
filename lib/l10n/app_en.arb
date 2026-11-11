@@ -232,6 +232,15 @@
     "@generalNotifications": {
         "description": "Label for general notification settings toggle"
     },
+    "appVersion": "Version {version}",
+    "@appVersion": {
+        "description": "Installed app version at the bottom of the account page, e.g. 1.0.4 (12)",
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
+    },
     "languageSettings": "Language",
     "@languageSettings": {
         "description": "Section header on the account page for choosing the app language"

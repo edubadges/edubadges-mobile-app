@@ -5,6 +5,7 @@ import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/errors/failures.dart';
+import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/core/utils/platform_info.dart';
@@ -673,6 +674,29 @@ class _AccountPageState extends ConsumerState<AccountPage> {
     );
   }
 
+  /// The installed version, so a user reporting a problem can tell support
+  /// which build they have. Same format as the feedback email. Shows nothing
+  /// while the version loads or if it cannot be read.
+  Widget _buildAppVersion(BuildContext context, WidgetRef ref) {
+    final packageInfo = ref.watch(packageInfoProvider).value;
+    if (packageInfo == null) return const SizedBox.shrink();
+
+    final theme = Theme.of(context);
+    final version = '${packageInfo.version} (${packageInfo.buildNumber})';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: _spacingMedium),
+      child: Center(
+        child: Text(
+          AppLocalizations.of(context).appVersion(version),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _showNotificationPermissionDeniedDialog(
     BuildContext context,
     WidgetRef ref,
@@ -768,6 +792,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
             children: [
               _buildAgreementsSection(ref, context, profile),
               _buildDeleteAccountSection(context, ref),
+              _buildAppVersion(context, ref),
             ],
           ),
         ),
