@@ -68,6 +68,7 @@ void main() async {
     apiUrl: dotenv.env[EnvKeys.apiUrl] ?? '',
     openIdUrl: dotenv.env[EnvKeys.openIdUrl] ?? '',
     openIdClientId: dotenv.env[EnvKeys.openIdClientId] ?? '',
+    openIdWebClientId: dotenv.env[EnvKeys.openIdWebClientId] ?? '',
     enableAnalytics: dotenv.env[EnvKeys.enableAnalytics] == 'true',
     enableCrashlytics: dotenv.env[EnvKeys.enableCrashlytics] == 'true',
     publicCollectionBaseUrl: dotenv.env[EnvKeys.publicCollectionBaseUrl] ?? '',
