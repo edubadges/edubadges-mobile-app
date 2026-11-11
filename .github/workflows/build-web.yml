@@ -43,6 +43,22 @@ jobs:
               ;;
           esac
 
+      - name: Override API URLs per environment
+        run: |
+          ENV_FILE=".env.${{ steps.flavor-map.outputs.flavor }}"
+
+          # Pick the API_URL for this flavor
+          case "${{ steps.flavor-map.outputs.flavor }}" in
+            dev)    API_URL="https://api-demo.edubadges.nl/mobile/api" ;;
+            tst)    API_URL="https://api-test.edubadges.nl/mobile/api" ;;
+            acc)    API_URL="https://api-acc.edubadges.nl/mobile/api" ;;
+            prod)   API_URL="https://api.edubadges.nl/mobile/api" ;;
+          esac
+
+          sed -i "s|^API_URL=.*|API_URL=$API_URL|" "$ENV_FILE"
+          echo "  → $ENV_FILE now reads:"
+          grep API_URL "$ENV_FILE"
+
       - name: Build web
         run: |
           ./tool/build_web.sh ${{ steps.flavor-map.outputs.flavor }}
