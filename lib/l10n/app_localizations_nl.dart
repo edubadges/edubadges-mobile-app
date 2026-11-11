@@ -195,6 +195,11 @@ class AppLocalizationsNl extends AppLocalizations {
   String get generalNotifications => 'Algemene meldingen';
 
   @override
+  String appVersion(String version) {
+    return 'Versie $version';
+  }
+
+  @override
   String get languageSettings => 'Taal';
 
   @override
