@@ -197,8 +197,9 @@ public, so the client must be public and rely on PKCE, the same way the mobile
 clients do.
 
 Add one redirect URI per hostname, so the test client ends up with
-`backpack-acc`, `backpack-test` and `backpack-demo`, and add
-`http://localhost:8080/` to it for development logins. The Edubadges API must
+`backpack-acc`, `backpack-test` and `backpack-demo`. For development logins,
+also add `http://localhost:8080/` as a redirect URI on the test client and
+`http://localhost:8080` to its token-endpoint CORS. The Edubadges API must
 also accept tokens issued to the web clients.
 
 The redirect URI is read from the address bar. A different value will not work
