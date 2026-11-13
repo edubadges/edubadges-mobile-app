@@ -59,6 +59,22 @@ jobs:
           echo "  → $ENV_FILE now reads:"
           grep API_URL "$ENV_FILE"
 
+      - name: Override collection base URLs per environment
+        run: |
+          ENV_FILE=".env.${{ steps.flavor-map.outputs.flavor }}"
+
+          # Pick the PUBLIC_COLLECTION_BASE_URL for this flavor
+          case "${{ steps.flavor-map.outputs.flavor }}" in
+            dev)    COLLECTION_URL="https://demo.edubadges.nl/public/collections" ;;
+            tst)    COLLECTION_URL="https://test.edubadges.nl/public/collections" ;;
+            acc)    COLLECTION_URL="https://acc.edubadges.nl/public/collections" ;;
+            prod)   COLLECTION_URL="https://edubadges.nl/public/collections" ;;
+          esac
+
+          sed -i "s|^PUBLIC_COLLECTION_BASE_URL=.*|PUBLIC_COLLECTION_BASE_URL=$COLLECTION_URL|" "$ENV_FILE"
+          echo "  → $ENV_FILE now reads:"
+          grep PUBLIC_COLLECTION_BASE_URL "$ENV_FILE"
+
       - name: Build web
         run: |
           ./tool/build_web.sh ${{ steps.flavor-map.outputs.flavor }}
