@@ -21,7 +21,12 @@
             <data android:scheme="https" />
             <data android:host="demo.edubadges.nl" />
             <data android:host="edubadges.nl" />
+            <data android:host="www.edubadges.nl" />
             <data android:pathPrefix="/public/catalog/" />
+            <!-- /public/<id>: exactly 22 chars (an entity id), so that
+                 /public/collections/<id> stays in the browser. Simple globs cannot
+                 exclude "/", and pathAdvancedPattern is ignored below API 31. -->
+            <data android:pathPattern="/public/......................" />
         </intent-filter>
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
