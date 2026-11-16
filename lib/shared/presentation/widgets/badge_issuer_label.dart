@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,8 @@ typedef BadgeIssuerNames = ({
 /// One line when it fits, as in the design. A name that does not fit wraps
 /// onto a second line instead of being cut off (SURF-679).
 class BadgeIssuerLabel extends StatelessWidget {
-  static const double logoSize = 22;
-  static const double _logoGap = 8;
+  static const double logoSize = LayoutConstants.badgeIssuerLogoSize;
+  static const double _logoGap = 12;
   static const int maxLines = 2;
 
   final String issuerName;
