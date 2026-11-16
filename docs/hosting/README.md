@@ -172,12 +172,12 @@ signs in on a shared campus computer should not stay signed in for that long.
 | Client | Environments | `.env` setting |
 |---|---|---|
 | `edubadges.web` | production | `OPEN_ID_WEB_CLIENT_ID` in `.env.prod` |
-| *(test client, to be confirmed)* | acceptance, test, demo | `OPEN_ID_WEB_CLIENT_ID` in `.env.acc`, `.env.tst`, `.env.dev` |
+| `edubadges.web.test` | acceptance, test, demo | `OPEN_ID_WEB_CLIENT_ID` in `.env.acc`, `.env.tst`, `.env.dev` |
 
-Until `OPEN_ID_WEB_CLIENT_ID` is filled in for a flavor, that web build keeps
-logging in with the mobile client (`edubadges.mobile` / `edubadges.mobile.test`).
-Switching an environment over signs existing web users out once, because their
-refresh token belongs to the old client.
+If `OPEN_ID_WEB_CLIENT_ID` is left empty for a flavor, that web build logs in
+with the mobile client (`edubadges.mobile` / `edubadges.mobile.test`) instead.
+Changing the client of an environment that is already live signs its web users
+out once, because their refresh token belongs to the old client.
 
 Each web client needs:
 
