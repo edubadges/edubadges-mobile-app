@@ -46,13 +46,20 @@ class LayoutConstants {
   static const double _badgeGridTileFixedHeight =
       16 + 100 + 8 + badgeGridTileNameHeight + 8 + 16;
 
-  /// The issuer label: one [TextTheme.bodySmall] line (16) beside its 22 logo,
-  /// or two lines when a name does not fit on one. Its lines grow with
-  /// [textScaler].
+  /// The institution logo beside the issuer label. Large enough to recognise
+  /// the institution by (SURF-685).
+  static const double badgeIssuerLogoSize = 36;
+
+  /// The issuer label: as tall as its logo, which also fits two
+  /// [TextTheme.bodySmall] lines (16 each) when a name does not fit on one.
+  /// Its lines grow with [textScaler].
   static double badgeGridIssuerHeight(
     int lines, {
     TextScaler textScaler = TextScaler.noScaling,
-  }) => math.max(22, lines * textScaler.scale(_issuerLineHeight));
+  }) => math.max(
+    badgeIssuerLogoSize,
+    lines * textScaler.scale(_issuerLineHeight),
+  );
 
   static const double badgeGridChipRowHeight = 32;
 

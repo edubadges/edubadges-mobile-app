@@ -1,4 +1,5 @@
 import 'package:edubadges/core/constants/layout_constants.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 int _overviewColumns(double width) => LayoutConstants.badgeGridColumnCount(
@@ -58,7 +59,7 @@ void main() {
     const double image = 100;
     const double name = 48;
     const double chipRow = 32;
-    const double issuer = 22;
+    const double issuer = LayoutConstants.badgeIssuerLogoSize;
     const double gap = 8;
 
     test('drops the chip row when there are no chips', () {
@@ -83,12 +84,29 @@ void main() {
     });
 
     // SURF-679: a name that does not fit wraps onto a second issuer line
-    // instead of being cut off.
-    test('grows from the logo height to two issuer lines', () {
-      const double issuerLine = 16;
+    // instead of being cut off. Two lines fit beside the logo (SURF-685), so
+    // the tile only grows once enlarged text outgrows it.
+    test('fits two issuer lines in the logo height', () {
       expect(
         LayoutConstants.badgeGridTileHeightFor(chipRows: 1, issuerLines: 2),
-        padding + image + gap + name + gap * 2 + chipRow + issuerLine * 2,
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 1, issuerLines: 1),
+      );
+    });
+
+    test('grows past the logo height with enlarged text', () {
+      const double issuerLine = 16;
+      expect(
+        LayoutConstants.badgeGridTileHeightFor(
+              chipRows: 0,
+              issuerLines: 2,
+              textScaler: const TextScaler.linear(2),
+            ) -
+            LayoutConstants.badgeGridTileHeightFor(
+              chipRows: 0,
+              issuerLines: 1,
+              textScaler: const TextScaler.linear(2),
+            ),
+        issuerLine * 2 * 2 - LayoutConstants.badgeIssuerLogoSize,
       );
     });
   });
