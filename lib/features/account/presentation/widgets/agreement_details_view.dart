@@ -8,6 +8,7 @@ import 'package:edubadges/core/utils/markdown_sanitizer.dart';
 import 'package:edubadges/core/widgets/actionable_content_layout.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/info_state_view.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/features/account/data/models/agreement_route_model.dart';
 import 'package:edubadges/features/account/presentation/providers/account_providers.dart';
 import 'package:edubadges/features/account/presentation/widgets/withdraw_agreement_dialog.dart';
@@ -135,11 +136,7 @@ class _AgreementDetailsViewState extends ConsumerState<AgreementDetailsView> {
         );
       },
       loading: () {
-        return Center(
-          child: CircularProgressIndicator(
-            semanticsLabel: l10n.semanticsLoading,
-          ),
-        );
+        return const Center(child: LoadingSpinner());
       },
     );
 

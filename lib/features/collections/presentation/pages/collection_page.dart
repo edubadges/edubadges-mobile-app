@@ -2,15 +2,17 @@ import 'package:collection/collection.dart';
 import 'package:edubadges/app/colors.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/environment_config.dart';
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/error_message.dart';
+import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/debug_error_log_button.dart';
-import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/lite_rolling_switch.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/sidebar_list_layout.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/collections/data/models/collection_route_model.dart';
@@ -20,8 +22,10 @@ import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_grid_sliver.dart';
 import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -39,17 +43,23 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
   final ScrollController _scrollController = ScrollController();
   late final ValueNotifier<bool> _publicNotifier;
 
+  /// Whether the copy link button has copied the link. The button then says
+  /// so itself, so the confirmation stays readable after the snackbar is gone.
+  final ValueNotifier<bool> _linkCopiedNotifier = ValueNotifier<bool>(false);
+
   CollectionRouteModel get collection => widget.collection;
 
   @override
   void initState() {
     super.initState();
     _publicNotifier = ValueNotifier<bool>(false);
+    _publicNotifier.addListener(_resetLinkCopied);
   }
 
   @override
   void dispose() {
     _publicNotifier.dispose();
+    _linkCopiedNotifier.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -66,6 +76,51 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
       }
       _publicNotifier.value = isPublic;
     });
+  }
+
+  void _resetLinkCopied() {
+    _linkCopiedNotifier.value = false;
+  }
+
+  /// The backpack overview's grid on web, as long as two tiles fit; the list
+  /// of large cards otherwise.
+  Widget _buildBadgeSliver(List<BadgeInstanceEntity> badges) {
+    return SliverLayoutBuilder(
+      builder: (BuildContext context, SliverConstraints constraints) {
+        final int columns = PlatformInfo.isWeb
+            ? LayoutConstants.badgeGridColumnCount(
+                constraints.crossAxisExtent,
+                maxColumns: LayoutConstants.badgesOverviewGridMaxColumns,
+              )
+            : 0;
+
+        if (columns > 0) {
+          return BadgeGridSliver(
+            badges: badges,
+            columns: columns,
+            itemBuilder: (context, index) => BadgeCard(
+              instance: badges[index],
+              badgeClass: badges[index].badgeclass as BadgeClassModel,
+              style: BadgeCardStyle.grid,
+            ),
+          );
+        }
+
+        return SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            final badge = badges[index];
+            return Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: BadgeCard(
+                instance: badge,
+                badgeClass: badge.badgeclass as BadgeClassModel,
+                style: BadgeCardStyle.large,
+              ),
+            );
+          }, childCount: badges.length),
+        );
+      },
+    );
   }
 
   Widget _buildVisibilitySection(
@@ -183,10 +238,21 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
               if (!isPublicValue || !canMakePublic) {
                 return const SizedBox.shrink();
               }
-              void copyLink() {
+              Future<void> copyLink() async {
                 final link =
                     '${EnvironmentConfig.instance.publicCollectionBaseUrl}/${collection.entityId}';
-                Clipboard.setData(ClipboardData(text: link));
+                try {
+                  await Clipboard.setData(ClipboardData(text: link));
+                } catch (e) {
+                  if (context.mounted) {
+                    showAppSnackBar(context, l10n.somethingWentWrong);
+                  }
+                  return;
+                }
+                if (!context.mounted) {
+                  return;
+                }
+                _linkCopiedNotifier.value = true;
                 showAppSnackBar(context, l10n.linkCopied);
               }
 
@@ -194,23 +260,28 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                 children: [
                   SizedBox(
                     width: double.infinity,
-                    child: KeyboardActivatable(
-                      wrapWithSemantics: false,
-                      includeOuterTapTarget: false,
-                      onActivate: copyLink,
-                      child: ElevatedButton.icon(
-                        onPressed: copyLink,
-                        icon: const Icon(Icons.copy, size: 20),
-                        label: Text(l10n.copyLink),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: colorScheme.primary,
-                          foregroundColor: colorScheme.onPrimary,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                    child: ValueListenableBuilder<bool>(
+                      valueListenable: _linkCopiedNotifier,
+                      builder: (context, linkCopied, child) {
+                        return ElevatedButton.icon(
+                          onPressed: copyLink,
+                          icon: Icon(
+                            linkCopied ? Icons.check : Icons.copy,
+                            size: 20,
                           ),
-                        ),
-                      ),
+                          label: Text(
+                            linkCopied ? l10n.linkCopied : l10n.copyLink,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: colorScheme.primary,
+                            foregroundColor: colorScheme.onPrimary,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -385,11 +456,15 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
             leading: const AppBackButton(
               fallbackLocation: RoutePath.collections,
             ),
-            title: Text(
-              collectionTitle,
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: colorScheme.onSurface,
-                fontWeight: FontWeight.w700,
+            // The app bar makes its title a heading; this sets its level.
+            title: Semantics(
+              headingLevel: HeadingLevel.page,
+              child: Text(
+                collectionTitle,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
             backgroundColor: AppColors.surface,
@@ -522,29 +597,13 @@ class _CollectionPageState extends ConsumerState<CollectionPage> {
                     padding: EdgeInsets.symmetric(
                       horizontal: horizontalPadding,
                     ),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final badge = badges[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 16),
-                          child: BadgeCard(
-                            instance: badge,
-                            badgeClass: badge.badgeclass as BadgeClassModel,
-                            style: BadgeCardStyle.large,
-                          ),
-                        );
-                      }, childCount: badges.length),
-                    ),
+                    sliver: _buildBadgeSliver(badges),
                   ),
                 ],
                 useSidebarLayout: isLargeScreen,
               );
             },
-            loading: () => Center(
-              child: CircularProgressIndicator(
-                semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-              ),
-            ),
+            loading: () => const Center(child: LoadingSpinner()),
 
             error: (error, stackTrace) => Center(
               child: Column(

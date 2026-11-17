@@ -40,6 +40,10 @@ class SidebarListLayout extends StatelessWidget {
       final EdgeInsets outerPadding = PlatformInfo.isWeb
           ? EdgeInsets.fromLTRB(padding, padding, padding, 0)
           : EdgeInsets.all(padding);
+      // Each column is a traversal group of its own, so Tab finishes the
+      // sidebar before it moves on to the list. Without them, the reading
+      // order interleaves the two columns by height, and focus jumps between
+      // them halfway through a section.
       return Padding(
         padding: outerPadding,
         child: Row(
@@ -47,17 +51,21 @@ class SidebarListLayout extends StatelessWidget {
           children: [
             SizedBox(
               width: sidebarWidth,
-              child: SingleChildScrollView(primary: false, child: sidebar),
+              child: FocusTraversalGroup(
+                child: SingleChildScrollView(primary: false, child: sidebar),
+              ),
             ),
             SizedBox(width: columnGap),
             Expanded(
-              child: RefreshIndicator(
-                backgroundColor: colorScheme.surfaceContainer,
-                onRefresh: onRefresh,
-                child: CustomScrollView(
-                  controller: scrollController,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  slivers: [...slivers, endSpacing],
+              child: FocusTraversalGroup(
+                child: RefreshIndicator(
+                  backgroundColor: colorScheme.surfaceContainer,
+                  onRefresh: onRefresh,
+                  child: CustomScrollView(
+                    controller: scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [...slivers, endSpacing],
+                  ),
                 ),
               ),
             ),

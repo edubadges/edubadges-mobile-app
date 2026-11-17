@@ -164,43 +164,52 @@ redirect, and the `/health` check wired into your load balancer.
 
 ### SurfConext
 
-Login uses the authorization-code flow with PKCE, in the browser. We are reusing
-the existing mobile clients rather than registering new ones, so these settings
-need to be **added** to them:
+Login uses the authorization-code flow with PKCE, in the browser. The web app
+has **its own SURFconext clients**, separate from the mobile apps, so its
+refresh tokens can live much shorter than the mobile app's year: a student who
+signs in on a shared campus computer should not stay signed in for that long.
 
-| Client | Environments |
-|---|---|
-| `edubadges.mobile` | production |
-| `edubadges.mobile.test` | acceptance, test, demo |
+| Client | Environments | `.env` setting |
+|---|---|---|
+| `edubadges.web` | production | `OPEN_ID_WEB_CLIENT_ID` in `.env.prod` |
+| `edubadges.web.test` | acceptance, test, demo | `OPEN_ID_WEB_CLIENT_ID` in `.env.acc`, `.env.tst`, `.env.dev` |
+
+If `OPEN_ID_WEB_CLIENT_ID` is left empty for a flavor, that web build logs in
+with the mobile client (`edubadges.mobile` / `edubadges.mobile.test`) instead.
+Changing the client of an environment that is already live signs its web users
+out once, because their refresh token belongs to the old client.
+
+Each web client needs:
 
 | Setting | Value |
 |---|---|
+| Client type | **Public** — no client secret |
 | Grant type | `authorization_code` |
 | PKCE | Required, method `S256` |
 | Redirect URI | `https://<hostname>/` — **exactly**, including the trailing slash |
 | Scopes | `openid`, `eduid.nl/links`, `offline_access` |
 | Token-endpoint CORS | Allow origin `https://<hostname>` |
+| Refresh-token lifetime | Short — this is why web has its own client |
 
-Add one redirect URI per hostname, so `edubadges.mobile.test` ends up with
-`backpack-acc`, `backpack-test` and `backpack-demo`.
+**No client secret.** The whole app runs in the browser, and everything it
+ships is downloadable, the `.env` file included. A secret given to it would be
+public, so the client must be public and rely on PKCE, the same way the mobile
+clients do.
 
-`http://localhost:8080/` is **already registered** on `edubadges.mobile.test`, so
-development logins work today — a local build completes the flow as far as the
-eduID login screen. None of the three backpack hostnames is registered yet, so
-those are what remain.
-
-While you have that client open, one piece of housekeeping:
-`https://dev.edubadges.preprod.aws.coffeeit.nl/` is still a registered redirect
-URI on it. It points at the AWS deployment this setup replaces, and a registered
-redirect URI on infrastructure that is being decommissioned is worth removing.
+Add one redirect URI per hostname, so the test client ends up with
+`backpack-acc`, `backpack-test` and `backpack-demo`. For development logins,
+also add `http://localhost:8080/` as a redirect URI on the test client and
+`http://localhost:8080` to its token-endpoint CORS. The Edubadges API must
+also accept tokens issued to the web clients.
 
 The redirect URI is read from the address bar. A different value will not work
 without a code change. `offline_access` is required for users to stay signed in.
 Token-endpoint CORS is required because the code-for-token exchange happens in
 the browser; without it, login returns to the site and then fails.
 
-> Because the refresh token is held in browser storage, a shorter refresh-token
-> lifetime for these clients is worth considering.
+Once web runs on its own clients, the web redirect URIs on the mobile clients
+can go — including `https://dev.edubadges.preprod.aws.coffeeit.nl/` on
+`edubadges.mobile.test`, which points at the AWS deployment this setup replaces.
 
 ### API CORS
 
@@ -278,7 +287,8 @@ Please rehearse it once before go-live.
 - [ ] Reverse proxy forwards to the app on port 8080
 - [ ] `backpack-demo` repointed from its placeholder page to the app
 - [ ] `/health` wired into the load balancer
-- [ ] SurfConext redirect URIs and token-endpoint CORS added to both clients
+- [ ] Web SurfConext clients (production and test) set up as public PKCE clients
+      with redirect URIs, token-endpoint CORS and a short refresh-token lifetime
 - [ ] API CORS live for all four origins
 - [ ] Deploy token stored, and its expiry date diarised
 - [ ] Decided who approves a production deploy

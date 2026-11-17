@@ -1,5 +1,4 @@
 import 'package:edubadges/core/utils/color.dart';
-import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 
@@ -26,17 +25,14 @@ class WideButton extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final mainColor = color ?? colorScheme.onPrimary;
 
-    return KeyboardActivatable(
-      wrapWithSemantics: false,
-      includeOuterTapTarget: false,
-      onActivate: onTap,
-      enabled: onTap != null,
+    // The ink well takes focus and handles Enter and Space itself. Merged, so
+    // the node that takes focus also carries the label.
+    return MergeSemantics(
       child: Semantics(
         sortKey: semanticsSortKey,
         button: true,
         enabled: onTap != null,
         label: text,
-        onTap: onTap,
         child: Material(
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(8),

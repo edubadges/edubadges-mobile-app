@@ -232,6 +232,15 @@
     "@generalNotifications": {
         "description": "Label for general notification settings toggle"
     },
+    "appVersion": "Versie {version}",
+    "@appVersion": {
+        "description": "Installed app version at the bottom of the account page, e.g. 1.0.4 (12)",
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
+    },
     "languageSettings": "Taal",
     "@languageSettings": {
         "description": "Section header on the account page for choosing the app language"
@@ -854,6 +863,17 @@
     "@unableToLoadSubtitle": {
         "description": "Subtitle message suggesting user to retry later after a loading failure"
     },
+    "badgeIssuerOfInstitution": "{issuer} van {institution}",
+    "@badgeIssuerOfInstitution": {
+        "placeholders": {
+            "issuer": {
+                "type": "String"
+            },
+            "institution": {
+                "type": "String"
+            }
+        }
+    },
     "failedToLoadTermsFrom": "Fout bij het laden van voorwaarden van {institution}",
     "@failedToLoadTermsFrom": {
         "placeholders": {
@@ -1292,6 +1312,7 @@
     "semanticsBack": "Terug",
     "semanticsClearSearch": "Zoekopdracht wissen",
     "semanticsClearFilter": "Filter wissen",
+    "semanticsOpenQualityAssurance": "Pagina over kwaliteitswaarborging openen",
     "semanticsBadgeImage": "Badge-afbeelding",
     "semanticsInstitutionLogo": "Logo van de instelling",
     "semanticsImageNotSupported": "Afbeelding niet beschikbaar",
@@ -1313,5 +1334,9 @@
     "readMore": "Lees meer",
     "readLess": "Minder lezen",
     "loginConnectionError": "We kunnen nu geen verbinding maken met de inlogdienst. Controleer je internetverbinding en probeer het opnieuw.",
-    "sessionExpiredMessage": "Je sessie is verlopen. Log opnieuw in."
+    "sessionExpiredMessage": "Je sessie is verlopen. Log opnieuw in.",
+    "pageTitleLogin": "Inloggen",
+    "pageTitleBadgeDetails": "Details van edubadge",
+    "pageTitleEnrollmentTerms": "Voorwaarden voor deze edubadge",
+    "catalogLevelFilterLabel": "Onderwijsniveau"
 }

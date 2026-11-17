@@ -1,10 +1,12 @@
 import 'package:collection/collection.dart';
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/error_message.dart';
 import 'package:edubadges/core/utils/route_exit_guard.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/outlined_button.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
@@ -346,11 +348,15 @@ class _CollectionFormPageState extends ConsumerState<CollectionFormPage> {
         leading: _isCreating
             ? const AppBackButton(fallbackLocation: RoutePath.collections)
             : null,
-        title: Text(
-          _isCreating ? l10n.newCollection : l10n.editCollection,
-          style: theme.textTheme.titleLarge?.copyWith(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeight.w700,
+        // The app bar makes its title a heading; this sets its level.
+        title: Semantics(
+          headingLevel: HeadingLevel.page,
+          child: Text(
+            _isCreating ? l10n.newCollection : l10n.editCollection,
+            style: theme.textTheme.titleLarge?.copyWith(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
         actions: [
@@ -402,11 +408,7 @@ class _CollectionFormPageState extends ConsumerState<CollectionFormPage> {
       // Loaded, but this collection no longer exists.
       return const Center(child: ErrorMessageWidget());
     }
-    return Center(
-      child: CircularProgressIndicator(
-        semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-      ),
-    );
+    return const Center(child: LoadingSpinner());
   }
 
   Widget _buildForm(BuildContext context) {
@@ -438,6 +440,7 @@ class _CollectionFormPageState extends ConsumerState<CollectionFormPage> {
                           const SizedBox(height: 32),
                           Semantics(
                             header: true,
+                            headingLevel: HeadingLevel.section,
                             child: Text(
                               l10n.badgesInCollection,
                               style: theme.textTheme.titleMedium?.copyWith(
@@ -517,13 +520,8 @@ class _CollectionFormPageState extends ConsumerState<CollectionFormPage> {
               onToggle: _toggleBadge,
             );
           },
-          loading: () => SliverToBoxAdapter(
-            child: Center(
-              child: CircularProgressIndicator(
-                semanticsLabel: l10n.semanticsLoading,
-              ),
-            ),
-          ),
+          loading: () =>
+              const SliverToBoxAdapter(child: Center(child: LoadingSpinner())),
           error: (error, stackTrace) => SliverToBoxAdapter(
             child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
           ),

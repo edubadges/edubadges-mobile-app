@@ -1,10 +1,11 @@
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/app_modal.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
-import 'package:edubadges/core/widgets/keyboard_activatable.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/badge_details/domain/enums/badge_details_scope.dart';
 import 'package:edubadges/features/badges_overview/domain/entities/badges_overview_state.dart';
@@ -15,9 +16,9 @@ import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_card.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_grid_sliver.dart';
 import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -81,7 +82,14 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.badgesOverviewTitle, style: textTheme.titleLarge),
+                Semantics(
+                  header: true,
+                  headingLevel: HeadingLevel.page,
+                  child: Text(
+                    l10n.badgesOverviewTitle,
+                    style: textTheme.titleLarge,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   l10n.badgesOverviewSubtitle,
@@ -149,22 +157,18 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
       final navigationEntityId = scope == BadgeDetailsScope.enrollment
           ? badge.badgeclass.entityId
           : badge.entityId;
-      void activate() => onActivate(badge);
+      // The card's own ink well takes focus and handles Enter and Space, so
+      // each badge is a single tab stop.
       return FocusTraversalOrder(
+        key: ValueKey('${keyPrefix}_${badge.entityId}'),
         order: NumericFocusOrder(index.toDouble()),
-        child: KeyboardActivatable(
-          key: ValueKey('${keyPrefix}_${badge.entityId}'),
-          wrapWithSemantics: false,
-          includeOuterTapTarget: false,
-          onActivate: activate,
-          child: _buildBadgeCard(
-            badge: badge,
-            scope: scope,
-            navigationEntityId: navigationEntityId,
-            onActivate: activate,
-            useGridTile: gridColumns > 0,
-            showClaimedGalleryOnOpen: showClaimedGalleryOnOpen,
-          ),
+        child: _buildBadgeCard(
+          badge: badge,
+          scope: scope,
+          navigationEntityId: navigationEntityId,
+          onActivate: () => onActivate(badge),
+          useGridTile: gridColumns > 0,
+          showClaimedGalleryOnOpen: showClaimedGalleryOnOpen,
         ),
       );
     }
@@ -174,28 +178,10 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
         padding: const EdgeInsets.symmetric(
           horizontal: LayoutConstants.badgeGridPadding,
         ),
-        sliver: SliverLayoutBuilder(
-          builder: (BuildContext context, SliverConstraints constraints) {
-            final double tileWidth = LayoutConstants.badgeGridTileWidth(
-              constraints.crossAxisExtent,
-              gridColumns,
-            );
-            return SliverGrid(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: gridColumns,
-                crossAxisSpacing: LayoutConstants.badgeGridSpacing,
-                mainAxisSpacing: LayoutConstants.badgeGridSpacing,
-                mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
-                  tileWidth,
-                  hasChips: true,
-                ),
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => buildItem(badges[index], index),
-                childCount: badges.length,
-              ),
-            );
-          },
+        sliver: BadgeGridSliver(
+          badges: badges,
+          columns: gridColumns,
+          itemBuilder: (context, index) => buildItem(badges[index], index),
         ),
       );
     }
@@ -521,11 +507,19 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
           appBar: isDesktopLayout
               ? null
               : AppBar(
-                  title: SvgPicture.asset(
-                    Assets.imageLogo,
-                    width: 131,
-                    height: 32,
-                    semanticsLabel: l10n.appName,
+                  // The logo stands in for the page heading the desktop
+                  // layout shows, so screen readers get that heading here too.
+                  title: Semantics(
+                    header: true,
+                    headingLevel: HeadingLevel.page,
+                    label: l10n.badgesOverviewTitle,
+                    child: ExcludeSemantics(
+                      child: SvgPicture.asset(
+                        Assets.imageLogo,
+                        width: 131,
+                        height: 32,
+                      ),
+                    ),
                   ),
                   centerTitle: true,
                   actions: [
@@ -539,11 +533,7 @@ class _BadgesOverviewPageState extends ConsumerState<BadgesOverviewPage>
           body: Builder(
             builder: (BuildContext context) {
               if (isBadgesLoading) {
-                return Center(
-                  child: CircularProgressIndicator(
-                    semanticsLabel: l10n.semanticsLoading,
-                  ),
-                );
+                return const Center(child: LoadingSpinner());
               }
               if (badgesError != null && badgesState == null) {
                 return Center(
