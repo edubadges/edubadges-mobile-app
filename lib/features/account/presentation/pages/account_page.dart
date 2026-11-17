@@ -1,9 +1,11 @@
 import 'package:app_settings/app_settings.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/branding.dart';
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/errors/failures.dart';
+import 'package:edubadges/core/network/network_providers.dart';
 import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/logger.dart';
 import 'package:edubadges/core/utils/platform_info.dart';
@@ -12,6 +14,7 @@ import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_modal.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/page_header.dart';
 import 'package:edubadges/core/widgets/sidebar_list_layout.dart';
@@ -93,8 +96,12 @@ class _AccountPageState extends ConsumerState<AccountPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // A node of its own: merged into the card, the whole section
+            // would be the heading, which the web exposes as a page banner.
             Semantics(
               header: true,
+              headingLevel: HeadingLevel.section,
+              container: true,
               identifier: semanticsIdentifier,
               child: Text(
                 title,
@@ -563,6 +570,8 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                 ),
                 child: Semantics(
                   header: true,
+                  headingLevel: HeadingLevel.subsection,
+                  container: true,
                   child: Text(
                     institutionName,
                     style: theme.textTheme.titleMedium?.copyWith(
@@ -665,6 +674,29 @@ class _AccountPageState extends ConsumerState<AccountPage> {
     );
   }
 
+  /// The installed version, so a user reporting a problem can tell support
+  /// which build they have. Same format as the feedback email. Shows nothing
+  /// while the version loads or if it cannot be read.
+  Widget _buildAppVersion(BuildContext context, WidgetRef ref) {
+    final packageInfo = ref.watch(packageInfoProvider).value;
+    if (packageInfo == null) return const SizedBox.shrink();
+
+    final theme = Theme.of(context);
+    final version = '${packageInfo.version} (${packageInfo.buildNumber})';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: _spacingMedium),
+      child: Center(
+        child: Text(
+          AppLocalizations.of(context).appVersion(version),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _showNotificationPermissionDeniedDialog(
     BuildContext context,
     WidgetRef ref,
@@ -760,6 +792,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
             children: [
               _buildAgreementsSection(ref, context, profile),
               _buildDeleteAccountSection(context, ref),
+              _buildAppVersion(context, ref),
             ],
           ),
         ),
@@ -820,10 +853,14 @@ class _AccountPageState extends ConsumerState<AccountPage> {
           appBar: useSidebarLayout
               ? null
               : AppBar(
-                  title: Text(
-                    l10n.tabAccount,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
+                  // The app bar makes its title a heading; this sets its level.
+                  title: Semantics(
+                    headingLevel: HeadingLevel.page,
+                    child: Text(
+                      l10n.tabAccount,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                   backgroundColor: colorScheme.surface,
@@ -871,10 +908,8 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                         useSidebarLayout: useSidebarLayout,
                       );
                     },
-                    loading: () => Center(
-                      child: CircularProgressIndicator(
-                        semanticsLabel: l10n.semanticsLoading,
-                      ),
+                    loading: () => const Center(
+                      child: LoadingSpinner(),
                     ),
                     error: (error, stack) => Center(
                       child: Column(

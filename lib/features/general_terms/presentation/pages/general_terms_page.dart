@@ -1,6 +1,8 @@
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/markdown_sanitizer.dart';
 import 'package:edubadges/core/widgets/focusable_section.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:edubadges/features/general_terms/presentation/providers/general_terms_providers.dart';
@@ -96,7 +98,11 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.generalAgreementTitle),
+        // The app bar makes its title a heading; this sets its level.
+        title: Semantics(
+          headingLevel: HeadingLevel.page,
+          child: Text(l10n.generalAgreementTitle),
+        ),
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
@@ -107,13 +113,7 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
             markdownAsync.when(
               data: (markdownContent) {
                 if (markdownContent.isEmpty) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      semanticsLabel: AppLocalizations.of(
-                        context,
-                      ).semanticsLoading,
-                    ),
-                  );
+                  return const Center(child: LoadingSpinner());
                 }
                 return SingleChildScrollView(
                   controller: _scrollController,
@@ -125,16 +125,17 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
                         p: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurface,
                         ),
+                        // The default link blue is 2.8:1 on the surface.
+                        a: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.primary,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
                   ),
                 );
               },
-              loading: () => Center(
-                child: CircularProgressIndicator(
-                  semanticsLabel: AppLocalizations.of(context).semanticsLoading,
-                ),
-              ),
+              loading: () => const Center(child: LoadingSpinner()),
               error: (error, stackTrace) => Center(
                 child: ErrorMessageWidget(error: error, stackTrace: stackTrace),
               ),

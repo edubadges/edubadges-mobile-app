@@ -9,6 +9,7 @@ import 'package:edubadges/core/utils/string.dart';
 import 'package:edubadges/core/widgets/adaptive_dialog.dart';
 import 'package:edubadges/core/widgets/app_network_image.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
+import 'package:edubadges/core/widgets/focus_ring_overlay.dart';
 import 'package:edubadges/core/widgets/keyboard_activatable.dart';
 import 'package:edubadges/core/widgets/svg_icon.dart';
 import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
@@ -21,6 +22,8 @@ import 'package:edubadges/shared/data/models/badge_class_model.dart';
 import 'package:edubadges/shared/data/models/badge_instance_model.dart';
 import 'package:edubadges/shared/domain/entities/badge_instance_entity.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_grid_tile.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_issuer_label.dart';
+import 'package:edubadges/shared/presentation/widgets/list_row_card.dart';
 import 'package:edubadges/shared/presentation/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,6 +33,8 @@ import 'package:intl/intl.dart';
 enum BadgeCardStyle { small, large, grid }
 
 class BadgeCard extends ConsumerWidget {
+  static const double _visibilityIconSize = 32;
+
   final BadgeInstanceEntity? instance;
   final BadgeClassModel badgeClass;
   final BadgeCardStyle style;
@@ -73,7 +78,9 @@ class BadgeCard extends ConsumerWidget {
     this.borderColor,
   });
 
-  int? getTimeInvestment() {
+  int? getTimeInvestment() => _timeInvestment(badgeClass);
+
+  static int? _timeInvestment(BadgeClassModel badgeClass) {
     final match = badgeClass.badgeclassextensionSet?.firstWhereOrNull(
       (element) => element.name == 'extensions:TimeInvestmentExtension',
     );
@@ -83,11 +90,16 @@ class BadgeCard extends ConsumerWidget {
     return match != null ? int.tryParse(match.value.toString()) : null;
   }
 
-  List<BadgeInfoChipData> _buildInfoChips(AppLocalizations l10n) {
-    final int? timeInvestment = getTimeInvestment();
-    final BadgeInstanceEntity? badgeInstance = instance;
-    final String? gradeAchieved = badgeInstance is BadgeInstanceModel
-        ? badgeInstance.gradeAchieved
+  /// The chips a card shows for [badgeClass], and for [instance] once awarded.
+  /// Grids use it to size their tiles before building them.
+  static List<BadgeInfoChipData> infoChips({
+    required BadgeInstanceEntity? instance,
+    required BadgeClassModel badgeClass,
+    required AppLocalizations l10n,
+  }) {
+    final int? timeInvestment = _timeInvestment(badgeClass);
+    final String? gradeAchieved = instance is BadgeInstanceModel
+        ? instance.gradeAchieved
         : null;
 
     return [
@@ -98,15 +110,40 @@ class BadgeCard extends ConsumerWidget {
         ),
       if (gradeAchieved != null)
         BadgeInfoChipData(icon: Assets.iconCollections, label: gradeAchieved),
-      if (badgeInstance?.issuedOn != null)
+      if (instance?.issuedOn != null)
         BadgeInfoChipData(
           icon: Assets.iconDate,
           label: DateFormat(
             'd MMM, yyyy',
             l10n.localeName,
-          ).format(badgeInstance!.issuedOn!),
+          ).format(instance!.issuedOn!),
         ),
     ];
+  }
+
+  List<BadgeInfoChipData> _buildInfoChips(AppLocalizations l10n) =>
+      infoChips(instance: instance, badgeClass: badgeClass, l10n: l10n);
+
+  /// The names and logo a card shows for [badgeClass]. Grids use it to size
+  /// their tiles before building them.
+  static BadgeIssuerNames issuerNames(
+    BadgeClassModel badgeClass,
+    String langCode,
+  ) {
+    final institution = badgeClass.issuer?.faculty?.institution;
+    return (
+      issuerName: getLocalizedString(
+        badgeClass.issuer?.nameDutch,
+        badgeClass.issuer?.nameEnglish,
+        langCode,
+      ),
+      institutionName: getLocalizedString(
+        institution?.nameDutch,
+        institution?.nameEnglish,
+        langCode,
+      ),
+      logoUrl: buildImageUrl(institution?.imageDutch),
+    );
   }
 
   void _openDetails(BuildContext context) {
@@ -130,13 +167,8 @@ class BadgeCard extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
     final institution = badgeClass.issuer?.faculty?.institution;
-    final langCode = ref.watch(appLanguageProvider).code;
-    final institutionName = getLocalizedString(
-      institution?.nameDutch,
-      institution?.nameEnglish,
-      langCode,
-    );
-    final institutionImageUrl = buildImageUrl(institution?.imageDutch);
+    final (:issuerName, :institutionName, logoUrl: institutionImageUrl) =
+        issuerNames(badgeClass, ref.watch(appLanguageProvider).code);
     final badgeImageUrl = buildImageUrl(badgeClass.image);
 
     if (style == BadgeCardStyle.grid) {
@@ -144,6 +176,7 @@ class BadgeCard extends ConsumerWidget {
       return BadgeGridTile(
         imageUrl: badgeImageUrl,
         name: badgeClass.name,
+        issuerName: issuerName,
         institutionName: institutionName,
         institutionImageUrl: institutionImageUrl,
         chips: _buildInfoChips(l10n),
@@ -159,78 +192,16 @@ class BadgeCard extends ConsumerWidget {
     }
 
     if (style == BadgeCardStyle.small) {
-      final cardContent = Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected
-                ? colorScheme.primary
-                : borderColor ?? colorScheme.outlineVariant,
-          ),
-          color: isSelected
-              ? colorScheme.surface
-              : colorScheme.surfaceContainer,
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            ExcludeSemantics(
-              child: AppNetworkImage(
-                imageUrl: badgeImageUrl ?? '',
-                height: 64,
-                width: 64,
-                errorBuilder: (context, error, stackTrace) {
-                  return SizedBox(
-                    height: 64,
-                    width: 64,
-                    child: Icon(
-                      Icons.image_not_supported_outlined,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: MergeSemantics(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      badgeClass.name,
-                      style: textTheme.titleSmall,
-                      maxLines: 2,
-                    ),
-                    Text(
-                      institutionName,
-                      style: textTheme.bodySmall,
-                      maxLines: 1,
-                      softWrap: false,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            if (trailing != null) ...[const SizedBox(width: 12), trailing!],
-          ],
-        ),
+      return ListRowCard(
+        imageUrl: badgeImageUrl,
+        title: badgeClass.name,
+        issuerName: issuerName,
+        institutionName: institutionName,
+        isSelected: isSelected,
+        borderColor: borderColor,
+        trailing: trailing,
+        onTap: onTapDisabled ? null : onTap,
       );
-
-      final effectiveOnTap = onTapDisabled ? null : onTap;
-      if (effectiveOnTap != null) {
-        return Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(20),
-            onTap: effectiveOnTap,
-            child: cardContent,
-          ),
-        );
-      }
-
-      return cardContent;
     }
 
     final Widget largeContent = Column(
@@ -270,7 +241,6 @@ class BadgeCard extends ConsumerWidget {
           style: textTheme.titleMedium,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          softWrap: false,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 12),
@@ -284,33 +254,12 @@ class BadgeCard extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 8),
-        if (institution != null)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (institutionImageUrl != null)
-                ExcludeSemantics(
-                  child: AppNetworkImage(
-                    imageUrl: institutionImageUrl,
-                    height: 25,
-                    width: 25,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const SizedBox(height: 25, width: 25);
-                    },
-                  ),
-                ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  institutionName,
-                  style: textTheme.bodySmall,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  softWrap: false,
-                ),
-              ),
-            ],
+        if (institution != null || issuerName.isNotEmpty)
+          BadgeIssuerLabel(
+            issuerName: issuerName,
+            institutionName: institutionName,
+            logoUrl: institutionImageUrl,
+            centered: true,
           ),
         if (instance == null &&
             badgeClass.userMayEnroll &&
@@ -319,24 +268,46 @@ class BadgeCard extends ConsumerWidget {
       ],
     );
 
-    return KeyboardActivatable(
-      enabled: !onTapDisabled,
-      onActivate: onTapDisabled ? null : () => _openDetails(context),
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
+    return FocusRingShape.rounded(
+      borderRadius: BorderRadius.circular(20),
+      child: KeyboardActivatable(
+        enabled: !onTapDisabled,
+        onActivate: onTapDisabled ? null : () => _openDetails(context),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSelected
+                  ? colorScheme.primary
+                  : colorScheme.outlineVariant,
+            ),
             color: isSelected
-                ? colorScheme.primary
-                : colorScheme.outlineVariant,
+                ? colorScheme.surface
+                : colorScheme.surfaceContainer,
           ),
-          color: isSelected
-              ? colorScheme.surface
-              : colorScheme.surfaceContainer,
+          padding: const EdgeInsets.all(16),
+          child: Stack(
+            children: [
+              largeContent,
+              // Shown on the badge itself, so its visibility reads at a glance.
+              if (instance != null)
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: SvgIcon(
+                    assetPath: instance!.public
+                        ? Assets.iconUnlocked
+                        : Assets.iconLocked,
+                    size: _visibilityIconSize,
+                    semanticLabel: instance!.public
+                        ? l10n.semanticsBadgeVisibilityPublic
+                        : l10n.semanticsBadgeVisibilityPrivate,
+                  ),
+                ),
+            ],
+          ),
         ),
-        padding: const EdgeInsets.all(16),
-        child: largeContent,
       ),
     );
   }

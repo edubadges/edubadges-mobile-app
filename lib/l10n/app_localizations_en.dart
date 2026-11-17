@@ -195,6 +195,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalNotifications => 'General notifications';
 
   @override
+  String appVersion(String version) {
+    return 'Version $version';
+  }
+
+  @override
   String get languageSettings => 'Language';
 
   @override
@@ -719,6 +724,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unableToLoadSubtitle => 'Please try again later';
 
   @override
+  String badgeIssuerOfInstitution(String issuer, String institution) {
+    return '$issuer of $institution';
+  }
+
+  @override
   String failedToLoadTermsFrom(String institution) {
     return 'Failed to load terms from $institution';
   }
@@ -1092,6 +1102,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get semanticsClearFilter => 'Clear filter';
 
   @override
+  String get semanticsOpenQualityAssurance => 'Open quality assurance page';
+
+  @override
   String get semanticsBadgeImage => 'Badge image';
 
   @override
@@ -1151,4 +1164,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get sessionExpiredMessage =>
       'Your session has expired. Please log in again.';
+
+  @override
+  String get pageTitleLogin => 'Log in';
+
+  @override
+  String get pageTitleBadgeDetails => 'Edubadge details';
+
+  @override
+  String get pageTitleEnrollmentTerms => 'Terms for this edubadge';
+
+  @override
+  String get catalogLevelFilterLabel => 'Education level';
 }

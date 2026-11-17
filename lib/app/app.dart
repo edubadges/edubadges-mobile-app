@@ -2,6 +2,7 @@ import 'package:edubadges/app/routes.dart';
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/app_language.dart';
+import 'package:edubadges/core/widgets/focus_ring_overlay.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/language_refresh_providers.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -47,6 +48,8 @@ class _AppState extends ConsumerState<App> {
       theme: AppThemes.themeForPlatform(AppThemes.lightTheme),
       highContrastTheme: AppThemes.themeForPlatform(AppThemes.highContrastTheme),
       routerConfig: router,
+      builder: (BuildContext context, Widget? child) =>
+          FocusRingOverlay(child: child ?? const SizedBox.shrink()),
       locale: language.locale,
       showSemanticsDebugger: false,
       localizationsDelegates: const [

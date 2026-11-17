@@ -1,3 +1,4 @@
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/widgets/app_back_button.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
@@ -47,13 +48,17 @@ class _ActionableContentLayoutState extends State<ActionableContentLayout> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: Text(
-          widget.title,
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w700,
+        // The app bar makes its title a heading; this sets its level.
+        title: Semantics(
+          headingLevel: HeadingLevel.page,
+          child: Text(
+            widget.title,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
           ),
-          textAlign: TextAlign.center,
-          maxLines: 2,
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,

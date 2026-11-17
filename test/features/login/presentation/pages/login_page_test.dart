@@ -9,8 +9,11 @@ import 'package:edubadges/features/login/presentation/providers/auto_login_provi
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../../../helpers/heading_levels.dart';
 
 class _FakeSuppressionStorage implements AutoLoginSuppressionStorage {
   _FakeSuppressionStorage(this.stored);
@@ -70,11 +73,15 @@ void main() {
     bool? loggedIn = false,
     bool loginFails = false,
     AutoLoginSuppression? suppression,
+    Size size = const Size(1280, 1000),
+    double textScale = 1,
   }) async {
-    // Tall enough for the landing page, which does not scroll.
+    // By default tall enough to show the whole landing page without scrolling.
     tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(1280, 1000);
+    tester.view.physicalSize = size;
     addTearDown(tester.view.reset);
+    tester.platformDispatcher.textScaleFactorTestValue = textScale;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
 
     auth = _FakeAuthNotifier(loggedIn: loggedIn, loginFails: loginFails);
     storage = _FakeSuppressionStorage(suppression);
@@ -202,6 +209,32 @@ void main() {
       expect(auth.loginCalls, 1);
     });
 
+    testWidgets(
+      'with the largest font size the login button can be scrolled to',
+      (tester) async {
+        // SURF-686: on a phone at the maximum text size the button fell off
+        // the bottom of a page that did not scroll.
+        await pumpLoginPage(
+          tester,
+          web: false,
+          size: const Size(390, 844),
+          textScale: 3.1,
+        );
+
+        expect(tester.takeException(), isNull);
+
+        await tester.scrollUntilVisible(
+          landing,
+          200,
+          scrollable: find.byType(Scrollable).last,
+        );
+        await tester.tap(landing);
+        await tester.pump();
+
+        expect(auth.loginCalls, 1);
+      },
+    );
+
     testWidgets('ignores a web suppression', (tester) async {
       await pumpLoginPage(
         tester,
@@ -211,6 +244,48 @@ void main() {
 
       expect(landing, findsOneWidget);
       expect(error, findsNothing);
+    });
+  });
+
+  group('accessibility', () {
+    testWidgets('names the logo for screen readers', (tester) async {
+      final SemanticsHandle semantics = tester.ensureSemantics();
+      await pumpLoginPage(tester, web: false);
+
+      expect(find.bySemanticsLabel(_l10n.appName), findsOneWidget);
+      // Named as text: an image node would sit inside the app bar.
+      final SemanticsNode logo = tester.getSemantics(
+        find.bySemanticsLabel(_l10n.appName),
+      );
+      expect(logo, isSemantics(isHeader: false, label: _l10n.appName));
+      expect(logo.childrenCount, 0);
+      semantics.dispose();
+    });
+
+    testWidgets('the login title is the only heading, at the page level', (
+      tester,
+    ) async {
+      final SemanticsHandle semantics = tester.ensureSemantics();
+      await pumpLoginPage(tester, web: false);
+
+      expect(headingLevels(tester), {_l10n.loginTitle: 1});
+      semantics.dispose();
+    });
+
+    testWidgets('reads the card text as text, not as a group label', (
+      tester,
+    ) async {
+      final SemanticsHandle semantics = tester.ensureSemantics();
+      await pumpLoginPage(tester, web: false);
+
+      // As the card's own label, the text wrapped the login button and
+      // reached the browser only as an aria-label of that group.
+      final SemanticsNode text = tester.getSemantics(
+        find.text(_l10n.loginCardText),
+      );
+      expect(text.getSemanticsData().label, _l10n.loginCardText);
+      expect(text.childrenCount, 0);
+      semantics.dispose();
     });
   });
 }

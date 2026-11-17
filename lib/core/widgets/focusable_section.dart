@@ -17,7 +17,7 @@ class FocusableSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return FocusableActionDetector(
       enabled: true,
-      autofocus: true,
+      autofocus: autofocus,
       child: Semantics(container: true, child: child),
     );
   }
