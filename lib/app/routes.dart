@@ -68,7 +68,16 @@ final appRouter = Provider<GoRouter>((ref) {
 
       // After login, decide where to go based on a priority system.
       if (loggedIn && isGoingToLogin) {
-        final loginStatus = ref.read(loginStatusProvider).asData?.value;
+        final loginStatusAsync = ref.read(loginStatusProvider);
+        // Stay on the login route, which shows a loader, until the API has
+        // said whether the user still has to accept the general terms. Going
+        // on without it sent new users to an empty home screen instead of
+        // the terms (SURF-687). The refresh listenable re-runs this redirect
+        // once the status has loaded.
+        if (loginStatusAsync.isLoading) {
+          return null;
+        }
+        final loginStatus = loginStatusAsync.asData?.value;
         final language = ref.read(appLanguageProvider);
 
         // Check if terms need to be agreed to.
@@ -77,9 +86,12 @@ final appRouter = Provider<GoRouter>((ref) {
             loginStatus,
             language.code,
           );
+          // Returned rather than navigated to with context.go: a go() from
+          // inside a redirect run by the refresh listenable lost to that very
+          // redirect, which kept the user on the login route. The terms route
+          // reads the URL from this cache.
           cacheGeneralTermsMarkdownUrl(ref, termsUrl);
-          context.go(RoutePath.generalTerms, extra: termsUrl);
-          return null;
+          return RoutePath.generalTerms;
         }
 
         // Check if notification permissions need to be asked.
@@ -133,7 +145,11 @@ final appRouter = Provider<GoRouter>((ref) {
           return null;
         },
         builder: (context, state) {
-          final url = state.extra as String;
+          final extra = state.extra;
+          // The login redirect cannot pass the URL as extra; it caches it.
+          final url = extra is String && extra.isNotEmpty
+              ? extra
+              : ref.read(generalTermsMarkdownUrlCacheProvider) ?? '';
           return PageTitle(
             title: (l10n) => l10n.generalAgreementTitle,
             child: DeferredWidget(

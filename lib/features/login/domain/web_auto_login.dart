@@ -37,22 +37,27 @@ enum LoginEntryMode {
 ///
 /// On web a logged-out visitor goes straight to eduID
 /// ([LoginEntryMode.startLogin]), unless [suppression] says that would be
-/// wrong; then the landing page is the fallback. The mobile app always shows
-/// the landing page.
+/// wrong; then the landing page is the fallback. The mobile app shows the
+/// landing page to a logged-out visitor.
+///
+/// A signed-in user only sees a loader: the router leaves the login route as
+/// soon as it knows where to go next.
 LoginEntryMode resolveLoginEntryMode({
   required bool autoLoginSupported,
   required AsyncValue<bool> auth,
   required AutoLoginSuppression? suppression,
 }) {
+  // Signed in: the router is about to leave the login route, on mobile too,
+  // once it knows where to go next.
+  if (auth.asData?.value ?? false) {
+    return LoginEntryMode.loading;
+  }
   if (!autoLoginSupported) {
     return LoginEntryMode.landing;
   }
   // The login could not even leave the app (it failed before the redirect).
   if (auth.hasError && !auth.isLoading) {
     return LoginEntryMode.landingWithError;
-  }
-  if (auth.asData?.value ?? false) {
-    return LoginEntryMode.loading;
   }
   switch (suppression) {
     case AutoLoginSuppression.loginFailed:

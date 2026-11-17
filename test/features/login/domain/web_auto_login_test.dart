@@ -84,7 +84,13 @@ void main() {
   });
 
   group('mobile', () {
-    test('always shows the landing page', () {
+    test('shows a signed-in user a loader while the router moves on', () {
+      // SURF-687: the router now waits on the login route for the login
+      // status; the landing page with its button would flash meanwhile.
+      expect(_mobile(loggedIn), LoginEntryMode.loading);
+    });
+
+    test('shows a logged-out visitor the landing page', () {
       expect(_mobile(loggedOut), LoginEntryMode.landing);
       expect(_mobile(resolving), LoginEntryMode.landing);
       expect(_mobile(failed), LoginEntryMode.landing);
