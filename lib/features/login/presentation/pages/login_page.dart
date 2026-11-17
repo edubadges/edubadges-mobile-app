@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/heading_level.dart';
@@ -22,6 +23,8 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
+  static const double _pagePadding = 24;
+
   final PageController _pageController = PageController(
     viewportFraction: 0.333,
     initialPage: 0,
@@ -142,144 +145,157 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         centerTitle: true,
       ),
       body: MaxWidthWrapper(
-        enableScrollbar: false,
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Semantics(
-                  header: true,
-                  headingLevel: HeadingLevel.page,
-                  child: Text(
-                    l10n.loginTitle,
-                    style: textTheme.titleLarge?.copyWith(
-                      color: colorScheme.onSurface,
+        // Scrolls once the content no longer fits, e.g. with a large font
+        // size, so the login button can always be reached (SURF-686).
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            primary: true,
+            padding: const EdgeInsets.all(_pagePadding),
+            child: ConstrainedBox(
+              // Keeps the content centred on screens where it does fit.
+              constraints: BoxConstraints(
+                minHeight: math.max(
+                  0,
+                  constraints.maxHeight - 2 * _pagePadding,
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Semantics(
+                    header: true,
+                    headingLevel: HeadingLevel.page,
+                    child: Text(
+                      l10n.loginTitle,
+                      style: textTheme.titleLarge?.copyWith(
+                        color: colorScheme.onSurface,
+                      ),
                     ),
                   ),
-                ),
 
-                const SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
-                Semantics(
-                  child: Text(
-                    l10n.loginSubtitle,
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurface,
+                  Semantics(
+                    child: Text(
+                      l10n.loginSubtitle,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                ),
 
-                const SizedBox(height: 40),
+                  const SizedBox(height: 40),
 
-                Card(
-                  // Not one merged node: the card's paragraphs are read as
-                  // text in their own right, also by the browser's "speak".
-                  semanticContainer: false,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  color: colorScheme.surfaceContainer,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 28),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 80,
-                          child: PageView.builder(
-                            controller: _pageController,
-                            physics: const NeverScrollableScrollPhysics(),
-                            padEnds: false,
-                            itemCount: _extendedImages.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Image.asset(
-                                      _extendedImages[index],
-                                      fit: BoxFit.contain,
-                                      width: 80,
-                                      height: 80,
-                                      excludeFromSemantics: true,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
+                  Card(
+                    // Not one merged node: the card's paragraphs are read as
+                    // text in their own right, also by the browser's "speak".
+                    semanticContainer: false,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    color: colorScheme.surfaceContainer,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 24, 20, 28),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 80,
+                            child: PageView.builder(
+                              controller: _pageController,
+                              physics: const NeverScrollableScrollPhysics(),
+                              padEnds: false,
+                              itemCount: _extendedImages.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Image.asset(
+                                        _extendedImages[index],
+                                        fit: BoxFit.contain,
+                                        width: 80,
+                                        height: 80,
+                                        excludeFromSemantics: true,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
                           ),
-                        ),
 
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                        Text(
-                          l10n.loginCardText,
-                          style: textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurface,
+                          Text(
+                            l10n.loginCardText,
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onSurface,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
 
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                        if (mode == LoginEntryMode.landingWithError) ...[
+                          if (mode == LoginEntryMode.landingWithError) ...[
+                            SizedBox(
+                              width: double.infinity,
+                              child: Semantics(
+                                liveRegion: true,
+                                child: Text(
+                                  l10n.loginFailedMessage,
+                                  style: textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.error,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+
                           SizedBox(
                             width: double.infinity,
-                            child: Semantics(
-                              liveRegion: true,
-                              child: Text(
-                                l10n.loginFailedMessage,
-                                style: textTheme.bodyMedium?.copyWith(
-                                  color: colorScheme.error,
+                            child: ElevatedButton(
+                              onPressed: authAsync.isLoading ? null : _login,
+                              style: ElevatedButton.styleFrom(
+                                // A minimum, not a fixed height: the label
+                                // grows with the font size.
+                                minimumSize: const Size.fromHeight(54),
+                                backgroundColor: colorScheme.primary,
+                                foregroundColor: colorScheme.onPrimary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
-                                textAlign: TextAlign.center,
+                                elevation: 0,
                               ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-
-                        SizedBox(
-                          width: double.infinity,
-                          height: 54,
-                          child: ElevatedButton(
-                            onPressed: authAsync.isLoading ? null : _login,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: colorScheme.primary,
-                              foregroundColor: colorScheme.onPrimary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              elevation: 0,
-                            ),
-                            child: authAsync.isLoading
-                                ? LoadingSpinner(
-                                    // The button is disabled, so pale, while
-                                    // it loads.
-                                    color: colorScheme.primary,
-                                  )
-                                : Text(
-                                    l10n.loginCardButton,
-                                    style: textTheme.labelLarge?.copyWith(
-                                      color: colorScheme.onPrimary,
+                              child: authAsync.isLoading
+                                  ? LoadingSpinner(
+                                      // The button is disabled, so pale, while
+                                      // it loads.
+                                      color: colorScheme.primary,
+                                    )
+                                  : Text(
+                                      l10n.loginCardButton,
+                                      style: textTheme.labelLarge?.copyWith(
+                                        color: colorScheme.onPrimary,
+                                      ),
                                     ),
-                                  ),
+                            ),
                           ),
-                        ),
 
-                        const LoginStatusMessage(),
-                      ],
+                          const LoginStatusMessage(),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

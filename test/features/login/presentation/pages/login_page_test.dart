@@ -73,11 +73,15 @@ void main() {
     bool? loggedIn = false,
     bool loginFails = false,
     AutoLoginSuppression? suppression,
+    Size size = const Size(1280, 1000),
+    double textScale = 1,
   }) async {
-    // Tall enough for the landing page, which does not scroll.
+    // By default tall enough to show the whole landing page without scrolling.
     tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(1280, 1000);
+    tester.view.physicalSize = size;
     addTearDown(tester.view.reset);
+    tester.platformDispatcher.textScaleFactorTestValue = textScale;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
 
     auth = _FakeAuthNotifier(loggedIn: loggedIn, loginFails: loginFails);
     storage = _FakeSuppressionStorage(suppression);
@@ -204,6 +208,32 @@ void main() {
 
       expect(auth.loginCalls, 1);
     });
+
+    testWidgets(
+      'with the largest font size the login button can be scrolled to',
+      (tester) async {
+        // SURF-686: on a phone at the maximum text size the button fell off
+        // the bottom of a page that did not scroll.
+        await pumpLoginPage(
+          tester,
+          web: false,
+          size: const Size(390, 844),
+          textScale: 3.1,
+        );
+
+        expect(tester.takeException(), isNull);
+
+        await tester.scrollUntilVisible(
+          landing,
+          200,
+          scrollable: find.byType(Scrollable).last,
+        );
+        await tester.tap(landing);
+        await tester.pump();
+
+        expect(auth.loginCalls, 1);
+      },
+    );
 
     testWidgets('ignores a web suppression', (tester) async {
       await pumpLoginPage(
