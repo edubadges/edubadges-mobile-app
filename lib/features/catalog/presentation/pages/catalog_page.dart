@@ -1,8 +1,10 @@
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/constants/route_path.dart';
+import 'package:edubadges/core/utils/app_language.dart';
 import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/app_snackbar.dart';
-import 'package:edubadges/core/widgets/keyboard_activatable.dart';
+import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/page_header.dart';
 import 'package:edubadges/core/widgets/sidebar_list_layout.dart';
@@ -13,8 +15,10 @@ import 'package:edubadges/features/catalog/presentation/providers/catalog_provid
 import 'package:edubadges/features/catalog/presentation/widgets/catalog_badge_card.dart';
 import 'package:edubadges/features/catalog/presentation/widgets/catalog_filters.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_grid_tile.dart';
 import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -113,6 +117,7 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
     required int gridColumns,
   }) {
     final displayBadges = state.displayBadges;
+    final String langCode = ref.watch(appLanguageProvider).code;
     final horizontalPadding = useSidebarLayout
         ? 0.0
         : LayoutConstants.sidebarListLayoutPadding;
@@ -154,13 +159,9 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
     );
     final Widget loadingSliver = SliverToBoxAdapter(
       child: state.hasMore
-          ? Padding(
-              padding: const EdgeInsets.all(16),
-              child: Center(
-                child: CircularProgressIndicator(
-                  semanticsLabel: l10n.semanticsLoading,
-                ),
-              ),
+          ? const Padding(
+              padding: EdgeInsets.all(16),
+              child: Center(child: LoadingSpinner()),
             )
           : const SizedBox.shrink(),
     );
@@ -169,24 +170,43 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
       return [
         SliverPadding(
           padding: padding,
-          sliver: SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: gridColumns,
-              crossAxisSpacing: LayoutConstants.badgeGridSpacing,
-              mainAxisSpacing: LayoutConstants.badgeGridSpacing,
-              // The catalog card carries no chips, so its height never depends
-              // on how wide the tiles end up.
-              mainAxisExtent: LayoutConstants.badgeGridTileHeightWithoutChips,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => _buildBadgeListItem(
-                context: context,
-                badge: displayBadges[index],
-                index: index,
-                useGridTile: true,
-              ),
-              childCount: displayBadges.length,
-            ),
+          sliver: SliverLayoutBuilder(
+            builder: (BuildContext context, SliverConstraints constraints) {
+              // The catalog card carries no chips, so only an issuer that
+              // wraps onto a second line makes the tiles taller.
+              final int issuerLines = BadgeGridTile.issuerLinesFor(
+                context,
+                displayBadges.map(
+                  (CatalogBadge badge) =>
+                      CatalogBadgeCard.issuerNames(badge, langCode),
+                ),
+                LayoutConstants.badgeGridTileWidth(
+                  constraints.crossAxisExtent,
+                  gridColumns,
+                ),
+              );
+              return SliverGrid(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: gridColumns,
+                  crossAxisSpacing: LayoutConstants.badgeGridSpacing,
+                  mainAxisSpacing: LayoutConstants.badgeGridSpacing,
+                  mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
+                    chipRows: 0,
+                    issuerLines: issuerLines,
+                    textScaler: MediaQuery.textScalerOf(context),
+                  ),
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => _buildBadgeListItem(
+                    context: context,
+                    badge: displayBadges[index],
+                    index: index,
+                    useGridTile: true,
+                  ),
+                  childCount: displayBadges.length,
+                ),
+              );
+            },
           ),
         ),
         loadingSliver,
@@ -227,18 +247,15 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
       );
     }
 
+    // The card's own ink well takes focus and handles Enter and Space, so
+    // each badge is a single tab stop.
     final Widget item = FocusTraversalOrder(
+      key: ValueKey('catalog_badge_${badge.entityId}'),
       order: NumericFocusOrder(index.toDouble()),
-      child: KeyboardActivatable(
-        key: ValueKey('catalog_badge_${badge.entityId}'),
-        wrapWithSemantics: false,
-        includeOuterTapTarget: false,
-        onActivate: openBadgeDetails,
-        child: CatalogBadgeCard(
-          badge: badge,
-          onTap: openBadgeDetails,
-          useGridTile: useGridTile,
-        ),
+      child: CatalogBadgeCard(
+        badge: badge,
+        onTap: openBadgeDetails,
+        useGridTile: useGridTile,
       ),
     );
 
@@ -310,7 +327,13 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
         return Scaffold(
           appBar: useSidebarLayout
               ? null
-              : AppBar(title: Text(l10n.tabCatalog)),
+              : AppBar(
+                  // The app bar makes its title a heading; this sets its level.
+                  title: Semantics(
+                    headingLevel: HeadingLevel.page,
+                    child: Text(l10n.tabCatalog),
+                  ),
+                ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -333,11 +356,7 @@ class _CatalogPageState extends ConsumerState<CatalogPage> {
                     child: Builder(
                       builder: (BuildContext context) {
                         if (isCatalogLoading) {
-                          return Center(
-                            child: CircularProgressIndicator(
-                              semanticsLabel: l10n.semanticsLoading,
-                            ),
-                          );
+                          return const Center(child: LoadingSpinner());
                         }
                         if (catalogError != null && catalogState == null) {
                           return Center(

@@ -1,5 +1,6 @@
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/branding.dart';
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
 import 'package:edubadges/core/utils/color.dart';
 import 'package:edubadges/core/utils/links.dart';
@@ -41,6 +42,10 @@ class BadgeVisibilityCard extends ConsumerStatefulWidget {
 class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
   late bool isPublic;
 
+  /// Whether the copy link button has copied the link. The button then says
+  /// so itself, so the confirmation stays readable after the snackbar is gone.
+  bool _linkCopied = false;
+
   @override
   void initState() {
     super.initState();
@@ -52,6 +57,10 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.badge.public != widget.badge.public) {
       isPublic = widget.badge.public;
+      _linkCopied = false;
+    }
+    if (oldWidget.badge.entityId != widget.badge.entityId) {
+      _linkCopied = false;
     }
   }
 
@@ -119,22 +128,30 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
             children: [
               if (hasCopyLinkOption)
                 WideButton(
-                  text: l10n.copyLink,
+                  text: _linkCopied ? l10n.linkCopied : l10n.copyLink,
                   icon: Icon(
-                    Icons.copy,
+                    _linkCopied ? Icons.check : Icons.copy,
                     size: 20,
                     color: getContrastingTextColor(colorScheme.primary),
                   ),
                   color: colorScheme.primary,
                   onTap: () async {
-                    final String link = createBadgeInstanceLink(
-                      widget.badge.entityId,
-                      ref,
-                    );
+                    final String entityId = widget.badge.entityId;
+                    final String link = createBadgeInstanceLink(entityId, ref);
 
-                    await Clipboard.setData(ClipboardData(text: link));
+                    try {
+                      await Clipboard.setData(ClipboardData(text: link));
+                    } catch (e) {
+                      if (context.mounted) {
+                        showAppSnackBar(context, l10n.somethingWentWrong);
+                      }
+                      return;
+                    }
 
-                    if (context.mounted) {
+                    // The card may show another badge by the time the write
+                    // finishes; only this badge's link was copied.
+                    if (context.mounted && widget.badge.entityId == entityId) {
+                      setState(() => _linkCopied = true);
                       showAppSnackBar(context, l10n.badgeLinkCopied);
                     }
                   },
@@ -172,6 +189,7 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                 children: [
                   Semantics(
                     header: true,
+                    headingLevel: HeadingLevel.section,
                     child: Text(
                       l10n.badgeVisibleAndShareable,
                       style: theme.textTheme.titleSmall?.copyWith(
@@ -179,13 +197,17 @@ class _BadgeVisibilityCardState extends ConsumerState<BadgeVisibilityCard> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    l10n.badgeVisibleAndShareableDescription,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                  // The explanation only helps while the badge is still
+                  // private; once public the share buttons take its place.
+                  if (!isPublic) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.badgeVisibleAndShareableDescription,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),

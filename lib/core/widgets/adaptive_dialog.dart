@@ -200,8 +200,11 @@ class AdaptiveDialog extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(24, 24, 24, contentWidget != null ? 0 : 20),
       child: DefaultTextStyle(
         style: titleTextStyle,
+        // Names the dialog for screen readers, and is its heading.
         child: Semantics(
           container: true,
+          header: true,
+          namesRoute: true,
           child: Text(title),
         ),
       ),

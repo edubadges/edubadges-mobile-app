@@ -100,8 +100,10 @@ extension BadgeClassExtensions on BadgeClassEntity {
     final value = match?.value;
     if (match?.value == null) return null;
 
-    // Handle int to double conversion when T expects a double
-    if (value is int && T.toString().contains('double')) {
+    // JSON decodes whole numbers as int. Compare types rather than
+    // T.toString(): release Wasm builds minify type names, and Wasm (unlike
+    // JS) rejects `5 as double`.
+    if (value is int && <T>[] is List<double?>) {
       return value.toDouble() as T;
     }
 

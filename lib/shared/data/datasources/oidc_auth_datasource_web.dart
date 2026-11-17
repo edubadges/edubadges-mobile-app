@@ -32,7 +32,7 @@ class OidcAuthDataSource {
   final List<String> _scopes = ['openid', 'eduid.nl/links', 'offline_access'];
 
   String get _issuer => EnvironmentConfig.instance.openIdUrl;
-  String get _clientId => EnvironmentConfig.instance.openIdClientId;
+  String get _clientId => EnvironmentConfig.instance.webOpenIdClientId;
   String get _authorizeEndpoint => '$_issuer/authorize';
   String get _tokenEndpoint => '$_issuer/token';
 

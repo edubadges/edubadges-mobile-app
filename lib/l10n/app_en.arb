@@ -232,6 +232,15 @@
     "@generalNotifications": {
         "description": "Label for general notification settings toggle"
     },
+    "appVersion": "Version {version}",
+    "@appVersion": {
+        "description": "Installed app version at the bottom of the account page, e.g. 1.0.4 (12)",
+        "placeholders": {
+            "version": {
+                "type": "String"
+            }
+        }
+    },
     "languageSettings": "Language",
     "@languageSettings": {
         "description": "Section header on the account page for choosing the app language"
@@ -854,6 +863,18 @@
     "@unableToLoadSubtitle": {
         "description": "Subtitle message suggesting user to retry later after a loading failure"
     },
+    "badgeIssuerOfInstitution": "{issuer} of {institution}",
+    "@badgeIssuerOfInstitution": {
+        "description": "Issuer and its institution on one line on the web badge tiles, e.g. 'Kennis & Informatie of Hogeschool Rotterdam'",
+        "placeholders": {
+            "issuer": {
+                "type": "String"
+            },
+            "institution": {
+                "type": "String"
+            }
+        }
+    },
     "failedToLoadTermsFrom": "Failed to load terms from {institution}",
     "@failedToLoadTermsFrom": {
         "placeholders": {
@@ -1304,6 +1325,10 @@
     "@semanticsClearFilter": {
         "description": "Accessibility label for clear filter button"
     },
+    "semanticsOpenQualityAssurance": "Open quality assurance page",
+    "@semanticsOpenQualityAssurance": {
+        "description": "Tooltip and accessibility label for the button that opens the badge's quality assurance web page"
+    },
     "semanticsBadgeImage": "Badge image",
     "@semanticsBadgeImage": {
         "description": "Accessibility label for badge image"
@@ -1379,5 +1404,21 @@
     "sessionExpiredMessage": "Your session has expired. Please log in again.",
     "@sessionExpiredMessage": {
         "description": "Shown on the login screen after the app logged the user out because their session (refresh token) was no longer valid"
+    },
+    "pageTitleLogin": "Log in",
+    "@pageTitleLogin": {
+        "description": "Browser tab title of the login page"
+    },
+    "pageTitleBadgeDetails": "Edubadge details",
+    "@pageTitleBadgeDetails": {
+        "description": "Browser tab title of a badge details page until the badge name has loaded"
+    },
+    "pageTitleEnrollmentTerms": "Terms for this edubadge",
+    "@pageTitleEnrollmentTerms": {
+        "description": "Browser tab title of the page with the terms to accept before requesting an edubadge"
+    },
+    "catalogLevelFilterLabel": "Education level",
+    "@catalogLevelFilterLabel": {
+        "description": "Accessible name of the group of education level filters (all, MBO, HBO, WO) in the catalog"
     }
 }

@@ -195,6 +195,11 @@ class AppLocalizationsNl extends AppLocalizations {
   String get generalNotifications => 'Algemene meldingen';
 
   @override
+  String appVersion(String version) {
+    return 'Versie $version';
+  }
+
+  @override
   String get languageSettings => 'Taal';
 
   @override
@@ -720,6 +725,11 @@ class AppLocalizationsNl extends AppLocalizations {
   String get unableToLoadSubtitle => 'Probeer het later opnieuw';
 
   @override
+  String badgeIssuerOfInstitution(String issuer, String institution) {
+    return '$issuer van $institution';
+  }
+
+  @override
   String failedToLoadTermsFrom(String institution) {
     return 'Fout bij het laden van voorwaarden van $institution';
   }
@@ -1097,6 +1107,10 @@ class AppLocalizationsNl extends AppLocalizations {
   String get semanticsClearFilter => 'Filter wissen';
 
   @override
+  String get semanticsOpenQualityAssurance =>
+      'Pagina over kwaliteitswaarborging openen';
+
+  @override
   String get semanticsBadgeImage => 'Badge-afbeelding';
 
   @override
@@ -1155,4 +1169,16 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get sessionExpiredMessage => 'Je sessie is verlopen. Log opnieuw in.';
+
+  @override
+  String get pageTitleLogin => 'Inloggen';
+
+  @override
+  String get pageTitleBadgeDetails => 'Details van edubadge';
+
+  @override
+  String get pageTitleEnrollmentTerms => 'Voorwaarden voor deze edubadge';
+
+  @override
+  String get catalogLevelFilterLabel => 'Onderwijsniveau';
 }

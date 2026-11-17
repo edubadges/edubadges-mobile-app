@@ -1,4 +1,5 @@
 import 'package:edubadges/core/constants/layout_constants.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 int _overviewColumns(double width) => LayoutConstants.badgeGridColumnCount(
@@ -56,39 +57,56 @@ void main() {
   group('badgeGridTileHeightFor', () {
     const double padding = 16 * 2;
     const double image = 100;
-    const double name = 72;
+    const double name = 48;
     const double chipRow = 32;
-    const double institution = 22;
+    const double issuer = LayoutConstants.badgeIssuerLogoSize;
     const double gap = 8;
 
     test('drops the chip row when there are no chips', () {
       expect(
-        LayoutConstants.badgeGridTileHeightFor(1000, hasChips: false),
-        padding + image + name + gap + institution,
-      );
-      expect(
-        LayoutConstants.badgeGridTileHeightFor(200, hasChips: false),
-        LayoutConstants.badgeGridTileHeightWithoutChips,
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 0, issuerLines: 1),
+        padding + image + gap + name + gap + issuer,
       );
     });
 
-    test('matches the design when the chips fit on one row', () {
+    test('matches the design with one chip row', () {
       expect(
-        LayoutConstants.badgeGridTileHeightFor(
-          LayoutConstants.badgeGridSingleChipRowMinTileWidth,
-          hasChips: true,
-        ),
-        padding + image + name + gap * 2 + chipRow + institution,
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 1, issuerLines: 1),
+        padding + image + gap + name + gap * 2 + chipRow + issuer,
       );
     });
 
-    test('reserves a second chip row on narrower tiles', () {
+    test('adds a row and its gap per extra chip row', () {
+      expect(
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 2, issuerLines: 1),
+        padding + image + gap + name + gap * 3 + chipRow * 2 + issuer,
+      );
+    });
+
+    // SURF-679: a name that does not fit wraps onto a second issuer line
+    // instead of being cut off. Two lines fit beside the logo (SURF-685), so
+    // the tile only grows once enlarged text outgrows it.
+    test('fits two issuer lines in the logo height', () {
+      expect(
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 1, issuerLines: 2),
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 1, issuerLines: 1),
+      );
+    });
+
+    test('grows past the logo height with enlarged text', () {
+      const double issuerLine = 16;
       expect(
         LayoutConstants.badgeGridTileHeightFor(
-          LayoutConstants.badgeGridSingleChipRowMinTileWidth - 1,
-          hasChips: true,
-        ),
-        padding + image + name + gap * 3 + chipRow * 2 + institution,
+              chipRows: 0,
+              issuerLines: 2,
+              textScaler: const TextScaler.linear(2),
+            ) -
+            LayoutConstants.badgeGridTileHeightFor(
+              chipRows: 0,
+              issuerLines: 1,
+              textScaler: const TextScaler.linear(2),
+            ),
+        issuerLine * 2 * 2 - LayoutConstants.badgeIssuerLogoSize,
       );
     });
   });

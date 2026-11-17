@@ -1,4 +1,5 @@
 import 'package:edubadges/core/constants/assets.dart';
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:edubadges/core/constants/route_path.dart';
 import 'package:edubadges/core/utils/platform_info.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
@@ -69,6 +70,7 @@ class NotificationPermissionPage extends ConsumerWidget {
                     children: [
                       Semantics(
                         header: true,
+                        headingLevel: HeadingLevel.page,
                         child: Text(
                           l10n.notificationPermissionsTitle,
                           style: textTheme.headlineLarge?.copyWith(

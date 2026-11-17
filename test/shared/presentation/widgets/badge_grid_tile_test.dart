@@ -1,17 +1,23 @@
 import 'package:edubadges/app/themes.dart';
 import 'package:edubadges/core/constants/assets.dart';
 import 'package:edubadges/core/constants/layout_constants.dart';
+import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/widgets/badge_grid_tile.dart';
+import 'package:edubadges/shared/presentation/widgets/badge_issuer_label.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../../helpers/app_fonts.dart';
 
 const List<BadgeInfoChipData> _chips = <BadgeInfoChipData>[
   BadgeInfoChipData(icon: Assets.iconTimeInvestment, label: '480 uur'),
   BadgeInfoChipData(icon: Assets.iconCollections, label: '8,0'),
   BadgeInfoChipData(icon: Assets.iconDate, label: '22 aug, 2025'),
 ];
+
+const String _issuerLine = 'Kennis & Informatie van Hogeschool Rotterdam';
 
 const String _longName =
     'Desk Research | Advanced Beginner Desk Research for Applied Sciences '
@@ -38,50 +44,89 @@ Future<void> _withDesktopPlatform(Future<void> Function() runTest) async {
   }
 }
 
-Future<void> _pumpGrid(
+/// Pumps a grid sized the way the badges overview sizes it, and returns the
+/// chip rows and issuer lines it reserved.
+Future<({int chipRows, int issuerLines})> _pumpGrid(
   WidgetTester tester, {
   required double gridWidth,
   required int columns,
   String name = 'English Grammar B1+',
+  String issuerName = 'Kennis & Informatie',
   List<BadgeInfoChipData> chips = _chips,
+  double textScale = 1,
 }) async {
+  // Real badges carry a logo, which makes the issuer row taller than one line
+  // of text alone.
+  const String logoUrl = 'https://example.org/logo.png';
+  int chipRows = 0;
+  int issuerLines = 0;
   await tester.pumpWidget(
     MaterialApp(
       theme: AppThemes.lightTheme,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('nl'),
+      // Text enlarged in the browser settings, which Flutter web reads as the
+      // text scale.
+      builder: (BuildContext context, Widget? child) => MediaQuery(
+        data: MediaQuery.of(
+          context,
+        ).copyWith(textScaler: TextScaler.linear(textScale)),
+        child: child!,
+      ),
       home: Scaffold(
         body: Center(
           child: SizedBox(
             width: gridWidth,
             height: 800,
-            child: CustomScrollView(
-              slivers: [
-                SliverGrid(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: columns,
-                    crossAxisSpacing: LayoutConstants.badgeGridSpacing,
-                    mainAxisSpacing: LayoutConstants.badgeGridSpacing,
-                    mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
-                      LayoutConstants.badgeGridTileWidth(gridWidth, columns),
-                      hasChips: chips.isNotEmpty,
-                    ),
+            child: Builder(
+              builder: (BuildContext context) {
+                final double tileWidth = LayoutConstants.badgeGridTileWidth(
+                  gridWidth,
+                  columns,
+                );
+                chipRows = BadgeGridTile.chipRowsFor(
+                  context,
+                  <List<BadgeInfoChipData>>[chips],
+                  tileWidth,
+                );
+                issuerLines = BadgeGridTile.issuerLinesFor(context, [
+                  (
+                    issuerName: issuerName,
+                    institutionName: 'Hogeschool Rotterdam',
+                    logoUrl: logoUrl,
                   ),
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) => BadgeGridTile(
-                      name: name,
-                      institutionName:
-                          'Kennis & Informatie van Hogeschool Rotterdam',
-                      // Real badges carry a logo, which makes the institution
-                      // row taller than its text alone.
-                      institutionImageUrl: 'https://example.org/logo.png',
-                      chips: chips,
-                      isPublic: index.isEven,
-                      visibilityLabel: 'Badge is public',
-                      onTap: () {},
+                ], tileWidth);
+                return CustomScrollView(
+                  slivers: [
+                    SliverGrid(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: columns,
+                        crossAxisSpacing: LayoutConstants.badgeGridSpacing,
+                        mainAxisSpacing: LayoutConstants.badgeGridSpacing,
+                        mainAxisExtent: LayoutConstants.badgeGridTileHeightFor(
+                          chipRows: chipRows,
+                          issuerLines: issuerLines,
+                          textScaler: MediaQuery.textScalerOf(context),
+                        ),
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) => BadgeGridTile(
+                          name: name,
+                          issuerName: issuerName,
+                          institutionName: 'Hogeschool Rotterdam',
+                          institutionImageUrl: logoUrl,
+                          chips: chips,
+                          isPublic: index.isEven,
+                          visibilityLabel: 'Badge is public',
+                          onTap: () {},
+                        ),
+                        childCount: 6,
+                      ),
                     ),
-                    childCount: 6,
-                  ),
-                ),
-              ],
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -89,34 +134,13 @@ Future<void> _pumpGrid(
     ),
   );
   await tester.pumpAndSettle();
-}
-
-/// The default test font is a uniform-width placeholder, which measures chips
-/// and names very differently from production and hides real wrapping bugs.
-Future<void> _loadAppFonts() async {
-  const Map<String, List<String>> families = <String, List<String>>{
-    'Nunito': <String>[
-      'assets/fonts/Nunito-Regular.ttf',
-      'assets/fonts/Nunito-Bold.ttf',
-    ],
-    'SourceSans3': <String>[
-      'assets/fonts/SourceSans3-Regular.ttf',
-      'assets/fonts/SourceSans3-SemiBold.ttf',
-    ],
-  };
-  for (final MapEntry<String, List<String>> family in families.entries) {
-    final FontLoader loader = FontLoader(family.key);
-    for (final String path in family.value) {
-      loader.addFont(rootBundle.load(path));
-    }
-    await loader.load();
-  }
+  return (chipRows: chipRows, issuerLines: issuerLines);
 }
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  setUpAll(_loadAppFonts);
+  setUpAll(loadAppFonts);
 
   for (final double browserWidth in <double>[840, 1024, 1440, 1728]) {
     testWidgets('lays out without overflow at ${browserWidth.toInt()}px', (
@@ -135,7 +159,11 @@ void main() {
         );
         expect(columns, greaterThanOrEqualTo(2));
 
-        await _pumpGrid(tester, gridWidth: gridWidth, columns: columns);
+        final (:chipRows, :issuerLines) = await _pumpGrid(
+          tester,
+          gridWidth: gridWidth,
+          columns: columns,
+        );
 
         expect(tester.takeException(), isNull);
 
@@ -148,8 +176,8 @@ void main() {
         expect(
           firstRow.last.height,
           LayoutConstants.badgeGridTileHeightFor(
-            firstRow.last.width,
-            hasChips: true,
+            chipRows: chipRows,
+            issuerLines: issuerLines,
           ),
         );
 
@@ -168,6 +196,53 @@ void main() {
       });
     });
   }
+
+  testWidgets('keeps names, chips and issuers whole at 200% text', (
+    WidgetTester tester,
+  ) async {
+    await _withDesktopPlatform(() async {
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final double gridWidth = _overviewGridWidth(1440);
+      await _pumpGrid(
+        tester,
+        gridWidth: gridWidth,
+        columns: LayoutConstants.badgeGridColumnCount(
+          gridWidth,
+          maxColumns: LayoutConstants.badgesOverviewGridMaxColumns,
+        ),
+        textScale: 2,
+      );
+
+      expect(tester.takeException(), isNull);
+
+      // Both name lines fit their box instead of the second being cut off.
+      final RenderParagraph name = tester.renderObject<RenderParagraph>(
+        find.text('English Grammar B1+').first,
+      );
+      expect(
+        name.size.height,
+        greaterThanOrEqualTo(name.getMinIntrinsicHeight(name.size.width) - 0.5),
+      );
+
+      final Rect tile = tester.getRect(find.byType(BadgeGridTile).first);
+      final Rect chipRegion = tester.getRect(find.byType(OverflowBox).first);
+      for (final BadgeInfoChipData chip in _chips) {
+        expect(
+          tester.getRect(find.text(chip.label).first).bottom,
+          lessThanOrEqualTo(chipRegion.bottom),
+          reason: 'chip "${chip.label}" is clipped',
+        );
+      }
+      expect(
+        tester.getRect(find.byType(BadgeIssuerLabel).first).bottom,
+        lessThanOrEqualTo(tile.bottom),
+      );
+    });
+  });
 
   test('the grid widens the tiles as the window grows', () {
     int columns(double browserWidth) => LayoutConstants.badgeGridColumnCount(
@@ -233,12 +308,69 @@ void main() {
       expect(tester.takeException(), isNull);
 
       final Rect tile = tester.getRect(find.byType(BadgeGridTile).first);
-      expect(tile.height, LayoutConstants.badgeGridTileHeightWithoutChips);
-
-      final Rect institution = tester.getRect(
-        find.text('Kennis & Informatie van Hogeschool Rotterdam').first,
+      expect(
+        tile.height,
+        LayoutConstants.badgeGridTileHeightFor(chipRows: 0, issuerLines: 1),
       );
-      expect(institution.bottom, lessThanOrEqualTo(tile.bottom - 16));
+
+      final Rect issuer = tester.getRect(find.text(_issuerLine).first);
+      expect(issuer.bottom, lessThanOrEqualTo(tile.bottom - 16));
+    });
+  });
+
+  testWidgets('keeps an issuer and institution that fit on one line', (
+    WidgetTester tester,
+  ) async {
+    await _withDesktopPlatform(() async {
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await _pumpGrid(tester, gridWidth: _overviewGridWidth(1440), columns: 3);
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Hogeschool Rotterdam'), findsNothing);
+      final Rect line = tester.getRect(find.text(_issuerLine).first);
+      expect(line.height, lessThanOrEqualTo(BadgeIssuerLabel.logoSize));
+    });
+  });
+
+  // SURF-679: a name that does not fit on one line wraps onto a second one
+  // instead of being cut off, and the grid makes room for it.
+  testWidgets('wraps a long issuer onto a second line', (
+    WidgetTester tester,
+  ) async {
+    await _withDesktopPlatform(() async {
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      const String issuer = 'Erasmus School of Social and Behavioural Sciences';
+      final (:chipRows, :issuerLines) = await _pumpGrid(
+        tester,
+        gridWidth: _overviewGridWidth(1440),
+        columns: 3,
+        issuerName: issuer,
+      );
+
+      expect(issuerLines, 2);
+      expect(tester.takeException(), isNull);
+
+      final Rect tile = tester.getRect(find.byType(BadgeGridTile).first);
+      expect(
+        tile.height,
+        LayoutConstants.badgeGridTileHeightFor(
+          chipRows: chipRows,
+          issuerLines: 2,
+        ),
+      );
+      final Rect label = tester.getRect(
+        find.text('$issuer van Hogeschool Rotterdam').first,
+      );
+      expect(label.height, 32);
+      expect(label.bottom, lessThanOrEqualTo(tile.bottom - 16));
     });
   });
 
@@ -267,5 +399,114 @@ void main() {
 
       expect(tester.takeException(), isNull);
     });
+  });
+
+  // SURF-680: a fixed width threshold reserved a second chip row on every
+  // tile narrower than 380, leaving a blank band when the chips fit on one.
+  testWidgets('reserves no chip row the badges do not need', (
+    WidgetTester tester,
+  ) async {
+    await _withDesktopPlatform(() async {
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      const List<BadgeInfoChipData> chips = <BadgeInfoChipData>[
+        BadgeInfoChipData(icon: Assets.iconCollections, label: '9'),
+        BadgeInfoChipData(icon: Assets.iconDate, label: '16 Oct, 2026'),
+      ];
+      final int chipRows = (await _pumpGrid(
+        tester,
+        gridWidth: _overviewGridWidth(1440),
+        columns: 3,
+        chips: chips,
+      )).chipRows;
+
+      expect(chipRows, 1);
+      expect(tester.takeException(), isNull);
+
+      final Rect date = tester.getRect(find.text('16 Oct, 2026').first);
+      final Rect issuer = tester.getRect(find.text(_issuerLine).first);
+      // The chip row's own 6 padding plus the 8 gap above the issuer.
+      expect(issuer.top - date.bottom, lessThan(32));
+    });
+  });
+
+  testWidgets('counts the rows the chips wrap onto', (
+    WidgetTester tester,
+  ) async {
+    late BuildContext context;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppThemes.lightTheme,
+        home: Builder(
+          builder: (BuildContext builderContext) {
+            context = builderContext;
+            return const SizedBox();
+          },
+        ),
+      ),
+    );
+
+    expect(BadgeGridTile.chipRowsFor(context, const [_chips], 500), 1);
+    expect(BadgeGridTile.chipRowsFor(context, const [_chips], 300), 2);
+    expect(
+      BadgeGridTile.chipRowsFor(context, const [<BadgeInfoChipData>[]], 300),
+      0,
+    );
+    // The grid takes the badge that needs the most rows.
+    expect(
+      BadgeGridTile.chipRowsFor(context, const [
+        <BadgeInfoChipData>[],
+        _chips,
+      ], 300),
+      2,
+    );
+  });
+
+  testWidgets('a tappable tile is one button named after the badge first', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle semantics = tester.ensureSemantics();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppThemes.lightTheme,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('en'),
+        home: Scaffold(
+          body: SizedBox(
+            width: 300,
+            height: LayoutConstants.badgeGridTileHeightFor(
+              chipRows: 1,
+              issuerLines: 1,
+            ),
+            child: BadgeGridTile(
+              name: 'English Grammar B1+',
+              issuerName: 'Kennis & Informatie',
+              institutionName: 'Hogeschool Rotterdam',
+              chips: _chips.take(1).toList(),
+              isPublic: false,
+              visibilityLabel: 'Badge is private',
+              onTap: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // The node that takes keyboard focus used to be named by the shield alone.
+    final SemanticsNode node = tester.getSemantics(find.byType(InkWell));
+    expect(
+      node,
+      isSemantics(isButton: true, isFocusable: true, hasTapAction: true),
+    );
+    final String label = node.getSemanticsData().label;
+    expect(label, startsWith('English Grammar B1+'));
+    expect(label, contains('Hogeschool Rotterdam'));
+    expect(label, endsWith('Badge is private'));
+    semantics.dispose();
   });
 }

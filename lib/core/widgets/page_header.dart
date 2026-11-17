@@ -1,3 +1,4 @@
+import 'package:edubadges/core/constants/heading_level.dart';
 import 'package:flutter/material.dart';
 
 class PageHeader extends StatelessWidget {
@@ -30,6 +31,7 @@ class PageHeader extends StatelessWidget {
               children: [
                 Semantics(
                   header: true,
+                  headingLevel: HeadingLevel.page,
                   child: Text(title, style: textTheme.titleLarge),
                 ),
                 if (subtitle != null) ...[
