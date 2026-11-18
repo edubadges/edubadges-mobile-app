@@ -52,7 +52,7 @@ LoginTermsAgreementRequired _$LoginTermsAgreementRequiredFromJson(
       ),
       termsAgreed: $checkedConvert('terms_agreed', (v) => v as bool? ?? false),
       termsAgreementSet: $checkedConvert(
-        'terms_agreement_set',
+        'termsagreement_set',
         (v) =>
             (v as List<dynamic>?)
                 ?.map(
@@ -71,7 +71,7 @@ LoginTermsAgreementRequired _$LoginTermsAgreementRequiredFromJson(
     'validatedName': 'validated_name',
     'schacHomes': 'schac_homes',
     'termsAgreed': 'terms_agreed',
-    'termsAgreementSet': 'terms_agreement_set',
+    'termsAgreementSet': 'termsagreement_set',
   },
 );
 
@@ -84,7 +84,7 @@ Map<String, dynamic> _$LoginTermsAgreementRequiredToJson(
   'validated_name': instance.validatedName,
   'schac_homes': instance.schacHomes,
   'terms_agreed': instance.termsAgreed,
-  'terms_agreement_set': instance.termsAgreementSet
+  'termsagreement_set': instance.termsAgreementSet
       .map((e) => e.toJson())
       .toList(),
 };
@@ -107,7 +107,7 @@ LoginUser _$LoginUserFromJson(Map<String, dynamic> json) => $checkedCreate(
       ),
       termsAgreed: $checkedConvert('terms_agreed', (v) => v as bool? ?? true),
       termsAgreementSet: $checkedConvert(
-        'terms_agreement_set',
+        'termsagreement_set',
         (v) =>
             (v as List<dynamic>?)
                 ?.map(
@@ -126,7 +126,7 @@ LoginUser _$LoginUserFromJson(Map<String, dynamic> json) => $checkedCreate(
     'validatedName': 'validated_name',
     'schacHomes': 'schac_homes',
     'termsAgreed': 'terms_agreed',
-    'termsAgreementSet': 'terms_agreement_set',
+    'termsAgreementSet': 'termsagreement_set',
   },
 );
 
@@ -137,7 +137,7 @@ Map<String, dynamic> _$LoginUserToJson(LoginUser instance) => <String, dynamic>{
   'validated_name': instance.validatedName,
   'schac_homes': instance.schacHomes,
   'terms_agreed': instance.termsAgreed,
-  'terms_agreement_set': instance.termsAgreementSet
+  'termsagreement_set': instance.termsAgreementSet
       .map((e) => e.toJson())
       .toList(),
 };
