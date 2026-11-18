@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:dartz/dartz.dart';
 import 'package:edubadges/core/errors/failures.dart';
+import 'package:edubadges/features/login/data/datasources/login_remote_datasource.dart';
+import 'package:edubadges/features/login/data/models/login_user_status.dart';
 import 'package:edubadges/features/login/domain/repositories/login_repository.dart';
 import 'package:edubadges/features/login/presentation/providers/login_providers.dart';
 import 'package:edubadges/shared/data/datasources/notification_permission_local_datasource.dart';
@@ -33,6 +35,16 @@ class _FakeLoginRepository implements LoginRepository {
   Future<Either<Failure, void>> logout() async {
     loggedIn = false;
     return const Right(null);
+  }
+}
+
+class _FakeLoginRemote implements LoginRemoteDataSource {
+  int calls = 0;
+
+  @override
+  Future<LoginUserAuthStatus> login() async {
+    calls++;
+    return parseUserAuthStatus({'terms_agreed': false});
   }
 }
 
@@ -70,10 +82,13 @@ void main() {
   ProviderContainer createContainer(
     _FakeLoginRepository repository, {
     bool failToClearLocalState = false,
+    LoginRemoteDataSource? loginRemote,
   }) {
     final container = ProviderContainer(
       overrides: [
         loginRepositoryProvider.overrideWithValue(repository),
+        if (loginRemote != null)
+          loginRemoteDataSourceProvider.overrideWithValue(loginRemote),
         sessionExpiredEventsProvider.overrideWithValue(sessionExpired.stream),
         notificationPermissionLocalDataSourceProvider.overrideWithValue(
           _FakeNotificationPermissionLocalDataSource(
@@ -89,6 +104,30 @@ void main() {
   setUp(() {
     sessionExpired = StreamController<void>.broadcast();
     addTearDown(sessionExpired.close);
+  });
+
+  // SURF-687: the router listens to the login status, which follows the
+  // session. Clearing it from login() was a circular dependency that made
+  // the login button do nothing.
+  test('logs in while the router listens to the login status', () async {
+    final remote = _FakeLoginRemote();
+    final container = createContainer(
+      _FakeLoginRepository(loggedIn: false),
+      loginRemote: remote,
+    );
+    container.listen(loginStatusProvider, (_, _) {});
+    await container.read(authProvider.future);
+    expect(await container.read(loginStatusProvider.future), isNull);
+    expect(remote.calls, 0);
+
+    final bool loggedIn = await container.read(authProvider.notifier).login();
+
+    expect(loggedIn, isTrue);
+    expect(
+      await container.read(loginStatusProvider.future),
+      isA<LoginTermsAgreementRequired>(),
+    );
+    expect(remote.calls, 1);
   });
 
   test('returns to the login screen when the session expires', () async {
