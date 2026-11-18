@@ -77,6 +77,12 @@ final appRouter = Provider<GoRouter>((ref) {
         if (loginStatusAsync.isLoading) {
           return null;
         }
+        // Without the status the app cannot know whether the terms still need
+        // accepting, so it stays here too; the login page shows the error and
+        // a button that asks for the status again.
+        if (loginStatusAsync.hasError) {
+          return null;
+        }
         final loginStatus = loginStatusAsync.asData?.value;
         final language = ref.read(appLanguageProvider);
 

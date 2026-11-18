@@ -25,15 +25,16 @@ class _SignedOut extends AuthNotifier {
   Future<bool> build() async => false;
 }
 
-/// `/login` that answers only when the test completes [response].
+/// `/login` that answers each call only when the test completes it.
 class _FakeLoginRemote implements LoginRemoteDataSource {
-  final Completer<LoginUserAuthStatus> response =
-      Completer<LoginUserAuthStatus>();
-  int calls = 0;
+  final List<Completer<LoginUserAuthStatus>> responses = [];
+
+  int get calls => responses.length;
 
   @override
   Future<LoginUserAuthStatus> login() {
-    calls++;
+    final response = Completer<LoginUserAuthStatus>();
+    responses.add(response);
     return response.future;
   }
 }
@@ -58,6 +59,8 @@ final LoginUserAuthStatus _termsRequired = parseUserAuthStatus({
   ],
 });
 
+final AppLocalizations _l10n = lookupAppLocalizations(const Locale('en'));
+
 void main() {
   late _FakeLoginRemote remote;
   late GoRouter router;
@@ -65,9 +68,16 @@ void main() {
   late List<String> termsLoaded;
 
   Future<void> pumpApp(WidgetTester tester) async {
+    // Tall enough to show the whole login page without scrolling.
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(1280, 1000);
+    addTearDown(tester.view.reset);
     remote = _FakeLoginRemote();
     termsLoaded = <String>[];
     container = ProviderContainer(
+      // Riverpod retries a failed request by itself; the tests decide when
+      // `/login` answers instead.
+      retry: (_, _) => null,
       overrides: [
         authProvider.overrideWith(_SignedIn.new),
         loginRemoteDataSourceProvider.overrideWithValue(remote),
@@ -109,13 +119,39 @@ void main() {
     expect(remote.calls, 1);
     expect(router.state.uri.path, RoutePath.login);
 
-    remote.response.complete(_termsRequired);
+    remote.responses.single.complete(_termsRequired);
     for (var i = 0; i < 5; i++) {
       await tester.pump(const Duration(milliseconds: 100));
     }
 
     expect(router.state.uri.path, RoutePath.generalTerms);
     expect(termsLoaded, ['https://example.com/terms-en.md']);
+  });
+
+  testWidgets('stays on login with a retry when the status cannot load', (
+    tester,
+  ) async {
+    await pumpApp(tester);
+
+    remote.responses.single.completeError(Exception('network down'));
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    // Not on to the home screen without knowing about the terms.
+    expect(router.state.uri.path, RoutePath.login);
+    expect(find.text(_l10n.loginFailedMessage), findsOneWidget);
+
+    await tester.tap(find.text(_l10n.loginCardButton));
+    await tester.pump();
+    expect(remote.calls, 2);
+
+    remote.responses.last.complete(_termsRequired);
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    expect(router.state.uri.path, RoutePath.generalTerms);
   });
 
   test('does not ask for the login status while logged out', () async {

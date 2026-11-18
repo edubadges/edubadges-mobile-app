@@ -41,16 +41,21 @@ enum LoginEntryMode {
 /// landing page to a logged-out visitor.
 ///
 /// A signed-in user only sees a loader: the router leaves the login route as
-/// soon as it knows where to go next.
+/// soon as it knows where to go next. If the login status could not be
+/// loaded ([loginStatusFailed]), the router stays here and the user gets the
+/// error with a button to try again.
 LoginEntryMode resolveLoginEntryMode({
   required bool autoLoginSupported,
   required AsyncValue<bool> auth,
   required AutoLoginSuppression? suppression,
+  bool loginStatusFailed = false,
 }) {
   // Signed in: the router is about to leave the login route, on mobile too,
   // once it knows where to go next.
   if (auth.asData?.value ?? false) {
-    return LoginEntryMode.loading;
+    return loginStatusFailed
+        ? LoginEntryMode.landingWithError
+        : LoginEntryMode.loading;
   }
   if (!autoLoginSupported) {
     return LoginEntryMode.landing;

@@ -90,6 +90,27 @@ void main() {
       expect(_mobile(loggedIn), LoginEntryMode.loading);
     });
 
+    test('shows the error when the login status could not load', () {
+      expect(
+        resolveLoginEntryMode(
+          autoLoginSupported: false,
+          auth: loggedIn,
+          suppression: null,
+          loginStatusFailed: true,
+        ),
+        LoginEntryMode.landingWithError,
+      );
+      expect(
+        resolveLoginEntryMode(
+          autoLoginSupported: true,
+          auth: loggedIn,
+          suppression: null,
+          loginStatusFailed: true,
+        ),
+        LoginEntryMode.landingWithError,
+      );
+    });
+
     test('shows a logged-out visitor the landing page', () {
       expect(_mobile(loggedOut), LoginEntryMode.landing);
       expect(_mobile(resolving), LoginEntryMode.landing);
