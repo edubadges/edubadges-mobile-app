@@ -82,6 +82,12 @@ fi
 # stalled network cannot hold up the archive. The watchdog's output goes to
 # /dev/null: Xcode waits for every process that still holds the phase's output.
 UPLOAD_TIMEOUT="${CRASHLYTICS_UPLOAD_TIMEOUT:-300}"
+case "$UPLOAD_TIMEOUT" in
+  '' | *[!0-9]* | 0)
+    warn "CRASHLYTICS_UPLOAD_TIMEOUT='$UPLOAD_TIMEOUT' is not a positive number of seconds; using 300."
+    UPLOAD_TIMEOUT=300
+    ;;
+esac
 
 echo "Crashlytics symbol upload: $FLAVOR ($PLIST)"
 xcrun dwarfdump --uuid "$DSYM" 2>/dev/null
