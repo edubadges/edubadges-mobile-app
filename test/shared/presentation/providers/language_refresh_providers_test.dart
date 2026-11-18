@@ -15,6 +15,9 @@ import 'package:edubadges/features/collections/domain/entities/collections_entit
 import 'package:edubadges/features/collections/presentation/providers/collections_providers.dart';
 import 'package:edubadges/features/collections/presentation/state/collections_notifier.dart';
 import 'package:edubadges/features/general_terms/presentation/providers/general_terms_providers.dart';
+import 'package:edubadges/features/login/data/datasources/login_remote_datasource.dart';
+import 'package:edubadges/features/login/data/models/login_user_status.dart';
+import 'package:edubadges/features/login/presentation/providers/login_providers.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
 import 'package:edubadges/shared/presentation/providers/language_refresh_providers.dart';
 import 'package:edubadges/shared/presentation/providers/permission_providers.dart';
@@ -45,6 +48,13 @@ class _FakeAuthNotifier extends AuthNotifier {
     builds++;
     return loggedIn;
   }
+}
+
+/// `/login` for a user who has accepted the terms; the router asks for it.
+class _FakeLoginRemote implements LoginRemoteDataSource {
+  @override
+  Future<LoginUserAuthStatus> login() async =>
+      parseUserAuthStatus({'terms_agreed': true});
 }
 
 class _FakeProfileNotifier extends ProfileNotifier {
@@ -128,6 +138,7 @@ void main() {
         networkConfigProvider.overrideWithValue(
           NetworkConfig(baseUrl: 'https://api.example.test'),
         ),
+        loginRemoteDataSourceProvider.overrideWithValue(_FakeLoginRemote()),
       ],
     );
     addTearDown(container.dispose);

@@ -6,6 +6,7 @@ import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/core/widgets/primary_button.dart';
 import 'package:edubadges/features/general_terms/presentation/providers/general_terms_providers.dart';
+import 'package:edubadges/features/login/presentation/providers/login_providers.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/permission_providers.dart';
 import 'package:edubadges/shared/presentation/widgets/error_widget.dart';
@@ -69,6 +70,8 @@ class _GeneralTermsPageState extends ConsumerState<GeneralTermsPage> {
   Future<void> _acceptTerms() async {
     final dataSource = ref.watch(generalTermsDataSourceProvider);
     await dataSource.acceptTerms();
+    // The status from before accepting still says the terms are required.
+    ref.invalidate(loginStatusProvider);
 
     final shouldShowNotificationPrompt = await ref.read(
       shouldShowNotificationPermissionPromptProvider.future,
