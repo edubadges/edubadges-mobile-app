@@ -8,6 +8,7 @@ import 'package:edubadges/core/widgets/loading_spinner.dart';
 import 'package:edubadges/core/widgets/max_width_wrapper.dart';
 import 'package:edubadges/features/login/domain/web_auto_login.dart';
 import 'package:edubadges/features/login/presentation/providers/auto_login_providers.dart';
+import 'package:edubadges/features/login/presentation/providers/login_providers.dart';
 import 'package:edubadges/features/login/presentation/widgets/login_status_message.dart';
 import 'package:edubadges/l10n/app_localizations.dart';
 import 'package:edubadges/shared/presentation/providers/auth_providers.dart';
@@ -116,10 +117,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final textTheme = theme.textTheme;
 
     final authAsync = ref.watch(authProvider);
+    final bool signedIn = authAsync.asData?.value ?? false;
+    // Signed in, but the API could not say where to go next (SURF-687).
+    // Riverpod retries the request by itself; the error stays shown while it
+    // does, with a button to try again right away.
+    final bool loginStatusFailed =
+        signedIn &&
+        ref.watch(loginStatusProvider.select((status) => status.hasError));
     final LoginEntryMode mode = resolveLoginEntryMode(
       autoLoginSupported: ref.watch(autoLoginSupportedProvider),
       auth: authAsync,
       suppression: ref.watch(autoLoginSuppressionProvider),
+      loginStatusFailed: loginStatusFailed,
     );
 
     switch (mode) {
@@ -262,7 +271,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: authAsync.isLoading ? null : _login,
+                              onPressed: authAsync.isLoading
+                                  ? null
+                                  // Signing in again would not help: ask for
+                                  // the status again.
+                                  : loginStatusFailed
+                                  ? () => ref.invalidate(loginStatusProvider)
+                                  : _login,
                               style: ElevatedButton.styleFrom(
                                 // A minimum, not a fixed height: the label
                                 // grows with the font size.

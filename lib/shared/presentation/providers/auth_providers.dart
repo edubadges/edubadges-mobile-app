@@ -93,7 +93,9 @@ class AuthNotifier extends AsyncNotifier<bool> {
     ref.invalidate(badgesOverviewProvider, asReload: true);
     ref.invalidate(collectionsProvider, asReload: true);
     ref.invalidate(catalogProvider, asReload: true);
-    ref.invalidate(loginStatusProvider, asReload: true);
+    // loginStatusProvider is not invalidated here: it watches this provider,
+    // so it follows login and logout by itself, and invalidating a dependent
+    // from here is a circular dependency.
     ref.invalidate(badgeDetailsProvider, asReload: true);
     ref.invalidate(badgeDetailsModelProvider, asReload: true);
   }
