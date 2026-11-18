@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:edubadges/features/account/data/models/profile_model.dart';
+import 'package:edubadges/features/account/domain/entities/profile_entity.dart';
 import 'package:edubadges/features/general_terms/domain/general_terms_constants.dart';
 import 'package:edubadges/features/general_terms/domain/general_terms_url_resolver.dart';
 
@@ -9,10 +10,11 @@ String generalTermsUrlFromProfile(ProfileModel profile, String languageCode) {
   final agreement = profile.termsagreementSet.firstWhereOrNull(
     (a) => a.terms.termsType == GeneralTermsConstants.termsOfServiceType,
   );
-  if (agreement == null || agreement.terms.termsUrls.isEmpty) {
-    throw Exception('No terms of service URL in profile');
-  }
-  return agreement.terms.termsUrls.urlForLanguage(languageCode);
+  // A new account has no agreements until it accepts the terms.
+  final urls = agreement?.terms.termsUrls ?? const <TermsUrlEntity>[];
+  return (urls.isEmpty ? defaultTermsOfServiceUrls : urls).urlForLanguage(
+    languageCode,
+  );
 }
 
 /// Fetches the terms markdown URL from `/profile` without using Riverpod providers.

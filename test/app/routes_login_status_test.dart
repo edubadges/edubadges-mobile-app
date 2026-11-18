@@ -39,13 +39,25 @@ class _FakeLoginRemote implements LoginRemoteDataSource {
   }
 }
 
-/// What `/login` returns for a brand-new eduID account.
+/// What `/login` returns for a brand-new eduID account: no agreements yet.
+final LoginUserAuthStatus _newAccount = parseUserAuthStatus({
+  'id': 248,
+  'email': 'new@example.com',
+  'first_name': 'New',
+  'last_name': 'User',
+  'validated_name': null,
+  'schac_homes': <String>[],
+  'terms_agreed': false,
+  'termsagreement_set': <Object>[],
+});
+
+/// What `/login` returns when the user has to accept new terms.
 final LoginUserAuthStatus _termsRequired = parseUserAuthStatus({
   'email': 'new@example.com',
   'first_name': 'New',
   'last_name': 'User',
   'terms_agreed': false,
-  'terms_agreement_set': [
+  'termsagreement_set': [
     {
       'agreed': false,
       'agreed_version': 0,
@@ -126,6 +138,24 @@ void main() {
 
     expect(router.state.uri.path, RoutePath.generalTerms);
     expect(termsLoaded, ['https://example.com/terms-en.md']);
+  });
+
+  // SURF-687: a brand-new account has no terms agreements, so `/login` names
+  // no terms URL. The redirect threw on that and the app hung on a spinner.
+  testWidgets('shows a brand-new account the SURF account terms', (
+    tester,
+  ) async {
+    await pumpApp(tester);
+
+    remote.responses.single.complete(_newAccount);
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    expect(router.state.uri.path, RoutePath.generalTerms);
+    expect(termsLoaded, [
+      'https://raw.githubusercontent.com/edubadges/privacy/master/surf/account-terms-en.md',
+    ]);
   });
 
   testWidgets('stays on login with a retry when the status cannot load', (

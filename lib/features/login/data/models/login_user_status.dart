@@ -50,7 +50,8 @@ class LoginTermsAgreementRequired extends LoginUserAuthStatus {
   final List<String> schacHomes;
   @JsonKey(defaultValue: false)
   final bool termsAgreed;
-  @JsonKey(defaultValue: <LoginTermsAgreement>[])
+  // The API spells it without an underscore between terms and agreement.
+  @JsonKey(name: 'termsagreement_set', defaultValue: <LoginTermsAgreement>[])
   final List<LoginTermsAgreement> termsAgreementSet;
 
   const LoginTermsAgreementRequired({
@@ -84,7 +85,8 @@ class LoginUser extends LoginUserAuthStatus {
   final List<String> schacHomes;
   @JsonKey(defaultValue: true)
   final bool termsAgreed;
-  @JsonKey(defaultValue: <LoginTermsAgreement>[])
+  // The API spells it without an underscore between terms and agreement.
+  @JsonKey(name: 'termsagreement_set', defaultValue: <LoginTermsAgreement>[])
   final List<LoginTermsAgreement> termsAgreementSet;
 
   const LoginUser({
